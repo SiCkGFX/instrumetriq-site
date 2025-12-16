@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import statusData from '../data/status.json';
+
+// Calculate days since start
+const startDate = new Date(statusData.collection_start_date);
+const lastUpdate = new Date(statusData.last_updated_iso);
+const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+---
+
+<BaseLayout 
+  title="Collection Status - Instrumetriq"
+  description="Current status of Instrumetriq data collection"
+>
+  <article>
+    <h1>Collection Status</h1>
+    
+    <section class="status-grid">
+      <div class="stat-card">
+        <div class="stat-label">Collection Started</div>
+        <div class="stat-value">{startDate.toLocaleDateString()}</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Days Running</div>
+        <div class="stat-value">{daysSinceStart}</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Total Records</div>
+        <div class="stat-value">{statusData.total_records.toLocaleString()}</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Last Updated</div>
+        <div class="stat-value">{lastUpdate.toLocaleDateString()}</div>
+      </div>
+    </section>
+    
+    <section>
+      <h2>Platform Status</h2>
+      <div class="platform-list">
+        {statusData.platforms.map(platform => (
+          <div class="platform-card">
+            <div class="platform-header">
+              <h3>{platform.name}</h3>
+              <span class={`status-badge ${platform.status}`}>{platform.status}</span>
+            </div>
+            <p class="platform-records">{platform.records_collected.toLocaleString()} records</p>
+          </div>
+        ))}
+      </div>
+    </section>
+    
+    {statusData.notes && (
+      <section>
+        <h2>Notes</h2>
+        <p class="notes">{statusData.notes}</p>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  article {
+    max-width: 900px;
+  }
+  
+  h1 {
+    margin-bottom: var(--space-xl);
+  }
+  
+  section {
+    margin-bottom: var(--space-2xl);
+  }
+  
+  h2 {
+    margin-bottom: var(--space-md);
+  }
+  
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .stat-card {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+  }
+  
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+  
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  
+  .platform-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  
+  .platform-card {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+  }
+  
+  .platform-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+  }
+  
+  .platform-header h3 {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+  
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  .status-badge.active {
+    background-color: rgba(0, 188, 212, 0.1);
+    color: var(--color-accent);
+  }
+  
+  .status-badge.paused {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: #ff9800;
+  }
+  
+  .status-badge.inactive {
+    background-color: rgba(160, 160, 160, 0.1);
+    color: var(--color-text-muted);
+  }
+  
+  .platform-records {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+  
+  .notes {
+    padding: var(--space-lg);
+    background-color: var(--color-bg-secondary);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 4px;
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Disclaimer - Instrumetriq"
+  description="Disclaimer for Instrumetriq"
+>
+  <article>
+    <h1>Disclaimer</h1>
+    <p class="last-updated">Last Updated: December 16, 2025</p>
+    
+    <section>
+      <h2>No Warranty</h2>
+      <p>
+        The Instrumetriq dataset and website are provided "as is" without warranty of any kind,
+        either express or implied, including but not limited to the implied warranties of
+        merchantability, fitness for a particular purpose, or non-infringement.
+      </p>
+    </section>
+    
+    <section>
+      <h2>Data Accuracy</h2>
+      <p>
+        While we strive to ensure the accuracy and quality of the data, we make no guarantees
+        about the completeness, accuracy, reliability, or timeliness of the dataset. Users should
+        independently verify any data before relying on it for research or other purposes.
+      </p>
+    </section>
+    
+    <section>
+      <h2>Limitation of Liability</h2>
+      <p>
+        In no event shall Instrumetriq or its contributors be liable for any direct, indirect,
+        incidental, special, exemplary, or consequential damages arising from the use of the
+        dataset or website.
+      </p>
+    </section>
+    
+    <section>
+      <h2>Research Use</h2>
+      <p>
+        This dataset is intended for research and educational purposes. Users are responsible
+        for ensuring their use of the data complies with all applicable laws, regulations, and
+        ethical guidelines.
+      </p>
+    </section>
+    
+    <section>
+      <h2>Third-Party Content</h2>
+      <p>
+        The dataset may contain content from third-party sources. We do not endorse or take
+        responsibility for third-party content, and users should verify its accuracy and
+        appropriateness for their purposes.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  article {
+    max-width: 800px;
+  }
+  
+  h1 {
+    margin-bottom: var(--space-sm);
+  }
+  
+  .last-updated {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-xl);
+  }
+  
+  section {
+    margin-bottom: var(--space-xl);
+  }
+  
+  h2 {
+    margin-bottom: var(--space-md);
+  }
+</style>

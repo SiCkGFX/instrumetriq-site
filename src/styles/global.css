@@ -1,0 +1,153 @@
+/* 
+ * Instrumetriq Brand Guidelines
+ * - Background: dark grey (not pure black)
+ * - Text: off-white
+ * - Accent: subtle cyan for functional states only
+ * - Layout: generous whitespace, minimal borders
+ * - Typography: system font stack (fast, neutral)
+ */
+
+:root {
+  /* Colors */
+  --color-bg: #1a1a1a;
+  --color-bg-secondary: #242424;
+  --color-text: #e8e8e8;
+  --color-text-muted: #a0a0a0;
+  --color-accent: #00bcd4;
+  --color-accent-dim: #00838f;
+  --color-border: #333;
+  
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 4rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: var(--space-sm);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: var(--space-md);
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+a:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Layout utilities */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-xl) 0;
+}
+
+/* Minimal, functional design */
+.button {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-md);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.button:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Code blocks */
+code {
+  font-family: "Courier New", Courier, monospace;
+  background-color: var(--color-bg-secondary);
+  padding: 0.125rem 0.25rem;
+  border-radius: 2px;
+  font-size: 0.9em;
+}
+
+pre {
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-md);
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: var(--space-md);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-left: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+li {
+  margin-bottom: var(--space-xs);
+}

@@ -1,0 +1,14 @@
+{
+  "collection_start_date": "2025-01-01",
+  "days_collected": 15,
+  "last_updated_iso": "2025-12-16T00:00:00Z",
+  "total_records": 0,
+  "platforms": [
+    {
+      "name": "Platform A",
+      "status": "active",
+      "records_collected": 0
+    }
+  ],
+  "notes": "Data collection infrastructure is currently being set up. Regular updates will be posted as collection progresses."
+}

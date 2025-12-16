@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Contact - Instrumetriq"
+  description="Get in touch with the Instrumetriq team"
+>
+  <article>
+    <h1>Contact</h1>
+    
+    <section>
+      <h2>Get in Touch</h2>
+      <p>
+        For inquiries about the project, dataset access, or collaboration opportunities,
+        please reach out through the following channels:
+      </p>
+    </section>
+    
+    <section>
+      <h2>Email</h2>
+      <p>
+        <a href="mailto:contact@instrumetriq.com">contact@instrumetriq.com</a>
+      </p>
+    </section>
+    
+    <section>
+      <h2>GitHub</h2>
+      <p>
+        Visit our GitHub organization for code, issues, and discussions:
+        <br>
+        <a href="https://github.com/instrumetriq" target="_blank" rel="noopener noreferrer">
+          github.com/instrumetriq
+        </a>
+      </p>
+    </section>
+    
+    <section>
+      <h2>Reporting Issues</h2>
+      <p>
+        If you encounter any issues with the dataset or have questions about the research,
+        please open an issue on our GitHub repository or contact us via email.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  article {
+    max-width: 800px;
+  }
+  
+  h1 {
+    margin-bottom: var(--space-xl);
+  }
+  
+  section {
+    margin-bottom: var(--space-2xl);
+  }
+  
+  h2 {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+  }
+  
+  a {
+    color: var(--color-accent);
+  }
+</style>
