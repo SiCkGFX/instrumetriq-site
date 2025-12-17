@@ -76,7 +76,9 @@
   --shadow-lg: 0 4px 16px 0 rgba(0, 0, 0, 0.6);
   
   /* Layout */
-  --max-width: 1040px;
+  --container-max: 1040px;
+  --container-pad: 24px;
+  --max-width: var(--container-max);
   --max-width-wide: 1200px;
   --header-h: 72px;
   --header-h-mobile: 64px;
@@ -88,6 +90,12 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --container-pad: 16px;
+  }
 }
 
 * {
@@ -162,9 +170,8 @@ a:focus {
 
 /* Layout utilities */
 .container {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-4);
+  width: min(var(--container-max), calc(100% - (2 * var(--container-pad))));
+  margin-inline: auto;
 }
 
 .content {

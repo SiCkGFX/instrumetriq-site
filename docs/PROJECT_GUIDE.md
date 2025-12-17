@@ -128,6 +128,16 @@ The cyan accent should ONLY be used for:
 - `--space-6` (48px) - Section spacing
 - `--space-8` (64px) - Major sections
 
+### Layout container contract
+
+- **Single container utility:** Header, main content, and footer must all use the same `.container` class for identical left/right edges.
+- **Container variables:**
+  - `--container-max: 1040px`
+  - `--container-pad: 24px` (<= 640px: `16px`)
+- **Container implementation:**
+  - `.container { width: min(var(--container-max), calc(100% - (2 * var(--container-pad)))); margin-inline: auto; }`
+- **Do not nest competing containers:** Pages should avoid adding their own max-width/padding wrappers that shift edges relative to header/footer.
+
 **Border Radius:**
 - `--radius-sm` (6px) - Small elements (tags, badges)
 - `--radius-md` (12px) - Cards, panels

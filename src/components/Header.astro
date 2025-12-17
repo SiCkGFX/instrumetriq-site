@@ -5,7 +5,7 @@ const DEBUG_LAYOUT = false;
 ---
 
 <header class:list={[DEBUG_LAYOUT && 'debug-layout']}>
-  <div class="container">
+  <div class="container header__inner">
     <div class="header-content">
       <a href="/" class="logo">
         <img src="/logo/instrumetriq-logo.svg" alt="instrumetriq" class="logo-image" />
@@ -35,8 +35,7 @@ const DEBUG_LAYOUT = false;
     z-index: 100;
   }
 
-  header > .container {
-    width: 100%;
+  header > .header__inner {
     height: 100%;
     display: flex;
     align-items: center;

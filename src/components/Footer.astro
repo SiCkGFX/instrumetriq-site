@@ -4,16 +4,14 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer>
-  <div class="container">
-    <div class="footer-content">
-      <div class="copyright">
-        <p>&copy; {currentYear} Instrumetriq. All rights reserved.</p>
-      </div>
-      <div class="footer-links">
-        <a href="/legal/terms">Terms</a>
-        <a href="/legal/privacy">Privacy</a>
-        <a href="/legal/disclaimer">Disclaimer</a>
-      </div>
+  <div class="container footer__inner">
+    <div class="copyright">
+      <p>&copy; {currentYear} Instrumetriq. All rights reserved.</p>
+    </div>
+    <div class="footer-links">
+      <a href="/legal/terms">Terms</a>
+      <a href="/legal/privacy">Privacy</a>
+      <a href="/legal/disclaimer">Disclaimer</a>
     </div>
   </div>
 </footer>
@@ -21,11 +19,14 @@ const currentYear = new Date().getFullYear();
 <style>
   footer {
     border-top: 1px solid var(--color-border);
-    padding: var(--space-xl) 0;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    padding: 0;
     margin-top: auto;
   }
-  
-  .footer-content {
+
+  .footer__inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -44,6 +45,11 @@ const currentYear = new Date().getFullYear();
     gap: 18px;
     align-items: center;
   }
+
+  .footer-links a {
+    padding: 6px 0;
+    display: inline-block;
+  }
   
   .footer-links a {
     color: var(--color-text-muted);
@@ -55,7 +61,11 @@ const currentYear = new Date().getFullYear();
   }
   
   @media (max-width: 768px) {
-    .footer-content {
+    footer {
+      min-height: 64px;
+    }
+
+    .footer__inner {
       flex-direction: column;
       text-align: center;
     }
