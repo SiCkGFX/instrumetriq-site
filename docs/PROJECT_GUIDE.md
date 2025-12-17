@@ -34,18 +34,19 @@ We chose Astro for several key reasons:
 - Primary text MUST be off-white: `--text: #f0f0f0`
 - All CSS must reference these variables correctly (no `--color-bg` or `--color-text`)
 
-**Header Sizing Rules:**
-- **Header height**: `--header-height: 4.25rem` (68px) desktop, `--header-height-mobile: 3.5rem` (56px) mobile
-- **Logo height**: 2.125rem (34px) desktop, 1.75rem (28px) mobile
-- **Logo sizing**: Set via `height` CSS property, `width: auto` to preserve aspect ratio, `display: block`
-- **Vertical alignment**: Header uses `display: flex` + `align-items: center` to vertically center logo and nav
-- **Logo filter**: `brightness(1.2)` for clear visibility on dark background
-- **Nav link spacing**: `gap: var(--space-5)` desktop (32px), `var(--space-4)` mobile (24px)
-- **Nav links**: MUST have visible spacing between them
-- **Header background**: Semi-transparent dark with backdrop blur
-- **Bottom border**: 1px solid `--border`
-- **Content spacing below header**: Hero section starts with `var(--space-5)` (32px) top padding on desktop, `var(--space-4)` (24px) on mobile
-- **Main content padding**: No top/bottom padding on `.content` wrapper - individual pages control their own spacing
+**Header layout contract:**
+- **Single source of truth:** The top-level `<header>` in `src/components/Header.astro` owns BOTH `border-bottom` and `height`.
+- **Deterministic height variables (global):**
+  - `--header-h: 72px` (desktop)
+  - `--header-h-mobile: 64px` (<= 768px)
+  - Compatibility aliases exist: `--header-height` and `--header-height-mobile` map to the above.
+- **Height + centering:** The `<header>` element uses `display: flex` and `align-items: center` with **no vertical padding** (only inner horizontal padding via `.container`).
+- **Header row:** The direct child row (container + `.header-content`) is `display: flex; align-items: center; justify-content: space-between;` and spans `height: 100%`.
+- **Logo contract:**
+  - Anchor `.logo`: `display: flex; align-items: center; height: 100%`
+  - Image `.logo-image`: `display: block; width: auto; height: 34px` desktop / `28px` mobile
+- **Nav contract:** `display: flex; align-items: center; gap: var(--space-5)` desktop, `gap: var(--space-4)` mobile
+- **Spacing below header:** The page content should begin ~24–32px below the header; avoid adding “compensating” top padding in layouts.
 
 **Accent Color Usage:**
 - Cyan (`--accent: #00bcd4`) is ONLY for hover/focus/active states

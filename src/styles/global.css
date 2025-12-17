@@ -72,8 +72,11 @@
   /* Layout */
   --max-width: 1040px;
   --max-width-wide: 1200px;
-  --header-height: 4.25rem;
-  --header-height-mobile: 3.5rem;
+  --header-h: 72px;
+  --header-h-mobile: 64px;
+  /* Back-compat aliases (Header.astro previously used these) */
+  --header-height: var(--header-h);
+  --header-height-mobile: var(--header-h-mobile);
   
   /* Transitions */
   --transition-fast: 0.15s ease;
