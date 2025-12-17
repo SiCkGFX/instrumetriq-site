@@ -35,7 +35,7 @@ We chose Astro for several key reasons:
 - All CSS must reference these variables correctly (no `--color-bg` or `--color-text`)
 
 **Header Navigation:**
-- Logo height: 1.5rem desktop, 1.25rem mobile (never smaller)
+- Logo height: 1.75rem desktop (28px), 1.5rem mobile (24px)
 - Logo filter: `brightness(1.2)` for clear visibility
 - Nav link spacing: `gap: var(--space-5)` desktop (32px), `var(--space-4)` mobile (24px)
 - Nav links MUST have visible spacing between them
@@ -53,6 +53,33 @@ Previous changes accidentally introduced white backgrounds (breaking dark theme)
 ### Home Page Design Philosophy
 
 The home page embodies the Instrumetriq brand: minimal, credible, observational with a premium research lab aesthetic. It avoids promotional language and flashy effects in favor of refined typography, subtle depth, strong contrast, and restrained interactions.
+
+### Home Page Messaging Rules
+
+**CRITICAL: All copy must be truthful and scope-accurate:**
+
+**Data Source:**
+- We collect from X (Twitter) ONLY
+- Never claim "social platforms" (plural) or "across social media"
+- Be explicit: "X (Twitter)" or "Twitter/X"
+
+**What We Actually Do:**
+- Score public posts with a domain sentiment model
+- Aggregate activity and silence into time windows
+- Compare narrative/attention metrics to market factors (prices, returns, volatility)
+- Report findings as measured (positive or negative results)
+
+**What We Do NOT Do:**
+- Do NOT claim predictive power or "signals" that imply forecasting
+- Do NOT use vague phrases like "at scale" unless specifying what scale means
+- Do NOT oversell analytical capabilities beyond sentiment scoring + comparison
+
+**Approved Hero Copy Template:**
+- Eyebrow: "STUDY IN PROGRESS" or "RESEARCH NOTEBOOK"
+- Subtitle: "Measuring crypto narrative signals from X (Twitter)"
+- Description: "We score public posts with a domain sentiment model, aggregate activity and silence into time windows, and compare the results with market factors. Findings are reported as measured—positive or negative."
+
+These rules prevent overselling and maintain research credibility.
 
 ### Design Token System
 
