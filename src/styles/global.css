@@ -80,6 +80,11 @@
   --container-pad: 24px;
   --max-width: var(--container-max);
   --max-width-wide: 1200px;
+  
+  /* Logo clear-space compensation (CSS-only; do not edit SVG) */
+  --logo-pad-x: 12px; /* start value; tune to 14px/16px if needed */
+  --logo-pad-y: 0px;
+
   --header-h: 72px;
   --header-h-mobile: 64px;
   /* Back-compat aliases (Header.astro previously used these) */
