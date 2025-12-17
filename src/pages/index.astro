@@ -6,89 +6,241 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="Instrumetriq - Sentiment Data Collection"
   description="Instrumetriq collects and analyzes sentiment data from social media platforms"
 >
-  <section>
-    <h1>instrumetriq</h1>
-    <p class="tagline">Sentiment data collection from social media platforms</p>
-    
-    <div class="intro">
-      <p>
-        Instrumetriq is a research project dedicated to collecting, analyzing, and sharing
-        sentiment data from various social media platforms. Our goal is to provide researchers
-        and developers with high-quality, ethically-sourced data for sentiment analysis studies.
-      </p>
-    </div>
-    
-    <div class="quick-links">
-      <a href="/research" class="card">
-        <h3>Research</h3>
-        <p>Learn about our methodology and approach to data collection</p>
+  <div class="home-page">
+    <!-- Hero Section -->
+    <section class="hero gradient-overlay">
+      <div class="hero-content">
+        <h1 class="hero-title">instrumetriq</h1>
+        <p class="hero-subtitle text-balance">Observing sentiment patterns across social media platforms</p>
+        <p class="hero-description">
+          A research initiative focused on systematic collection and documentation of sentiment data. 
+          We measure, record, and share findings to support empirical analysis.
+        </p>
+      </div>
+    </section>
+
+    <!-- Status Strip -->
+    <section class="status-strip">
+      <div class="status-content">
+        <div class="status-item">
+          <span class="status-label">Study Status</span>
+          <span class="status-value">Active Collection</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+          <span class="status-label">Phase</span>
+          <span class="status-value">Infrastructure Setup</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+          <span class="status-label">Data Points</span>
+          <span class="status-value">— Pending —</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Access Cards -->
+    <section class="navigation-cards">
+      <a href="/research" class="nav-card">
+        <div class="card-header">
+          <h3>Research</h3>
+          <span class="card-arrow">→</span>
+        </div>
+        <p>Methodology, approach, and ethical framework for data collection</p>
       </a>
-      <a href="/dataset" class="card">
-        <h3>Dataset</h3>
-        <p>Access our sentiment dataset and documentation</p>
+      
+      <a href="/dataset" class="nav-card">
+        <div class="card-header">
+          <h3>Dataset</h3>
+          <span class="card-arrow">→</span>
+        </div>
+        <p>Access documentation, structure, and licensing information</p>
       </a>
-      <a href="/status" class="card">
-        <h3>Status</h3>
-        <p>View the current state of data collection</p>
+      
+      <a href="/status" class="nav-card">
+        <div class="card-header">
+          <h3>Status</h3>
+          <span class="card-arrow">→</span>
+        </div>
+        <p>Current collection metrics and operational status</p>
       </a>
-    </div>
-  </section>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
-  section {
-    max-width: 800px;
+  .home-page {
+    max-width: var(--max-width-narrow);
     margin: 0 auto;
   }
   
-  h1 {
-    font-size: 3rem;
+  /* Hero Section */
+  .hero {
+    padding: var(--space-3xl) 0 var(--space-2xl);
+    text-align: center;
+  }
+  
+  .hero-content {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  
+  .hero-title {
+    font-size: var(--font-size-5xl);
     font-weight: 400;
-    margin-bottom: var(--space-xs);
-  }
-  
-  .tagline {
-    font-size: 1.125rem;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-xl);
-  }
-  
-  .intro {
-    margin-bottom: var(--space-2xl);
-  }
-  
-  .intro p {
-    font-size: 1.125rem;
-    line-height: 1.7;
-  }
-  
-  .quick-links {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-md);
-    margin-top: var(--space-2xl);
-  }
-  
-  .card {
-    padding: var(--space-lg);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    transition: all 0.2s ease;
-  }
-  
-  .card:hover {
-    border-color: var(--color-accent);
-    transform: translateY(-2px);
-  }
-  
-  .card h3 {
-    margin-bottom: var(--space-xs);
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-md);
     color: var(--color-text);
   }
   
-  .card p {
-    margin: 0;
+  .hero-subtitle {
+    font-size: var(--font-size-xl);
     color: var(--color-text-muted);
-    font-size: 0.95rem;
+    margin-bottom: var(--space-lg);
+    font-weight: 400;
+  }
+  
+  .hero-description {
+    font-size: var(--font-size-base);
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+  }
+  
+  /* Status Strip */
+  .status-strip {
+    margin: var(--space-2xl) 0;
+    padding: var(--space-lg);
+    background: linear-gradient(to right, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 100%);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+  }
+  
+  .status-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  
+  .status-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    text-align: center;
+  }
+  
+  .status-label {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+    font-weight: 500;
+  }
+  
+  .status-value {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    font-weight: 400;
+  }
+  
+  .status-divider {
+    width: 1px;
+    height: 2rem;
+    background: var(--color-border);
+  }
+  
+  /* Navigation Cards */
+  .navigation-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .nav-card {
+    padding: var(--space-lg);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    min-height: 140px;
+  }
+  
+  .nav-card:hover {
+    border-color: var(--color-border-light);
+    background: var(--color-bg-tertiary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-subtle);
+  }
+  
+  .nav-card:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+  }
+  
+  .nav-card h3 {
+    font-size: var(--font-size-xl);
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-text);
+  }
+  
+  .card-arrow {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-dim);
+    transition: all var(--transition-base);
+  }
+  
+  .nav-card:hover .card-arrow {
+    color: var(--color-accent);
+    transform: translateX(2px);
+  }
+  
+  .nav-card p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--space-2xl) 0 var(--space-xl);
+    }
+    
+    .hero-title {
+      font-size: var(--font-size-4xl);
+    }
+    
+    .hero-subtitle {
+      font-size: var(--font-size-lg);
+    }
+    
+    .status-content {
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    .status-divider {
+      width: 100%;
+      height: 1px;
+    }
+    
+    .navigation-cards {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

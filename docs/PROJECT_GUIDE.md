@@ -23,6 +23,131 @@ We chose Astro for several key reasons:
 - **Minimal CSS**: Only the styles needed, no unused code
 - **CSS Custom Properties**: Centralized theming in `src/styles/global.css`
 
+## Design System
+
+### Home Page Design Philosophy
+
+The home page embodies the Instrumetriq brand: minimal, credible, observational. It avoids promotional language and flashy effects in favor of refined typography, subtle depth, and restrained interactions.
+
+#### Visual Hierarchy
+
+1. **Hero Section** - Establishes context with clear typographic hierarchy:
+   - Main title: 3rem (48px), neutral weight, tight letter spacing
+   - Subtitle: 1.25rem (20px), muted color, balanced text wrapping
+   - Description: 1rem base size, 1.7 line-height for readability
+   - Subtle radial gradient overlay (3% cyan opacity) adds depth without distraction
+
+2. **Status Strip** - Lab-status aesthetic:
+   - Horizontal layout with three sections divided by 1px borders
+   - Uppercase labels (0.75rem, 5% letter spacing) in dim gray
+   - Values in standard text color for contrast
+   - Subtle gradient background (secondary → tertiary → secondary)
+   - Responsive: stacks vertically on mobile
+
+3. **Navigation Cards** - Functional access points:
+   - Three equal-width cards in grid layout
+   - Secondary background with subtle hover states
+   - Arrow indicator (→) that shifts 2px right and changes to cyan on hover
+   - Minimum height ensures consistent card dimensions
+   - 1px elevation on hover (translateY) with soft shadow
+
+#### Typography Scale
+
+All sizes defined in `--font-size-*` variables:
+
+- **XS (0.75rem)**: Status labels, captions
+- **SM (0.875rem)**: Card descriptions, metadata
+- **Base (1rem)**: Body text, paragraphs
+- **LG (1.125rem)**: Lead text, emphasized content
+- **XL (1.25rem)**: Subtitles, card headings
+- **2XL (1.5rem)**: Section headings
+- **3XL (2rem)**: Large headings
+- **4XL (2.5rem)**: Hero headings (mobile)
+- **5XL (3rem)**: Hero headings (desktop)
+
+#### Spacing System
+
+Consistent spacing scale using `--space-*` variables:
+
+- **XS (0.5rem)**: Tight gaps, inline elements
+- **SM (1rem)**: Related elements, small gaps
+- **MD (1.5rem)**: Standard spacing between sections
+- **LG (2rem)**: Larger section gaps
+- **XL (3rem)**: Major section separation
+- **2XL (4rem)**: Hero padding, large gaps
+- **3XL (6rem)**: Hero top padding (desktop)
+
+#### Background Layers
+
+Multiple subtle layers create depth without noise:
+
+1. **Base**: Dark grey (#1a1a1a) - not pure black
+2. **Grid texture**: 50px grid with 1% white lines at 30% opacity (via body::before pseudo-element)
+3. **Gradient overlay**: Radial gradient on hero (3% cyan at center fading to transparent)
+4. **Card backgrounds**: Slightly lighter grey (#242424) that shift to #2a2a2a on hover
+
+#### Color Palette
+
+Restrained palette with cyan as functional accent only:
+
+- **Background**: #1a1a1a (primary), #242424 (secondary), #2a2a2a (tertiary)
+- **Text**: #e8e8e8 (primary), #a0a0a0 (muted), #707070 (dim)
+- **Accent**: #00bcd4 (cyan) - used only for hover, focus, active states
+- **Borders**: #333 (standard), #404040 (light)
+
+#### Hover & Focus States
+
+All interactive elements follow these rules:
+
+1. **Navigation links**: Text color shifts from muted to primary, cyan underline on active
+2. **Cards**: Border lightens, background darkens, 1px upward shift, arrow changes to cyan and shifts right
+3. **Logo**: Opacity reduces to 0.9
+4. **Focus rings**: 2px solid cyan with 4px offset for clear keyboard navigation
+
+#### Motion & Transitions
+
+- Base transition: 0.2s ease for most properties
+- Fast transition: 0.15s ease for immediate feedback (hover states)
+- Slow transition: 0.3s ease for complex animations (unused currently)
+- **Respects `prefers-reduced-motion`**: All animations reduced to 0.01ms when user requests reduced motion
+
+#### Responsive Breakpoints
+
+- **Desktop**: Default styles, 800px max-width content
+- **Mobile (≤768px)**: 
+  - Hero padding reduced
+  - Font sizes scale down (5xl → 4xl, xl → lg)
+  - Status strip stacks vertically
+  - Cards become single column
+  - Status dividers rotate from vertical to horizontal
+
+#### Accessibility
+
+- Semantic HTML structure (header, main, section, nav)
+- Focus states with high-contrast cyan outline (2px, 4px offset)
+- ARIA-appropriate landmarks
+- Color contrast meets WCAG AA standards (tested: white text on dark backgrounds)
+- Text remains readable at 200% zoom
+- Reduced motion support built-in
+
+#### Logo Implementation
+
+- SVG logo loaded from `/public/logo/instrumetriq-logo.svg`
+- Height: 1.75rem (28px) for crisp rendering
+- Width: auto to maintain aspect ratio
+- Wrapped in flex container for vertical alignment
+- Hover: opacity 0.9
+- Focus: cyan outline ring
+
+#### Performance Notes
+
+- Zero JavaScript on home page (static HTML/CSS only)
+- System fonts load instantly (no web font downloads)
+- Grid texture uses CSS gradients (no image files)
+- SVG logo is lightweight vector
+- All styles scoped or in single global.css (no unused CSS)
+- Build output: ~3-4KB CSS for entire page
+
 ## Pages & Routes
 
 All pages use the file-based routing system:
