@@ -71,8 +71,8 @@
 
 html {
   font-family: var(--font-sans);
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: var(--bg);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -81,6 +81,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  background-color: var(--bg);
 }
 
 body::before {
@@ -103,7 +104,7 @@ body::before {
 h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   line-height: 1.2;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-3);
 }
 
 h1 { font-size: 2.5rem; }
@@ -114,21 +115,21 @@ h5 { font-size: 1.125rem; }
 h6 { font-size: 1rem; }
 
 p {
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-4);
 }
 
 a {
-  color: var(--color-text);
+  color: var(--text);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: var(--accent);
 }
 
 a:focus {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -136,21 +137,21 @@ a:focus {
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-4);
 }
 
 .content {
   flex: 1;
-  padding: var(--space-xl) 0;
+  padding: var(--space-6) 0;
 }
 
 /* Minimal, functional design */
 .button {
   display: inline-block;
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-2) var(--space-4);
   background-color: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
+  border: 1px solid var(--border);
+  color: var(--text);
   font-family: var(--font-sans);
   font-size: 1rem;
   cursor: pointer;
@@ -158,30 +159,30 @@ a:focus {
 }
 
 .button:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .button:focus {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 /* Code blocks */
 code {
   font-family: "Courier New", Courier, monospace;
-  background-color: var(--color-bg-secondary);
+  background-color: var(--panel);
   padding: 0.125rem 0.25rem;
   border-radius: 2px;
   font-size: 0.9em;
 }
 
 pre {
-  background-color: var(--color-bg-secondary);
-  padding: var(--space-md);
+  background-color: var(--panel);
+  padding: var(--space-4);
   border-radius: 4px;
   overflow-x: auto;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-4);
 }
 
 pre code {
@@ -191,12 +192,12 @@ pre code {
 
 /* Lists */
 ul, ol {
-  margin-left: var(--space-md);
-  margin-bottom: var(--space-md);
+  margin-left: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 li {
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-2);
 }
 
 /* Utility Classes */

@@ -55,15 +55,15 @@ const currentPath = Astro.url.pathname;
   }
   
   .logo-image {
-    height: 2rem;
+    height: 1.5rem;
     width: auto;
     display: block;
-    filter: brightness(1.1);
+    filter: brightness(1.2);
   }
   
   nav {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-5);
   }
   
   nav a {
@@ -94,8 +94,12 @@ const currentPath = Astro.url.pathname;
   }
   
   @media (max-width: 768px) {
+    .logo-image {
+      height: 1.25rem;
+    }
+    
     nav {
-      gap: var(--space-md);
+      gap: var(--space-4);
     }
     
     nav a {

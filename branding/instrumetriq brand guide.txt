@@ -1,0 +1,252 @@
+
+---
+
+# Instrumetriq — Brand Rules & Principles
+
+## 1. Brand Purpose
+
+**Instrumetriq measures market narratives.**
+It does not predict, promise, or persuade.
+
+The brand must communicate:
+
+* rigor
+* restraint
+* credibility
+* methodological honesty
+
+Avoid anything that suggests:
+
+* hype
+* “alpha”
+* excitement
+* urgency
+
+---
+
+## 2. Brand Personality
+
+**Primary traits**
+
+* Analytical
+* Calm
+* Neutral
+* Serious
+* Unemotional
+
+**Secondary traits**
+
+* Methodical
+* Precise
+* Slightly austere
+
+**Explicitly not**
+
+* Playful
+* Friendly
+* Aggressive
+* Trend-driven
+* Sales-oriented
+
+If a design choice feels “cool”, question it.
+
+---
+
+## 3. Logo Usage Rules
+
+### Logo characteristics
+
+* Wordmark only
+* Monochrome
+* Lowercase
+* No decorative elements
+
+### Allowed logo colors
+
+* Off-white / light grey on dark backgrounds
+* Black or very dark grey on light backgrounds
+
+### Forbidden
+
+* Gradients
+* Shadows
+* Outlines
+* Color fills
+* Partial coloring of letters
+* Use of accent color inside the logo body
+
+The logo is an **anchor**, not a focal effect.
+
+---
+
+## 4. Clear Space & Scale
+
+* Clear space is defined by the vertical distance between:
+
+  * top of the `i` dots
+  * bottom of the `q` tail
+* No other elements may enter this space
+
+The logo must never feel crowded.
+
+---
+
+## 5. Color System
+
+### Primary palette (environment)
+
+**Dark background (default)**
+
+* Very dark grey (not pure black)
+* Used for:
+
+  * website background
+  * dashboards
+  * hero sections
+
+**Secondary dark**
+
+* Slightly lighter dark grey
+* Used for:
+
+  * cards
+  * panels
+  * section separation
+
+**Light foreground**
+
+* Off-white / very light grey
+* Used for:
+
+  * primary text
+  * logo on dark
+
+Avoid pure white except in print/PDF contexts.
+
+---
+
+### Accent color (strictly limited)
+
+**Desaturated cyan**
+
+* Used sparingly
+* Never decorative
+* Never dominant
+
+Allowed uses:
+
+* active states
+* hover states
+* selected items
+* key data points
+* thin dividers
+* indicators
+
+If cyan is noticeable at first glance, it is overused.
+
+---
+
+## 6. Typography
+
+### Primary typeface
+
+* Sans-serif, geometric or neutral grotesk
+* Consistent across:
+
+  * website
+  * documents
+  * UI
+  * marketing materials
+
+### Typography behavior
+
+* High hierarchy clarity
+* Calm line spacing
+* No playful weights
+* No excessive variation
+
+Typography should feel **measured**, not expressive.
+
+---
+
+## 7. Layout & Composition
+
+* Grid-driven layouts
+* Strong alignment
+* Generous margins
+* Minimal borders
+* Prefer spacing over lines
+
+Avoid:
+
+* card overload
+* visual noise
+* unnecessary separators
+
+Whitespace is part of the brand.
+
+---
+
+## 8. Language & Tone
+
+### Language rules
+
+* Declarative, not persuasive
+* Observational, not promotional
+* Evidence-first phrasing
+
+Prefer:
+
+* “measured”
+* “observed”
+* “documented”
+* “no significant correlation”
+* “negative result”
+
+Avoid:
+
+* “unlock”
+* “powerful”
+* “revolutionary”
+* “AI-driven alpha”
+* “guaranteed”
+
+---
+
+## 9. Data & Visualization
+
+* Neutral colors
+* Cyan only for emphasis
+* No rainbow charts
+* No aggressive contrast
+
+Charts should feel like:
+
+> research output
+> not
+> marketing visuals
+
+---
+
+## 10. Guiding Principle (Most Important)
+
+> **If a design element does not improve clarity or credibility, remove it.**
+
+Instrumetriq’s strength is **restraint**.
+
+---
+
+## 11. Long-Term Brand Intent
+
+The brand should:
+
+* age well
+* survive redesigns
+* integrate into larger organizations
+* feel acquisition-ready without modification
+
+The goal is not memorability through novelty, but through **trust**.
+
+---
+
+

@@ -25,6 +25,31 @@ We chose Astro for several key reasons:
 
 ## Design System
 
+### Design System Lock
+
+**CRITICAL: These values are locked and must not be changed without explicit approval:**
+
+**Global Background & Text (site-wide):**
+- Background MUST be dark grey: `--bg: #1a1a1a` (never pure black, never white)
+- Primary text MUST be off-white: `--text: #f0f0f0`
+- All CSS must reference these variables correctly (no `--color-bg` or `--color-text`)
+
+**Header Navigation:**
+- Logo height: 1.5rem desktop, 1.25rem mobile (never smaller)
+- Logo filter: `brightness(1.2)` for clear visibility
+- Nav link spacing: `gap: var(--space-5)` desktop (32px), `var(--space-4)` mobile (24px)
+- Nav links MUST have visible spacing between them
+- Header background: Semi-transparent dark with backdrop blur
+- Bottom border: 1px solid `--border`
+
+**Accent Color Usage:**
+- Cyan (`--accent: #00bcd4`) is ONLY for hover/focus/active states
+- Never use as background or dominant color
+- Always subtle and functional, never decorative
+
+**Why This Lock Exists:**
+Previous changes accidentally introduced white backgrounds (breaking dark theme), concatenated nav links (no spacing), and undersized/low-contrast logo. This section prevents regression.
+
 ### Home Page Design Philosophy
 
 The home page embodies the Instrumetriq brand: minimal, credible, observational with a premium research lab aesthetic. It avoids promotional language and flashy effects in favor of refined typography, subtle depth, strong contrast, and restrained interactions.

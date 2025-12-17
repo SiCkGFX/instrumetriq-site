@@ -1,0 +1,165 @@
+## Content plan for instrumetriq.com (Plan-agnostic, brand-compliant)
+
+Instrumetriq’s brand rules force the site to be: **observational, evidence-first, non-promotional**, with restrained visuals and language. 
+
+### Global content rules (apply everywhere)
+
+* No “alpha”, “signals”, “profit”, “guaranteed”, “unlock”, “revolutionary”. 
+* Use wording like **measured / observed / documented / negative result / no significant correlation**. 
+* Keep pages dense in *clarity*, not in marketing. Whitespace > cards. 
+
+---
+
+## Page-by-page contents
+
+### 1) Home (`/`)
+
+**Goal:** Explain what you are (measurement), what you are not (prediction), and that the study is in progress.
+
+Sections:
+
+1. **One-line definition**
+
+   * “Instrumetriq measures market narratives. It does not predict.” 
+2. **What we measure**
+
+   * “Attention, sentiment balance, activity vs silence, confidence.”
+3. **Study status strip** (pull from `status.json`)
+
+   * Start date, days collected, last updated, current scope.
+4. **Three short “pillars”**
+
+   * Methodology (link `/research`)
+   * Dataset (link `/dataset`)
+   * Updates (link `/updates`)
+5. **Waitlist / contact CTA**
+
+   * Neutral: “Request release notification” (no urgency)
+
+---
+
+### 2) Research (`/research`)
+
+**Goal:** Make the methodology credible and audit-friendly.
+
+Sections:
+
+1. **Purpose**
+
+   * Narrative measurement; no promises. 
+2. **What’s collected**
+
+   * What fields (high-level): sentiment windows, activity/silence, engagement aggregates, timestamps.
+3. **Constraints (hard rules)**
+
+   * “No scoring logic changes, no threshold tuning, no post-hoc filtering, continuous runtime.” (this matches both plans)  
+4. **Why negative results are valid**
+
+   * Explicitly allowed by the brand and Plan 2 framing.  
+5. **Limitations**
+
+   * Platform dependence, sampling bias, regime shifts, survivorship bias (document it, don’t hide it). 
+
+---
+
+### 3) Dataset (`/dataset`)
+
+**Goal:** Describe what someone can buy later without exposing raw pipeline.
+
+Sections:
+
+1. **Deliverables (future tense for now)**
+
+   * Report PDF
+   * Parquet dataset
+   * Documentation pack  
+2. **What’s inside (examples)**
+
+   * sentiment: `hybrid_mean_score`, pos/neu/neg ratios, `is_silent`, `posts_total`, confidence `prob_mean` 
+   * outcomes: price change after 30m/1h/2h, MAE/MFE, volatility delta 
+3. **What’s not included**
+
+   * No raw tweets / raw JSONL, no live signals, no uptime guarantees. 
+4. **Intended uses**
+
+   * Research, observability, filtering, regime analysis (keep neutral).
+5. **Licensing + disclaimers**
+
+   * “Not trading advice.”
+
+---
+
+### 4) Status (`/status`)
+
+**Goal:** Public progress, not marketing.
+
+Sections (all from `status.json`, later auto-updated):
+
+* Start date
+* Days collected
+* Entries archived so far
+* Last update timestamp
+* “Known issues / expected failures” line
+* A short “This week” note (1–3 bullets)
+
+This page should read like a lab log, not a landing page. 
+
+---
+
+### 5) Updates (`/updates`)
+
+**Goal:** Build credibility and future promotion material, slowly.
+
+Post types:
+
+* “Week X: collection status”
+* “Method note: what we changed (or explicitly didn’t change)”
+* “Observation: attention ≠ price (if it appears)”
+  Keep it short, evidence-first. 
+
+---
+
+### 6) Contact (`/contact`)
+
+**Goal:** Funnel without hype.
+
+Contents:
+
+* Email (primary)
+* Optional X/Twitter handle
+* A simple “request access when available” form
+
+---
+
+### 7) Legal pages (`/legal/*`)
+
+* Terms
+* Privacy
+* Disclaimer (“observability/research; no trading advice”)
+
+---
+
+## Two “switchable” sections we prepare now (but keep hidden until day 30–45)
+
+Add a single toggle-able MD section (or “draft” pages) that you publish later depending on which plan wins:
+
+### If correlation is found (Plan 1)
+
+* “Findings: conditional correlation” + “where it fails / weakens / disappears” 
+
+### If no correlation (Plan 2)
+
+* “Findings: no significant predictive correlation” + “attention dynamics dataset framing” 
+
+---
+
+## Minimal content backlog (ordered)
+
+1. Home: one-liner + study status strip + 3 links
+2. Research: constraints + limitations
+3. Dataset: “what’s inside / what’s excluded”
+4. Status: wire real fields and keep updating
+5. Updates: start weekly log cadence
+6. Legal: finalize text
+
+If you want the next step: paste your current `status.json` and I’ll specify the exact fields we should standardize so later you can auto-update it from your pipeline without touching page code.
