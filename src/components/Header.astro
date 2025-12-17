@@ -30,6 +30,7 @@ const DEBUG_LAYOUT = false;
     display: flex;
     align-items: center;
     padding: 0;
+    overflow: visible;
     background: linear-gradient(to bottom, rgba(26, 26, 26, 0.98), rgba(26, 26, 26, 0.95));
     backdrop-filter: blur(8px);
     z-index: 100;
@@ -39,6 +40,7 @@ const DEBUG_LAYOUT = false;
     height: 100%;
     display: flex;
     align-items: center;
+    overflow: visible;
   }
   
   .header-content {
@@ -46,6 +48,7 @@ const DEBUG_LAYOUT = false;
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    overflow: visible;
   }
   
   .brandLogoWrap {
@@ -55,6 +58,9 @@ const DEBUG_LAYOUT = false;
     padding-left: var(--logo-pad-x);
     padding-top: var(--logo-pad-y);
     padding-bottom: var(--logo-pad-y);
+    overflow: visible;
+    line-height: 0;
+    flex: 0 0 auto;
     transition: opacity var(--transition-fast);
   }
   
@@ -69,9 +75,12 @@ const DEBUG_LAYOUT = false;
   }
   
   .brandLogoWrap img {
-    height: 24px;
+    height: 34px;
     width: auto;
     display: block;
+    max-width: none;
+    overflow: visible;
+    flex-shrink: 0;
     /* Keep grid alignment based on wrapper edge, not SVG canvas padding */
     margin-left: calc(var(--logo-pad-x) * -1);
   }
@@ -115,7 +124,7 @@ const DEBUG_LAYOUT = false;
     }
 
     .brandLogoWrap img {
-      height: 20px;
+      height: 28px;
     }
     
     nav {
