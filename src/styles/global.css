@@ -76,14 +76,7 @@
   --shadow-lg: 0 4px 16px 0 rgba(0, 0, 0, 0.6);
   
   /* Layout */
-  --container-max: 1040px;
-  --container-pad: 24px;
-  --max-width: var(--container-max);
   --max-width-wide: 1200px;
-  
-  /* Logo clear-space compensation (CSS-only; do not edit SVG) */
-  --logo-pad-x: 12px; /* start value; tune to 14px/16px if needed */
-  --logo-pad-y: 0px;
 
   --header-h: 72px;
   --header-h-mobile: 64px;
@@ -97,11 +90,7 @@
   --transition-slow: 0.3s ease;
 }
 
-@media (max-width: 640px) {
-  :root {
-    --container-pad: 16px;
-  }
-}
+ 
 
 * {
   margin: 0;
@@ -175,8 +164,11 @@ a:focus {
 
 /* Layout utilities */
 .container {
-  width: min(var(--container-max), calc(100% - (2 * var(--container-pad))));
-  margin-inline: auto;
+  max-width: 1120px;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .content {
