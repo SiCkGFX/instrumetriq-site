@@ -7,8 +7,8 @@ const DEBUG_LAYOUT = false;
 <header class:list={[DEBUG_LAYOUT && 'debug-layout']}>
   <div class="container header__inner">
     <div class="header-content">
-      <a href="/" class="brand">
-        <img src="/logo/instrumetriq-logo.svg" alt="instrumetriq" />
+      <a href="/" class="brandLogoWrap">
+        <img src="/logo/instrumetriq-logo-tight.svg" alt="instrumetriq" />
       </a>
       <nav>
         <a href="/research" class:list={[currentPath === '/research' && 'active']}>Research</a>
@@ -48,29 +48,32 @@ const DEBUG_LAYOUT = false;
     width: 100%;
   }
   
-  .brand {
+  .brandLogoWrap {
     display: flex;
     align-items: center;
     height: 100%;
-    margin-left: calc(var(--logo-pad-x) * -1);
     padding-left: var(--logo-pad-x);
+    padding-top: var(--logo-pad-y);
+    padding-bottom: var(--logo-pad-y);
     transition: opacity var(--transition-fast);
   }
   
-  .brand:hover {
+  .brandLogoWrap:hover {
     opacity: 0.85;
   }
   
-  .brand:focus {
+  .brandLogoWrap:focus {
     outline: 2px solid var(--accent);
     outline-offset: 4px;
     border-radius: 2px;
   }
   
-  .brand img {
-    height: 34px;
+  .brandLogoWrap img {
+    height: 24px;
     width: auto;
     display: block;
+    /* Keep grid alignment based on wrapper edge, not SVG canvas padding */
+    margin-left: calc(var(--logo-pad-x) * -1);
   }
   
   nav {
@@ -111,8 +114,8 @@ const DEBUG_LAYOUT = false;
       height: var(--header-h-mobile);
     }
 
-    .brand img {
-      height: 28px;
+    .brandLogoWrap img {
+      height: 20px;
     }
     
     nav {
@@ -134,7 +137,7 @@ const DEBUG_LAYOUT = false;
     outline-offset: -1px;
   }
 
-  .debug-layout .brand {
+  .debug-layout .brandLogoWrap {
     outline: 1px solid rgba(255, 255, 255, 0.5);
     outline-offset: -1px;
   }
