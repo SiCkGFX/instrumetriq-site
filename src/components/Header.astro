@@ -55,7 +55,7 @@ const currentPath = Astro.url.pathname;
   }
   
   .logo-image {
-    height: 1.75rem;
+    height: 2.125rem;
     width: auto;
     display: block;
     filter: brightness(1.2);
@@ -94,9 +94,11 @@ const currentPath = Astro.url.pathname;
     background-color: var(--accent);
   }
   
-  @media (max-width: 768px) {
-    .logo-image {
-      height: 1.5rem;
+  @media (max-width: 768px) {    header {
+      height: var(--header-height-mobile);
+    }
+        .logo-image {
+      height: 1.75rem;
     }
     
     nav {

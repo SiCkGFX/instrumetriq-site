@@ -34,13 +34,18 @@ We chose Astro for several key reasons:
 - Primary text MUST be off-white: `--text: #f0f0f0`
 - All CSS must reference these variables correctly (no `--color-bg` or `--color-text`)
 
-**Header Navigation:**
-- Logo height: 1.75rem desktop (28px), 1.5rem mobile (24px)
-- Logo filter: `brightness(1.2)` for clear visibility
-- Nav link spacing: `gap: var(--space-5)` desktop (32px), `var(--space-4)` mobile (24px)
-- Nav links MUST have visible spacing between them
-- Header background: Semi-transparent dark with backdrop blur
-- Bottom border: 1px solid `--border`
+**Header Sizing Rules:**
+- **Header height**: `--header-height: 4.25rem` (68px) desktop, `--header-height-mobile: 3.5rem` (56px) mobile
+- **Logo height**: 2.125rem (34px) desktop, 1.75rem (28px) mobile
+- **Logo sizing**: Set via `height` CSS property, `width: auto` to preserve aspect ratio, `display: block`
+- **Vertical alignment**: Header uses `display: flex` + `align-items: center` to vertically center logo and nav
+- **Logo filter**: `brightness(1.2)` for clear visibility on dark background
+- **Nav link spacing**: `gap: var(--space-5)` desktop (32px), `var(--space-4)` mobile (24px)
+- **Nav links**: MUST have visible spacing between them
+- **Header background**: Semi-transparent dark with backdrop blur
+- **Bottom border**: 1px solid `--border`
+- **Content spacing below header**: Hero section starts with `var(--space-5)` (32px) top padding on desktop, `var(--space-4)` (24px) on mobile
+- **Main content padding**: No top/bottom padding on `.content` wrapper - individual pages control their own spacing
 
 **Accent Color Usage:**
 - Cyan (`--accent: #00bcd4`) is ONLY for hover/focus/active states

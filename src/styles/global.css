@@ -72,7 +72,8 @@
   /* Layout */
   --max-width: 1040px;
   --max-width-wide: 1200px;
-  --header-height: 4rem;
+  --header-height: 4.25rem;
+  --header-height-mobile: 3.5rem;
   
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -159,7 +160,7 @@ a:focus {
 
 .content {
   flex: 1;
-  padding: var(--space-6) 0;
+  padding: 0;
 }
 
 /* Minimal, functional design */
