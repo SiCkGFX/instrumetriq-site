@@ -53,6 +53,14 @@ We chose Astro for several key reasons:
 - Never use as background or dominant color
 - Always subtle and functional, never decorative
 
+### Logo usage rules
+
+- **Logo on dark UI:** The wordmark must render in off-white (match `--text`) on dark backgrounds.
+- **Never grey-on-dark:** Do not use a dark-grey logo fill on a dark UI; it becomes unreadable.
+- **Cyan marks preserved:** The cyan blocks/dots in the logo must remain visible; do not apply filters that wash out or recolor the accent.
+- **Header usage:** Use the logo at `34px` tall on desktop and `28px` tall on mobile (<= 768px), vertically centered in the header.
+- **Hero usage:** Use the SVG logo (not text) as the hero mark at ~`60px` tall desktop and ~`46px` mobile.
+
 **Why This Lock Exists:**
 Previous changes accidentally introduced white backgrounds (breaking dark theme), concatenated nav links (no spacing), and undersized/low-contrast logo. This section prevents regression.
 

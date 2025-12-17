@@ -10,7 +10,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <!-- Hero Section -->
     <section class="hero">
       <span class="eyebrow">STUDY IN PROGRESS</span>
-      <h1 class="title">instrumetriq</h1>
+      <img src="/logo/instrumetriq-logo.svg" alt="instrumetriq" class="hero-logo" />
       <p class="subtitle">Measuring crypto narrative signals from X (Twitter)</p>
       <p class="description">
         We score public posts with a domain sentiment model, aggregate activity and silence into time windows, and compare the results with market factors. Findings are reported as measured—positive or negative.
@@ -110,13 +110,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background: var(--panel);
   }
   
-  .title {
-    font-size: var(--font-size-5xl);
-    font-weight: 400;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    margin: 0 0 var(--space-4) 0;
-    line-height: 1.1;
+  .hero-logo {
+    height: 60px;
+    width: auto;
+    display: block;
+    margin: 0 auto var(--space-4) auto;
   }
   
   .subtitle {
@@ -276,8 +274,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       padding: var(--gap-20) 0 var(--gap-24);
     }
     
-    .title {
-      font-size: var(--font-size-4xl);
+    .hero-logo {
+      height: 46px;
+      margin-bottom: var(--space-3);
     }
     
     .subtitle {
