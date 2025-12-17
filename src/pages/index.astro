@@ -6,241 +6,296 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="Instrumetriq - Sentiment Data Collection"
   description="Instrumetriq collects and analyzes sentiment data from social media platforms"
 >
-  <div class="home-page">
+  <div class="home-container">
     <!-- Hero Section -->
-    <section class="hero gradient-overlay">
-      <div class="hero-content">
-        <h1 class="hero-title">instrumetriq</h1>
-        <p class="hero-subtitle text-balance">Observing sentiment patterns across social media platforms</p>
-        <p class="hero-description">
-          A research initiative focused on systematic collection and documentation of sentiment data. 
-          We measure, record, and share findings to support empirical analysis.
-        </p>
+    <section class="hero">
+      <span class="eyebrow">RESEARCH NOTEBOOK</span>
+      <h1 class="title">instrumetriq</h1>
+      <p class="subtitle">Documenting sentiment patterns across social platforms</p>
+      <p class="description">
+        Systematic collection and analysis of public sentiment data. 
+        Empirical approach to understanding expressed opinions at scale.
+      </p>
+    </section>
+
+    <!-- Lab Status Panel -->
+    <section class="lab-status">
+      <div class="status-grid">
+        <div class="status-cell">
+          <div class="status-label">STATUS</div>
+          <div class="status-value">Active</div>
+        </div>
+        <div class="status-cell">
+          <div class="status-label">PHASE</div>
+          <div class="status-value">Infrastructure</div>
+        </div>
+        <div class="status-cell">
+          <div class="status-label">RECORDS</div>
+          <div class="status-value">Pending</div>
+        </div>
       </div>
     </section>
 
-    <!-- Status Strip -->
-    <section class="status-strip">
-      <div class="status-content">
-        <div class="status-item">
-          <span class="status-label">Study Status</span>
-          <span class="status-value">Active Collection</span>
+    <!-- Navigation Cards -->
+    <section class="cards">
+      <a href="/research" class="card">
+        <div class="card-content">
+          <h3 class="card-title">Research</h3>
+          <p class="card-desc">Methodology and collection framework</p>
+          <p class="card-detail">Ethical data sourcing, analysis approach, and documentation standards</p>
         </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-          <span class="status-label">Phase</span>
-          <span class="status-value">Infrastructure Setup</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-          <span class="status-label">Data Points</span>
-          <span class="status-value">— Pending —</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Quick Access Cards -->
-    <section class="navigation-cards">
-      <a href="/research" class="nav-card">
-        <div class="card-header">
-          <h3>Research</h3>
-          <span class="card-arrow">→</span>
-        </div>
-        <p>Methodology, approach, and ethical framework for data collection</p>
+        <span class="card-arrow">→</span>
       </a>
       
-      <a href="/dataset" class="nav-card">
-        <div class="card-header">
-          <h3>Dataset</h3>
-          <span class="card-arrow">→</span>
+      <a href="/dataset" class="card">
+        <div class="card-content">
+          <h3 class="card-title">Dataset</h3>
+          <p class="card-desc">Structure and access information</p>
+          <p class="card-detail">Schema, formats, licensing terms, and distribution details</p>
         </div>
-        <p>Access documentation, structure, and licensing information</p>
+        <span class="card-arrow">→</span>
       </a>
       
-      <a href="/status" class="nav-card">
-        <div class="card-header">
-          <h3>Status</h3>
-          <span class="card-arrow">→</span>
+      <a href="/status" class="card">
+        <div class="card-content">
+          <h3 class="card-title">Status</h3>
+          <p class="card-desc">Current collection metrics</p>
+          <p class="card-detail">Real-time statistics, operational state, and progress tracking</p>
         </div>
-        <p>Current collection metrics and operational status</p>
+        <span class="card-arrow">→</span>
       </a>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .home-page {
-    max-width: var(--max-width-narrow);
+  /* Background Layers */
+  .home-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60vh;
+    background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(0, 188, 212, 0.04), transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .home-container {
+    max-width: var(--max-width);
     margin: 0 auto;
+    padding: 0 var(--space-4);
   }
   
   /* Hero Section */
   .hero {
-    padding: var(--space-3xl) 0 var(--space-2xl);
+    padding: var(--space-8) 0 var(--space-6);
     text-align: center;
-  }
-  
-  .hero-content {
-    max-width: 680px;
+    max-width: 840px;
     margin: 0 auto;
   }
   
-  .hero-title {
+  .eyebrow {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: var(--space-3);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+  }
+  
+  .title {
     font-size: var(--font-size-5xl);
     font-weight: 400;
     letter-spacing: -0.03em;
-    margin-bottom: var(--space-md);
-    color: var(--color-text);
+    color: var(--text);
+    margin: 0 0 var(--space-4) 0;
+    line-height: 1.1;
   }
   
-  .hero-subtitle {
+  .subtitle {
     font-size: var(--font-size-xl);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-lg);
     font-weight: 400;
+    color: var(--text-muted);
+    margin: 0 0 var(--space-4) 0;
+    line-height: 1.4;
   }
   
-  .hero-description {
+  .description {
     font-size: var(--font-size-base);
-    line-height: 1.7;
-    color: var(--color-text-muted);
-    margin-bottom: 0;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
-  /* Status Strip */
-  .status-strip {
-    margin: var(--space-2xl) 0;
-    padding: var(--space-lg);
-    background: linear-gradient(to right, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 100%);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
+  /* Lab Status Panel */
+  .lab-status {
+    margin: var(--space-6) 0;
+    padding: var(--space-4) var(--space-5);
+    background: linear-gradient(to bottom, var(--panel), var(--panel2));
+    border: 1px solid var(--border2);
+    border-left: 2px solid var(--border2);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
   
-  .status-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-md);
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
   }
   
-  .status-item {
-    flex: 1;
+  .status-cell {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
-    text-align: center;
+    gap: var(--space-1);
   }
   
   .status-label {
     font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-dim);
-    font-weight: 500;
+    color: var(--text-dim);
   }
   
   .status-value {
-    font-size: var(--font-size-sm);
-    color: var(--color-text);
-    font-weight: 400;
-  }
-  
-  .status-divider {
-    width: 1px;
-    height: 2rem;
-    background: var(--color-border);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--text);
   }
   
   /* Navigation Cards */
-  .navigation-cards {
+  .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--space-md);
-    margin-top: var(--space-2xl);
-    margin-bottom: var(--space-2xl);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin: var(--space-6) 0 var(--space-8) 0;
   }
   
-  .nav-card {
-    padding: var(--space-lg);
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    transition: all var(--transition-base);
+  .card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    min-height: 140px;
+    justify-content: space-between;
+    padding: var(--space-5);
+    background: linear-gradient(to bottom, var(--panel), var(--panel2));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    min-height: 180px;
+    overflow: hidden;
   }
   
-  .nav-card:hover {
-    border-color: var(--color-border-light);
-    background: var(--color-bg-tertiary);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-subtle);
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--border);
+    transition: background var(--transition-base);
   }
   
-  .nav-card:focus {
-    outline: 2px solid var(--color-accent);
+  .card:hover {
+    border-color: var(--border2);
+    background: linear-gradient(to bottom, var(--panel2), var(--panel));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .card:hover::before {
+    background: var(--accent);
+  }
+  
+  .card:focus {
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
   
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-sm);
+  .card-content {
+    flex: 1;
   }
   
-  .nav-card h3 {
-    font-size: var(--font-size-xl);
+  .card-title {
+    font-size: var(--font-size-2xl);
     font-weight: 500;
+    color: var(--text);
+    margin: 0 0 var(--space-2) 0;
+  }
+  
+  .card-desc {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-muted);
+    margin: 0 0 var(--space-2) 0;
+  }
+  
+  .card-detail {
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    color: var(--text-dim);
     margin: 0;
-    color: var(--color-text);
   }
   
   .card-arrow {
-    font-size: var(--font-size-xl);
-    color: var(--color-text-dim);
+    display: block;
+    font-size: var(--font-size-2xl);
+    color: var(--text-dim);
     transition: all var(--transition-base);
+    margin-top: var(--space-3);
   }
   
-  .nav-card:hover .card-arrow {
-    color: var(--color-accent);
-    transform: translateX(2px);
-  }
-  
-  .nav-card p {
-    margin: 0;
-    font-size: var(--font-size-sm);
-    line-height: 1.6;
-    color: var(--color-text-muted);
+  .card:hover .card-arrow {
+    color: var(--accent);
+    transform: translateX(4px);
   }
   
   /* Responsive Design */
   @media (max-width: 768px) {
-    .hero {
-      padding: var(--space-2xl) 0 var(--space-xl);
+    .home-container {
+      padding: 0 var(--space-3);
     }
     
-    .hero-title {
+    .hero {
+      padding: var(--space-6) 0 var(--space-5);
+    }
+    
+    .title {
       font-size: var(--font-size-4xl);
     }
     
-    .hero-subtitle {
+    .subtitle {
       font-size: var(--font-size-lg);
     }
     
-    .status-content {
-      flex-direction: column;
-      gap: var(--space-sm);
+    .lab-status {
+      padding: var(--space-3);
     }
     
-    .status-divider {
-      width: 100%;
-      height: 1px;
-    }
-    
-    .navigation-cards {
+    .status-grid {
       grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+    
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (min-width: 1400px) {
+    .cards {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

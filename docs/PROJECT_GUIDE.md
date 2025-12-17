@@ -27,29 +27,84 @@ We chose Astro for several key reasons:
 
 ### Home Page Design Philosophy
 
-The home page embodies the Instrumetriq brand: minimal, credible, observational. It avoids promotional language and flashy effects in favor of refined typography, subtle depth, and restrained interactions.
+The home page embodies the Instrumetriq brand: minimal, credible, observational with a premium research lab aesthetic. It avoids promotional language and flashy effects in favor of refined typography, subtle depth, strong contrast, and restrained interactions.
 
-#### Visual Hierarchy
+### Design Token System
 
-1. **Hero Section** - Establishes context with clear typographic hierarchy:
-   - Main title: 3rem (48px), neutral weight, tight letter spacing
-   - Subtitle: 1.25rem (20px), muted color, balanced text wrapping
-   - Description: 1rem base size, 1.7 line-height for readability
-   - Subtle radial gradient overlay (3% cyan opacity) adds depth without distraction
+All colors, spacing, and visual properties are defined as CSS custom properties in `src/styles/global.css`:
 
-2. **Status Strip** - Lab-status aesthetic:
-   - Horizontal layout with three sections divided by 1px borders
-   - Uppercase labels (0.75rem, 5% letter spacing) in dim gray
-   - Values in standard text color for contrast
-   - Subtle gradient background (secondary → tertiary → secondary)
-   - Responsive: stacks vertically on mobile
+**Color Palette:**
+- `--bg` (#1a1a1a) - Primary dark background
+- `--panel` (#222222) - Elevated panel background
+- `--panel2` (#282828) - Secondary panel shade for gradients
+- `--text` (#f0f0f0) - Primary text (high contrast)
+- `--text-muted` (#b0b0b0) - Secondary text
+- `--text-dim` (#888888) - Tertiary text (labels, metadata)
+- `--border` (#2d2d2d) - Standard borders
+- `--border2` (#3a3a3a) - Lighter borders for emphasis
+- `--accent` (#00bcd4) - Cyan accent (use sparingly!)
+- `--accent-dim` (#008b9e) - Darker cyan variant
 
-3. **Navigation Cards** - Functional access points:
-   - Three equal-width cards in grid layout
-   - Secondary background with subtle hover states
-   - Arrow indicator (→) that shifts 2px right and changes to cyan on hover
-   - Minimum height ensures consistent card dimensions
-   - 1px elevation on hover (translateY) with soft shadow
+**When to Use Accent Color:**
+The cyan accent should ONLY be used for:
+- Hover states on interactive elements (borders, text, arrows)
+- Focus rings for keyboard navigation
+- Active state indicators (e.g., current nav item underline)
+- Thin accent borders (1-2px) on special components
+- **Never** use accent as a background or large surface color
+
+**Spacing Scale (8px base):**
+- `--space-1` (8px) - Tight gaps
+- `--space-2` (12px) - Small gaps
+- `--space-3` (16px) - Base spacing
+- `--space-4` (24px) - Medium spacing
+- `--space-5` (32px) - Large spacing
+- `--space-6` (48px) - Section spacing
+- `--space-8` (64px) - Major sections
+
+**Border Radius:**
+- `--radius-sm` (6px) - Small elements (tags, badges)
+- `--radius-md` (12px) - Cards, panels
+- `--radius-lg` (16px) - Large containers
+
+**Shadows:**
+- `--shadow-sm` - Subtle elevation
+- `--shadow-md` - Card hover states
+- `--shadow-lg` - Modal/overlay depth
+
+### Home Page Layout Structure
+
+**Container:**
+- Max-width: 1040px (centered)
+- Side padding: 24px (desktop), 16px (mobile)
+- Background gradient: Subtle radial (4% cyan opacity) in top 60vh
+
+**Hero Block:**
+- Padding: 64px top, 48px bottom
+- Max-width: 840px (centered within container)
+- Components:
+  1. **Eyebrow label**: Uppercase, 11px, bordered pill badge
+  2. **Title** (h1): 60px desktop / 48px mobile, -3% letter spacing
+  3. **Subtitle**: 22px, one-line summary, medium color
+  4. **Description**: 16px, 2-line max, muted color, 640px max-width
+
+**Lab Status Panel:**
+- 3-column grid layout (stacks on mobile)
+- Padding: 24px horizontal, 32px vertical
+- Background: Gradient from panel → panel2
+- Border: 1px standard + 2px left accent area (not cyan by default)
+- Each cell: Label (uppercase, 11px, dim) + Value (16px, primary text)
+
+**Navigation Cards:**
+- Grid: 3 columns (auto-fit, min 280px)
+- Gap: 24px
+- Each card:
+  - Min-height: 180px
+  - Padding: 32px
+  - Gradient background (panel → panel2, top to bottom)
+  - 2px left border (cyan on hover)
+  - Structure: Title (28px) + Description (14px) + Detail line (14px) + Arrow
+  - Hover: 2px lift, shadow, cyan left border + arrow shift
 
 #### Typography Scale
 

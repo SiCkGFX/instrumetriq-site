@@ -23,10 +23,11 @@ const currentPath = Astro.url.pathname;
 <style>
   header {
     height: var(--header-height);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    background-color: var(--color-bg);
+    background: linear-gradient(to bottom, rgba(26, 26, 26, 0.98), rgba(26, 26, 26, 0.95));
+    backdrop-filter: blur(8px);
     z-index: 100;
   }
   
@@ -40,23 +41,24 @@ const currentPath = Astro.url.pathname;
   .logo {
     display: flex;
     align-items: center;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--transition-fast);
   }
   
   .logo:hover {
-    opacity: 0.9;
+    opacity: 0.85;
   }
   
   .logo:focus {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 4px;
     border-radius: 2px;
   }
   
   .logo-image {
-    height: 1.75rem;
+    height: 2rem;
     width: auto;
     display: block;
+    filter: brightness(1.1);
   }
   
   nav {
@@ -65,24 +67,30 @@ const currentPath = Astro.url.pathname;
   }
   
   nav a {
-    font-size: 0.95rem;
-    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    color: var(--text-muted);
     position: relative;
+    padding-bottom: 0.25rem;
+    transition: color var(--transition-fast);
   }
   
-  nav a:hover,
+  nav a:hover {
+    color: var(--text);
+  }
+  
   nav a.active {
-    color: var(--color-text);
+    color: var(--text);
   }
   
+  nav a:hover::after,
   nav a.active::after {
     content: '';
     position: absolute;
-    bottom: -0.5rem;
+    bottom: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background-color: var(--color-accent);
+    height: 1px;
+    background-color: var(--accent);
   }
   
   @media (max-width: 768px) {
