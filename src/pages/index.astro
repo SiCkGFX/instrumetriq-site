@@ -89,7 +89,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   /* Hero Section */
   .hero {
-    padding: var(--space-5) 0 var(--space-6);
+    /* Reduce vertical padding to minimize 1080p scroll */
+    padding: var(--gap-20) 0 var(--gap-24);
     text-align: center;
     max-width: 840px;
     margin: 0 auto;
@@ -138,8 +139,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   /* Lab Status Panel */
   .lab-status {
-    margin: var(--space-6) 0;
-    padding: var(--space-4) var(--space-5);
+    /* Section gap contract: status→cards gap equals cards gutter */
+    margin: var(--gap-24) 0 var(--gap-24);
+    /* Slightly tighter panel padding to reduce page height */
+    padding: var(--gap-20) var(--gap-24);
     background: linear-gradient(to bottom, var(--panel), var(--panel2));
     border: 1px solid var(--border2);
     border-left: 2px solid var(--border2);
@@ -177,8 +180,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-4);
-    margin: var(--space-6) 0 var(--space-8) 0;
+    /* Gutter must match status→cards gap */
+    gap: var(--gap-24);
+    /* Reduce bottom spacing so footer fits on 1080p */
+    margin: 0 0 var(--gap-24) 0;
   }
   
   .card {
@@ -186,7 +191,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: var(--space-5);
+    /* Slightly tighter card padding to reduce overall page height */
+    padding: var(--gap-24);
     background: linear-gradient(to bottom, var(--panel), var(--panel2));
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -267,7 +273,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
     
     .hero {
-      padding: var(--space-4) 0 var(--space-5);
+      padding: var(--gap-20) 0 var(--gap-24);
     }
     
     .title {
@@ -279,7 +285,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
     
     .lab-status {
-      padding: var(--space-3);
+      padding: var(--gap-20);
     }
     
     .status-grid {
