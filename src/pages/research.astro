@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import { PLATFORM, SCORING, AGGREGATION, WHAT_WE_DO } from '../data/ssot_copy';
+import { PLATFORM } from '../data/ssot_copy';
 ---
 
 <BaseLayout 
@@ -17,7 +17,13 @@ import { PLATFORM, SCORING, AGGREGATION, WHAT_WE_DO } from '../data/ssot_copy';
     <section>
       <h2>Overview</h2>
       <p>
-        {WHAT_WE_DO}
+        Instrumetriq observes public posts from {PLATFORM} for a defined set of crypto assets.
+      </p>
+      <p>
+        Each post is evaluated for sentiment at ingestion time, then grouped into fixed time windows (“cycles”). Within each cycle, we aggregate both expressed activity and the absence of activity (silence) to produce a structured snapshot of narrative intensity and direction.
+      </p>
+      <p>
+        These aggregated sentiment signals are then compared against external market data to study how public narratives evolve alongside market conditions. Instrumetriq does not predict outcomes or claim causation; it documents observable patterns.
       </p>
     </section>
 
@@ -37,8 +43,16 @@ import { PLATFORM, SCORING, AGGREGATION, WHAT_WE_DO } from '../data/ssot_copy';
     <section>
       <h2>Scoring Framework</h2>
       <p>
-        Public posts from {PLATFORM} are scored using the {SCORING}.
-        Scores are rolled up into {AGGREGATION} summaries, including explicit handling of silence.
+        Sentiment scoring is performed using a domain-specific model trained on crypto-related language and market discourse. The model is designed to capture both explicit sentiment (positive or negative statements) and contextual language commonly used in crypto narratives.
+      </p>
+      <p>
+        Training combines large, general sentiment datasets with internally curated crypto-specific data. This allows the system to recognize informal phrasing, slang, sarcasm, and market-specific expressions that are poorly handled by generic sentiment tools.
+      </p>
+      <p>
+        Individual post scores are not used in isolation. Instead, scores are aggregated over time into cycle-based summaries, reducing noise from single posts and emphasizing consistent narrative shifts. Explicit handling of inactivity ensures that silence is treated as a signal rather than ignored.
+      </p>
+      <p>
+        The result is a conservative, repeatable sentiment measure intended for research and comparative analysis—not for real-time prediction.
       </p>
     </section>
 

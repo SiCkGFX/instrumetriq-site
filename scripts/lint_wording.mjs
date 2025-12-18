@@ -6,12 +6,19 @@ const ROOT = process.cwd();
 const TARGET_DIRS = [
   path.join(ROOT, 'src', 'pages'),
   path.join(ROOT, 'src', 'components'),
+  path.join(ROOT, 'src', 'data'),
+  path.join(ROOT, 'src', 'content'),
 ];
+
+const TARGET_EXTS = new Set(['.astro', '.ts', '.md', '.mdx']);
 
 const FORBIDDEN = [
   { label: 'multiple social media platforms', re: /multiple\s+social\s+media\s+platforms/i },
   { label: 'diverse social media', re: /diverse\s+social\s+media/i },
   { label: 'lexicon-based scoring', re: /lexicon[-\s]*based\s+scoring/i },
+  { label: 'RUN7', re: /RUN7/i, reason: 'Internal model/run naming must never appear in public copy.' },
+  { label: 'RUN8', re: /RUN8/i, reason: 'Internal model/run naming must never appear in public copy.' },
+  { label: 'hybrid sentiment system', re: /hybrid\s+sentiment\s+system/i, reason: 'Avoid internal jargon; use plain-language explanations instead.' },
 ];
 
 async function* walkFiles(dir) {
@@ -24,7 +31,9 @@ async function* walkFiles(dir) {
     }
 
     if (!entry.isFile()) continue;
-    if (!full.endsWith('.astro')) continue;
+
+    const ext = path.extname(full).toLowerCase();
+    if (!TARGET_EXTS.has(ext)) continue;
 
     yield full;
   }
