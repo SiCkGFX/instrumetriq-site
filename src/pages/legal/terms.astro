@@ -1,13 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
 ---
 
 <BaseLayout 
   title="Terms of Service - Instrumetriq"
   description="Terms of Service for Instrumetriq"
 >
-  <article>
-    <h1>Terms of Service</h1>
+  <PageHero
+    eyebrow="LEGAL"
+    title="Terms of Service"
+    subtitle="Terms governing use of the Instrumetriq website and dataset."
+  />
+  <div class="pageContent">
     <p class="last-updated">Last Updated: December 16, 2025</p>
     
     <section>
@@ -49,25 +54,5 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         page with an updated revision date.
       </p>
     </section>
-  </article>
+  </div>
 </BaseLayout>
-
-<style>
-  h1 {
-    margin-bottom: var(--space-sm);
-  }
-  
-  .last-updated {
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-    margin-bottom: var(--space-xl);
-  }
-  
-  section {
-    margin-bottom: var(--space-xl);
-  }
-  
-  h2 {
-    margin-bottom: var(--space-md);
-  }
-</style>

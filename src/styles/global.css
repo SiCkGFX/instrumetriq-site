@@ -334,6 +334,17 @@ li {
   z-index: -1;
 }
 
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Temporary must-win overrides to verify inner-page tightening in production */
 main .container .pageContent p {
   line-height: 1.55 !important;
@@ -365,15 +376,4 @@ main .container .pageContent > h2:first-child {
 /* Structural-safe variant (current markup uses section wrappers) */
 main .container .pageContent > section:first-child > h2:first-child {
   margin-top: 0 !important;
-}
-
-/* Motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }

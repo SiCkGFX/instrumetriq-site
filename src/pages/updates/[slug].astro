@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import PageHero from '../../components/PageHero.astro';
 
 export async function getStaticPaths() {
   const updates = await getCollection('updates');
@@ -18,75 +19,45 @@ const { Content } = await update.render();
   title={`${update.data.title} - Instrumetriq`}
   description={update.data.description}
 >
-  <article class="update-post">
-    <header class="post-header">
-      <h1>{update.data.title}</h1>
-      <div class="post-meta">
-        <time datetime={update.data.date.toISOString()}>
-          {update.data.date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
-        </time>
-        <span class="separator">•</span>
-        <span>By {update.data.author}</span>
-      </div>
-    </header>
-    
+  <PageHero
+    eyebrow="UPDATES"
+    title={update.data.title}
+    subtitle={update.data.description}
+  />
+  <div class="pageContent">
+    <div class="post-meta">
+      <time datetime={update.data.date.toISOString()}>
+        {update.data.date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}
+      </time>
+      <span class="separator">•</span>
+      <span>By {update.data.author}</span>
+    </div>
+
     <div class="post-content">
       <Content />
     </div>
-    
+
     <footer class="post-footer">
       <a href="/updates" class="back-link">← Back to Updates</a>
     </footer>
-  </article>
+  </div>
 </BaseLayout>
 
 <style>
-  .post-header {
-    margin-bottom: var(--space-2xl);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
-  }
-  
-  .post-header h1 {
-    margin-bottom: var(--space-md);
-  }
-  
   .post-meta {
     display: flex;
-    gap: var(--space-sm);
-    color: var(--color-text-muted);
+    gap: var(--space-2);
+    color: var(--text-muted);
     font-size: 0.95rem;
+    margin-bottom: var(--space-4);
   }
   
   .separator {
     opacity: 0.5;
-  }
-  
-  .post-content {
-    line-height: 1.8;
-  }
-  
-  .post-content :global(h2) {
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-md);
-  }
-  
-  .post-content :global(h3) {
-    margin-top: var(--space-lg);
-    margin-bottom: var(--space-sm);
-  }
-  
-  .post-content :global(p) {
-    margin-bottom: var(--space-md);
-  }
-  
-  .post-content :global(ul),
-  .post-content :global(ol) {
-    margin-bottom: var(--space-md);
   }
   
   .post-content :global(img) {
@@ -96,17 +67,17 @@ const { Content } = await update.render();
   }
   
   .post-footer {
-    margin-top: var(--space-2xl);
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
   }
   
   .back-link {
-    color: var(--color-accent);
+    color: var(--text);
     font-size: 0.95rem;
   }
   
   .back-link:hover {
-    color: var(--color-accent-dim);
+    color: var(--accent);
   }
 </style>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import statusData from '../data/status.json';
 
 // Calculate days since start
@@ -12,9 +13,12 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
   title="Collection Status - Instrumetriq"
   description="Current status of Instrumetriq data collection"
 >
+  <PageHero
+    eyebrow="STATUS"
+    title="Collection Status"
+    subtitle="Current snapshot of collection progress and platform coverage."
+  />
   <div class="pageContent">
-    <h1>Collection Status</h1>
-    
     <section class="status-grid">
       <div class="stat-card">
         <div class="stat-label">Collection Started</div>
@@ -65,37 +69,37 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
   .status-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-md);
-    margin-bottom: var(--space-2xl);
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
   }
   
   .stat-card {
-    padding: var(--space-lg);
-    border: 1px solid var(--color-border);
+    padding: var(--space-4);
+    border: 1px solid var(--border);
     border-radius: 4px;
   }
   
   .stat-label {
     font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--space-1);
   }
   
   .stat-value {
     font-size: 1.75rem;
     font-weight: 500;
-    color: var(--color-text);
+    color: var(--text);
   }
   
   .platform-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-3);
   }
   
   .platform-card {
-    padding: var(--space-lg);
-    border: 1px solid var(--color-border);
+    padding: var(--space-4);
+    border: 1px solid var(--border);
     border-radius: 4px;
   }
   
@@ -103,7 +107,7 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-2);
   }
   
   .platform-header h3 {
@@ -117,33 +121,37 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
     font-size: 0.75rem;
     text-transform: uppercase;
     font-weight: 500;
+    border: 1px solid var(--border2);
+    background: var(--panel);
+    color: var(--text-muted);
   }
   
   .status-badge.active {
-    background-color: rgba(0, 188, 212, 0.1);
-    color: var(--color-accent);
+    background-color: var(--accent-subtle);
+    border-color: var(--accent-dim);
+    color: var(--accent);
   }
   
   .status-badge.paused {
-    background-color: rgba(255, 152, 0, 0.1);
-    color: #ff9800;
+    background-color: var(--panel2);
+    color: var(--text-muted);
   }
   
   .status-badge.inactive {
-    background-color: rgba(160, 160, 160, 0.1);
-    color: var(--color-text-muted);
+    background-color: var(--panel2);
+    color: var(--text-muted);
   }
   
   .platform-records {
     margin: 0;
-    color: var(--color-text-muted);
+    color: var(--text-muted);
     font-size: 0.95rem;
   }
   
   .notes {
-    padding: var(--space-lg);
-    background-color: var(--color-bg-secondary);
-    border-left: 3px solid var(--color-accent);
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-left: 3px solid var(--accent);
     border-radius: 4px;
   }
 </style>

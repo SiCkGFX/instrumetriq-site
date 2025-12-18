@@ -1,14 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 ---
 
 <BaseLayout 
   title="Contact - Instrumetriq"
   description="Get in touch with the Instrumetriq team"
 >
-  <article>
-    <h1>Contact</h1>
-    
+  <PageHero
+    eyebrow="CONTACT"
+    title="Contact"
+    subtitle="Channels for project inquiries, access questions, and collaboration."
+  />
+  <div class="pageContent">
     <section>
       <h2>Get in Touch</h2>
       <p>
@@ -42,24 +46,5 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         please open an issue on our GitHub repository or contact us via email.
       </p>
     </section>
-  </article>
+  </div>
 </BaseLayout>
-
-<style>
-  h1 {
-    margin-bottom: var(--space-xl);
-  }
-  
-  section {
-    margin-bottom: var(--space-2xl);
-  }
-  
-  h2 {
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-md);
-  }
-  
-  a {
-    color: var(--color-accent);
-  }
-</style>
