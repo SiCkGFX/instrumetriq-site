@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import { PLATFORM, SCORING, AGGREGATION, WHAT_WE_DO } from '../data/ssot_copy';
 ---
 
 <BaseLayout 
@@ -16,8 +17,7 @@ import PageHero from '../components/PageHero.astro';
     <section>
       <h2>Overview</h2>
       <p>
-        Instrumetriq collects public posts from X (Twitter) for a defined set of assets.
-        Each post is scored at ingestion time and aggregated into fixed time windows (cycles), including explicit handling of silence.
+        {WHAT_WE_DO}
       </p>
     </section>
 
@@ -37,8 +37,8 @@ import PageHero from '../components/PageHero.astro';
     <section>
       <h2>Scoring Framework</h2>
       <p>
-        Posts are scored with a domain-specific sentiment engine. The default path is lexicon-based scoring stored with each record.
-        Optional AI arbitration may be used for additional signal, but it is not required for cycle summaries.
+        Public posts from {PLATFORM} are scored using the {SCORING}.
+        Scores are rolled up into {AGGREGATION} summaries, including explicit handling of silence.
       </p>
     </section>
 

@@ -14,8 +14,8 @@ If you are writing documentation or website copy, you must follow the wording ru
 
 - Continuously scrapes public posts from **X (Twitter)** about a configured list of crypto assets.
 - Stores normalized tweet records to disk (JSONL).
-- Computes **per-tweet sentiment** at ingestion time using a lexicon-based engine (canonical sentiment).
-- Optionally computes **hybrid AI sentiment** (two-model arbitration) for additional signal.
+- Computes **per-post sentiment** at ingestion time using the **hybrid sentiment system** (two-model arbitration).
+- The hybrid system uses **RUN7** as the primary model and **RUN8** as the referee model.
 - Aggregates tweets into **per-cycle** (and optionally hourly) bucketed summaries for monitoring and downstream consumption.
 
 ### What this system does NOT do
@@ -38,9 +38,9 @@ If you are writing documentation or website copy, you must follow the wording ru
    - Tweets are fetched via `twscrape`.
    - A per-coin dedupe state prevents counting the same tweet multiple times.
 
-4. **Storage (canonical sentiment at ingestion)**
+4. **Storage (sentiment at ingestion)**
    - Tweets are written to hourly-partitioned JSONL under `data/twitter/raw/…`.
-   - Canonical (lexicon) sentiment is computed and stored with each tweet record.
+  - Hybrid sentiment scores are computed and stored with each tweet record.
 
 5. **Aggregation / Buckets**
    - Per-cycle aggregated bucket JSONL files are written under `data/buckets_cycle/YYYY-MM-DD/…`.
@@ -114,16 +114,12 @@ The daemon supports multiple scheduling modes. The current default is **flat mod
 
 This repo supports two sentiment paths:
 
-### 1) Canonical sentiment (lexicon-based; stored per tweet)
+### 1) Hybrid sentiment (primary)
 
-- Implemented in `twitter/sentiment_engine.py`.
-- Canonical sentiment is computed at ingestion time (when storing tweets).
-- This canonical score is treated as the default sentiment signal for aggregation.
-
-### 2) Hybrid AI sentiment (optional)
+Hybrid scoring is the primary path used for stored per-post sentiment.
 
 - Implemented in `twitter/hybrid_sentiment.py` + configured in `twitter/hybrid_config.py`.
-- Uses a **primary** model and a **referee** model.
+- Uses a **primary** model (**RUN7**) and a **referee** model (**RUN8**).
 
 Decision rules (as implemented):
 
@@ -135,6 +131,11 @@ Operational notes:
 
 - Model device and lifecycle are controlled by environment variables.
 - CUDA memory management is hardened with explicit GC and cache clearing to reduce OOM risk during load/unload.
+
+### 2) Lexicon helper (internal)
+
+A lexicon configuration exists as an internal helper for diagnostics/auxiliary analysis.
+It must not be described as the default scoring path in website copy.
 
 ---
 
