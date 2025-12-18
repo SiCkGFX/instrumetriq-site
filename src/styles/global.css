@@ -158,28 +158,28 @@ p {
 /* Page content spacing (scoped; does not affect PageHero/header/footer) */
 .pageContent p {
   line-height: 1.55;
-  margin-bottom: 0.9em;
+  margin-bottom: 0.85em;
 }
 
 .pageContent ul,
 .pageContent ol {
   margin-top: 0.5em;
-  margin-bottom: 0.9em;
+  margin-bottom: 0.85em;
   margin-left: 0;
   padding-left: 1.2em;
 }
 
 .pageContent li {
-  margin-bottom: 0.45em;
+  margin-bottom: 0.4em;
 }
 
 .pageContent h2 {
-  margin-top: 2.2em;
-  margin-bottom: 0.6em;
+  margin-top: 1.8em;
+  margin-bottom: 0.55em;
 }
 
 .pageContent h3 {
-  margin-top: 1.6em;
+  margin-top: 1.25em;
   margin-bottom: 0.4em;
 }
 
@@ -332,6 +332,39 @@ li {
   background: radial-gradient(ellipse at center, rgba(0, 188, 212, 0.03) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
+}
+
+/* Temporary must-win overrides to verify inner-page tightening in production */
+main .container .pageContent p {
+  line-height: 1.55 !important;
+  margin-block: 0 0.85em !important;
+}
+
+main .container .pageContent h2 {
+  margin-block: 1.8em 0.55em !important;
+}
+
+main .container .pageContent h3 {
+  margin-block: 1.25em 0.4em !important;
+}
+
+main .container .pageContent ul,
+main .container .pageContent ol {
+  margin-block: 0.5em 0.85em !important;
+  padding-left: 1.2em !important;
+}
+
+main .container .pageContent li {
+  margin-bottom: 0.4em !important;
+}
+
+main .container .pageContent > h2:first-child {
+  margin-top: 0 !important;
+}
+
+/* Structural-safe variant (current markup uses section wrappers) */
+main .container .pageContent > section:first-child > h2:first-child {
+  margin-top: 0 !important;
 }
 
 /* Motion preferences */
