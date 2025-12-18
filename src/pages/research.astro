@@ -1,14 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 ---
 
 <BaseLayout 
   title="Research & Methodology - Instrumetriq"
   description="Learn about Instrumetriq's research methodology and approach to sentiment data collection"
 >
+  <PageHero
+    eyebrow="RESEARCH"
+    title="Research & Methodology"
+    subtitle="How we collect and summarize sentiment signals, with ethics, privacy, and documentation as first principles."
+  />
   <article>
-    <h1>Research & Methodology</h1>
-    
     <section>
       <h2>Overview</h2>
       <p>
@@ -48,16 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  h1 {
-    margin-bottom: var(--space-xl);
-  }
-  
   section {
-    margin-bottom: var(--space-2xl);
-  }
-  
-  h2 {
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-6);
   }
 </style>

@@ -1,0 +1,17 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  eyebrow?: string;
+  compact?: boolean;
+}
+
+const { title, subtitle, eyebrow, compact = false } = Astro.props;
+---
+
+<section class:list={['pageHero', compact && 'pageHero--compact']}>
+  {eyebrow && <p class="pageHero__eyebrow">{eyebrow}</p>}
+  <h1 class="pageHero__title">{title}</h1>
+  {subtitle && <p class="pageHero__subtitle">{subtitle}</p>}
+</section>
+<div class="pageHero__divider" />

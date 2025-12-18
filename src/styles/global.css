@@ -151,8 +151,52 @@ h4 { font-size: 1.25rem; }
 h5 { font-size: 1.125rem; }
 h6 { font-size: 1rem; }
 
+/* Content section rhythm (keeps H2 clearly below hero H1) */
+h2 {
+  margin-top: var(--space-6);
+}
+
 p {
   margin-bottom: var(--space-4);
+}
+
+/* PageHero (inner pages) */
+.pageHero {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-4);
+}
+
+.pageHero--compact {
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-3);
+}
+
+.pageHero__eyebrow {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.pageHero__title {
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.pageHero__subtitle {
+  max-width: 65ch;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: var(--space-3) 0 0 0;
+}
+
+.pageHero__divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 0 var(--space-5) 0;
 }
 
 a {
