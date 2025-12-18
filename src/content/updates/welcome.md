@@ -4,21 +4,25 @@ date: 2025-12-16
 description: "Introducing Instrumetriq - a new sentiment data collection project"
 ---
 
-We're excited to announce the launch of Instrumetriq, a research project dedicated to collecting and analyzing sentiment data from social media platforms.
+Instrumetriq is a research project focused on measuring narrative signals from public X (Twitter) posts.
 
 ## Project Goals
 
 Our primary objectives include:
 
-- Collecting high-quality sentiment data from diverse social media sources
-- Maintaining ethical standards and protecting user privacy
-- Providing researchers with accessible, well-documented datasets
-- Contributing to the advancement of sentiment analysis research
+- Collect public X (Twitter) posts for a defined set of assets
+- Score each post with a domain-specific sentiment model
+- Aggregate activity and silence into fixed time windows (cycles)
+- Compare aggregated signals with external market factors (analysis tooling is not published yet)
 
 ## Current Status
 
-We're currently in the early stages of infrastructure setup and data collection. Regular updates will be posted here as the project progresses.
+Collection and storage are X (Twitter)-only.
+
+Per-post sentiment scores are computed at ingestion time, and cycle-level summaries are produced for monitoring.
 
 ## Stay Tuned
 
-Follow our progress through this updates section, and check the Status page for real-time information about data collection.
+Updates in this section will log changes to collection, scoring, and aggregation.
+
+Check the Status page for the latest published collection snapshot.
