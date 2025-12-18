@@ -131,6 +131,12 @@ The `/status` page will automatically reflect these changes.
 
 See [docs/DEPLOYMENT_CLOUDFLARE_PAGES.md](docs/DEPLOYMENT_CLOUDFLARE_PAGES.md) for detailed deployment instructions.
 
+## Copilot Instructions
+
+For mandatory repo rules and workflow guidance for Copilot-assisted changes, see:
+
+- [.github/copilot-instruction.md](.github/copilot-instruction.md)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
