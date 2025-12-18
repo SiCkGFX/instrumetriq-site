@@ -151,13 +151,44 @@ h4 { font-size: 1.25rem; }
 h5 { font-size: 1.125rem; }
 h6 { font-size: 1rem; }
 
-/* Content section rhythm (keeps H2 clearly below hero H1) */
-h2 {
-  margin-top: var(--space-6);
-}
-
 p {
   margin-bottom: var(--space-4);
+}
+
+/* Page content spacing (scoped; does not affect PageHero/header/footer) */
+.pageContent p {
+  line-height: 1.55;
+  margin-bottom: 0.9em;
+}
+
+.pageContent ul,
+.pageContent ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.9em;
+  margin-left: 0;
+  padding-left: 1.2em;
+}
+
+.pageContent li {
+  margin-bottom: 0.45em;
+}
+
+.pageContent h2 {
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+}
+
+.pageContent h3 {
+  margin-top: 1.6em;
+  margin-bottom: 0.4em;
+}
+
+.pageContent > h2:first-child {
+  margin-top: 0;
+}
+
+.pageContent > section:first-child > h2:first-child {
+  margin-top: 0;
 }
 
 /* PageHero (inner pages) */

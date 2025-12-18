@@ -12,7 +12,7 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
   title="Collection Status - Instrumetriq"
   description="Current status of Instrumetriq data collection"
 >
-  <article>
+  <article class="pageContent">
     <h1>Collection Status</h1>
     
     <section class="status-grid">
@@ -62,18 +62,6 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
 </BaseLayout>
 
 <style>
-  h1 {
-    margin-bottom: var(--space-xl);
-  }
-  
-  section {
-    margin-bottom: var(--space-2xl);
-  }
-  
-  h2 {
-    margin-bottom: var(--space-md);
-  }
-  
   .status-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
