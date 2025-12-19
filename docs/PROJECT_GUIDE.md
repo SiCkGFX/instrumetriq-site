@@ -561,6 +561,55 @@ ARTIFACT_SCAN_LIMIT=2000 python scripts/build_artifacts_part_b.py
 
 **Non-interactive:** Both scripts stream through archive with ASCII-only output, no charts.
 
+### Dataset Artifacts (Part C)
+
+**Artifact builder:** `scripts/build_artifacts_part_c.py` generates transparency and lifecycle artifacts.
+
+**Run manually:**
+```bash
+# From instrumetriq-site root
+python scripts/build_artifacts_part_c.py
+
+# With scan limit for testing
+ARTIFACT_SCAN_LIMIT=2000 python scripts/build_artifacts_part_c.py
+```
+
+**Artifacts generated** (in `public/data/artifacts/`):
+
+1. **hybrid_decisions_v7.json** - Hybrid decision breakdown (C1)
+   - Aggregates decision_sources counts across all v7 entries:
+     - primary_lexicon: Lexicon-based decision used as final
+     - primary_ai: AI-based decision used as final
+     - referee_override: Referee overrode primary decision
+     - full_agreement: Both primary and referee agreed
+   - Computes percentages for each source
+   - Includes posts_scored totals (total posts analyzed, entries with posts)
+   - **Transparency**: Shows how sentiment decisions are made in the hybrid system
+   - Fields used: `twitter_sentiment_windows.last_cycle.hybrid_decision_stats.decision_sources`, `posts_scored`
+
+2. **confidence_disagreement_v7.json** - Confidence vs disagreement (C2)
+   - Bins by referee_conf_mean into 5 bins: [0..0.2), [0.2..0.4), ..., [0.8..1.0)
+   - For each bin:
+     - sample_count: Number of entries in bin
+     - disagreement_count: Times referee overrode primary
+     - disagreement_rate: Proportion of disagreements
+   - **Descriptive only**: Shows calibration-like patterns (when referee has low confidence, are there more overrides?)
+   - Fields used: `twitter_sentiment_windows.last_cycle.hybrid_decision_stats.referee_conf_mean`, `decision_sources.referee_override`
+
+3. **lifecycle_summary_v7.json** - Per-symbol lifecycle summary (C3)
+   - Aggregates lifecycle metrics per symbol:
+     - sessions_count: Number of distinct session_ids
+     - median_duration_sec: Median session duration
+     - first_seen_day, last_seen_day: Date range (YYYY-MM-DD format)
+     - median_final_score: Median of hybrid mean_score
+   - **No raw session data**: Only aggregated summaries, no timestamps or session IDs exposed
+   - Sorted by symbol name
+   - Fields used: `meta.session_id`, `meta.duration_sec`, folder date, `twitter_sentiment_windows.last_cycle.hybrid_decision_stats.mean_score`
+
+**Same usable v7 gate:** Uses identical filtering as Parts A/B.
+
+**Date normalization:** All dates in outputs are YYYY-MM-DD format only (no full timestamps).
+
 ### Customizing Branding
 
 All branding constants are in `src/styles/global.css`:
