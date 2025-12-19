@@ -10,40 +10,187 @@ import PageHero from '../components/PageHero.astro';
   <PageHero
     eyebrow="DATASET"
     title="Dataset"
-    subtitle="Access and documentation for the Instrumetriq sentiment dataset."
+    subtitle="Validated market snapshots combining price microstructure, spot sampling, and frozen social sentiment windows."
   />
   <div class="pageContent">
     <section>
       <h2>About the Dataset</h2>
       <p>
-        The Instrumetriq dataset consists of market snapshots combining price microstructure, spot sampling, and frozen social sentiment windows.
-        A record is a single validated v7 snapshot (see <a href="/status">Status</a> for current counts).
+        A record is a single validated <strong>v7 snapshot</strong>—frozen at admission and required to pass dataset health gates (700+ spot samples minimum). Each snapshot captures a moment in time, combining market microstructure, high-resolution price samples, and aggregated social sentiment windows.
       </p>
+      <p>
+        See <a href="/status">Status</a> for current validated record counts.
+      </p>
+    </section>
+    
+    <section>
+      <h2>What is a Snapshot?</h2>
+      <p>
+        Each snapshot is a structured observation of a single cryptocurrency symbol at a specific moment. A single record contains:
+      </p>
+      <ul>
+        <li><strong>Symbol:</strong> The cryptocurrency being observed (e.g., BTC, AAVE, ETH)</li>
+        <li><strong>Timestamp:</strong> UTC timestamp marking when the snapshot was captured</li>
+        <li><strong>Spot price microstructure:</strong> Bid/ask spreads, order book depth, liquidity metrics</li>
+        <li><strong>700+ spot price samples:</strong> High-resolution price observations collected over a fixed window</li>
+        <li><strong>Social sentiment windows:</strong> Aggregated, frozen sentiment metrics from X (Twitter)</li>
+      </ul>
+      <p>
+        <strong>Important:</strong> This is <em>not</em> a live feed. Each snapshot is a frozen observation, validated and archived for research use.
+      </p>
+    </section>
+    
+    <section>
+      <h2>Snapshot Anatomy</h2>
+      <p>
+        Each snapshot is organized into conceptual blocks. This is a high-level view—detailed schema documentation will accompany public releases.
+      </p>
+      <div class="anatomy-grid">
+        <div class="anatomy-block">
+          <h3>spot_raw</h3>
+          <p>Market microstructure & liquidity context. Includes bid/ask spreads, order book snapshots, and exchange-level metadata.</p>
+        </div>
+        <div class="anatomy-block">
+          <h3>spot_prices</h3>
+          <p>High-resolution price samples collected over a fixed window. Provides fine-grained visibility into price movement and volatility.</p>
+        </div>
+        <div class="anatomy-block">
+          <h3>twitter_sentiment_windows</h3>
+          <p>Aggregated social sentiment metrics from X (Twitter). Windows are frozen at snapshot time and provide context on public narrative activity.</p>
+        </div>
+        <div class="anatomy-block">
+          <h3>scores / flags</h3>
+          <p>Derived context and quality markers. Includes validation results, admission criteria, and computed indicators.</p>
+        </div>
+      </div>
+    </section>
+    
+    <section>
+      <h2>Data Validation & Quality Gates</h2>
+      <p>
+        Only validated entries appear in public counts. Every snapshot must meet strict quality requirements:
+      </p>
+      <ul>
+        <li><strong>v7 schema only:</strong> All snapshots conform to the v7 data model</li>
+        <li><strong>Type checking:</strong> Required blocks must exist and have correct structure</li>
+        <li><strong>700+ spot samples minimum:</strong> Insufficient sampling results in exclusion</li>
+        <li><strong>Health gates:</strong> Automated checks verify data completeness and integrity</li>
+        <li><strong>Repeatability:</strong> All validation is automated and deterministic</li>
+      </ul>
+      <p>
+        Entries that fail quality gates are excluded from public counts. <strong>This page reflects only validated entries.</strong>
+      </p>
+    </section>
+    
+    <section>
+      <h2>What this dataset is — and isn't</h2>
+      <div class="is-isnt-grid">
+        <div class="is-block">
+          <h3>Is</h3>
+          <ul>
+            <li>A research-grade market observability dataset</li>
+            <li>Suitable for analysis, filtering, conditioning, and academic research</li>
+            <li>Validated, structured, and reproducible</li>
+          </ul>
+        </div>
+        <div class="isnt-block">
+          <h3>Is not</h3>
+          <ul>
+            <li>A trading signal or prediction engine</li>
+            <li>A guarantee of price movement or correlation</li>
+            <li>Financial advice or investment guidance</li>
+          </ul>
+        </div>
+      </div>
     </section>
     
     <section>
       <h2>Dataset Structure</h2>
       <p>
-        The schema and file layout will be documented alongside the first public release.
-        Until then, treat this page as a placeholder for format and access details.
+        Detailed schema documentation, file formats, and field definitions will be provided with the first public release. Future documentation will include versioned schemas, migration guides, and format specifications.
       </p>
     </section>
     
     <section>
       <h2>Access & Licensing</h2>
       <p>
-        Information about dataset access, usage terms, and licensing will be provided here.
-        Public downloads will include a quickstart script for reading Parquet.
+        Public releases will include comprehensive documentation and a Python quickstart for reading and exploring the data. Access terms and licensing details will be finalized and published alongside the first release.
       </p>
     </section>
     
     <section>
       <h2>Citation</h2>
       <p>
-        If you use this dataset in your research, please cite it appropriately. Citation
-        guidelines will be provided here.
+        If you use this dataset in your research, please cite it appropriately. Citation guidelines and version-specific references will be provided with versioned releases.
       </p>
     </section>
   </div>
 </BaseLayout>
 
+<style>
+  .anatomy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  
+  .anatomy-block {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-left: 3px solid var(--accent-dim);
+    border-radius: 4px;
+  }
+  
+  .anatomy-block h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+    font-size: 1.125rem;
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+  }
+  
+  .anatomy-block p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  
+  .is-isnt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  
+  .is-block, .isnt-block {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-radius: 4px;
+  }
+  
+  .is-block {
+    border-left: 3px solid #10b981;
+  }
+  
+  .isnt-block {
+    border-left: 3px solid #ef4444;
+  }
+  
+  .is-block h3, .isnt-block h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-3);
+    font-size: 1.125rem;
+    color: var(--text);
+  }
+  
+  .is-block ul, .isnt-block ul {
+    margin: 0;
+    padding-left: var(--space-4);
+  }
+  
+  .is-block li, .isnt-block li {
+    margin-bottom: var(--space-2);
+    color: var(--text-muted);
+  }
+</style>
