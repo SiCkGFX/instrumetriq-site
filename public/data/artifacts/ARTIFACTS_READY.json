@@ -1,0 +1,25 @@
+{
+  "status": "FAIL",
+  "generated_at_utc": "2025-12-19T14:46:00.950508Z",
+  "artifacts_verified": [
+    "coverage_v7.json",
+    "scale_v7.json",
+    "preview_row_v7.json",
+    "sentiment_vs_forward_return_v7.json",
+    "regimes_activity_vs_silence_v7.json",
+    "hybrid_decisions_v7.json",
+    "confidence_disagreement_v7.json",
+    "lifecycle_summary_v7.json"
+  ],
+  "checks_passed": [
+    "Part A completed",
+    "Part B completed",
+    "Part C completed",
+    "All artifacts present and valid JSON"
+  ],
+  "warnings": [],
+  "errors": [
+    "lifecycle_summary_v7: must have at least 1 symbol"
+  ],
+  "ready_for_website": false
+}

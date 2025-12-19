@@ -610,6 +610,63 @@ ARTIFACT_SCAN_LIMIT=2000 python scripts/build_artifacts_part_c.py
 
 **Date normalization:** All dates in outputs are YYYY-MM-DD format only (no full timestamps).
 
+### Artifact Build Pipeline (Master)
+
+**Master builder:** `scripts/build_artifacts_master.py` orchestrates the complete artifact generation and validation pipeline.
+
+**What it does:**
+1. Runs Part A → Part B → Part C in sequence
+2. Validates all 8 expected artifacts exist and have valid JSON
+3. Performs schema sanity checks on each artifact
+4. Runs cross-artifact consistency checks
+5. Generates `ARTIFACTS_READY.json` readiness report
+
+**Usage:**
+```bash
+# Full pipeline (production)
+python scripts/build_artifacts_master.py
+
+# Test mode with scan limit
+MASTER_TEST_MODE=1 ARTIFACT_SCAN_LIMIT=3000 python scripts/build_artifacts_master.py
+
+# Self-test flag
+python scripts/build_artifacts_master.py --self-test
+```
+
+**Expected artifacts (validated):**
+- `coverage_v7.json` - Feature coverage table
+- `scale_v7.json` - Dataset scale metrics
+- `preview_row_v7.json` - Example data vector
+- `sentiment_vs_forward_return_v7.json` - Sentiment bucket distributions
+- `regimes_activity_vs_silence_v7.json` - Activity vs silence comparison
+- `hybrid_decisions_v7.json` - Decision source breakdown
+- `confidence_disagreement_v7.json` - Confidence calibration
+- `lifecycle_summary_v7.json` - Per-symbol lifecycle summaries
+
+**Validation checks:**
+- **File existence**: All 8 artifacts present, non-empty, valid JSON
+- **Schema sanity**: Required fields present, correct types, no NaN/Infinity
+- **Consistency**: v7_usable counts match across artifacts (within ±1%)
+
+**Readiness report** (`ARTIFACTS_READY.json`):
+```json
+{
+  "status": "PASS" | "FAIL",
+  "generated_at_utc": "2025-12-19T12:00:00.000000Z",
+  "artifacts_verified": [...],
+  "checks_passed": [...],
+  "warnings": [...],
+  "errors": [...],
+  "ready_for_website": true | false
+}
+```
+
+**Exit codes:**
+- `0` - PASS (all artifacts ready for website)
+- `1` - FAIL (validation failed, do not deploy)
+
+**Website readiness gate:** If `ready_for_website: false`, the site MUST NOT be updated. This prevents silent failures and partial deployments.
+
 ### Customizing Branding
 
 All branding constants are in `src/styles/global.css`:
