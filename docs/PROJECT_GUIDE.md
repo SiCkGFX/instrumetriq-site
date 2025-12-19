@@ -517,6 +517,50 @@ ARTIFACT_SCAN_LIMIT=2000 python scripts/build_artifacts_part_a.py
 - very_positive: [2%, inf)
 - unknown: insufficient data
 
+### Dataset Artifacts (Part B)
+
+**Artifact builder:** `scripts/build_artifacts_part_b.py` generates behavioral analysis artifacts (descriptive, not predictive).
+
+**Run manually:**
+```bash
+# From instrumetriq-site root
+python scripts/build_artifacts_part_b.py
+
+# With scan limit for testing
+ARTIFACT_SCAN_LIMIT=2000 python scripts/build_artifacts_part_b.py
+```
+
+**Artifacts generated** (in `public/data/artifacts/`):
+
+1. **sentiment_vs_forward_return_v7.json** - Sentiment bucket distributions (B1)
+   - Buckets hybrid mean_score into 10 fixed bins: [-1..-0.8), [-0.8..-0.6), ..., [0.8..1.0)
+   - For each bin, computes forward return distribution:
+     - sample_count: Number of entries in bin
+     - median: Median 1h forward return
+     - p25, p75: Quartiles for IQR
+     - pct_positive: Percentage of positive returns
+   - Coverage: Tracks how many entries had valid mean_score and forward_return
+   - **Descriptive only**: Shows "how returns distribute given sentiment", not predictive/correlative
+   - Fields used: `twitter_sentiment_windows.last_cycle.hybrid_decision_stats.mean_score`, `spot_prices.mid_forward_returns.1h`
+
+2. **regimes_activity_vs_silence_v7.json** - Regime comparison (B2)
+   - Splits entries into two groups: silent vs active (from `sentiment_activity.is_silent`)
+   - For each group, computes stats (median, p90) on:
+     - abs_return_over_window: Absolute return from mid_first to mid_last
+     - liq_qv_usd: Quote volume liquidity (from `spot_raw.liq_qv_usd`)
+     - spread_bps: Bid-ask spread in bps (from `spot_raw.spread_bps`)
+     - liq_global_pct: Global liquidity % (from `derived.liq_global_pct`)
+   - Includes sample counts and date range
+   - **Descriptive only**: Compares regimes, not predictive
+   - Fields used: `twitter_sentiment_windows.last_cycle.sentiment_activity.is_silent`, `spot_prices`, `spot_raw`, `derived`
+
+**Same usable v7 gate as Part A:** Artifacts use identical filtering:
+- schema_version == 7
+- spot_prices >= 700 samples
+- Required keys: spot_raw, derived, twitter_sentiment_windows with last_cycle
+
+**Non-interactive:** Both scripts stream through archive with ASCII-only output, no charts.
+
 ### Customizing Branding
 
 All branding constants are in `src/styles/global.css`:

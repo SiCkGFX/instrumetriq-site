@@ -1,0 +1,57 @@
+{
+  "description": "Comparison of silent vs active regimes across multiple dimensions. Descriptive only, not predictive.",
+  "data_version": "v7",
+  "date_range": {
+    "first": "2025-12-14",
+    "last": "2025-12-19",
+    "days": 6
+  },
+  "groups": {
+    "silent": {
+      "sample_count": 6,
+      "abs_return_over_window": {
+        "count": 6,
+        "median": 0.007623,
+        "p90": 0.027064
+      },
+      "liq_qv_usd": {
+        "count": 6,
+        "median": 94915.68573,
+        "p90": 304655.6785
+      },
+      "spread_bps": {
+        "count": 6,
+        "median": 27.689019,
+        "p90": 69.025022
+      },
+      "liq_global_pct": {
+        "count": 6,
+        "median": 36.151079,
+        "p90": 62.230216
+      }
+    },
+    "active": {
+      "sample_count": 8778,
+      "abs_return_over_window": {
+        "count": 8778,
+        "median": 0.007115,
+        "p90": 0.027726
+      },
+      "liq_qv_usd": {
+        "count": 8778,
+        "median": 223627.880771,
+        "p90": 4351618.605084
+      },
+      "spread_bps": {
+        "count": 8778,
+        "median": 13.84083,
+        "p90": 43.010753
+      },
+      "liq_global_pct": {
+        "count": 8778,
+        "median": 57.553957,
+        "p90": 92.086331
+      }
+    }
+  }
+}
