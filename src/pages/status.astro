@@ -16,7 +16,7 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
   <PageHero
     eyebrow="STATUS"
     title="Collection Status"
-    subtitle="Current snapshot of X (Twitter) collection and aggregation outputs."
+    subtitle="Current snapshot of dataset metrics."
   />
   <div class="pageContent">
     <section class="status-grid">
@@ -39,6 +39,14 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
         <div class="stat-label">Last Updated</div>
         <div class="stat-value">{lastUpdate.toLocaleDateString()}</div>
       </div>
+    </section>
+    
+    <section class="data-definitions">
+      <h2>Data Definitions</h2>
+      <ul>
+        <li><strong>Total Records:</strong> Validated v7 snapshots that pass dataset health gates (700+ spot samples).</li>
+        <li><strong>Status Updates:</strong> Status is updated periodically; this page reports the latest exported snapshot.</li>
+      </ul>
     </section>
     
     <section>
@@ -153,5 +161,23 @@ const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 6
     background-color: var(--panel2);
     border-left: 3px solid var(--accent);
     border-radius: 4px;
+  }
+  
+  .data-definitions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .data-definitions li {
+    padding: var(--space-3);
+    margin-bottom: var(--space-2);
+    background-color: var(--panel2);
+    border-radius: 4px;
+    border-left: 3px solid var(--accent-dim);
+  }
+  
+  .data-definitions strong {
+    color: var(--text);
   }
 </style>
