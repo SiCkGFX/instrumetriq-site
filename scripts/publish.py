@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Import chart generation modules
 sys.path.insert(0, str(Path(__file__).parent))
-from lib import daily_stats, charts
+from lib import daily_stats, charts, insights_stats
 
 # ASCII-only mode for OS-agnostic operation (Windows + Linux safe)
 ASCII_MODE = True
@@ -44,6 +44,7 @@ def get_repo_paths():
         "output_dir": site_root / "public" / "data",
         "updates_dir": site_root / "src" / "content" / "updates",
         "charts_dir": site_root / "public" / "charts",
+        "insights_dir": site_root / "public" / "charts" / "insights",
     }
 
 
@@ -52,10 +53,12 @@ def ensure_directories(paths):
     paths["output_dir"].mkdir(parents=True, exist_ok=True)
     paths["updates_dir"].mkdir(parents=True, exist_ok=True)
     paths["charts_dir"].mkdir(parents=True, exist_ok=True)
+    paths["insights_dir"].mkdir(parents=True, exist_ok=True)
     print(f"{OK_MARK} Ensured directories exist:")
     print(f"  - {paths['output_dir']}")
     print(f"  - {paths['updates_dir']}")
     print(f"  - {paths['charts_dir']}")
+    print(f"  - {paths['insights_dir']}")
 
 
 def run_exporter(paths, scan_limit=None):
@@ -276,6 +279,11 @@ def main():
         action="store_true",
         help="Skip chart generation"
     )
+    parser.add_argument(
+        "--no-insights",
+        action="store_true",
+        help="Skip insight chart generation"
+    )
     
     args = parser.parse_args()
     
@@ -325,6 +333,25 @@ def main():
             print(f"{WARN_MARK} No daily data found, skipping chart generation")
     else:
         print(f"\n{WARN_MARK} Chart generation skipped")
+    
+    # Step 4.6: Generate insight charts (unless --no-insights or PUBLISH_NO_INSIGHTS env var)
+    skip_insights = args.no_insights or os.environ.get("PUBLISH_NO_INSIGHTS") == "1"
+    if not skip_insights:
+        print(f"\n{RUNNING_MARK} Computing insights...")
+        
+        # Use the same usable gate as daily_stats for consistency
+        aggregator = insights_stats.compute_insights(
+            paths["cryptobot_archive"], 
+            daily_stats.is_usable_v7_entry
+        )
+        
+        # Print summary
+        aggregator.print_summary()
+        
+        # Generate insight charts
+        charts.generate_insight_charts(aggregator, paths["insights_dir"])
+    else:
+        print(f"\n{WARN_MARK} Insight chart generation skipped")
     
     # Step 5: Generate daily update
     update_file = generate_daily_update(

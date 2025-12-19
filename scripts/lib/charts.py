@@ -3,6 +3,7 @@ Chart generator for instrumetriq-site.
 Creates clean, static SVG charts from daily statistics.
 """
 
+import math
 import sys
 from pathlib import Path
 from typing import List, Dict
@@ -157,6 +158,244 @@ def generate_all_charts(daily_stats: List[Dict], output_dir: Path):
     )
     
     print(f"{OK_MARK} All charts generated")
+
+
+# ============================================================================
+# INSIGHT CHARTS (Phase 4.2)
+# ============================================================================
+
+def create_spread_bps_hist(samples: List[float], output_path: Path):
+    """Generate spread_bps histogram."""
+    if not samples:
+        print("[WARN] No spread_bps samples for chart")
+        return
+    
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.hist(samples, bins=50, edgecolor='black', alpha=0.7)
+    
+    ax.set_xlabel("Spread (bps)", fontsize=11)
+    ax.set_ylabel("Frequency", fontsize=11)
+    ax.set_title("Spread (bps) Distribution", fontsize=13, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='y')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def create_liq_qv_usd_hist(samples: List[float], output_path: Path):
+    """Generate liq_qv_usd histogram with log scale."""
+    if not samples:
+        print("[WARN] No liq_qv_usd samples for chart")
+        return
+    
+    # Filter out zeros for log scale
+    log_samples = [math.log10(s) for s in samples if s > 0]
+    
+    if not log_samples:
+        print("[WARN] No positive liq_qv_usd values for log chart")
+        return
+    
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.hist(log_samples, bins=50, edgecolor='black', alpha=0.7, color='#2ca02c')
+    
+    ax.set_xlabel("Liquidity Quote Volume (log10 USD)", fontsize=11)
+    ax.set_ylabel("Frequency", fontsize=11)
+    ax.set_title("Liquidity Volume Distribution (log scale)", fontsize=13, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='y')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def create_spread_vs_liq_scatter(spread_samples: List[float], liq_samples: List[float], output_path: Path):
+    """Generate spread vs liquidity scatter plot (hexbin for density)."""
+    if not spread_samples or not liq_samples:
+        print("[WARN] Insufficient samples for spread_vs_liq chart")
+        return
+    
+    # Match sample counts
+    n = min(len(spread_samples), len(liq_samples))
+    spread = spread_samples[:n]
+    liq = [math.log10(l) if l > 0 else 0 for l in liq_samples[:n]]
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    # Use hexbin for density visualization
+    hb = ax.hexbin(liq, spread, gridsize=30, cmap='Blues', mincnt=1)
+    
+    ax.set_xlabel("Liquidity Quote Volume (log10 USD)", fontsize=11)
+    ax.set_ylabel("Spread (bps)", fontsize=11)
+    ax.set_title("Spread vs Liquidity", fontsize=13, fontweight='bold')
+    
+    # Add colorbar
+    cb = plt.colorbar(hb, ax=ax)
+    cb.set_label("Count", fontsize=10)
+    
+    plt.tight_layout()
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def create_tweets_last_cycle_hist(samples: List[int], output_path: Path):
+    """Generate tweets_last_cycle histogram."""
+    if not samples:
+        print("[WARN] No tweets_last_cycle samples for chart")
+        return
+    
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.hist(samples, bins=50, edgecolor='black', alpha=0.7, color='#ff7f0e')
+    
+    ax.set_xlabel("Tweet Count", fontsize=11)
+    ax.set_ylabel("Frequency", fontsize=11)
+    ax.set_title("Tweet Volume (last_cycle) Distribution", fontsize=13, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='y')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def create_tweets_last_2_cycles_hist(samples: List[int], output_path: Path):
+    """Generate tweets_last_2_cycles histogram."""
+    if not samples:
+        print("[WARN] No tweets_last_2_cycles samples for chart")
+        return
+    
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.hist(samples, bins=50, edgecolor='black', alpha=0.7, color='#9467bd')
+    
+    ax.set_xlabel("Tweet Count", fontsize=11)
+    ax.set_ylabel("Frequency", fontsize=11)
+    ax.set_title("Tweet Volume (last_2_cycles) Distribution", fontsize=13, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='y')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def create_tweets_volume_over_time(daily_stats: List[Dict], output_path: Path):
+    """Generate tweet volume time series (median and p90)."""
+    if not daily_stats:
+        print("[WARN] No daily tweet stats for time series chart")
+        return
+    
+    dates = [s["date"] for s in daily_stats]
+    medians = [s["median"] for s in daily_stats]
+    p90s = [s["p90"] for s in daily_stats]
+    
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(dates, medians, marker='o', linewidth=2, markersize=4, label='Median', color='#1f77b4')
+    ax.plot(dates, p90s, marker='s', linewidth=2, markersize=4, label='P90', color='#ff7f0e')
+    
+    ax.set_xlabel("Date", fontsize=11)
+    ax.set_ylabel("Tweet Count (last_cycle)", fontsize=11)
+    ax.set_title("Tweet Volume Over Time (median, p90)", fontsize=13, fontweight='bold')
+    ax.legend(loc='best', fontsize=10)
+    ax.grid(True, alpha=0.3)
+    
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def create_abs_return_hist(samples: List[float], output_path: Path):
+    """Generate absolute return histogram."""
+    if not samples:
+        print("[WARN] No abs_return samples for chart")
+        return
+    
+    # Convert to percentage
+    pct_samples = [s * 100 for s in samples]
+    
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.hist(pct_samples, bins=50, edgecolor='black', alpha=0.7, color='#d62728')
+    
+    ax.set_xlabel("Absolute Return (%)", fontsize=11)
+    ax.set_ylabel("Frequency", fontsize=11)
+    ax.set_title("Absolute Return Over Sampled Window", fontsize=13, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='y')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, format='svg', dpi=100)
+    plt.close()
+    
+    print(f"  Generated: {output_path.name}")
+
+
+def generate_insight_charts(aggregator, output_dir: Path):
+    """
+    Generate all insight charts from aggregator.
+    
+    Args:
+        aggregator: InsightsAggregator with collected samples
+        output_dir: Path to public/charts/insights/ directory
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    print("\nGenerating insight charts...")
+    
+    # Import here to avoid circular dependency
+    import math
+    
+    # Market microstructure
+    create_spread_bps_hist(
+        aggregator.spread_bps_samples,
+        output_dir / "spread_bps_hist.svg"
+    )
+    
+    create_liq_qv_usd_hist(
+        aggregator.liq_qv_usd_samples,
+        output_dir / "liq_qv_usd_hist.svg"
+    )
+    
+    create_spread_vs_liq_scatter(
+        aggregator.spread_bps_samples,
+        aggregator.liq_qv_usd_samples,
+        output_dir / "spread_vs_liq_scatter.svg"
+    )
+    
+    # Tweet volume
+    create_tweets_last_cycle_hist(
+        aggregator.tweets_last_cycle_samples,
+        output_dir / "tweets_last_cycle_hist.svg"
+    )
+    
+    create_tweets_last_2_cycles_hist(
+        aggregator.tweets_last_2_cycles_samples,
+        output_dir / "tweets_last_2_cycles_hist.svg"
+    )
+    
+    # Tweet volume time series
+    daily_tweet_stats = aggregator.get_daily_tweet_stats()
+    create_tweets_volume_over_time(
+        daily_tweet_stats,
+        output_dir / "tweets_volume_over_time.svg"
+    )
+    
+    # Return distribution
+    create_abs_return_hist(
+        aggregator.abs_return_samples,
+        output_dir / "abs_return_over_window_hist.svg"
+    )
+    
+    print(f"{OK_MARK} All insight charts generated")
 
 
 # Import status symbol for consistency
