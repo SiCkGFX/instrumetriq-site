@@ -11,37 +11,60 @@ from typing import Dict, List, Optional
 
 
 def is_v7_entry(entry: dict) -> bool:
-    """Check if entry is v7 (schema_version >= 7)."""
+    """Check if entry is v7 (schema_version == 7)."""
     meta = entry.get("meta", {})
     schema_version = meta.get("schema_version", 0)
-    return schema_version >= 7
+    return schema_version == 7
 
 
-def is_usable_entry(entry: dict) -> bool:
+def is_usable_v7_entry(entry: dict, min_spot_samples: int = 700) -> tuple[bool, str]:
     """
     Check if entry meets 'usable' criteria from status contract.
     
-    Requirements (matching CryptoBot exporter logic):
-    - v7 entry (schema_version >= 7)
-    - spot_prices array has >= 700 samples
-    - spot_raw dict has core pricing fields
+    Requirements (aligned with status.json contract):
+    - meta.schema_version == 7
+    - spot_prices is list with len >= min_spot_samples (default 700)
+    - spot_raw is dict with non-null required keys: mid, bid, ask, spread_bps
+    - twitter_sentiment_windows is dict with required windows (last_cycle OR last_2_cycles)
+    
+    Returns:
+        (is_usable: bool, reason: str)
     """
     # Must be v7
-    if not is_v7_entry(entry):
-        return False
+    meta = entry.get("meta", {})
+    schema_version = meta.get("schema_version", 0)
+    if schema_version != 7:
+        return (False, f"schema_version={schema_version}, expected 7")
     
-    # Check spot_prices count
-    spot_prices = entry.get("spot_prices", [])
-    if len(spot_prices) < 700:
-        return False
+    # Check spot_prices is list and has enough samples
+    spot_prices = entry.get("spot_prices")
+    if not isinstance(spot_prices, list):
+        return (False, "spot_prices not a list")
+    if len(spot_prices) < min_spot_samples:
+        return (False, f"spot_prices={len(spot_prices)}, required>={min_spot_samples}")
     
-    # Check spot_raw has essential fields
-    spot_raw = entry.get("spot_raw", {})
-    required_fields = ["mid", "bid", "ask", "last"]
-    if not all(field in spot_raw for field in required_fields):
-        return False
+    # Check spot_raw has required fields with non-null values
+    spot_raw = entry.get("spot_raw")
+    if not isinstance(spot_raw, dict):
+        return (False, "spot_raw not a dict")
     
-    return True
+    required_spot_fields = ["mid", "bid", "ask", "spread_bps"]
+    for field in required_spot_fields:
+        if field not in spot_raw:
+            return (False, f"spot_raw missing '{field}'")
+        if spot_raw[field] is None:
+            return (False, f"spot_raw '{field}' is null")
+    
+    # Check twitter_sentiment_windows has required windows
+    tsw = entry.get("twitter_sentiment_windows")
+    if not isinstance(tsw, dict):
+        return (False, "twitter_sentiment_windows not a dict")
+    
+    # Must have at least one of the required windows
+    if "last_cycle" not in tsw and "last_2_cycles" not in tsw:
+        return (False, "twitter_sentiment_windows missing required windows")
+    
+    return (True, "OK")
 
 
 def scan_day_folder(day_folder: Path) -> Dict[str, int]:
@@ -70,8 +93,9 @@ def scan_day_folder(day_folder: Path) -> Dict[str, int]:
                         if is_v7_entry(entry):
                             v7_seen += 1
                             
-                            # Check if usable
-                            if is_usable_entry(entry):
+                            # Check if usable (using aligned gate)
+                            is_usable, reason = is_usable_v7_entry(entry)
+                            if is_usable:
                                 usable += 1
                     
                     except json.JSONDecodeError:

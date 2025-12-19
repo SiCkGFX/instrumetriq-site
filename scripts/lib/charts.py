@@ -3,11 +3,24 @@ Chart generator for instrumetriq-site.
 Creates clean, static SVG charts from daily statistics.
 """
 
-import matplotlib
-matplotlib.use('Agg')  # Non-interactive backend
-import matplotlib.pyplot as plt
+import sys
 from pathlib import Path
 from typing import List, Dict
+
+# Graceful matplotlib import with clear error message
+try:
+    import matplotlib
+    matplotlib.use('Agg')  # Non-interactive backend
+    import matplotlib.pyplot as plt
+except ImportError:
+    print("[ERROR] matplotlib is required for chart generation")
+    print("")
+    print("Install script dependencies with:")
+    print("  pip install -r scripts/requirements.txt")
+    print("")
+    print("Or skip chart generation with:")
+    print("  npm run publish -- --no-charts")
+    sys.exit(1)
 
 
 def create_snapshots_per_day_chart(daily_stats: List[Dict], output_path: Path):

@@ -306,6 +306,19 @@ def main():
             # Add cumulative usable count
             daily_data_with_cumulative = daily_stats.compute_cumulative_usable(daily_data)
             
+            # Consistency check: compare daily stats to status.json
+            cumulative_usable = sum(day["usable"] for day in daily_data)
+            status_usable = status_data.get("counts", {}).get("usable_entries", 0)
+            
+            diff_abs = abs(cumulative_usable - status_usable)
+            diff_ratio = diff_abs / max(status_usable, 1)  # Avoid division by zero
+            
+            if diff_ratio > 0.01 or diff_abs > 50:
+                print(f"{WARN_MARK} Consistency check: chart usable ({cumulative_usable}) vs status.json ({status_usable})")
+                print(f"  Difference: {diff_abs} entries ({diff_ratio*100:.1f}%)")
+            else:
+                print(f"{OK_MARK} Consistency check: chart usable matches status.json ({cumulative_usable})")
+            
             # Generate charts
             charts.generate_all_charts(daily_data_with_cumulative, paths["charts_dir"])
         else:

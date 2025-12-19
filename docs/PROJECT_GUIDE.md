@@ -431,11 +431,21 @@ The post will automatically appear on `/updates`.
 
 **One-command publisher:** The site includes `npm run publish` which automates daily dataset updates.
 
+**Prerequisites:**
+The publisher scripts require Python dependencies for chart generation. Install once:
+```bash
+pip install -r scripts/requirements.txt
+```
+
+This installs:
+- `matplotlib` - Required for generating static SVG charts
+
 This command:
 1. Runs the CryptoBot exporter to scan archives and generate status files
 2. Updates `public/data/status.json` and `public/data/status_history.jsonl`
-3. Generates a daily update post in `src/content/updates/YYYY-MM-DD.md`
-4. Prints a summary of counts and changes
+3. Computes daily statistics and generates charts in `public/charts/`
+4. Generates a daily update post in `src/content/updates/YYYY-MM-DD.md`
+5. Prints a summary of counts and changes
 
 **Daily workflow:**
 ```bash
