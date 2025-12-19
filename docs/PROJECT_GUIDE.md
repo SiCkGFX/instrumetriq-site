@@ -431,21 +431,11 @@ The post will automatically appear on `/updates`.
 
 **One-command publisher:** The site includes `npm run publish` which automates daily dataset updates.
 
-**Prerequisites:**
-The publisher scripts require Python dependencies for chart generation. Install once:
-```bash
-pip install -r scripts/requirements.txt
-```
-
-This installs:
-- `matplotlib` - Required for generating static SVG charts
-
 This command:
 1. Runs the CryptoBot exporter to scan archives and generate status files
 2. Updates `public/data/status.json` and `public/data/status_history.jsonl`
-3. Computes daily statistics and generates charts in `public/charts/`
-4. Generates a daily update post in `src/content/updates/YYYY-MM-DD.md`
-5. Prints a summary of counts and changes
+3. Generates a daily update post in `src/content/updates/YYYY-MM-DD.md`
+4. Prints a summary of counts and changes
 
 **Daily workflow:**
 ```bash
@@ -467,42 +457,14 @@ git push
 ```
 
 **Optional flags for publish:**
-- `--scan-limit N` - Limit archive files scanned (for testing; affects exporter only, not chart/insights aggregation)
+- `--scan-limit N` - Limit archive files scanned (for testing)
 - `--date YYYY-MM-DD` - Override date for update post
 - `--no-history` - Skip delta computation
-- `--no-charts` - Skip health chart generation (also skipped if `PUBLISH_NO_CHARTS=1` env var set)
-- `--no-insights` - Skip insight chart generation (also skipped if `PUBLISH_NO_INSIGHTS=1` env var set)
 
 **Files generated/updated:**
 - `public/data/status.json` - Current dataset status (read by /status page at build time)
 - `public/data/status_history.jsonl` - Historical snapshots (one JSON object per line)
 - `src/content/updates/YYYY-MM-DD.md` - Daily update post (appears on /updates)
-
-**Health charts** (in `public/charts/`):
-- `snapshots_per_day.svg` - Daily usable snapshot count (line chart)
-- `usable_rate_per_day.svg` - Daily usable rate percentage (line chart)
-- `total_usable_over_time.svg` - Cumulative usable snapshots (line chart)
-
-**Insight charts** (in `public/charts/insights/`):
-- `spread_bps_hist.svg` - Spread (bps) distribution histogram
-- `liq_qv_usd_hist.svg` - Liquidity volume distribution (log scale) histogram
-- `spread_vs_liq_scatter.svg` - Spread vs liquidity scatter/hexbin plot
-- `tweets_last_cycle_hist.svg` - Tweet volume (last_cycle) distribution histogram
-- `tweets_last_2_cycles_hist.svg` - Tweet volume (last_2_cycles) distribution histogram
-- `tweets_volume_over_time.svg` - Tweet volume time series (median and p90)
-- `abs_return_over_window_hist.svg` - Absolute return distribution histogram
-
-**Chart generation:**
-The publisher automatically generates static SVG charts by scanning the CryptoBot archive folders directly.
-
-Health charts track dataset size over time (per-day aggregation).
-
-Insight charts characterize dataset content using reservoir sampling (max 200k samples per metric):
-- Market microstructure: spread_bps, liq_qv_usd from `spot_raw`
-- Tweet volume: posts_total from `twitter_sentiment_windows.last_cycle` and `last_2_cycles`
-- Price moves: abs((last-first)/first) computed from `spot_prices` array
-
-All charts use the same "usable v7" gate for consistency. Charts are regenerated on each publish run (idempotent).
 
 **Important:** Do not manually edit generated files. Run `npm run publish` to regenerate.
 

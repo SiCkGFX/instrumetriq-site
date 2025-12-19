@@ -12,10 +12,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Import chart generation modules
-sys.path.insert(0, str(Path(__file__).parent))
-from lib import daily_stats, charts, insights_stats
-
 # ASCII-only mode for OS-agnostic operation (Windows + Linux safe)
 ASCII_MODE = True
 
@@ -43,8 +39,6 @@ def get_repo_paths():
         "cryptobot_archive": cryptobot_archive,
         "output_dir": site_root / "public" / "data",
         "updates_dir": site_root / "src" / "content" / "updates",
-        "charts_dir": site_root / "public" / "charts",
-        "insights_dir": site_root / "public" / "charts" / "insights",
     }
 
 
@@ -52,13 +46,9 @@ def ensure_directories(paths):
     """Ensure destination folders exist."""
     paths["output_dir"].mkdir(parents=True, exist_ok=True)
     paths["updates_dir"].mkdir(parents=True, exist_ok=True)
-    paths["charts_dir"].mkdir(parents=True, exist_ok=True)
-    paths["insights_dir"].mkdir(parents=True, exist_ok=True)
     print(f"{OK_MARK} Ensured directories exist:")
     print(f"  - {paths['output_dir']}")
     print(f"  - {paths['updates_dir']}")
-    print(f"  - {paths['charts_dir']}")
-    print(f"  - {paths['insights_dir']}")
 
 
 def run_exporter(paths, scan_limit=None):
@@ -274,16 +264,6 @@ def main():
         action="store_true",
         help="Skip reading history for delta computation"
     )
-    parser.add_argument(
-        "--no-charts",
-        action="store_true",
-        help="Skip chart generation"
-    )
-    parser.add_argument(
-        "--no-insights",
-        action="store_true",
-        help="Skip insight chart generation"
-    )
     
     args = parser.parse_args()
     
@@ -303,67 +283,6 @@ def main():
     
     # Step 4: Verify outputs
     status_data = verify_outputs(paths)
-    
-    # Step 4.5: Generate charts (unless --no-charts or PUBLISH_NO_CHARTS env var)
-    skip_charts = args.no_charts or os.environ.get("PUBLISH_NO_CHARTS") == "1"
-    if not skip_charts:
-        print(f"\n{RUNNING_MARK} Computing daily statistics...")
-        daily_data = daily_stats.compute_daily_stats(paths["cryptobot_archive"])
-        
-        if daily_data:
-            # Add cumulative usable count
-            daily_data_with_cumulative = daily_stats.compute_cumulative_usable(daily_data)
-            
-            # Consistency check: compare daily stats to status.json
-            cumulative_usable = sum(day["usable"] for day in daily_data)
-            status_usable = status_data.get("counts", {}).get("usable_entries", 0)
-            
-            diff_abs = abs(cumulative_usable - status_usable)
-            diff_ratio = diff_abs / max(status_usable, 1)  # Avoid division by zero
-            
-            if diff_ratio > 0.01 or diff_abs > 50:
-                print(f"{WARN_MARK} Consistency check: chart usable ({cumulative_usable}) vs status.json ({status_usable})")
-                print(f"  Difference: {diff_abs} entries ({diff_ratio*100:.1f}%)")
-            else:
-                print(f"{OK_MARK} Consistency check: chart usable matches status.json ({cumulative_usable})")
-            
-            # Generate charts
-            charts.generate_all_charts(daily_data_with_cumulative, paths["charts_dir"])
-        else:
-            print(f"{WARN_MARK} No daily data found, skipping chart generation")
-    else:
-        print(f"\n{WARN_MARK} Chart generation skipped")
-    
-    # Step 4.6: Generate insight charts (unless --no-insights or PUBLISH_NO_INSIGHTS env var)
-    skip_insights = args.no_insights or os.environ.get("PUBLISH_NO_INSIGHTS") == "1"
-    if not skip_insights:
-        print(f"\n{RUNNING_MARK} Computing insights...")
-        
-        # Use the same usable gate as daily_stats for consistency
-        aggregator = insights_stats.compute_insights(
-            paths["cryptobot_archive"], 
-            daily_stats.is_usable_v7_entry
-        )
-        
-        # Print summary
-        aggregator.print_summary()
-        
-        # Prepare metadata for charts
-        from datetime import datetime, timezone
-        insight_metadata = {
-            "first_day": aggregator.first_day or "UNKNOWN",
-            "last_day": aggregator.last_day or "UNKNOWN",
-            "sample_size": aggregator.usable_count,
-            "generated_at": datetime.now(timezone.utc).isoformat()
-        }
-        
-        # Generate insight charts
-        charts.generate_insight_charts(aggregator, paths["insights_dir"], insight_metadata)
-        
-        # Write chart manifest
-        charts.write_chart_manifest(aggregator, paths["insights_dir"], insight_metadata)
-    else:
-        print(f"\n{WARN_MARK} Insight chart generation skipped")
     
     # Step 5: Generate daily update
     update_file = generate_daily_update(
