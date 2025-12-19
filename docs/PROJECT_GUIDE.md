@@ -457,14 +457,25 @@ git push
 ```
 
 **Optional flags for publish:**
-- `--scan-limit N` - Limit archive files scanned (for testing)
+- `--scan-limit N` - Limit archive files scanned (for testing; affects exporter only, not chart aggregation)
 - `--date YYYY-MM-DD` - Override date for update post
 - `--no-history` - Skip delta computation
+- `--no-charts` - Skip chart generation (also skipped if `PUBLISH_NO_CHARTS=1` env var set)
 
 **Files generated/updated:**
 - `public/data/status.json` - Current dataset status (read by /status page at build time)
 - `public/data/status_history.jsonl` - Historical snapshots (one JSON object per line)
 - `src/content/updates/YYYY-MM-DD.md` - Daily update post (appears on /updates)
+- `public/charts/snapshots_per_day.svg` - Daily usable snapshot count (line chart)
+- `public/charts/usable_rate_per_day.svg` - Daily usable rate percentage (line chart)
+- `public/charts/total_usable_over_time.svg` - Cumulative usable snapshots (line chart)
+
+**Chart generation:**
+The publisher automatically generates static SVG charts by scanning the CryptoBot archive folders directly. For each day folder (YYYYMMDD), it computes:
+- `v7_seen`: Count of v7 entries
+- `usable`: Count of usable entries (v7 + 700+ spot samples + required fields)
+
+These daily statistics are then visualized as clean, simple line charts saved to `public/charts/`. Charts are regenerated on each publish run (idempotent).
 
 **Important:** Do not manually edit generated files. Run `npm run publish` to regenerate.
 

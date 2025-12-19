@@ -12,6 +12,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Import chart generation modules
+sys.path.insert(0, str(Path(__file__).parent))
+from lib import daily_stats, charts
+
 # ASCII-only mode for OS-agnostic operation (Windows + Linux safe)
 ASCII_MODE = True
 
@@ -39,6 +43,7 @@ def get_repo_paths():
         "cryptobot_archive": cryptobot_archive,
         "output_dir": site_root / "public" / "data",
         "updates_dir": site_root / "src" / "content" / "updates",
+        "charts_dir": site_root / "public" / "charts",
     }
 
 
@@ -46,9 +51,11 @@ def ensure_directories(paths):
     """Ensure destination folders exist."""
     paths["output_dir"].mkdir(parents=True, exist_ok=True)
     paths["updates_dir"].mkdir(parents=True, exist_ok=True)
+    paths["charts_dir"].mkdir(parents=True, exist_ok=True)
     print(f"{OK_MARK} Ensured directories exist:")
     print(f"  - {paths['output_dir']}")
     print(f"  - {paths['updates_dir']}")
+    print(f"  - {paths['charts_dir']}")
 
 
 def run_exporter(paths, scan_limit=None):
@@ -264,6 +271,11 @@ def main():
         action="store_true",
         help="Skip reading history for delta computation"
     )
+    parser.add_argument(
+        "--no-charts",
+        action="store_true",
+        help="Skip chart generation"
+    )
     
     args = parser.parse_args()
     
@@ -283,6 +295,23 @@ def main():
     
     # Step 4: Verify outputs
     status_data = verify_outputs(paths)
+    
+    # Step 4.5: Generate charts (unless --no-charts or PUBLISH_NO_CHARTS env var)
+    skip_charts = args.no_charts or os.environ.get("PUBLISH_NO_CHARTS") == "1"
+    if not skip_charts:
+        print(f"\n{RUNNING_MARK} Computing daily statistics...")
+        daily_data = daily_stats.compute_daily_stats(paths["cryptobot_archive"])
+        
+        if daily_data:
+            # Add cumulative usable count
+            daily_data_with_cumulative = daily_stats.compute_cumulative_usable(daily_data)
+            
+            # Generate charts
+            charts.generate_all_charts(daily_data_with_cumulative, paths["charts_dir"])
+        else:
+            print(f"{WARN_MARK} No daily data found, skipping chart generation")
+    else:
+        print(f"\n{WARN_MARK} Chart generation skipped")
     
     # Step 5: Generate daily update
     update_file = generate_daily_update(
