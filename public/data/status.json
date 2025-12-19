@@ -1,20 +1,15 @@
 {
-  "last_updated_utc": "2025-12-19T07:14:43.645546Z",
+  "last_updated_utc": "2025-12-19T08:58:44.229373Z",
   "archive_window": {
     "first_day": "2025-12-09",
     "last_day": "2025-12-19"
   },
   "counts": {
-    "total_entries_scanned": 16154,
-    "v7_entries_seen": 10884,
-    "usable_entries": 10234,
-    "usable_full_spot_raw": 10234,
+    "total_entries_scanned": 11,
+    "v7_entries_seen": 10,
+    "usable_entries": 10,
+    "usable_full_spot_raw": 10,
     "usable_partial_spot_raw": 0
   },
-  "fail_reasons": {
-    "not_v7": 5270,
-    "insufficient_spot_samples": 648,
-    "bad_type_twitter_sentiment_windows": 2,
-    "bad_type_twitter_sentiment_meta": 2
-  }
+  "fail_reasons": {}
 }
