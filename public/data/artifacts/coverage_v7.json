@@ -1,0 +1,104 @@
+{
+  "generated_at_utc": "2025-12-19T13:42:25.761547+00:00",
+  "date_range_utc": {
+    "first_day": "2025-12-14",
+    "last_day": "2025-12-19"
+  },
+  "counts": {
+    "v7_seen": 11580,
+    "v7_usable": 10931
+  },
+  "groups": [
+    {
+      "id": "microstructure",
+      "label": "Market microstructure",
+      "present_rate": 1.0,
+      "notes": [
+        "Bid, ask, mid, spread_bps, last, range_pct_24h"
+      ],
+      "examples": {
+        "median_spread_bps": 14.947683109118437
+      }
+    },
+    {
+      "id": "liquidity",
+      "label": "Liquidity metrics",
+      "present_rate": 0.9984455958549223,
+      "notes": [
+        "liq_qv_usd, liq_global_pct"
+      ],
+      "examples": {
+        "median_liq_qv_usd": 143008.066795
+      }
+    },
+    {
+      "id": "order_book",
+      "label": "Order book depth",
+      "present_rate": 0.9984455958549223,
+      "notes": [
+        "depth_* fields, obi_5"
+      ],
+      "examples": {}
+    },
+    {
+      "id": "time_series",
+      "label": "Time-series prices",
+      "present_rate": 0.9989637305699481,
+      "notes": [
+        "spot_prices array"
+      ],
+      "examples": {
+        "median_sample_count": 747.0
+      }
+    },
+    {
+      "id": "sentiment_lexicon",
+      "label": "Sentiment (lexicon-based)",
+      "present_rate": 0.9984455958549223,
+      "notes": [
+        "lexicon_sentiment.score, posts_pos/neu/neg"
+      ],
+      "examples": {}
+    },
+    {
+      "id": "sentiment_ai",
+      "label": "Sentiment (AI/hybrid)",
+      "present_rate": 0.9984455958549223,
+      "notes": [
+        "ai_sentiment, hybrid_decision_stats, decision_sources"
+      ],
+      "examples": {
+        "median_mean_score": 0.7723
+      }
+    },
+    {
+      "id": "activity_silence",
+      "label": "Activity vs silence detection",
+      "present_rate": 0.9984455958549223,
+      "notes": [
+        "is_silent, recent_posts_count, hours_since_latest_tweet"
+      ],
+      "examples": {
+        "median_posts_total": 7.0
+      }
+    },
+    {
+      "id": "engagement",
+      "label": "Platform engagement",
+      "present_rate": 0.0,
+      "notes": [
+        "platform_engagement totals"
+      ],
+      "examples": {}
+    },
+    {
+      "id": "author_stats",
+      "label": "Author statistics",
+      "present_rate": 0.0,
+      "notes": [
+        "author_stats fields"
+      ],
+      "examples": {}
+    }
+  ]
+}

@@ -468,6 +468,55 @@ git push
 
 **Important:** Do not manually edit generated files. Run `npm run publish` to regenerate.
 
+### Dataset Artifacts (Part A)
+
+**Artifact builder:** The site includes `scripts/build_artifacts_part_a.py` which generates structured artifacts for website content.
+
+**Run manually:**
+```bash
+# From instrumetriq-site root
+python scripts/build_artifacts_part_a.py
+
+# With scan limit for testing
+ARTIFACT_SCAN_LIMIT=2000 python scripts/build_artifacts_part_a.py
+```
+
+**Artifacts generated** (in `public/data/artifacts/`):
+
+1. **coverage_v7.json** - Feature coverage table
+   - Shows availability rate for each feature group across v7 entries
+   - Groups: microstructure, liquidity, order book, time-series, sentiment (lexicon/AI), activity/silence, engagement, author stats
+   - Includes example median values where applicable
+   - Used for "What we collect" section
+
+2. **scale_v7.json** - Scale metrics
+   - Date range (first_day, last_day)
+   - Total v7 seen/usable entries
+   - Days running, avg per day
+   - Distinct symbols covered
+   - Cycles completed
+   - Used for "Dataset scale" section
+
+3. **preview_row_v7.json** - Redacted example vector
+   - Single representative entry with redaction
+   - Shows typical fields: symbol, scores, liquidity, spread, sentiment, activity, forward return bucket
+   - No timestamps, session_id, or exact returns
+   - Used for "Preview" section
+
+**Usable v7 gate:** Artifacts use the same "usable v7" filtering logic as the exporter:
+- schema_version == 7
+- spot_prices >= 700 samples
+- spot_raw has required keys (mid, bid, ask, spread_bps)
+- twitter_sentiment_windows has at least one cycle
+
+**Forward return bucketing:** Preview row includes next_1h_return_bucket computed from spot_prices:
+- very_negative: [-inf, -2%)
+- negative: [-2%, -0.5%)
+- neutral: [-0.5%, 0.5%)
+- positive: [0.5%, 2%)
+- very_positive: [2%, inf)
+- unknown: insufficient data
+
 ### Customizing Branding
 
 All branding constants are in `src/styles/global.css`:
