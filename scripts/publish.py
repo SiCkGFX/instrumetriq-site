@@ -348,8 +348,20 @@ def main():
         # Print summary
         aggregator.print_summary()
         
+        # Prepare metadata for charts
+        from datetime import datetime, timezone
+        insight_metadata = {
+            "first_day": aggregator.first_day or "UNKNOWN",
+            "last_day": aggregator.last_day or "UNKNOWN",
+            "sample_size": aggregator.usable_count,
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
         # Generate insight charts
-        charts.generate_insight_charts(aggregator, paths["insights_dir"])
+        charts.generate_insight_charts(aggregator, paths["insights_dir"], insight_metadata)
+        
+        # Write chart manifest
+        charts.write_chart_manifest(aggregator, paths["insights_dir"], insight_metadata)
     else:
         print(f"\n{WARN_MARK} Insight chart generation skipped")
     

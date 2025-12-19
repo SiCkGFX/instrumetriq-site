@@ -160,6 +160,13 @@ class InsightsAggregator:
         # Per-day tweet volume (for time series)
         self.daily_tweets = {}  # date -> list of last_cycle tweet counts
         
+        # Per-symbol aggregation (for top-20 charts)
+        self.per_symbol = {}  # symbol -> {tweets_lc: [], spread_bps: [], liq_qv_usd: []}
+        
+        # Date range tracking
+        self.first_day = None
+        self.last_day = None
+        
         # Total usable entries processed
         self.usable_count = 0
     
@@ -167,28 +174,51 @@ class InsightsAggregator:
         """Process one usable entry."""
         self.usable_count += 1
         
+        # Track date range
+        if self.first_day is None or date < self.first_day:
+            self.first_day = date
+        if self.last_day is None or date > self.last_day:
+            self.last_day = date
+        
+        # Extract symbol for per-symbol tracking
+        symbol = entry.get("symbol", "UNKNOWN")
+        if symbol not in self.per_symbol:
+            self.per_symbol[symbol] = {
+                "tweets_lc": [],
+                "spread_bps": [],
+                "liq_qv_usd": []
+            }
+        
         # Extract spread_bps
         spot_raw = entry.get("spot_raw", {})
         spread_bps = spot_raw.get("spread_bps")
         if is_valid_number(spread_bps) and spread_bps >= 0:
+            spread_val = float(spread_bps)
             self.n_spread = reservoir_sample(
-                float(spread_bps), 
+                spread_val, 
                 self.spread_bps_samples, 
                 self.max_samples, 
                 self.n_spread
             )
+            # Track per-symbol (bounded to avoid memory issues)
+            if len(self.per_symbol[symbol]["spread_bps"]) < 10_000:
+                self.per_symbol[symbol]["spread_bps"].append(spread_val)
         else:
             self.missing_spread += 1
         
         # Extract liq_qv_usd
         liq_qv_usd = spot_raw.get("liq_qv_usd")
         if is_valid_number(liq_qv_usd) and liq_qv_usd >= 0:
+            liq_val = float(liq_qv_usd)
             self.n_liq = reservoir_sample(
-                float(liq_qv_usd), 
+                liq_val, 
                 self.liq_qv_usd_samples, 
                 self.max_samples, 
                 self.n_liq
             )
+            # Track per-symbol (bounded)
+            if len(self.per_symbol[symbol]["liq_qv_usd"]) < 10_000:
+                self.per_symbol[symbol]["liq_qv_usd"].append(liq_val)
         else:
             self.missing_liq += 1
         
@@ -221,6 +251,10 @@ class InsightsAggregator:
             # Also use bounded sampling per day to avoid memory issues
             if len(self.daily_tweets[date]) < 50_000:
                 self.daily_tweets[date].append(tweets_lc)
+            
+            # Track per-symbol (bounded)
+            if len(self.per_symbol[symbol]["tweets_lc"]) < 10_000:
+                self.per_symbol[symbol]["tweets_lc"].append(tweets_lc)
         else:
             self.missing_tweets_lc += 1
         
@@ -260,6 +294,37 @@ class InsightsAggregator:
             })
         
         return daily_stats
+    
+    def get_top_symbols(self, metric: str, min_samples: int = 30, top_n: int = 20) -> List[Dict]:
+        """
+        Get top symbols by sample count with median values for a metric.
+        
+        Args:
+            metric: One of 'tweets_lc', 'spread_bps', 'liq_qv_usd'
+            min_samples: Minimum samples required per symbol
+            top_n: Number of top symbols to return
+        
+        Returns:
+            List of {"symbol": str, "median": float, "count": int}
+            sorted by sample count descending
+        """
+        import statistics
+        
+        symbol_stats = []
+        for symbol, data in self.per_symbol.items():
+            samples = data.get(metric, [])
+            if len(samples) >= min_samples:
+                median = statistics.median(samples)
+                symbol_stats.append({
+                    "symbol": symbol,
+                    "median": median,
+                    "count": len(samples)
+                })
+        
+        # Sort by sample count (most samples first = most stable)
+        symbol_stats.sort(key=lambda x: x["count"], reverse=True)
+        
+        return symbol_stats[:top_n]
     
     def print_summary(self):
         """Print ASCII-only summary."""

@@ -1,0 +1,175 @@
+{
+  "generated_at": "2025-12-19T11:12:32.177607+00:00",
+  "date_range_utc": {
+    "first_day": "2025-12-14",
+    "last_day": "2025-12-19"
+  },
+  "total_usable_snapshots": 10711,
+  "charts": [
+    {
+      "id": "spread_bps_hist",
+      "file": "spread_bps_hist.svg",
+      "title": "Bid-Ask Spread Distribution",
+      "description": "Distribution of bid-ask spreads across all usable snapshots, showing market microstructure characteristics.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "spot_raw.spread_bps"
+      ],
+      "aggregation": "histogram",
+      "notes": [
+        "One sample = one snapshot entry",
+        "Spread measured in basis points"
+      ]
+    },
+    {
+      "id": "liq_qv_usd_hist",
+      "file": "liq_qv_usd_hist.svg",
+      "title": "Liquidity Distribution (log scale)",
+      "description": "Distribution of liquidity quote values on log scale, showing market depth characteristics.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "spot_raw.liq_qv_usd"
+      ],
+      "aggregation": "histogram",
+      "notes": [
+        "One sample = one snapshot entry",
+        "Log10 scale for clarity"
+      ]
+    },
+    {
+      "id": "spread_vs_liq_scatter",
+      "file": "spread_vs_liq_scatter.svg",
+      "title": "Spread vs Liquidity Relationship",
+      "description": "Hexbin density plot showing relationship between spread and liquidity across snapshots.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "spot_raw.spread_bps",
+        "spot_raw.liq_qv_usd"
+      ],
+      "aggregation": "hexbin",
+      "notes": [
+        "One sample = one snapshot entry",
+        "Log scale on liquidity axis"
+      ]
+    },
+    {
+      "id": "tweets_last_cycle_hist",
+      "file": "tweets_last_cycle_hist.svg",
+      "title": "Tweet Volume Distribution (Single Cycle)",
+      "description": "Distribution of tweet counts per snapshot for single cycle window, showing social media activity levels.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "twitter_sentiment_windows.last_cycle.posts_total"
+      ],
+      "aggregation": "histogram",
+      "notes": [
+        "One sample = one snapshot entry",
+        "Counts aggregated per snapshot"
+      ]
+    },
+    {
+      "id": "tweets_last_2_cycles_hist",
+      "file": "tweets_last_2_cycles_hist.svg",
+      "title": "Tweet Volume Distribution (Double Cycle)",
+      "description": "Distribution of tweet counts per snapshot for double cycle window, showing extended social media activity.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "twitter_sentiment_windows.last_2_cycles.posts_total"
+      ],
+      "aggregation": "histogram",
+      "notes": [
+        "One sample = one snapshot entry",
+        "Counts aggregated per snapshot"
+      ]
+    },
+    {
+      "id": "tweets_volume_over_time",
+      "file": "tweets_volume_over_time.svg",
+      "title": "Tweet Volume Over Time",
+      "description": "Time series showing median and 90th percentile tweet volumes per day, revealing temporal patterns.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "twitter_sentiment_windows.last_cycle.posts_total"
+      ],
+      "aggregation": "time_series",
+      "notes": [
+        "Aggregated by archive day",
+        "Median and P90 computed per day"
+      ]
+    },
+    {
+      "id": "abs_return_hist",
+      "file": "abs_return_over_window_hist.svg",
+      "title": "Absolute Return Distribution",
+      "description": "Distribution of absolute returns computed from spot price windows, showing price movement characteristics.",
+      "population": "All usable v7 snapshots across all symbols",
+      "sample_size": 10711,
+      "fields": [
+        "spot_prices"
+      ],
+      "aggregation": "histogram",
+      "notes": [
+        "One sample = one snapshot entry",
+        "Computed from first to last mid price"
+      ]
+    },
+    {
+      "id": "tweets_last_cycle_top20_symbols",
+      "file": "tweets_last_cycle_top20_symbols.svg",
+      "title": "Top 20 Symbols by Tweet Volume",
+      "description": "Top 20 symbols ranked by sample count, showing median tweet volume per symbol for most-sampled assets.",
+      "population": "Symbols with >= 30 usable snapshots",
+      "sample_size": 10711,
+      "fields": [
+        "twitter_sentiment_windows.last_cycle.posts_total",
+        "symbol"
+      ],
+      "aggregation": "bar_chart",
+      "notes": [
+        "Median per symbol",
+        "Top 20 by sample count for stability"
+      ]
+    },
+    {
+      "id": "spread_bps_top20_symbols",
+      "file": "spread_bps_top20_symbols.svg",
+      "title": "Top 20 Symbols by Bid-Ask Spread",
+      "description": "Top 20 symbols ranked by sample count, showing median spread per symbol for most-sampled assets.",
+      "population": "Symbols with >= 30 usable snapshots",
+      "sample_size": 10711,
+      "fields": [
+        "spot_raw.spread_bps",
+        "symbol"
+      ],
+      "aggregation": "bar_chart",
+      "notes": [
+        "Median per symbol",
+        "Top 20 by sample count for stability"
+      ]
+    },
+    {
+      "id": "liq_qv_usd_top20_symbols",
+      "file": "liq_qv_usd_top20_symbols.svg",
+      "title": "Top 20 Symbols by Liquidity",
+      "description": "Top 20 symbols ranked by sample count, showing median liquidity per symbol for most-sampled assets.",
+      "population": "Symbols with >= 30 usable snapshots",
+      "sample_size": 10711,
+      "fields": [
+        "spot_raw.liq_qv_usd",
+        "symbol"
+      ],
+      "aggregation": "bar_chart",
+      "notes": [
+        "Median per symbol",
+        "Top 20 by sample count for stability",
+        "X-axis on log scale"
+      ]
+    }
+  ]
+}
