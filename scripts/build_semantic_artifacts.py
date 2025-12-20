@@ -15,7 +15,7 @@ import statistics
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Any
 
 
 # ASCII-only status marks
@@ -140,12 +140,14 @@ class CoverageTableBuilder:
                 safe_float(liq.get("liq_qv_usd"))
             )
         
-        # Order book depth
-        if liq.get("depth_snapshot_usd") is not None:
-            self.group_stats["order_book_depth"]["present"] += 1
-            depth = liq.get("depth_snapshot_usd", {})
-            total_depth = safe_float(depth.get("bid", 0), 0) + safe_float(depth.get("ask", 0), 0)
-            self.group_stats["order_book_depth"]["depth_values"].append(total_depth)
+            # Order book depth
+            if liq.get("depth_snapshot_usd") is not None:
+                self.group_stats["order_book_depth"]["present"] += 1
+                depth = liq.get("depth_snapshot_usd", {})
+                bid_depth = safe_float(depth.get("bid", 0), 0.0)
+                ask_depth = safe_float(depth.get("ask", 0), 0.0)
+                total_depth = (bid_depth or 0.0) + (ask_depth or 0.0)
+                self.group_stats["order_book_depth"]["depth_values"].append(total_depth)
         
         # Spot prices
         spot_prices = entry.get("spot_prices", [])
@@ -389,10 +391,40 @@ class DatasetSummaryBuilder:
         if symbol:
             self.distinct_symbols.add(symbol)
         
-        meta = entry.get("meta", {})
-        admitted_at = meta.get("admitted_at_unix_ms")
-        if admitted_at:
-            day = datetime.fromtimestamp(admitted_at / 1000, tz=timezone.utc).date().isoformat()
+        # Try multiple timestamp fields
+        day = None
+        # Try snapshot_ts first (ISO string)
+        snapshot_ts = entry.get("snapshot_ts")
+        if snapshot_ts:
+            try:
+                dt = datetime.fromisoformat(snapshot_ts.replace('Z', '+00:00'))
+                day = dt.date().isoformat()
+            except (ValueError, AttributeError):
+                pass
+        
+        # Try meta.added_ts (ISO string)
+        if not day:
+            meta = entry.get("meta", {})
+            added_ts = meta.get("added_ts")
+            if added_ts:
+                try:
+                    dt = datetime.fromisoformat(added_ts.replace('Z', '+00:00'))
+                    day = dt.date().isoformat()
+                except (ValueError, AttributeError):
+                    pass
+        
+        # Try meta.admitted_at_unix_ms (Unix milliseconds)
+        if not day:
+            meta = entry.get("meta", {})
+            admitted_at = meta.get("admitted_at_unix_ms")
+            if admitted_at:
+                try:
+                    dt = datetime.fromtimestamp(admitted_at / 1000, tz=timezone.utc)
+                    day = dt.date().isoformat()
+                except (ValueError, OSError):
+                    pass
+        
+        if day:
             self.days_seen.add(day)
         
         # Posts scored
@@ -518,6 +550,15 @@ class DatasetSummaryBuilder:
                 }
             })
         
+        # Add reason if sentiment buckets are empty
+        sentiment_buckets_result = {
+            "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
+            "buckets": sentiment_buckets_data,
+            "disclaimer": "Descriptive distribution only. No trading signal or correlation claim."
+        }
+        if len(sentiment_buckets_data) == 0:
+            sentiment_buckets_result["reason_unavailable"] = "hybrid_mean_score not found in archive entries"
+        
         return {
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scale": {
@@ -532,11 +573,7 @@ class DatasetSummaryBuilder:
                 "from_entries": self.posts_scored_entries,
                 "window_definition": "posts counted from twitter_sentiment_windows.last_cycle and last_2_cycles"
             },
-            "sentiment_buckets": {
-                "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
-                "buckets": sentiment_buckets_data,
-                "disclaimer": "Descriptive distribution only. No trading signal or correlation claim."
-            },
+            "sentiment_buckets": sentiment_buckets_result,
             "activity_regimes": {
                 "definition": "Regimes based on posts_total in last_cycle",
                 "bins": activity_regimes_data
@@ -548,7 +585,7 @@ class SymbolTableBuilder:
     """Build symbol_table.json with per-symbol sentiment and market context."""
     
     def __init__(self):
-        self.symbol_data = defaultdict(lambda: {
+        self.symbol_data: Dict[str, Dict[str, Any]] = defaultdict(lambda: {
             "sessions": 0,
             "first_seen": None,
             "last_seen": None,
@@ -567,11 +604,40 @@ class SymbolTableBuilder:
         data = self.symbol_data[symbol]
         data["sessions"] += 1
         
-        # Track first/last seen
-        meta = entry.get("meta", {})
-        admitted_at = meta.get("admitted_at_unix_ms")
-        if admitted_at:
-            day = datetime.fromtimestamp(admitted_at / 1000, tz=timezone.utc).date().isoformat()
+        # Track first/last seen - try multiple timestamp fields
+        day = None
+        # Try snapshot_ts first (ISO string)
+        snapshot_ts = entry.get("snapshot_ts")
+        if snapshot_ts:
+            try:
+                dt = datetime.fromisoformat(snapshot_ts.replace('Z', '+00:00'))
+                day = dt.date().isoformat()
+            except (ValueError, AttributeError):
+                pass
+        
+        # Try meta.added_ts (ISO string)
+        if not day:
+            meta = entry.get("meta", {})
+            added_ts = meta.get("added_ts")
+            if added_ts:
+                try:
+                    dt = datetime.fromisoformat(added_ts.replace('Z', '+00:00'))
+                    day = dt.date().isoformat()
+                except (ValueError, AttributeError):
+                    pass
+        
+        # Try meta.admitted_at_unix_ms (Unix milliseconds)
+        if not day:
+            meta = entry.get("meta", {})
+            admitted_at = meta.get("admitted_at_unix_ms")
+            if admitted_at:
+                try:
+                    dt = datetime.fromtimestamp(admitted_at / 1000, tz=timezone.utc)
+                    day = dt.date().isoformat()
+                except (ValueError, OSError):
+                    pass
+        
+        if day:
             if data["first_seen"] is None or day < data["first_seen"]:
                 data["first_seen"] = day
             if data["last_seen"] is None or day > data["last_seen"]:
@@ -741,10 +807,15 @@ def main():
     # Determine paths
     archive_base = args.archive or os.getenv("ARCHIVE_BASE_PATH")
     output_dir = args.output or os.getenv("OUTPUT_DIR")
-    scan_limit = args.scan_limit or os.getenv("SEMANTIC_SCAN_LIMIT")
+    scan_limit_str = args.scan_limit or os.getenv("SEMANTIC_SCAN_LIMIT")
     
-    if scan_limit:
-        scan_limit = int(scan_limit)
+    scan_limit = None
+    if scan_limit_str:
+        try:
+            scan_limit = int(scan_limit_str)
+        except (ValueError, TypeError):
+            print(f"{WARN_MARK} Invalid scan limit: {scan_limit_str}, ignoring")
+            scan_limit = None
     
     if not archive_base:
         print(f"{ERROR_MARK} ARCHIVE_BASE_PATH not set")

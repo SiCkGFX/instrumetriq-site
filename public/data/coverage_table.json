@@ -1,54 +1,54 @@
 {
-  "generated_at_utc": "2025-12-20T05:45:20.764995+00:00",
-  "total_entries": 0,
+  "generated_at_utc": "2025-12-20T06:09:20.237362+00:00",
+  "total_entries": 12540,
   "feature_groups": [
     {
       "group": "market_microstructure",
-      "present_rate_pct": 0,
+      "present_rate_pct": 100.0,
       "example_metric_label": "Median spread (bps)",
-      "example_metric_value": null,
+      "example_metric_value": 14.89,
       "example_metric_note": "Computed across all usable v7 entries"
     },
     {
       "group": "liquidity",
-      "present_rate_pct": 0,
+      "present_rate_pct": 0.0,
       "example_metric_label": "N/A",
       "example_metric_value": "Not present in v7 entries",
       "example_metric_note": "Liquidity data not collected for this dataset"
     },
     {
       "group": "order_book_depth",
-      "present_rate_pct": 0,
+      "present_rate_pct": 0.0,
       "example_metric_label": "N/A",
       "example_metric_value": "Not present in v7 entries",
       "example_metric_note": "Order book depth not collected for this dataset"
     },
     {
       "group": "spot_prices",
-      "present_rate_pct": 0,
+      "present_rate_pct": 100.0,
       "example_metric_label": "Median sample count",
-      "example_metric_value": null,
+      "example_metric_value": 749,
       "example_metric_note": "High-resolution price samples per entry"
     },
     {
       "group": "lexicon_sentiment",
-      "present_rate_pct": 0,
+      "present_rate_pct": 0.0,
       "example_metric_label": "N/A",
       "example_metric_value": "Not present in v7 entries",
       "example_metric_note": "Lexicon sentiment not available for this dataset"
     },
     {
       "group": "ai_sentiment",
-      "present_rate_pct": 0,
+      "present_rate_pct": 0.0,
       "example_metric_label": "N/A",
       "example_metric_value": "Not present in v7 entries",
       "example_metric_note": "AI sentiment not available for this dataset"
     },
     {
       "group": "activity_and_silence",
-      "present_rate_pct": 0,
+      "present_rate_pct": 100.0,
       "example_metric_label": "Median posts (last_cycle)",
-      "example_metric_value": 0,
+      "example_metric_value": 7,
       "example_metric_note": "Post count in most recent cycle"
     },
     {

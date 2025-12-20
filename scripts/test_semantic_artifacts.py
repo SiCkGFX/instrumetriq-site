@@ -11,9 +11,9 @@ from pathlib import Path
 def test_file_exists(file_path: Path, name: str) -> bool:
     """Test that file exists."""
     if not file_path.exists():
-        print(f"❌ FAIL: {name} not found at {file_path}")
+        print(f"[FAIL] FAIL: {name} not found at {file_path}")
         return False
-    print(f"✓ PASS: {name} exists")
+    print(f"[PASS] PASS: {name} exists")
     return True
 
 
@@ -22,10 +22,10 @@ def test_valid_json(file_path: Path, name: str):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        print(f"✓ PASS: {name} is valid JSON")
+        print(f"[PASS] PASS: {name} is valid JSON")
         return data
     except json.JSONDecodeError as e:
-        print(f"❌ FAIL: {name} is not valid JSON: {e}")
+        print(f"[FAIL] FAIL: {name} is not valid JSON: {e}")
         return None
 
 
@@ -40,15 +40,15 @@ def test_coverage_table(data: dict) -> bool:
     required_keys = ["generated_at_utc", "total_entries", "feature_groups"]
     for key in required_keys:
         if key not in data:
-            print(f"❌ FAIL: Missing key '{key}'")
+            print(f"[FAIL] FAIL: Missing key '{key}'")
             return False
     
-    print(f"✓ PASS: All required top-level keys present")
+    print(f"[PASS] PASS: All required top-level keys present")
     
     # Check feature groups
     groups = data["feature_groups"]
     if not isinstance(groups, list):
-        print(f"❌ FAIL: 'feature_groups' is not a list")
+        print(f"[FAIL] FAIL: 'feature_groups' is not a list")
         return False
     
     required_groups = [
@@ -66,10 +66,10 @@ def test_coverage_table(data: dict) -> bool:
     found_groups = {g["group"] for g in groups}
     missing_groups = set(required_groups) - found_groups
     if missing_groups:
-        print(f"❌ FAIL: Missing feature groups: {missing_groups}")
+        print(f"[FAIL] FAIL: Missing feature groups: {missing_groups}")
         return False
     
-    print(f"✓ PASS: All required feature groups present ({len(groups)} groups)")
+    print(f"[PASS] PASS: All required feature groups present ({len(groups)} groups)")
     
     # Check no empty example metrics
     empty_metrics = []
@@ -82,10 +82,10 @@ def test_coverage_table(data: dict) -> bool:
                 empty_metrics.append(group["group"])
     
     if empty_metrics:
-        print(f"❌ FAIL: Groups with empty example metrics: {empty_metrics}")
+        print(f"[FAIL] FAIL: Groups with empty example metrics: {empty_metrics}")
         return False
     
-    print(f"✓ PASS: No empty example metrics")
+    print(f"[PASS] PASS: No empty example metrics")
     
     return True
 
@@ -101,48 +101,48 @@ def test_dataset_summary(data: dict) -> bool:
     required_sections = ["scale", "posts_scored", "sentiment_buckets", "activity_regimes"]
     for section in required_sections:
         if section not in data:
-            print(f"❌ FAIL: Missing section '{section}'")
+            print(f"[FAIL] FAIL: Missing section '{section}'")
             return False
     
-    print(f"✓ PASS: All required sections present")
+    print(f"[PASS] PASS: All required sections present")
     
     # Check scale
     scale = data["scale"]
     scale_keys = ["days_running", "total_usable_entries", "avg_entries_per_day", "distinct_symbols"]
     for key in scale_keys:
         if key not in scale:
-            print(f"❌ FAIL: Missing scale key '{key}'")
+            print(f"[FAIL] FAIL: Missing scale key '{key}'")
             return False
     
-    print(f"✓ PASS: Scale section valid")
+    print(f"[PASS] PASS: Scale section valid")
     
     # Check sentiment buckets
     buckets = data["sentiment_buckets"]["buckets"]
     if not isinstance(buckets, list):
-        print(f"❌ FAIL: sentiment_buckets.buckets is not a list")
+        print(f"[FAIL] FAIL: sentiment_buckets.buckets is not a list")
         return False
     
-    print(f"✓ PASS: Sentiment buckets section valid ({len(buckets)} buckets)")
+    print(f"[PASS] PASS: Sentiment buckets section valid ({len(buckets)} buckets)")
     
     # Check activity regimes
     activity_bins = data["activity_regimes"]["bins"]
     if not isinstance(activity_bins, list):
-        print(f"❌ FAIL: activity_regimes.bins is not a list")
+        print(f"[FAIL] FAIL: activity_regimes.bins is not a list")
         return False
     
     if len(activity_bins) < 3:
-        print(f"❌ FAIL: Activity regimes has fewer than 3 bins (found {len(activity_bins)})")
+        print(f"[FAIL] FAIL: Activity regimes has fewer than 3 bins (found {len(activity_bins)})")
         return False
     
-    print(f"✓ PASS: Activity regimes has {len(activity_bins)} bins (>= 3)")
+    print(f"[PASS] PASS: Activity regimes has {len(activity_bins)} bins (>= 3)")
     
     # Check volume-based (not boolean)
     for bin_data in activity_bins:
         if "label" not in bin_data or "min" not in bin_data or "max" not in bin_data:
-            print(f"❌ FAIL: Activity bin missing required keys")
+            print(f"[FAIL] FAIL: Activity bin missing required keys")
             return False
     
-    print(f"✓ PASS: Activity regimes are volume-based (not boolean)")
+    print(f"[PASS] PASS: Activity regimes are volume-based (not boolean)")
     
     return True
 
@@ -156,26 +156,26 @@ def test_symbol_table(data: dict) -> bool:
     
     # Check required keys
     if "symbols" not in data:
-        print(f"❌ FAIL: Missing 'symbols' key")
+        print(f"[FAIL] FAIL: Missing 'symbols' key")
         return False
     
     symbols = data["symbols"]
     if not isinstance(symbols, list):
-        print(f"❌ FAIL: 'symbols' is not a list")
+        print(f"[FAIL] FAIL: 'symbols' is not a list")
         return False
     
     if len(symbols) == 0:
-        print(f"❌ FAIL: Symbol table is empty")
+        print(f"[FAIL] FAIL: Symbol table is empty")
         return False
     
-    print(f"✓ PASS: Symbol table has {len(symbols)} symbols")
+    print(f"[PASS] PASS: Symbol table has {len(symbols)} symbols")
     
     # Check first symbol structure
     first_symbol = symbols[0]
     required_keys = ["symbol", "sessions", "first_seen", "last_seen", "sentiment", "market_context"]
     for key in required_keys:
         if key not in first_symbol:
-            print(f"❌ FAIL: Missing key '{key}' in symbol entry")
+            print(f"[FAIL] FAIL: Missing key '{key}' in symbol entry")
             return False
     
     # Check sentiment sub-keys
@@ -190,10 +190,10 @@ def test_symbol_table(data: dict) -> bool:
     ]
     for key in sentiment_keys:
         if key not in sentiment:
-            print(f"❌ FAIL: Missing sentiment key '{key}'")
+            print(f"[FAIL] FAIL: Missing sentiment key '{key}'")
             return False
     
-    print(f"✓ PASS: Symbol table structure valid")
+    print(f"[PASS] PASS: Symbol table structure valid")
     
     return True
 
@@ -253,12 +253,13 @@ def main():
     # Final result
     print("\n" + "=" * 60)
     if all_pass:
-        print("✅ ALL TESTS PASSED")
+        print("[SUCCESS] ALL TESTS PASSED")
         return 0
     else:
-        print("❌ SOME TESTS FAILED")
+        print("[FAIL] SOME TESTS FAILED")
         return 1
 
 
 if __name__ == "__main__":
     exit(main())
+

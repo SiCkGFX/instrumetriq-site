@@ -1,24 +1,110 @@
 {
-  "generated_at_utc": "2025-12-20T05:45:20.765659+00:00",
+  "generated_at_utc": "2025-12-20T06:09:20.243358+00:00",
   "scale": {
-    "days_running": 0,
-    "total_usable_entries": 0,
-    "avg_entries_per_day": 0,
-    "distinct_symbols": 0,
+    "days_running": 7,
+    "total_usable_entries": 12540,
+    "avg_entries_per_day": 1791,
+    "distinct_symbols": 278,
     "cycles_completed": 0
   },
   "posts_scored": {
-    "total_posts": 0,
-    "from_entries": 0,
+    "total_posts": 640318,
+    "from_entries": 10064,
     "window_definition": "posts counted from twitter_sentiment_windows.last_cycle and last_2_cycles"
   },
   "sentiment_buckets": {
     "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
     "buckets": [],
-    "disclaimer": "Descriptive distribution only. No trading signal or correlation claim."
+    "disclaimer": "Descriptive distribution only. No trading signal or correlation claim.",
+    "reason_unavailable": "hybrid_mean_score not found in archive entries"
   },
   "activity_regimes": {
     "definition": "Regimes based on posts_total in last_cycle",
-    "bins": []
+    "bins": [
+      {
+        "label": "0",
+        "min": 0,
+        "max": 0,
+        "n_entries": 2476,
+        "metrics": {
+          "median_abs_return": null,
+          "p90_abs_return": null,
+          "median_spread_bps": 18.96,
+          "p90_spread_bps": 51.41,
+          "median_liq_qv_usd": null,
+          "p90_liq_qv_usd": null
+        }
+      },
+      {
+        "label": "1-2",
+        "min": 1,
+        "max": 2,
+        "n_entries": 1944,
+        "metrics": {
+          "median_abs_return": null,
+          "p90_abs_return": null,
+          "median_spread_bps": 18.94,
+          "p90_spread_bps": 49.9,
+          "median_liq_qv_usd": null,
+          "p90_liq_qv_usd": null
+        }
+      },
+      {
+        "label": "3-9",
+        "min": 3,
+        "max": 9,
+        "n_entries": 2513,
+        "metrics": {
+          "median_abs_return": null,
+          "p90_abs_return": null,
+          "median_spread_bps": 15.9,
+          "p90_spread_bps": 44.86,
+          "median_liq_qv_usd": null,
+          "p90_liq_qv_usd": null
+        }
+      },
+      {
+        "label": "10-24",
+        "min": 10,
+        "max": 24,
+        "n_entries": 1939,
+        "metrics": {
+          "median_abs_return": null,
+          "p90_abs_return": null,
+          "median_spread_bps": 14.11,
+          "p90_spread_bps": 38.94,
+          "median_liq_qv_usd": null,
+          "p90_liq_qv_usd": null
+        }
+      },
+      {
+        "label": "25-49",
+        "min": 25,
+        "max": 49,
+        "n_entries": 2380,
+        "metrics": {
+          "median_abs_return": null,
+          "p90_abs_return": null,
+          "median_spread_bps": 9.93,
+          "p90_spread_bps": 38.71,
+          "median_liq_qv_usd": null,
+          "p90_liq_qv_usd": null
+        }
+      },
+      {
+        "label": "50+",
+        "min": 50,
+        "max": 999999,
+        "n_entries": 1288,
+        "metrics": {
+          "median_abs_return": null,
+          "p90_abs_return": null,
+          "median_spread_bps": 7.97,
+          "p90_spread_bps": 31.98,
+          "median_liq_qv_usd": null,
+          "p90_liq_qv_usd": null
+        }
+      }
+    ]
   }
 }
