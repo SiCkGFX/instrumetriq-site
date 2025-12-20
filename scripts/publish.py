@@ -99,6 +99,53 @@ def run_exporter(paths, scan_limit=None):
         sys.exit(1)
 
 
+def run_semantic_artifacts(paths, scan_limit=None):
+    """Run semantic artifacts builder as subprocess."""
+    semantic_script = paths["site_root"] / "scripts" / "build_semantic_artifacts.py"
+    
+    if not semantic_script.exists():
+        print(f"{WARN_MARK} Semantic artifacts builder not found at {semantic_script}")
+        print(f"  Skipping semantic artifacts generation")
+        return
+    
+    # Build environment variables
+    env = os.environ.copy()
+    env["ARCHIVE_BASE_PATH"] = str(paths["cryptobot_archive"])
+    env["OUTPUT_DIR"] = str(paths["output_dir"])
+    env["PYTHONIOENCODING"] = "utf-8"
+    
+    if scan_limit:
+        env["SEMANTIC_SCAN_LIMIT"] = str(scan_limit)
+    
+    print(f"\n{RUNNING_MARK} Running semantic artifacts builder...")
+    print(f"  Archive: {paths['cryptobot_archive']}")
+    print(f"  Output: {paths['output_dir']}")
+    
+    # Determine python executable
+    python_cmd = sys.executable if sys.executable else "python"
+    
+    try:
+        result = subprocess.run(
+            [python_cmd, str(semantic_script)],
+            env=env,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            errors='replace',
+            check=True
+        )
+        print(result.stdout)
+        if result.stderr:
+            print("Warnings:", result.stderr, file=sys.stderr)
+        print(f"{OK_MARK} Semantic artifacts generated successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"{WARN_MARK} Semantic artifacts builder failed with code {e.returncode}")
+        print("STDOUT:", e.stdout)
+        print("STDERR:", e.stderr)
+        print(f"  Continuing without semantic artifacts")
+
+
+
 def verify_outputs(paths):
     """Verify outputs exist and are valid JSON."""
     status_json = paths["output_dir"] / "status.json"
@@ -281,7 +328,10 @@ def main():
     # Step 3: Run exporter
     run_exporter(paths, scan_limit=args.scan_limit)
     
-    # Step 4: Verify outputs
+    # Step 4: Generate semantic artifacts
+    run_semantic_artifacts(paths, scan_limit=args.scan_limit)
+    
+    # Step 5: Verify outputs
     status_data = verify_outputs(paths)
     
     # Step 5: Generate daily update

@@ -1,0 +1,24 @@
+{
+  "generated_at_utc": "2025-12-20T05:45:20.765659+00:00",
+  "scale": {
+    "days_running": 0,
+    "total_usable_entries": 0,
+    "avg_entries_per_day": 0,
+    "distinct_symbols": 0,
+    "cycles_completed": 0
+  },
+  "posts_scored": {
+    "total_posts": 0,
+    "from_entries": 0,
+    "window_definition": "posts counted from twitter_sentiment_windows.last_cycle and last_2_cycles"
+  },
+  "sentiment_buckets": {
+    "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
+    "buckets": [],
+    "disclaimer": "Descriptive distribution only. No trading signal or correlation claim."
+  },
+  "activity_regimes": {
+    "definition": "Regimes based on posts_total in last_cycle",
+    "bins": []
+  }
+}
