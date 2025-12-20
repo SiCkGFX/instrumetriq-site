@@ -1,18 +1,401 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import { 
+  loadArtifacts, 
+  formatPercent, 
+  formatNumber, 
+  formatDuration,
+  formatReturnPercent
+} from '../lib/artifactsData';
+
+const artifacts = loadArtifacts();
 ---
 
 <BaseLayout 
   title="Dataset - Instrumetriq"
-  description="Dataset notes for normalized public X (Twitter) post records and windowed summaries."
+  description="Dataset details: validated market snapshots with coverage, scale, behavior patterns, and transparency metrics."
 >
   <PageHero
     eyebrow="DATASET"
     title="Dataset"
-    subtitle="Validated market snapshots combining price microstructure, spot sampling, and frozen social sentiment windows."
+    subtitle="Validated market snapshots: v7 schema with coverage details, scale metrics, and behavioral summaries."
   />
+  
+  <!-- Warning banner if artifacts unavailable -->
+  {!artifacts.available && (
+    <div class="warning-banner">
+      <strong>Artifacts Status:</strong> Some artifacts are unavailable or failed validation. 
+      {artifacts.warnings.map(w => <div>• {w}</div>)}
+      Data below may be incomplete.
+    </div>
+  )}
+  
+  <!-- Readiness banner -->
+  {artifacts.ready && artifacts.scale && artifacts.scale.date_range && (
+    <div class={`readiness-banner ${artifacts.ready.status.toLowerCase()}`}>
+      <div class="banner-main">
+        <strong>Dataset snapshot:</strong> v7 validated entries
+        <span class="badge">{artifacts.ready.status}</span>
+      </div>
+      <div class="banner-details">
+        {artifacts.scale.date_range.first_day} to {artifacts.scale.date_range.last_day} 
+        • {formatNumber(artifacts.scale.v7_usable_total)} usable entries
+        {artifacts.ready.status === 'FAIL' && artifacts.ready.errors.length > 0 && (
+          <span class="error-hint">• Error: {artifacts.ready.errors[0]}</span>
+        )}
+      </div>
+      <div class="banner-link">
+        See <a href="/status">Status</a> for collection counters
+      </div>
+    </div>
+  )}
+  
   <div class="pageContent">
+    <!-- Section 1: Coverage -->
+    {artifacts.coverage && (
+      <section>
+        <h2>What We Collect</h2>
+        <p>
+          Each entry is a market snapshot. Feature groups show which data blocks are present across snapshots. 
+          A group's "present rate" indicates the percentage of validated entries that include that feature block.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Feature Group</th>
+                <th>Present Rate</th>
+                <th>Notes</th>
+                <th>Example Metric</th>
+              </tr>
+            </thead>
+            <tbody>
+              {artifacts.coverage.groups.map(group => (
+                <tr>
+                  <td><code>{group.group_name}</code></td>
+                  <td>{formatPercent(group.present_rate)}</td>
+                  <td>{group.notes || '—'}</td>
+                  <td>{group.example_metric || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 2: Scale -->
+    {artifacts.scale && (
+      <section>
+        <h2>Scale</h2>
+        <div class="scale-grid">
+          <div class="scale-card">
+            <div class="scale-label">Days Running</div>
+            <div class="scale-value">{artifacts.scale.days_running}</div>
+          </div>
+          <div class="scale-card">
+            <div class="scale-label">Total Usable</div>
+            <div class="scale-value">{formatNumber(artifacts.scale.v7_usable_total)}</div>
+          </div>
+          <div class="scale-card">
+            <div class="scale-label">Avg Per Day</div>
+            <div class="scale-value">{formatNumber(Math.round(artifacts.scale.avg_usable_per_day))}</div>
+          </div>
+          <div class="scale-card">
+            <div class="scale-label">Distinct Symbols</div>
+            <div class="scale-value">{formatNumber(artifacts.scale.distinct_symbols_total)}</div>
+          </div>
+          {artifacts.scale.cycles_completed !== undefined && (
+            <div class="scale-card">
+              <div class="scale-label">Cycles Completed</div>
+              <div class="scale-value">{formatNumber(artifacts.scale.cycles_completed)}</div>
+            </div>
+          )}
+          {artifacts.scale.date_range && (
+            <div class="scale-card">
+              <div class="scale-label">Date Range</div>
+              <div class="scale-value">{artifacts.scale.date_range.first_day} to {artifacts.scale.date_range.last_day}</div>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 3: Preview Row -->
+    {artifacts.preview && (
+      <section>
+        <h2>Dataset Preview Row</h2>
+        <p>
+          Example entry showing typical fields. This row is redacted: no timestamps, no URLs, forward return is bucketed.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table preview-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(artifacts.preview.row).map(([key, value]) => (
+                <tr>
+                  <td><code>{key}</code></td>
+                  <td>{typeof value === 'number' ? value.toFixed(6) : String(value)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 4: Behavior Summaries -->
+    {artifacts.sentiment && (
+      <section>
+        <h2>Sentiment Buckets vs Forward Return</h2>
+        <p>
+          Forward return distributions bucketed by hybrid sentiment mean score. 
+          This is descriptive distribution, not a trading signal or correlation claim.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sentiment Bucket</th>
+                <th>N</th>
+                <th>Median Return</th>
+                <th>IQR (p25..p75)</th>
+                <th>% Positive</th>
+              </tr>
+            </thead>
+            <tbody>
+              {artifacts.sentiment.bins
+                .filter(bin => bin.sample_count > 0)
+                .map(bin => (
+                  <tr>
+                    <td><code>{bin.bin_label}</code></td>
+                    <td>{formatNumber(bin.sample_count)}</td>
+                    <td>{formatReturnPercent(bin.median)}</td>
+                    <td>{formatReturnPercent(bin.p25)}..{formatReturnPercent(bin.p75)}</td>
+                    <td>{formatPercent(bin.pct_positive)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+    
+    {artifacts.regimes && (
+      <section>
+        <h2>Activity vs Silence Regimes</h2>
+        <p>
+          Comparison of metrics between silent and active regimes. 
+          "Silent" = no recent Twitter activity detected (is_silent=true).
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Silent (N={formatNumber(artifacts.regimes.groups.silent.sample_count)})</th>
+                <th>Active (N={formatNumber(artifacts.regimes.groups.active.sample_count)})</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Abs Return (median)</td>
+                <td>{formatReturnPercent(artifacts.regimes.groups.silent.abs_return_over_window.median)}</td>
+                <td>{formatReturnPercent(artifacts.regimes.groups.active.abs_return_over_window.median)}</td>
+              </tr>
+              <tr>
+                <td>Abs Return (p90)</td>
+                <td>{formatReturnPercent(artifacts.regimes.groups.silent.abs_return_over_window.p90)}</td>
+                <td>{formatReturnPercent(artifacts.regimes.groups.active.abs_return_over_window.p90)}</td>
+              </tr>
+              <tr>
+                <td>Spread (median bps)</td>
+                <td>{artifacts.regimes.groups.silent.spread_bps.median?.toFixed(2) || '—'}</td>
+                <td>{artifacts.regimes.groups.active.spread_bps.median?.toFixed(2) || '—'}</td>
+              </tr>
+              <tr>
+                <td>Spread (p90 bps)</td>
+                <td>{artifacts.regimes.groups.silent.spread_bps.p90?.toFixed(2) || '—'}</td>
+                <td>{artifacts.regimes.groups.active.spread_bps.p90?.toFixed(2) || '—'}</td>
+              </tr>
+              <tr>
+                <td>Liq QV USD (median)</td>
+                <td>{formatNumber(Math.round(artifacts.regimes.groups.silent.liq_qv_usd.median || 0))}</td>
+                <td>{formatNumber(Math.round(artifacts.regimes.groups.active.liq_qv_usd.median || 0))}</td>
+              </tr>
+              <tr>
+                <td>Liq QV USD (p90)</td>
+                <td>{formatNumber(Math.round(artifacts.regimes.groups.silent.liq_qv_usd.p90 || 0))}</td>
+                <td>{formatNumber(Math.round(artifacts.regimes.groups.active.liq_qv_usd.p90 || 0))}</td>
+              </tr>
+              <tr>
+                <td>Liq Global % (median)</td>
+                <td>{formatPercent(artifacts.regimes.groups.silent.liq_global_pct.median)}</td>
+                <td>{formatPercent(artifacts.regimes.groups.active.liq_global_pct.median)}</td>
+              </tr>
+              <tr>
+                <td>Liq Global % (p90)</td>
+                <td>{formatPercent(artifacts.regimes.groups.silent.liq_global_pct.p90)}</td>
+                <td>{formatPercent(artifacts.regimes.groups.active.liq_global_pct.p90)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 5: Hybrid Transparency -->
+    {artifacts.hybrid && (
+      <section>
+        <h2>Hybrid Decision Breakdown</h2>
+        <p>
+          How sentiment decisions are made in the hybrid system. Shows the distribution of decision sources.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Decision Source</th>
+                <th>Count</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Primary Lexicon</td>
+                <td>{formatNumber(artifacts.hybrid.decision_sources.primary_lexicon.count)}</td>
+                <td>{formatPercent(artifacts.hybrid.decision_sources.primary_lexicon.percentage)}</td>
+              </tr>
+              <tr>
+                <td>Primary AI</td>
+                <td>{formatNumber(artifacts.hybrid.decision_sources.primary_ai.count)}</td>
+                <td>{formatPercent(artifacts.hybrid.decision_sources.primary_ai.percentage)}</td>
+              </tr>
+              <tr>
+                <td>Referee Override</td>
+                <td>{formatNumber(artifacts.hybrid.decision_sources.referee_override.count)}</td>
+                <td>{formatPercent(artifacts.hybrid.decision_sources.referee_override.percentage)}</td>
+              </tr>
+              <tr>
+                <td>Full Agreement</td>
+                <td>{formatNumber(artifacts.hybrid.decision_sources.full_agreement.count)}</td>
+                <td>{formatPercent(artifacts.hybrid.decision_sources.full_agreement.percentage)}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>{formatNumber(artifacts.hybrid.decision_sources.total)}</strong></td>
+                <td><strong>100%</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="note">
+          Posts scored: {formatNumber(artifacts.hybrid.posts_scored.total)} 
+          (from {formatNumber(artifacts.hybrid.coverage.entries_with_decision_sources)} entries)
+        </p>
+      </section>
+    )}
+    
+    {artifacts.confidence && (
+      <section>
+        <h2>Confidence vs Disagreement</h2>
+        <p>
+          Disagreement rate binned by referee confidence. Shows when referee overrides primary decision.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Confidence Bin</th>
+                <th>N</th>
+                <th>Disagreement Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              {artifacts.confidence.bins
+                .filter(bin => bin.sample_count > 0)
+                .map(bin => (
+                  <tr>
+                    <td><code>{bin.bin_label}</code></td>
+                    <td>{formatNumber(bin.sample_count)}</td>
+                    <td>{formatPercent(bin.disagreement_rate)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 6: Lifecycle -->
+    {artifacts.lifecycle && (
+      <section>
+        <h2>Temporal Structure: Lifecycle Summary</h2>
+        <p>
+          Per-symbol aggregates showing session counts, durations, and date ranges. 
+          A session is an admission-to-expiry observation window.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table lifecycle-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Sessions</th>
+                <th>Median Duration</th>
+                <th>First Seen</th>
+                <th>Last Seen</th>
+                <th>Median Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {artifacts.lifecycle.symbols
+                .sort((a, b) => b.sessions_count - a.sessions_count)
+                .slice(0, 50)
+                .map(sym => (
+                  <tr>
+                    <td><code>{sym.symbol}</code></td>
+                    <td>{formatNumber(sym.sessions_count)}</td>
+                    <td>
+                      {sym.median_duration_sec ? 
+                        `${formatDuration(sym.median_duration_sec)} (${Math.round(sym.median_duration_sec)}s)` 
+                        : '—'}
+                    </td>
+                    <td>{sym.first_seen_day || '—'}</td>
+                    <td>{sym.last_seen_day || '—'}</td>
+                    <td>{sym.median_final_score?.toFixed(2) || '—'}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        {artifacts.lifecycle.symbols_count > 50 && (
+          <p class="note">Showing top 50 of {formatNumber(artifacts.lifecycle.symbols_count)} symbols (sorted by session count)</p>
+        )}
+      </section>
+    )}
+    
+    <!-- Honesty Block -->
+    <section>
+      <h2>What We Do Not Claim</h2>
+      <div class="honesty-block">
+        <ul>
+          <li><strong>No live signals:</strong> This dataset is for research and analysis, not real-time trading</li>
+          <li><strong>No guaranteed correlation:</strong> Patterns shown are descriptive, not predictive</li>
+          <li><strong>No post-hoc filtering:</strong> Data passes automated gates only, no cherry-picking</li>
+          <li><strong>No execution advice:</strong> This is not financial advice or investment guidance</li>
+        </ul>
+      </div>
+    </section>
+    
+    <!-- Original context sections -->
     <section>
       <h2>About the Dataset</h2>
       <p>
@@ -21,87 +404,6 @@ import PageHero from '../components/PageHero.astro';
       <p>
         See <a href="/status">Status</a> for current validated record counts.
       </p>
-    </section>
-    
-    <section>
-      <h2>What is a Snapshot?</h2>
-      <p>
-        Each snapshot is a structured observation of a single cryptocurrency symbol at a specific moment. A single record contains:
-      </p>
-      <ul>
-        <li><strong>Symbol:</strong> The cryptocurrency being observed (e.g., BTC, AAVE, ETH)</li>
-        <li><strong>Timestamp:</strong> UTC timestamp marking when the snapshot was captured</li>
-        <li><strong>Spot price microstructure:</strong> Bid/ask spreads, order book depth, liquidity metrics</li>
-        <li><strong>700+ spot price samples:</strong> High-resolution price observations collected over a fixed window</li>
-        <li><strong>Social sentiment windows:</strong> Aggregated, frozen sentiment metrics from X (Twitter)</li>
-      </ul>
-      <p>
-        <strong>Important:</strong> This is <em>not</em> a live feed. Each snapshot is a frozen observation, validated and archived for research use.
-      </p>
-    </section>
-    
-    <section>
-      <h2>Snapshot Anatomy</h2>
-      <p>
-        Each snapshot is organized into conceptual blocks. This is a high-level view—detailed schema documentation will accompany public releases.
-      </p>
-      <div class="anatomy-grid">
-        <div class="anatomy-block">
-          <h3>spot_raw</h3>
-          <p>Market microstructure & liquidity context. Includes bid/ask spreads, order book snapshots, and exchange-level metadata.</p>
-        </div>
-        <div class="anatomy-block">
-          <h3>spot_prices</h3>
-          <p>High-resolution price samples collected over a fixed window. Provides fine-grained visibility into price movement and volatility.</p>
-        </div>
-        <div class="anatomy-block">
-          <h3>twitter_sentiment_windows</h3>
-          <p>Aggregated social sentiment metrics from X (Twitter). Windows are frozen at snapshot time and provide context on public narrative activity.</p>
-        </div>
-        <div class="anatomy-block">
-          <h3>scores / flags</h3>
-          <p>Derived context and quality markers. Includes validation results, admission criteria, and computed indicators.</p>
-        </div>
-      </div>
-    </section>
-    
-    <section>
-      <h2>Data Validation & Quality Gates</h2>
-      <p>
-        Only validated entries appear in public counts. Every snapshot must meet strict quality requirements:
-      </p>
-      <ul>
-        <li><strong>v7 schema only:</strong> All snapshots conform to the v7 data model</li>
-        <li><strong>Type checking:</strong> Required blocks must exist and have correct structure</li>
-        <li><strong>700+ spot samples minimum:</strong> Insufficient sampling results in exclusion</li>
-        <li><strong>Health gates:</strong> Automated checks verify data completeness and integrity</li>
-        <li><strong>Repeatability:</strong> All validation is automated and deterministic</li>
-      </ul>
-      <p>
-        Entries that fail quality gates are excluded from public counts. <strong>This page reflects only validated entries.</strong>
-      </p>
-    </section>
-    
-    <section>
-      <h2>What this dataset is — and isn't</h2>
-      <div class="is-isnt-grid">
-        <div class="is-block">
-          <h3>Is</h3>
-          <ul>
-            <li>A research-grade market observability dataset</li>
-            <li>Suitable for analysis, filtering, conditioning, and academic research</li>
-            <li>Validated, structured, and reproducible</li>
-          </ul>
-        </div>
-        <div class="isnt-block">
-          <h3>Is not</h3>
-          <ul>
-            <li>A trading signal or prediction engine</li>
-            <li>A guarantee of price movement or correlation</li>
-            <li>Financial advice or investment guidance</li>
-          </ul>
-        </div>
-      </div>
     </section>
     
     <section>
@@ -117,79 +419,167 @@ import PageHero from '../components/PageHero.astro';
         Public releases will include comprehensive documentation and a Python quickstart for reading and exploring the data. Access terms and licensing details will be finalized and published alongside the first release.
       </p>
     </section>
-    
-    <section>
-      <h2>Citation</h2>
-      <p>
-        If you use this dataset in your research, please cite it appropriately. Citation guidelines and version-specific references will be provided with versioned releases.
-      </p>
-    </section>
   </div>
 </BaseLayout>
 
 <style>
-  .anatomy-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-4);
+  .warning-banner {
+    background-color: #fee;
+    border-left: 4px solid #f44;
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+    color: #600;
   }
   
-  .anatomy-block {
+  .readiness-banner {
     padding: var(--space-4);
-    background-color: var(--panel2);
-    border-left: 3px solid var(--accent-dim);
+    margin-bottom: var(--space-5);
     border-radius: 4px;
+    border-left: 4px solid var(--accent);
   }
   
-  .anatomy-block h3 {
-    margin-top: 0;
+  .readiness-banner.pass {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+  }
+  
+  .readiness-banner.fail {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+  }
+  
+  .banner-main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.1rem;
     margin-bottom: var(--space-2);
-    font-size: 1.125rem;
-    color: var(--text);
-    font-family: 'Courier New', monospace;
   }
   
-  .anatomy-block p {
-    margin: 0;
+  .banner-main .badge {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .readiness-banner.pass .badge {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .readiness-banner.fail .badge {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  .banner-details {
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    margin-bottom: var(--space-2);
   }
   
-  .is-isnt-grid {
+  .banner-details .error-hint {
+    color: #ef4444;
+    font-weight: 500;
+  }
+  
+  .banner-link {
+    font-size: 0.9rem;
+  }
+  
+  .scale-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-3);
     margin-top: var(--space-4);
   }
   
-  .is-block, .isnt-block {
+  .scale-card {
     padding: var(--space-4);
     background-color: var(--panel2);
     border-radius: 4px;
+    text-align: center;
   }
   
-  .is-block {
-    border-left: 3px solid #10b981;
+  .scale-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
   }
   
-  .isnt-block {
-    border-left: 3px solid #ef4444;
-  }
-  
-  .is-block h3, .isnt-block h3 {
-    margin-top: 0;
-    margin-bottom: var(--space-3);
-    font-size: 1.125rem;
+  .scale-value {
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--text);
   }
   
-  .is-block ul, .isnt-block ul {
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: var(--space-4);
+  }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--panel2);
+    font-size: 0.9rem;
+  }
+  
+  .data-table th {
+    background-color: var(--panel);
+    padding: var(--space-3);
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--accent-dim);
+  }
+  
+  .data-table td {
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--panel);
+  }
+  
+  .data-table tbody tr:hover {
+    background-color: rgba(0, 188, 212, 0.05);
+  }
+  
+  .data-table code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    color: var(--accent);
+  }
+  
+  .preview-table td {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+  }
+  
+  .lifecycle-table {
+    font-size: 0.85rem;
+  }
+  
+  .note {
+    margin-top: var(--space-3);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  
+  .honesty-block {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-left: 4px solid #ef4444;
+    border-radius: 4px;
+    margin-top: var(--space-4);
+  }
+  
+  .honesty-block ul {
     margin: 0;
     padding-left: var(--space-4);
   }
   
-  .is-block li, .isnt-block li {
+  .honesty-block li {
     margin-bottom: var(--space-2);
     color: var(--text-muted);
   }

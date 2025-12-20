@@ -17,6 +17,16 @@ try {
   console.error('Failed to load status data:', error);
   statusDisplay = parseStatusData(null);
 }
+
+// Load artifacts readiness
+let artifactsReady;
+try {
+  const artifactsPath = path.join(process.cwd(), 'public', 'data', 'artifacts', 'ARTIFACTS_READY.json');
+  artifactsReady = JSON.parse(fs.readFileSync(artifactsPath, 'utf-8'));
+} catch (error) {
+  console.error('Failed to load artifacts readiness:', error);
+  artifactsReady = null;
+}
 ---
 
 <BaseLayout 
@@ -33,6 +43,35 @@ try {
       <div class="warning-banner">
         <p>⚠️ Status data not available.</p>
       </div>
+    )}
+    
+    {artifactsReady && (
+      <section class="artifacts-readiness">
+        <h2>Dataset Artifacts</h2>
+        <div class={`readiness-box ${artifactsReady.status.toLowerCase()}`}>
+          <div class="readiness-header">
+            <strong>Validation Status:</strong>
+            <span class="status-badge">{artifactsReady.status}</span>
+          </div>
+          <div class="readiness-details">
+            <p>
+              {artifactsReady.checks_passed} checks passed
+              {artifactsReady.warnings.length > 0 && ` • ${artifactsReady.warnings.length} warnings`}
+              {artifactsReady.errors.length > 0 && ` • ${artifactsReady.errors.length} errors`}
+            </p>
+            {artifactsReady.status === 'PASS' && (
+              <p class="success-msg">✓ Ready for website deployment</p>
+            )}
+            {artifactsReady.status === 'FAIL' && artifactsReady.errors.length > 0 && (
+              <p class="error-msg">First error: {artifactsReady.errors[0]}</p>
+            )}
+          </div>
+          <div class="readiness-footer">
+            Generated: {new Date(artifactsReady.generated_at_utc).toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' })}
+            • <a href="/dataset">View Dataset</a>
+          </div>
+        </div>
+      </section>
     )}
     
     <section class="status-grid">
@@ -165,6 +204,75 @@ try {
   .data-definitions ul {
     list-style: none;
     padding: 0;
+  }
+  
+  .artifacts-readiness {
+    margin-bottom: var(--space-6);
+  }
+  
+  .readiness-box {
+    padding: var(--space-4);
+    border-radius: 4px;
+    border-left: 4px solid var(--accent);
+  }
+  
+  .readiness-box.pass {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+  }
+  
+  .readiness-box.fail {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+  }
+  
+  .readiness-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .readiness-box.pass .status-badge {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .readiness-box.fail .status-badge {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  .readiness-details p {
+    margin: var(--space-2) 0;
+    color: var(--text-muted);
+  }
+  
+  .success-msg {
+    color: #10b981 !important;
+    font-weight: 500;
+  }
+  
+  .error-msg {
+    color: #ef4444 !important;
+    font-weight: 500;
+  }
+  
+  .readiness-footer {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--panel);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
     margin: 0;
   }
   

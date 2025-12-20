@@ -667,6 +667,60 @@ python scripts/build_artifacts_master.py --self-test
 
 **Website readiness gate:** If `ready_for_website: false`, the site MUST NOT be updated. This prevents silent failures and partial deployments.
 
+---
+
+## Phase 4.E: Frontend Wiring (Dataset Page)
+
+**Purpose:** Wire JSON artifacts into the website `/dataset` page with clear sections, tables (not charts), and honest disclaimers.
+
+**Artifact location:** `public/data/artifacts/` (9 JSON files committed to repo)
+
+**Loader module:** `src/lib/artifactsData.ts`
+- **Pattern:** Build-time fs reading using Node APIs (similar to `statusData.ts`)
+- **Type interfaces:** Full TypeScript definitions for all 9 artifacts
+- **Function:** `loadArtifacts()` returns `ArtifactsLoadResult` with:
+  - `available: boolean` - Whether artifacts loaded successfully
+  - `warnings: string[]` - List of load failures
+  - Individual artifact properties (all nullable): `ready`, `coverage`, `scale`, `preview`, `sentiment`, `regimes`, `hybrid`, `confidence`, `lifecycle`
+- **Utility formatters:** `formatPercent()`, `formatNumber()`, `formatDuration()`, `formatReturnPercent()`
+- **Graceful fallbacks:** Returns null for missing artifacts, populates warnings array
+
+**Dataset page sections:** `src/pages/dataset.astro`
+
+1. **Warning banner** - Shows if `!artifacts.available`, lists warnings
+2. **Readiness banner** - Shows PASS/FAIL status from `ARTIFACTS_READY.json`, date range, link to /status
+3. **Coverage table** - Renders `coverage_v7.groups` with feature groups, present rates, notes, example metrics
+4. **Scale grid** - Card layout showing `days_running`, `v7_usable_total`, `avg_usable_per_day`, `distinct_symbols_total`, date range
+5. **Preview table** - Two-column key/value table showing redacted example entry from `preview_row_v7.row`
+6. **Sentiment buckets table** - Bins from `sentiment_vs_forward_return_v7` with N, median, IQR, % positive
+7. **Activity regimes table** - Silent vs Active comparison from `regimes_activity_vs_silence_v7`
+8. **Hybrid decisions table** - Decision source breakdown from `hybrid_decisions_v7`
+9. **Confidence disagreement table** - Bins from `confidence_disagreement_v7` showing disagreement rates
+10. **Lifecycle table** - Per-symbol session summary from `lifecycle_summary_v7`, sorted by session count (top 50)
+11. **Honesty block** - "What We Do Not Claim" disclaimers (no live signals, no guaranteed correlation, no cherry-picking, no execution advice)
+
+**Status page update:** `src/pages/status.astro`
+- Added artifacts readiness box reading `ARTIFACTS_READY.json`
+- Shows PASS/FAIL badge with conditional styling (green for PASS, red for FAIL)
+- Displays checks_passed count, warnings/errors if any
+- Generated timestamp and link to /dataset
+
+**Styling:**
+- `.data-table` - Standard table styling with hover effects, code formatting
+- `.scale-grid` - Responsive card grid for scale metrics
+- `.readiness-banner` / `.readiness-box` - Conditional styling for PASS (green) / FAIL (red)
+- `.honesty-block` - Red-left-border callout for disclaimers
+- All tables use monospace code formatting for keys/identifiers
+
+**Testing:**
+- Build succeeds with all artifacts present
+- Graceful degradation tested: Loader returns warnings if artifacts missing, page renders without crashing
+- Preview server confirmed working at http://localhost:4321/
+
+**Documentation:** See Phase 4.A-4.D above for artifact generation and validation details.
+
+---
+
 ### Customizing Branding
 
 All branding constants are in `src/styles/global.css`:
