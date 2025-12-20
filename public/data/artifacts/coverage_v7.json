@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2025-12-19T13:42:25.761547+00:00",
+  "generated_at_utc": "2025-12-19T14:45:45.270029+00:00",
   "date_range_utc": {
     "first_day": "2025-12-14",
-    "last_day": "2025-12-19"
+    "last_day": "2025-12-16"
   },
   "counts": {
-    "v7_seen": 11580,
-    "v7_usable": 10931
+    "v7_seen": 5001,
+    "v7_usable": 4352
   },
   "groups": [
     {
@@ -17,24 +17,24 @@
         "Bid, ask, mid, spread_bps, last, range_pct_24h"
       ],
       "examples": {
-        "median_spread_bps": 14.947683109118437
+        "median_spread_bps": 14.524328249819114
       }
     },
     {
       "id": "liquidity",
       "label": "Liquidity metrics",
-      "present_rate": 0.9984455958549223,
+      "present_rate": 0.9964007198560288,
       "notes": [
         "liq_qv_usd, liq_global_pct"
       ],
       "examples": {
-        "median_liq_qv_usd": 143008.066795
+        "median_liq_qv_usd": 137029.617558
       }
     },
     {
       "id": "order_book",
       "label": "Order book depth",
-      "present_rate": 0.9984455958549223,
+      "present_rate": 0.9964007198560288,
       "notes": [
         "depth_* fields, obi_5"
       ],
@@ -43,18 +43,18 @@
     {
       "id": "time_series",
       "label": "Time-series prices",
-      "present_rate": 0.9989637305699481,
+      "present_rate": 0.9976004799040192,
       "notes": [
         "spot_prices array"
       ],
       "examples": {
-        "median_sample_count": 747.0
+        "median_sample_count": 744
       }
     },
     {
       "id": "sentiment_lexicon",
       "label": "Sentiment (lexicon-based)",
-      "present_rate": 0.9984455958549223,
+      "present_rate": 0.9964007198560288,
       "notes": [
         "lexicon_sentiment.score, posts_pos/neu/neg"
       ],
@@ -63,23 +63,23 @@
     {
       "id": "sentiment_ai",
       "label": "Sentiment (AI/hybrid)",
-      "present_rate": 0.9984455958549223,
+      "present_rate": 0.9964007198560288,
       "notes": [
         "ai_sentiment, hybrid_decision_stats, decision_sources"
       ],
       "examples": {
-        "median_mean_score": 0.7723
+        "median_mean_score": 0.7857
       }
     },
     {
       "id": "activity_silence",
       "label": "Activity vs silence detection",
-      "present_rate": 0.9984455958549223,
+      "present_rate": 0.9964007198560288,
       "notes": [
         "is_silent, recent_posts_count, hours_since_latest_tweet"
       ],
       "examples": {
-        "median_posts_total": 7.0
+        "median_posts_total": 8
       }
     },
     {

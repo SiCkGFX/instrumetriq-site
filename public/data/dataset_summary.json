@@ -1,15 +1,15 @@
 {
-  "generated_at_utc": "2025-12-20T06:09:20.243358+00:00",
+  "generated_at_utc": "2025-12-20T13:11:23.722477+00:00",
   "scale": {
     "days_running": 7,
-    "total_usable_entries": 12540,
-    "avg_entries_per_day": 1791,
+    "total_usable_entries": 13235,
+    "avg_entries_per_day": 1891,
     "distinct_symbols": 278,
     "cycles_completed": 0
   },
   "posts_scored": {
-    "total_posts": 640318,
-    "from_entries": 10064,
+    "total_posts": 672268,
+    "from_entries": 10609,
     "window_definition": "posts counted from twitter_sentiment_windows.last_cycle and last_2_cycles"
   },
   "sentiment_buckets": {
@@ -25,11 +25,11 @@
         "label": "0",
         "min": 0,
         "max": 0,
-        "n_entries": 2476,
+        "n_entries": 2626,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 18.96,
+          "median_spread_bps": 18.94,
           "p90_spread_bps": 51.41,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
@@ -39,12 +39,12 @@
         "label": "1-2",
         "min": 1,
         "max": 2,
-        "n_entries": 1944,
+        "n_entries": 2079,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 18.94,
-          "p90_spread_bps": 49.9,
+          "median_spread_bps": 18.61,
+          "p90_spread_bps": 49.68,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -53,12 +53,12 @@
         "label": "3-9",
         "min": 3,
         "max": 9,
-        "n_entries": 2513,
+        "n_entries": 2644,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 15.9,
-          "p90_spread_bps": 44.86,
+          "median_spread_bps": 15.81,
+          "p90_spread_bps": 44.02,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -67,12 +67,12 @@
         "label": "10-24",
         "min": 10,
         "max": 24,
-        "n_entries": 1939,
+        "n_entries": 2033,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 14.11,
-          "p90_spread_bps": 38.94,
+          "median_spread_bps": 13.7,
+          "p90_spread_bps": 38.9,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -81,12 +81,12 @@
         "label": "25-49",
         "min": 25,
         "max": 49,
-        "n_entries": 2380,
+        "n_entries": 2508,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 9.93,
-          "p90_spread_bps": 38.71,
+          "median_spread_bps": 9.78,
+          "p90_spread_bps": 39.6,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -95,12 +95,12 @@
         "label": "50+",
         "min": 50,
         "max": 999999,
-        "n_entries": 1288,
+        "n_entries": 1345,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 7.97,
-          "p90_spread_bps": 31.98,
+          "median_spread_bps": 7.98,
+          "p90_spread_bps": 31.09,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }

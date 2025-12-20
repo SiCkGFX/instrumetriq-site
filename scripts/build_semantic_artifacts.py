@@ -192,8 +192,8 @@ class CoverageTableBuilder:
                 self.group_stats["author_stats"]["present"] += 1
                 self.group_stats["author_stats"]["author_counts"].append(authors)
     
-    def build(self) -> dict:
-        """Build coverage_table.json structure."""
+    def build(self, is_partial_scan: bool = False, scan_limit: int | None = None) -> dict:
+        """Build coverage_table.json structure with partial scan indicator."""
         feature_groups = []
         
         # Market microstructure
@@ -349,11 +349,18 @@ class CoverageTableBuilder:
                 "example_metric_note": "Unique authors per cycle"
             })
         
-        return {
+        result = {
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "total_entries": self.total_entries,
             "feature_groups": feature_groups
         }
+        
+        if is_partial_scan:
+            result["partial_scan"] = True
+            result["partial_scan_limit"] = scan_limit
+            result["note"] = "partial scan - metrics may be unreliable"
+        
+        return result
 
 
 class DatasetSummaryBuilder:
@@ -479,8 +486,8 @@ class DatasetSummaryBuilder:
             if liq_qv_usd is not None:
                 self.activity_bins[bin_key]["liq_qv_usd"].append(liq_qv_usd)
     
-    def build(self) -> dict:
-        """Build dataset_summary.json structure."""
+    def build(self, is_partial_scan: bool = False, scan_limit: int | None = None) -> dict:
+        """Build dataset_summary.json structure with partial scan indicator."""
         days_list = sorted(self.days_seen)
         days_running = len(days_list)
         avg_per_day = self.total_entries / days_running if days_running > 0 else 0
@@ -559,7 +566,7 @@ class DatasetSummaryBuilder:
         if len(sentiment_buckets_data) == 0:
             sentiment_buckets_result["reason_unavailable"] = "hybrid_mean_score not found in archive entries"
         
-        return {
+        result = {
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scale": {
                 "days_running": days_running,
@@ -579,6 +586,12 @@ class DatasetSummaryBuilder:
                 "bins": activity_regimes_data
             }
         }
+        
+        if is_partial_scan:
+            result["partial_scan"] = True
+            result["partial_scan_limit"] = scan_limit
+        
+        return result
 
 
 class SymbolTableBuilder:
@@ -768,20 +781,22 @@ def scan_archive(archive_path: Path, scan_limit: Optional[int] = None):
     return coverage_builder, summary_builder, symbol_builder
 
 
-def write_artifacts(output_dir: Path, coverage_builder, summary_builder, symbol_builder):
+def write_artifacts(output_dir: Path, coverage_builder, summary_builder, symbol_builder, scan_limit=None):
     """Write all three artifacts to output directory."""
     output_dir.mkdir(parents=True, exist_ok=True)
     
+    is_partial_scan = scan_limit is not None
+    
     # Coverage table
     coverage_path = output_dir / "coverage_table.json"
-    coverage_data = coverage_builder.build()
+    coverage_data = coverage_builder.build(is_partial_scan=is_partial_scan, scan_limit=scan_limit)
     with open(coverage_path, "w", encoding="utf-8") as f:
         json.dump(coverage_data, f, indent=2, ensure_ascii=True)
     print(f"{OK_MARK} Wrote: {coverage_path}")
     
     # Dataset summary
     summary_path = output_dir / "dataset_summary.json"
-    summary_data = summary_builder.build()
+    summary_data = summary_builder.build(is_partial_scan=is_partial_scan, scan_limit=scan_limit)
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(summary_data, f, indent=2, ensure_ascii=True)
     print(f"{OK_MARK} Wrote: {summary_path}")
@@ -840,7 +855,7 @@ def main():
     coverage_builder, summary_builder, symbol_builder = scan_archive(archive_path, scan_limit)
     
     # Write artifacts
-    write_artifacts(output_path, coverage_builder, summary_builder, symbol_builder)
+    write_artifacts(output_path, coverage_builder, summary_builder, symbol_builder, scan_limit)
     
     print(f"\n{OK_MARK} Semantic artifacts generation complete")
     return 0

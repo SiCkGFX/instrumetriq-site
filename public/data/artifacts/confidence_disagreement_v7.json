@@ -2,49 +2,49 @@
   "description": "Confidence vs disagreement patterns. Shows when referee overrides primary decision, binned by referee confidence. Descriptive only.",
   "data_version": "v7",
   "coverage": {
-    "total_usable_entries": 10972,
-    "entries_with_referee_conf": 8664
+    "total_usable_entries": 0,
+    "entries_with_referee_conf": 0
   },
   "bins": [
     {
       "bin_label": "[0.0..0.2)",
       "bin_low": 0.0,
       "bin_high": 0.2,
-      "sample_count": 157,
+      "sample_count": 0,
       "disagreement_count": 0,
-      "disagreement_rate": 0.0
+      "disagreement_rate": null
     },
     {
       "bin_label": "[0.2..0.4)",
       "bin_low": 0.2,
       "bin_high": 0.4,
-      "sample_count": 262,
-      "disagreement_count": 2,
-      "disagreement_rate": 0.0076
+      "sample_count": 0,
+      "disagreement_count": 0,
+      "disagreement_rate": null
     },
     {
       "bin_label": "[0.4..0.6)",
       "bin_low": 0.4,
       "bin_high": 0.6,
-      "sample_count": 1041,
-      "disagreement_count": 27,
-      "disagreement_rate": 0.0259
+      "sample_count": 0,
+      "disagreement_count": 0,
+      "disagreement_rate": null
     },
     {
       "bin_label": "[0.6..0.8)",
       "bin_low": 0.6,
       "bin_high": 0.8,
-      "sample_count": 3364,
-      "disagreement_count": 135,
-      "disagreement_rate": 0.0401
+      "sample_count": 0,
+      "disagreement_count": 0,
+      "disagreement_rate": null
     },
     {
       "bin_label": "[0.8..1.0)",
       "bin_low": 0.8,
       "bin_high": 1.0,
-      "sample_count": 3840,
-      "disagreement_count": 123,
-      "disagreement_rate": 0.032
+      "sample_count": 0,
+      "disagreement_count": 0,
+      "disagreement_rate": null
     }
   ]
 }

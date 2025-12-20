@@ -1,14 +1,14 @@
 {
-  "last_updated_utc": "2025-12-19T08:58:44.229373Z",
+  "last_updated_utc": "2025-12-20T05:55:49.668174Z",
   "archive_window": {
     "first_day": "2025-12-09",
-    "last_day": "2025-12-19"
+    "last_day": "2025-12-20"
   },
   "counts": {
-    "total_entries_scanned": 11,
-    "v7_entries_seen": 10,
-    "usable_entries": 10,
-    "usable_full_spot_raw": 10,
+    "total_entries_scanned": 3001,
+    "v7_entries_seen": 3000,
+    "usable_entries": 3000,
+    "usable_full_spot_raw": 3000,
     "usable_partial_spot_raw": 0
   },
   "fail_reasons": {}

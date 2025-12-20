@@ -2,110 +2,110 @@
   "description": "Forward return distributions bucketed by hybrid sentiment mean_score. Descriptive only, not predictive.",
   "data_version": "v7",
   "coverage": {
-    "total_usable_entries": 10972,
-    "entries_with_mean_score": 8664,
-    "entries_with_forward_return": 8664
+    "total_usable_entries": 0,
+    "entries_with_mean_score": 0,
+    "entries_with_forward_return": 0
   },
   "bins": [
     {
       "bin_label": "[-1.0..-0.8)",
       "bin_low": -1.0,
       "bin_high": -0.8,
-      "sample_count": 157,
-      "median": -0.000335,
-      "p25": -0.005478,
-      "p75": 0.005767,
-      "pct_positive": 0.4013
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[-0.8..-0.6)",
       "bin_low": -0.8,
       "bin_high": -0.6,
-      "sample_count": 4,
-      "median": 0.010002,
-      "p25": -0.000612,
-      "p75": 0.012598,
-      "pct_positive": 0.75
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[-0.6..-0.4)",
       "bin_low": -0.6,
       "bin_high": -0.4,
-      "sample_count": 32,
-      "median": -0.001283,
-      "p25": -0.00419,
-      "p75": 0.001299,
-      "pct_positive": 0.2812
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[-0.4..-0.2)",
       "bin_low": -0.4,
       "bin_high": -0.2,
-      "sample_count": 55,
-      "median": -0.000868,
-      "p25": -0.004707,
-      "p75": 0.004231,
-      "pct_positive": 0.4
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[-0.2..0.0)",
       "bin_low": -0.2,
       "bin_high": 0.0,
-      "sample_count": 51,
-      "median": 0.001723,
-      "p25": -0.003854,
-      "p75": 0.007477,
-      "pct_positive": 0.5882
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[0.0..0.2)",
       "bin_low": 0.0,
       "bin_high": 0.2,
-      "sample_count": 392,
-      "median": -0.000375,
-      "p25": -0.005042,
-      "p75": 0.004112,
-      "pct_positive": 0.4311
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[0.2..0.4)",
       "bin_low": 0.2,
       "bin_high": 0.4,
-      "sample_count": 578,
-      "median": 0.0,
-      "p25": -0.004672,
-      "p75": 0.005278,
-      "pct_positive": 0.4879
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[0.4..0.6)",
       "bin_low": 0.4,
       "bin_high": 0.6,
-      "sample_count": 1290,
-      "median": 0.0,
-      "p25": -0.005027,
-      "p75": 0.004598,
-      "pct_positive": 0.4791
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[0.6..0.8)",
       "bin_low": 0.6,
       "bin_high": 0.8,
-      "sample_count": 2012,
-      "median": 0.0,
-      "p25": -0.005341,
-      "p75": 0.005,
-      "pct_positive": 0.4667
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     },
     {
       "bin_label": "[0.8..1.0)",
       "bin_low": 0.8,
       "bin_high": 1.0,
-      "sample_count": 1589,
-      "median": 0.0,
-      "p25": -0.005158,
-      "p75": 0.004722,
-      "pct_positive": 0.4688
+      "sample_count": 0,
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "pct_positive": null
     }
   ]
 }

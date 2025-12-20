@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2025-12-20T06:09:20.251489+00:00",
+  "generated_at_utc": "2025-12-20T13:11:23.729979+00:00",
   "total_symbols": 278,
   "symbols": [
     {
       "symbol": "FF",
-      "sessions": 48,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 47.9,
+        "pct_silent_sessions": 48.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -23,69 +23,69 @@
     },
     {
       "symbol": "HMSTR",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
-        "p90_posts_last_cycle": 16,
-        "pct_silent_sessions": 47.8,
+        "p90_posts_last_cycle": 22,
+        "pct_silent_sessions": 47.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 49.26,
+        "median_spread_bps": 48.9,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "JTO",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 12,
         "p90_posts_last_cycle": 24,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 28.45,
+        "median_spread_bps": 28.41,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LAYER",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 8,
-        "p90_posts_last_cycle": 31,
-        "pct_silent_sessions": 4.4,
+        "p90_posts_last_cycle": 29,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 30.08,
+        "median_spread_bps": 28.13,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "OM",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 50,
+        "median_posts_last_cycle": 48,
         "p90_posts_last_cycle": 64,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -99,52 +99,52 @@
     },
     {
       "symbol": "QNT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 44,
         "p90_posts_last_cycle": 59,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.41,
+        "median_spread_bps": 9.37,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CGPT",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 15,
-        "pct_silent_sessions": 12.8,
+        "pct_silent_sessions": 14.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 32.41,
+        "median_spread_bps": 32.52,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ILV",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 29.8,
+        "pct_silent_sessions": 32.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -156,71 +156,71 @@
     },
     {
       "symbol": "YGG",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 22,
-        "pct_silent_sessions": 13.3,
+        "pct_silent_sessions": 14.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.54,
+        "median_spread_bps": 15.74,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ACH",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 5,
-        "pct_silent_sessions": 29.5,
+        "pct_silent_sessions": 29.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 24.39,
+        "median_spread_bps": 24.84,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "COTI",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 10.9,
+        "pct_silent_sessions": 10.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 31.89,
+        "median_spread_bps": 31.94,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "OPEN",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 46,
+        "median_posts_last_cycle": 45,
         "p90_posts_last_cycle": 60,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -232,185 +232,185 @@
     },
     {
       "symbol": "REZ",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 23,
         "p90_posts_last_cycle": 40,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 21.62,
+        "median_spread_bps": 21.39,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "1INCH",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 7,
-        "p90_posts_last_cycle": 44,
-        "pct_silent_sessions": 6.8,
+        "median_posts_last_cycle": 6,
+        "p90_posts_last_cycle": 42,
+        "pct_silent_sessions": 6.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 24.68,
+        "median_spread_bps": 24.2,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "A2Z",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 9,
-        "p90_posts_last_cycle": 21,
-        "pct_silent_sessions": 6.8,
+        "median_posts_last_cycle": 6,
+        "p90_posts_last_cycle": 20,
+        "pct_silent_sessions": 8.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 35.24,
+        "median_spread_bps": 36.11,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AEVO",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 9,
-        "pct_silent_sessions": 31.8,
+        "pct_silent_sessions": 34.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 54.27,
+        "median_spread_bps": 54.5,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TST",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
-        "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 33.3,
+        "p90_posts_last_cycle": 5,
+        "pct_silent_sessions": 31.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 27.62,
+        "median_spread_bps": 27.6,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BANANAS31",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 32.6,
+        "pct_silent_sessions": 35.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 14.44,
+        "median_spread_bps": 14.4,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BONK",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 19,
+        "median_posts_last_cycle": 18,
         "p90_posts_last_cycle": 41,
-        "pct_silent_sessions": 4.4,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 11.77,
+        "median_spread_bps": 11.86,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "RESOLV",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
-        "p90_posts_last_cycle": 15,
-        "pct_silent_sessions": 31.8,
+        "p90_posts_last_cycle": 17,
+        "pct_silent_sessions": 29.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 14.17,
+        "median_spread_bps": 14.09,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TON",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 19,
         "p90_posts_last_cycle": 41,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 6.7,
+        "median_spread_bps": 6.73,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "2Z",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 15,
-        "p90_posts_last_cycle": 28,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 27,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -422,146 +422,146 @@
     },
     {
       "symbol": "ALLO",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 42,
         "p90_posts_last_cycle": 44,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 18.07,
+        "median_spread_bps": 18.08,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ALT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 31,
+        "median_posts_last_cycle": 34,
         "p90_posts_last_cycle": 53,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 8.81,
+        "median_spread_bps": 8.71,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AR",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 6,
-        "pct_silent_sessions": 8.7,
+        "pct_silent_sessions": 10.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 28.61,
+        "median_spread_bps": 28.78,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AVNT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 11,
         "p90_posts_last_cycle": 40,
-        "pct_silent_sessions": 6.7,
+        "pct_silent_sessions": 6.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 8.41,
+        "median_spread_bps": 8.25,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CHZ",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 9,
-        "p90_posts_last_cycle": 25,
-        "pct_silent_sessions": 4.4,
+        "p90_posts_last_cycle": 27,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.96,
+        "median_spread_bps": 9.95,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "DYDX",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 13.3,
+        "pct_silent_sessions": 14.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.9,
+        "median_spread_bps": 5.91,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "EGLD",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 17,
         "p90_posts_last_cycle": 33,
-        "pct_silent_sessions": 0.0,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 14.99,
+        "median_spread_bps": 15.09,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "EIGEN",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 17,
-        "p90_posts_last_cycle": 29,
+        "p90_posts_last_cycle": 28,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
@@ -574,33 +574,33 @@
     },
     {
       "symbol": "ETHFI",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 8,
-        "pct_silent_sessions": 6.5,
+        "pct_silent_sessions": 8.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.35,
+        "median_spread_bps": 13.34,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "EURI",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 88.9,
+        "pct_silent_sessions": 89.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -612,7 +612,7 @@
     },
     {
       "symbol": "FLOKI",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -625,18 +625,18 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.01,
+        "median_spread_bps": 6.87,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "GRT",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 26,
+        "median_posts_last_cycle": 25,
         "p90_posts_last_cycle": 32,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -644,20 +644,20 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.36,
+        "median_spread_bps": 8.33,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "HEMI",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 11,
-        "pct_silent_sessions": 8.9,
+        "pct_silent_sessions": 8.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -669,50 +669,50 @@
     },
     {
       "symbol": "INIT",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 55.6,
+        "pct_silent_sessions": 55.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.31,
+        "median_spread_bps": 12.29,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "IO",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 84.4,
+        "pct_silent_sessions": 85.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 63.49,
+        "median_spread_bps": 66.01,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "JUP",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 46,
+        "median_posts_last_cycle": 45,
         "p90_posts_last_cycle": 61,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -720,58 +720,58 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.41,
+        "median_spread_bps": 5.37,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LINEA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 8,
+        "median_posts_last_cycle": 7,
         "p90_posts_last_cycle": 36,
-        "pct_silent_sessions": 4.5,
+        "pct_silent_sessions": 6.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.15,
+        "median_spread_bps": 15.3,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MMT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
+        "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 15,
-        "pct_silent_sessions": 17.8,
+        "pct_silent_sessions": 20.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.38,
+        "median_spread_bps": 9.39,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MORPHO",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 6,
-        "pct_silent_sessions": 33.3,
+        "pct_silent_sessions": 36.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -783,14 +783,14 @@
     },
     {
       "symbol": "NOT",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 6,
-        "p90_posts_last_cycle": 25,
-        "pct_silent_sessions": 4.4,
+        "p90_posts_last_cycle": 24,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -802,14 +802,14 @@
     },
     {
       "symbol": "PLUME",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 6,
+        "median_posts_last_cycle": 5,
         "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 6.5,
+        "pct_silent_sessions": 6.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -821,12 +821,12 @@
     },
     {
       "symbol": "PNUT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 48,
+        "median_posts_last_cycle": 51,
         "p90_posts_last_cycle": 62,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -834,18 +834,18 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.84,
+        "median_spread_bps": 13.85,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "POL",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 45,
+        "median_posts_last_cycle": 47,
         "p90_posts_last_cycle": 60,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -859,89 +859,89 @@
     },
     {
       "symbol": "PROVE",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
-        "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 66.7,
+        "p90_posts_last_cycle": 2,
+        "pct_silent_sessions": 64.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.3,
+        "median_spread_bps": 5.29,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "PYTH",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 9,
-        "pct_silent_sessions": 6.7,
+        "pct_silent_sessions": 6.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 17.17,
+        "median_spread_bps": 17.12,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "RAY",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 27,
+        "median_posts_last_cycle": 26,
         "p90_posts_last_cycle": 51,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.93,
+        "median_spread_bps": 10.88,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SAHARA",
-      "sessions": 48,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 39.6,
+        "pct_silent_sessions": 38.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 22.12,
+        "median_spread_bps": 22.34,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SKY",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 43,
-        "p90_posts_last_cycle": 61,
+        "p90_posts_last_cycle": 60,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
@@ -954,33 +954,33 @@
     },
     {
       "symbol": "TIA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 18,
         "p90_posts_last_cycle": 32,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 18.28,
+        "median_spread_bps": 18.13,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TRB",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
+        "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 9,
-        "pct_silent_sessions": 13.0,
+        "pct_silent_sessions": 14.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -992,33 +992,33 @@
     },
     {
       "symbol": "TWT",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 10,
+        "median_posts_last_cycle": 9,
         "p90_posts_last_cycle": 23,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.16,
+        "median_spread_bps": 13.15,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BFUSD",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 72.3,
+        "pct_silent_sessions": 71.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1030,26 +1030,26 @@
     },
     {
       "symbol": "NOM",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 9,
-        "pct_silent_sessions": 21.3,
+        "pct_silent_sessions": 20.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 29.54,
+        "median_spread_bps": 29.59,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "VET",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1062,13 +1062,13 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.41,
+        "median_spread_bps": 9.39,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "W",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1081,38 +1081,38 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 28.29,
+        "median_spread_bps": 28.21,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "WAL",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 5,
-        "p90_posts_last_cycle": 20,
-        "pct_silent_sessions": 13.6,
+        "p90_posts_last_cycle": 19,
+        "pct_silent_sessions": 15.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.39,
+        "median_spread_bps": 7.49,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "XTZ",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 32,
-        "p90_posts_last_cycle": 53,
+        "median_posts_last_cycle": 33,
+        "p90_posts_last_cycle": 52,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
@@ -1125,14 +1125,14 @@
     },
     {
       "symbol": "ZBT",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 50.0,
+        "pct_silent_sessions": 52.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1144,14 +1144,14 @@
     },
     {
       "symbol": "ACT",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 37,
-        "pct_silent_sessions": 13.0,
+        "pct_silent_sessions": 12.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1163,7 +1163,7 @@
     },
     {
       "symbol": "APE",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1176,58 +1176,58 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.11,
+        "median_spread_bps": 8.94,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "NIL",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 60.9,
+        "pct_silent_sessions": 60.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 34.75,
+        "median_spread_bps": 34.93,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SNX",
-      "sessions": 48,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 5,
         "p90_posts_last_cycle": 13,
-        "pct_silent_sessions": 2.1,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 24.01,
+        "median_spread_bps": 23.98,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BMT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 11,
+        "median_posts_last_cycle": 9,
         "p90_posts_last_cycle": 32,
-        "pct_silent_sessions": 17.8,
+        "pct_silent_sessions": 20.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1239,45 +1239,45 @@
     },
     {
       "symbol": "HEI",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 5,
-        "pct_silent_sessions": 28.9,
+        "pct_silent_sessions": 27.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.21,
+        "median_spread_bps": 16.24,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LPT",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 31.1,
+        "pct_silent_sessions": 29.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.8,
+        "median_spread_bps": 12.87,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MAGIC",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1296,33 +1296,33 @@
     },
     {
       "symbol": "QTUM",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 21.7,
+        "pct_silent_sessions": 20.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 21.97,
+        "median_spread_bps": 22.17,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SIGN",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 15.2,
+        "pct_silent_sessions": 14.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1334,12 +1334,12 @@
     },
     {
       "symbol": "1000CAT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 44,
+        "median_posts_last_cycle": 43,
         "p90_posts_last_cycle": 62,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -1347,13 +1347,13 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 67.57,
+        "median_spread_bps": 67.68,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BLUR",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1366,37 +1366,37 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.96,
+        "median_spread_bps": 16.89,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "VELODROME",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 95.6,
+        "pct_silent_sessions": 95.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 44.74,
+        "median_spread_bps": 45.77,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AAVE",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 19,
+        "median_posts_last_cycle": 17,
         "p90_posts_last_cycle": 31,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -1410,7 +1410,7 @@
     },
     {
       "symbol": "ADA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1429,13 +1429,13 @@
     },
     {
       "symbol": "ALGO",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 23,
-        "p90_posts_last_cycle": 39,
+        "median_posts_last_cycle": 22,
+        "p90_posts_last_cycle": 38,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
@@ -1448,12 +1448,12 @@
     },
     {
       "symbol": "APT",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 52,
+        "median_posts_last_cycle": 51,
         "p90_posts_last_cycle": 59,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -1461,18 +1461,18 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 6.42,
+        "median_spread_bps": 6.41,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ARB",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 52,
+        "median_posts_last_cycle": 51,
         "p90_posts_last_cycle": 58,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -1480,39 +1480,39 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.18,
+        "median_spread_bps": 5.2,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ASTER",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 48,
-        "p90_posts_last_cycle": 59,
+        "p90_posts_last_cycle": 58,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.43,
+        "median_spread_bps": 13.51,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AVAX",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 44,
+        "median_posts_last_cycle": 43,
         "p90_posts_last_cycle": 59,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1524,33 +1524,33 @@
     },
     {
       "symbol": "BCH",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 16,
-        "p90_posts_last_cycle": 42,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 41,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 1.83,
+        "median_spread_bps": 1.81,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BNB",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 50,
         "p90_posts_last_cycle": 61,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1562,7 +1562,7 @@
     },
     {
       "symbol": "DOGE",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1575,32 +1575,32 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 1.61,
+        "median_spread_bps": 1.6,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ENA",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 41,
-        "p90_posts_last_cycle": 52,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 51,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.76,
+        "median_spread_bps": 4.73,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "EUR",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1619,31 +1619,31 @@
     },
     {
       "symbol": "BARD",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
-        "p90_posts_last_cycle": 12,
-        "pct_silent_sessions": 27.7,
+        "p90_posts_last_cycle": 11,
+        "pct_silent_sessions": 26.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.03,
+        "median_spread_bps": 12.56,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "FIL",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 15,
+        "median_posts_last_cycle": 14,
         "p90_posts_last_cycle": 38,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -1651,39 +1651,39 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.98,
+        "median_spread_bps": 7.96,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ORDI",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 42,
-        "p90_posts_last_cycle": 58,
+        "p90_posts_last_cycle": 57,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.05,
+        "median_spread_bps": 8.67,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "PAXG",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1695,109 +1695,109 @@
     },
     {
       "symbol": "PENDLE",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 11,
-        "pct_silent_sessions": 15.6,
+        "pct_silent_sessions": 14.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.35,
+        "median_spread_bps": 5.32,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "RENDER",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 5,
+        "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 13,
-        "pct_silent_sessions": 4.4,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.43,
+        "median_spread_bps": 7.63,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SAPIEN",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
+        "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 6,
-        "pct_silent_sessions": 10.9,
+        "pct_silent_sessions": 10.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.75,
+        "median_spread_bps": 7.77,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SEI",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 22,
+        "median_posts_last_cycle": 21,
         "p90_posts_last_cycle": 36,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 8.66,
+        "median_spread_bps": 8.77,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SHIB",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 44,
-        "p90_posts_last_cycle": 57,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 58,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.91,
+        "median_spread_bps": 13.2,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SOMI",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 12,
+        "median_posts_last_cycle": 11,
         "p90_posts_last_cycle": 28,
-        "pct_silent_sessions": 4.3,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1809,33 +1809,33 @@
     },
     {
       "symbol": "STRK",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 37,
-        "p90_posts_last_cycle": 46,
-        "pct_silent_sessions": 2.2,
+        "median_posts_last_cycle": 34,
+        "p90_posts_last_cycle": 45,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.77,
+        "median_spread_bps": 10.98,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SYRUP",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 12,
         "p90_posts_last_cycle": 28,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1847,7 +1847,7 @@
     },
     {
       "symbol": "TNSR",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1860,20 +1860,20 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 21.93,
+        "median_spread_bps": 22.01,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "UNI",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 48,
         "p90_posts_last_cycle": 58,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1885,7 +1885,7 @@
     },
     {
       "symbol": "CAKE",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1898,58 +1898,58 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.4,
+        "median_spread_bps": 5.42,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "KMNO",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 20,
-        "p90_posts_last_cycle": 43,
-        "pct_silent_sessions": 2.3,
+        "p90_posts_last_cycle": 42,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.4,
+        "median_spread_bps": 3.87,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LDO",
-      "sessions": 43,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 11.6,
+        "pct_silent_sessions": 10.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 3.84,
+        "median_spread_bps": 3.85,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "YB",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 93.3,
+        "pct_silent_sessions": 93.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -1961,26 +1961,26 @@
     },
     {
       "symbol": "ARKM",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 33,
+        "median_posts_last_cycle": 31,
         "p90_posts_last_cycle": 42,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 51.68,
+        "median_spread_bps": 51.55,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BANK",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -1999,147 +1999,147 @@
     },
     {
       "symbol": "BOME",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 7,
+        "median_posts_last_cycle": 6,
         "p90_posts_last_cycle": 17,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.85,
+        "median_spread_bps": 16.88,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CETUS",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 65.9,
+        "pct_silent_sessions": 66.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 40.98,
+        "median_spread_bps": 41.24,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "COW",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 60.0,
+        "pct_silent_sessions": 61.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.5,
+        "median_spread_bps": 5.54,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CYBER",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 6,
-        "pct_silent_sessions": 36.4,
+        "pct_silent_sessions": 34.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 28.03,
+        "median_spread_bps": 28.17,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "DOGS",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 9,
-        "p90_posts_last_cycle": 39,
-        "pct_silent_sessions": 8.5,
+        "p90_posts_last_cycle": 40,
+        "pct_silent_sessions": 10.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 23.5,
+        "median_spread_bps": 23.45,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "EPIC",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 5,
+        "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 21,
-        "pct_silent_sessions": 17.8,
+        "pct_silent_sessions": 19.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.98,
+        "median_spread_bps": 18.57,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ETC",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 6,
         "p90_posts_last_cycle": 11,
-        "pct_silent_sessions": 4.4,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 8.26,
+        "median_spread_bps": 8.24,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "FLUX",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
-        "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 8.9,
+        "p90_posts_last_cycle": 9,
+        "pct_silent_sessions": 10.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2151,12 +2151,12 @@
     },
     {
       "symbol": "KAITO",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 23,
+        "median_posts_last_cycle": 22,
         "p90_posts_last_cycle": 43,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -2170,52 +2170,52 @@
     },
     {
       "symbol": "MET",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 38,
+        "median_posts_last_cycle": 36,
         "p90_posts_last_cycle": 55,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 20.29,
+        "median_spread_bps": 19.32,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "NMR",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 25.5,
+        "pct_silent_sessions": 24.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.98,
+        "median_spread_bps": 11.2,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ORCA",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 38.6,
+        "pct_silent_sessions": 39.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2227,71 +2227,71 @@
     },
     {
       "symbol": "PARTI",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 6,
         "p90_posts_last_cycle": 17,
-        "pct_silent_sessions": 6.7,
+        "pct_silent_sessions": 6.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.94,
+        "median_spread_bps": 19.86,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "RPL",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 95.6,
+        "pct_silent_sessions": 95.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 53.05,
+        "median_spread_bps": 52.49,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "RSR",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
-        "p90_posts_last_cycle": 34,
-        "pct_silent_sessions": 13.6,
+        "median_posts_last_cycle": 2,
+        "p90_posts_last_cycle": 30,
+        "pct_silent_sessions": 13.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.81,
+        "median_spread_bps": 7.76,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SAGA",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 7,
-        "p90_posts_last_cycle": 20,
-        "pct_silent_sessions": 4.4,
+        "median_posts_last_cycle": 6,
+        "p90_posts_last_cycle": 18,
+        "pct_silent_sessions": 6.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2303,12 +2303,12 @@
     },
     {
       "symbol": "SAND",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 37,
+        "median_posts_last_cycle": 36,
         "p90_posts_last_cycle": 45,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -2316,51 +2316,51 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 8.63,
+        "median_spread_bps": 8.54,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "STO",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 7,
-        "p90_posts_last_cycle": 30,
-        "pct_silent_sessions": 6.7,
+        "p90_posts_last_cycle": 29,
+        "pct_silent_sessions": 6.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 25.01,
+        "median_spread_bps": 25.07,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "THETA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 6,
-        "p90_posts_last_cycle": 17,
+        "p90_posts_last_cycle": 16,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 32.79,
+        "median_spread_bps": 33.17,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "USD1",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -2379,50 +2379,50 @@
     },
     {
       "symbol": "WCT",
-      "sessions": 44,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 2,
-        "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 18.2,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 13.95,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "XVG",
-      "sessions": 45,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 45,
-        "p90_posts_last_cycle": 62,
-        "pct_silent_sessions": 2.2,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 23.86,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "1000CHEEMS",
       "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 12,
+        "median_posts_last_cycle": 2,
+        "p90_posts_last_cycle": 8,
+        "pct_silent_sessions": 19.1,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 13.94,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "XVG",
+      "sessions": 48,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 44,
+        "p90_posts_last_cycle": 62,
+        "pct_silent_sessions": 2.1,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 24.31,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "1000CHEEMS",
+      "sessions": 50,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 11,
         "p90_posts_last_cycle": 25,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -2430,20 +2430,20 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 20.02,
+        "median_spread_bps": 19.96,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "1MBABYDOGE",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 84.8,
+        "pct_silent_sessions": 85.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2455,204 +2455,204 @@
     },
     {
       "symbol": "A",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 97.8,
+        "pct_silent_sessions": 95.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.21,
+        "median_spread_bps": 12.82,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AIXBT",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 8,
-        "pct_silent_sessions": 19.6,
+        "pct_silent_sessions": 20.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 63.4,
+        "median_spread_bps": 64.74,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AXS",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 6,
         "p90_posts_last_cycle": 19,
-        "pct_silent_sessions": 10.9,
+        "pct_silent_sessions": 12.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 11.45,
+        "median_spread_bps": 11.42,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BEAMX",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 80.4,
+        "pct_silent_sessions": 81.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 11.2,
+        "median_spread_bps": 11.16,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CKB",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 7,
+        "median_posts_last_cycle": 6,
         "p90_posts_last_cycle": 13,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.39,
+        "median_spread_bps": 12.34,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "COMP",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 54,
         "p90_posts_last_cycle": 60,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 24.98,
+        "median_spread_bps": 24.45,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "COOKIE",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 17,
-        "pct_silent_sessions": 21.7,
+        "pct_silent_sessions": 22.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 43.34,
+        "median_spread_bps": 43.48,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CVC",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 49,
+        "median_posts_last_cycle": 48,
         "p90_posts_last_cycle": 61,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 23.56,
+        "median_spread_bps": 22.86,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "DOLO",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 6,
-        "pct_silent_sessions": 37.0,
+        "pct_silent_sessions": 35.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 26.35,
+        "median_spread_bps": 26.28,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "EDEN",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
-        "p90_posts_last_cycle": 22,
-        "pct_silent_sessions": 22.2,
+        "p90_posts_last_cycle": 21,
+        "pct_silent_sessions": 25.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 31.2,
+        "median_spread_bps": 31.15,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ENSO",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 60.9,
+        "pct_silent_sessions": 62.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2664,14 +2664,14 @@
     },
     {
       "symbol": "ERA",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 48.9,
+        "pct_silent_sessions": 49.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2683,14 +2683,14 @@
     },
     {
       "symbol": "EUL",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 9,
         "p90_posts_last_cycle": 16,
-        "pct_silent_sessions": 2.1,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2702,26 +2702,26 @@
     },
     {
       "symbol": "HOLO",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 12,
-        "p90_posts_last_cycle": 35,
-        "pct_silent_sessions": 2.2,
+        "median_posts_last_cycle": 10,
+        "p90_posts_last_cycle": 33,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 30.49,
+        "median_spread_bps": 30.44,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "IMX",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -2740,64 +2740,64 @@
     },
     {
       "symbol": "KAIA",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 26.1,
+        "pct_silent_sessions": 24.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.2,
+        "median_spread_bps": 15.91,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LSK",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 13.0,
+        "pct_silent_sessions": 14.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 99.75,
+        "median_spread_bps": 100.0,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MAV",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 1,
+        "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 47.8,
+        "pct_silent_sessions": 50.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.41,
+        "median_spread_bps": 10.3,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MEME",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -2810,32 +2810,32 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.1,
+        "median_spread_bps": 10.23,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MINA",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 2,
+        "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 5,
-        "pct_silent_sessions": 14.9,
+        "pct_silent_sessions": 16.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 23.64,
+        "median_spread_bps": 23.71,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "NEIRO",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -2848,20 +2848,20 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 8.35,
+        "median_spread_bps": 8.79,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "NEO",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 19.6,
+        "pct_silent_sessions": 18.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2873,14 +2873,14 @@
     },
     {
       "symbol": "NXPC",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
-        "p90_posts_last_cycle": 5,
-        "pct_silent_sessions": 35.6,
+        "p90_posts_last_cycle": 6,
+        "pct_silent_sessions": 36.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2892,14 +2892,14 @@
     },
     {
       "symbol": "ONT",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 12,
-        "p90_posts_last_cycle": 20,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 19,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -2911,64 +2911,64 @@
     },
     {
       "symbol": "ROSE",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 43,
-        "p90_posts_last_cycle": 59,
+        "median_posts_last_cycle": 44,
+        "p90_posts_last_cycle": 62,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.41,
+        "median_spread_bps": 16.35,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SOLV",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 9,
-        "p90_posts_last_cycle": 24,
-        "pct_silent_sessions": 6.4,
+        "median_posts_last_cycle": 8,
+        "p90_posts_last_cycle": 23,
+        "pct_silent_sessions": 10.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 20.26,
+        "median_spread_bps": 20.21,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SPK",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 53,
+        "median_posts_last_cycle": 54,
         "p90_posts_last_cycle": 62,
-        "pct_silent_sessions": 4.4,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.27,
+        "median_spread_bps": 19.24,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "STX",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -2987,7 +2987,7 @@
     },
     {
       "symbol": "TREE",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3006,90 +3006,90 @@
     },
     {
       "symbol": "TURTLE",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 21,
+        "median_posts_last_cycle": 15,
         "p90_posts_last_cycle": 50,
-        "pct_silent_sessions": 4.3,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 17.94,
+        "median_spread_bps": 17.99,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TUT",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 5,
-        "pct_silent_sessions": 53.3,
+        "pct_silent_sessions": 51.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 17.12,
+        "median_spread_bps": 17.14,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "VANRY",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 33,
-        "p90_posts_last_cycle": 50,
+        "p90_posts_last_cycle": 49,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 124.22,
+        "median_spread_bps": 130.72,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "XAI",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 46.7,
+        "pct_silent_sessions": 46.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 61.16,
+        "median_spread_bps": 60.79,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "1000SATS",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 51,
+        "median_posts_last_cycle": 50,
         "p90_posts_last_cycle": 60,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3101,7 +3101,7 @@
     },
     {
       "symbol": "ACX",
-      "sessions": 47,
+      "sessions": 50,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3114,51 +3114,51 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.98,
+        "median_spread_bps": 20.02,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ANIME",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 75.6,
+        "pct_silent_sessions": 70.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 18.17,
+        "median_spread_bps": 18.38,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "AUCTION",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 61.4,
+        "pct_silent_sessions": 63.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 40.4,
+        "median_spread_bps": 40.28,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BABY",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3171,20 +3171,20 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 17.63,
+        "median_spread_bps": 17.54,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BB",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 95.6,
+        "pct_silent_sessions": 95.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3196,109 +3196,109 @@
     },
     {
       "symbol": "CHESS",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
-        "p90_posts_last_cycle": 6,
-        "pct_silent_sessions": 32.6,
+        "p90_posts_last_cycle": 5,
+        "pct_silent_sessions": 34.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 33.23,
+        "median_spread_bps": 32.83,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "F",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 86.7,
+        "pct_silent_sessions": 85.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.86,
+        "median_spread_bps": 15.84,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "FORM",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 10,
         "p90_posts_last_cycle": 33,
-        "pct_silent_sessions": 4.4,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.37,
+        "median_spread_bps": 11.46,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "FUN",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 35.6,
+        "pct_silent_sessions": 35.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 11.56,
+        "median_spread_bps": 11.52,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "GPS",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
-        "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 51.1,
+        "p90_posts_last_cycle": 2,
+        "pct_silent_sessions": 54.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 38.99,
+        "median_spread_bps": 38.87,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "HAEDAL",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 77.8,
+        "pct_silent_sessions": 78.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3310,7 +3310,7 @@
     },
     {
       "symbol": "BTC",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3329,33 +3329,33 @@
     },
     {
       "symbol": "DASH",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 12,
         "p90_posts_last_cycle": 26,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.5,
+        "median_spread_bps": 7.51,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ETH",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 50,
+        "median_posts_last_cycle": 51,
         "p90_posts_last_cycle": 60,
-        "pct_silent_sessions": 4.5,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3367,14 +3367,14 @@
     },
     {
       "symbol": "FDUSD",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 8,
-        "pct_silent_sessions": 21.7,
+        "pct_silent_sessions": 22.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3386,71 +3386,71 @@
     },
     {
       "symbol": "FET",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 20,
-        "p90_posts_last_cycle": 41,
-        "pct_silent_sessions": 2.2,
+        "median_posts_last_cycle": 19,
+        "p90_posts_last_cycle": 42,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.82,
+        "median_spread_bps": 4.8,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "GIGGLE",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 9,
         "p90_posts_last_cycle": 31,
-        "pct_silent_sessions": 4.4,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.41,
+        "median_spread_bps": 4.32,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "GUN",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 8,
-        "p90_posts_last_cycle": 24,
-        "pct_silent_sessions": 6.7,
+        "median_posts_last_cycle": 7,
+        "p90_posts_last_cycle": 25,
+        "pct_silent_sessions": 8.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.4,
+        "median_spread_bps": 15.85,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "HBAR",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 41,
         "p90_posts_last_cycle": 58,
-        "pct_silent_sessions": 4.3,
+        "pct_silent_sessions": 4.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3462,31 +3462,31 @@
     },
     {
       "symbol": "ICP",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 39,
-        "p90_posts_last_cycle": 48,
-        "pct_silent_sessions": 2.2,
+        "median_posts_last_cycle": 40,
+        "p90_posts_last_cycle": 49,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 6.58,
+        "median_spread_bps": 6.59,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LINK",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 53,
+        "median_posts_last_cycle": 52,
         "p90_posts_last_cycle": 61,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -3494,13 +3494,13 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.91,
+        "median_spread_bps": 7.9,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LTC",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3519,33 +3519,33 @@
     },
     {
       "symbol": "MOVE",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 65.2,
+        "pct_silent_sessions": 65.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 27.4,
+        "median_spread_bps": 27.74,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "NEAR",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 17,
         "p90_posts_last_cycle": 37,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3557,32 +3557,32 @@
     },
     {
       "symbol": "PENGU",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 41,
-        "p90_posts_last_cycle": 53,
-        "pct_silent_sessions": 0.0,
+        "median_posts_last_cycle": 42,
+        "p90_posts_last_cycle": 52,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 2.49,
+        "median_spread_bps": 2.16,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "PEPE",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 43,
-        "p90_posts_last_cycle": 53,
+        "median_posts_last_cycle": 44,
+        "p90_posts_last_cycle": 54,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
@@ -3595,7 +3595,7 @@
     },
     {
       "symbol": "PUMP",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3614,7 +3614,7 @@
     },
     {
       "symbol": "RUNE",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3627,13 +3627,13 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.82,
+        "median_spread_bps": 16.91,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SOL",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3652,14 +3652,14 @@
     },
     {
       "symbol": "SUI",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 44,
+        "median_posts_last_cycle": 43,
         "p90_posts_last_cycle": 58,
-        "pct_silent_sessions": 4.3,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3671,52 +3671,52 @@
     },
     {
       "symbol": "TAO",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 46,
         "p90_posts_last_cycle": 56,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.06,
+        "median_spread_bps": 4.12,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TRUMP",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 45,
-        "p90_posts_last_cycle": 56,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 55,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 3.82,
+        "median_spread_bps": 3.83,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TRX",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 53,
-        "p90_posts_last_cycle": 59,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 60,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3728,64 +3728,64 @@
     },
     {
       "symbol": "TURBO",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 7,
         "p90_posts_last_cycle": 18,
-        "pct_silent_sessions": 2.3,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 5.58,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "WIF",
-      "sessions": 44,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 15,
-        "p90_posts_last_cycle": 28,
-        "pct_silent_sessions": 2.3,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 27.4,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "XLM",
-      "sessions": 45,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 45,
-        "p90_posts_last_cycle": 62,
         "pct_silent_sessions": 2.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.59,
+        "median_spread_bps": 5.56,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "WIF",
+      "sessions": 47,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 15,
+        "p90_posts_last_cycle": 27,
+        "pct_silent_sessions": 2.1,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 27.66,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "XLM",
+      "sessions": 47,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 45,
+        "p90_posts_last_cycle": 62,
+        "pct_silent_sessions": 2.1,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 4.58,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "XPL",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3798,13 +3798,13 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.8,
+        "median_spread_bps": 7.75,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "XRP",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3823,7 +3823,7 @@
     },
     {
       "symbol": "ZEC",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3836,39 +3836,39 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 3.81,
+        "median_spread_bps": 3.92,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "0G",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 35,
-        "p90_posts_last_cycle": 50,
+        "median_posts_last_cycle": 36,
+        "p90_posts_last_cycle": 51,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.35,
+        "median_spread_bps": 12.76,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ATOM",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 45,
         "p90_posts_last_cycle": 58,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -3880,83 +3880,83 @@
     },
     {
       "symbol": "BERA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 28,
-        "p90_posts_last_cycle": 51,
-        "pct_silent_sessions": 2.3,
+        "p90_posts_last_cycle": 50,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.52,
+        "median_spread_bps": 16.85,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BIO",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 1,
+        "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 27.3,
+        "pct_silent_sessions": 25.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 22.99,
+        "median_spread_bps": 23.01,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CFX",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 11.4,
+        "pct_silent_sessions": 10.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 14.16,
+        "median_spread_bps": 14.11,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "CRV",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 7,
         "p90_posts_last_cycle": 15,
-        "pct_silent_sessions": 6.8,
+        "pct_silent_sessions": 6.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 2.85,
+        "median_spread_bps": 2.84,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "DOT",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -3969,70 +3969,70 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.36,
+        "median_spread_bps": 5.37,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "GALA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 16,
+        "median_posts_last_cycle": 15,
         "p90_posts_last_cycle": 40,
-        "pct_silent_sessions": 4.5,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 15.8,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "HUMA",
-      "sessions": 46,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 8,
-        "p90_posts_last_cycle": 15,
         "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.3,
+        "median_spread_bps": 15.79,
         "median_liq_qv_usd": null
       }
     },
     {
-      "symbol": "HYPER",
-      "sessions": 45,
+      "symbol": "HUMA",
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
-        "p90_posts_last_cycle": 18,
-        "pct_silent_sessions": 8.9,
+        "median_posts_last_cycle": 7,
+        "p90_posts_last_cycle": 15,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 14.6,
+        "median_spread_bps": 13.35,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "HYPER",
+      "sessions": 48,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 3,
+        "p90_posts_last_cycle": 17,
+        "pct_silent_sessions": 10.4,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 14.29,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "INJ",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -4045,18 +4045,18 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.49,
+        "median_spread_bps": 18.96,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "JUV",
-      "sessions": 47,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 42,
+        "median_posts_last_cycle": 41,
         "p90_posts_last_cycle": 44,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -4064,51 +4064,51 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 41.75,
+        "median_spread_bps": 41.87,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "KITE",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 6,
+        "median_posts_last_cycle": 7,
         "p90_posts_last_cycle": 14,
-        "pct_silent_sessions": 4.5,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 23.26,
+        "median_spread_bps": 23.23,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ONDO",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 20,
         "p90_posts_last_cycle": 52,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.49,
+        "median_spread_bps": 4.47,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "OP",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -4121,20 +4121,20 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 3.69,
+        "median_spread_bps": 3.68,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "USDE",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 15.9,
+        "pct_silent_sessions": 17.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4146,14 +4146,14 @@
     },
     {
       "symbol": "USUAL",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 5,
         "p90_posts_last_cycle": 12,
-        "pct_silent_sessions": 17.4,
+        "pct_silent_sessions": 18.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4165,52 +4165,52 @@
     },
     {
       "symbol": "VIRTUAL",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 8,
-        "p90_posts_last_cycle": 19,
-        "pct_silent_sessions": 2.2,
+        "p90_posts_last_cycle": 20,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 4.22,
+        "median_spread_bps": 4.23,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "WLD",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 14,
         "p90_posts_last_cycle": 21,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 18.14,
+        "median_spread_bps": 17.58,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "WLFI",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 40,
         "p90_posts_last_cycle": 51,
-        "pct_silent_sessions": 4.3,
+        "pct_silent_sessions": 4.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4222,52 +4222,52 @@
     },
     {
       "symbol": "ZEN",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 5,
-        "p90_posts_last_cycle": 27,
-        "pct_silent_sessions": 2.2,
+        "median_posts_last_cycle": 6,
+        "p90_posts_last_cycle": 24,
+        "pct_silent_sessions": 2.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 5.26,
+        "median_spread_bps": 5.36,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ZK",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 18,
+        "median_posts_last_cycle": 17,
         "p90_posts_last_cycle": 30,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.32,
+        "median_spread_bps": 10.31,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "IOTA",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
+        "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 8,
-        "pct_silent_sessions": 4.5,
+        "pct_silent_sessions": 4.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4279,31 +4279,31 @@
     },
     {
       "symbol": "S",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 87.0,
+        "pct_silent_sessions": 85.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.56,
+        "median_spread_bps": 12.58,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "THE",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 46,
+        "median_posts_last_cycle": 47,
         "p90_posts_last_cycle": 61,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
@@ -4311,77 +4311,77 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 12.04,
+        "median_spread_bps": 11.87,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ZRO",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 28,
-        "p90_posts_last_cycle": 49,
+        "median_posts_last_cycle": 27,
+        "p90_posts_last_cycle": 47,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.33,
+        "median_spread_bps": 7.39,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BROCCOLI714",
-      "sessions": 46,
+      "sessions": 49,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 67.4,
+        "pct_silent_sessions": 67.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 23.58,
+        "median_spread_bps": 23.59,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "HOME",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 91.1,
+        "pct_silent_sessions": 89.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.86,
+        "median_spread_bps": 9.88,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "KERNEL",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 1,
+        "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 47.7,
+        "pct_silent_sessions": 50.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4393,26 +4393,26 @@
     },
     {
       "symbol": "MANTA",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 32.6,
+        "pct_silent_sessions": 31.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 13.53,
+        "median_spread_bps": 13.49,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ME",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -4425,39 +4425,39 @@
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 55.19,
+        "median_spread_bps": 55.82,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MIRA",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 3,
+        "median_posts_last_cycle": 4,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 15.9,
+        "pct_silent_sessions": 15.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 17.16,
+        "median_spread_bps": 17.08,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "MUBARAK",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 77.8,
+        "pct_silent_sessions": 76.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4469,52 +4469,52 @@
     },
     {
       "symbol": "OSMO",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 13,
-        "p90_posts_last_cycle": 23,
+        "p90_posts_last_cycle": 24,
         "pct_silent_sessions": 0.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 54.55,
+        "median_spread_bps": 55.2,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "PEOPLE",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 5,
         "p90_posts_last_cycle": 13,
-        "pct_silent_sessions": 8.9,
+        "pct_silent_sessions": 8.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 11.37,
+        "median_spread_bps": 11.33,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "PHA",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 42.2,
+        "pct_silent_sessions": 40.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4526,14 +4526,14 @@
     },
     {
       "symbol": "RARE",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 14,
-        "pct_silent_sessions": 24.4,
+        "pct_silent_sessions": 27.7,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4545,71 +4545,71 @@
     },
     {
       "symbol": "RED",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 0,
-        "pct_silent_sessions": 97.8,
+        "pct_silent_sessions": 97.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 9.94,
+        "median_spread_bps": 9.72,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SHELL",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 53.3,
+        "pct_silent_sessions": 53.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 40.4,
+        "median_spread_bps": 24.66,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SUSHI",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 14,
         "p90_posts_last_cycle": 44,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 43.4,
+        "median_spread_bps": 43.44,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SXT",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 20.0,
+        "pct_silent_sessions": 21.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4621,223 +4621,223 @@
     },
     {
       "symbol": "VANA",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 47.7,
+        "pct_silent_sessions": 47.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 31.52,
+        "median_spread_bps": 28.64,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "ZKC",
-      "sessions": 43,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 2,
         "p90_posts_last_cycle": 15,
-        "pct_silent_sessions": 30.2,
+        "pct_silent_sessions": 32.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.61,
+        "median_spread_bps": 19.49,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "API3",
-      "sessions": 43,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 39.5,
+        "pct_silent_sessions": 39.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.07,
+        "median_spread_bps": 15.44,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BANANA",
-      "sessions": 45,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 51.1,
+        "pct_silent_sessions": 54.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 15.64,
+        "median_spread_bps": 15.6,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "BIGTIME",
-      "sessions": 43,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 46,
+        "median_posts_last_cycle": 45,
         "p90_posts_last_cycle": 63,
-        "pct_silent_sessions": 2.3,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 44.27,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "C",
-      "sessions": 44,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 0,
-        "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 75.0,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 23.35,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "CATI",
-      "sessions": 45,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 0,
-        "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 64.4,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 32.68,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "CVX",
-      "sessions": 45,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 16,
-        "p90_posts_last_cycle": 35,
-        "pct_silent_sessions": 4.4,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 17.91,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "DF",
-      "sessions": 44,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 0,
-        "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 65.9,
-        "median_hybrid_mean_score": null,
-        "p10_hybrid_mean_score": null,
-        "p90_hybrid_mean_score": null
-      },
-      "market_context": {
-        "median_spread_bps": 55.42,
-        "median_liq_qv_usd": null
-      }
-    },
-    {
-      "symbol": "ENJ",
-      "sessions": 45,
-      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-      "first_seen": "2025-12-14",
-      "last_seen": "2025-12-20",
-      "sentiment": {
-        "median_posts_last_cycle": 23,
-        "p90_posts_last_cycle": 40,
         "pct_silent_sessions": 2.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 7.48,
+        "median_spread_bps": 45.03,
         "median_liq_qv_usd": null
       }
     },
     {
-      "symbol": "ENS",
-      "sessions": 45,
+      "symbol": "C",
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 5,
-        "p90_posts_last_cycle": 9,
-        "pct_silent_sessions": 6.7,
+        "median_posts_last_cycle": 0,
+        "p90_posts_last_cycle": 2,
+        "pct_silent_sessions": 73.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 10.51,
+        "median_spread_bps": 23.08,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "CATI",
+      "sessions": 48,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 0,
+        "p90_posts_last_cycle": 2,
+        "pct_silent_sessions": 64.6,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 32.6,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "CVX",
+      "sessions": 48,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 15,
+        "p90_posts_last_cycle": 35,
+        "pct_silent_sessions": 4.2,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 17.69,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "DF",
+      "sessions": 47,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 0,
+        "p90_posts_last_cycle": 1,
+        "pct_silent_sessions": 66.0,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 54.55,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "ENJ",
+      "sessions": 48,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 22,
+        "p90_posts_last_cycle": 40,
+        "pct_silent_sessions": 2.1,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 7.46,
+        "median_liq_qv_usd": null
+      }
+    },
+    {
+      "symbol": "ENS",
+      "sessions": 47,
+      "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
+      "first_seen": "2025-12-14",
+      "last_seen": "2025-12-20",
+      "sentiment": {
+        "median_posts_last_cycle": 4,
+        "p90_posts_last_cycle": 9,
+        "pct_silent_sessions": 6.4,
+        "median_hybrid_mean_score": null,
+        "p10_hybrid_mean_score": null,
+        "p90_hybrid_mean_score": null
+      },
+      "market_context": {
+        "median_spread_bps": 10.5,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "GMT",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 15.6,
+        "pct_silent_sessions": 14.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4849,90 +4849,90 @@
     },
     {
       "symbol": "GMX",
-      "sessions": 46,
+      "sessions": 48,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 8,
-        "pct_silent_sessions": 8.7,
+        "pct_silent_sessions": 12.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 37.22,
+        "median_spread_bps": 37.2,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "HIVE",
-      "sessions": 44,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
-        "p90_posts_last_cycle": 10,
-        "pct_silent_sessions": 22.7,
+        "p90_posts_last_cycle": 9,
+        "pct_silent_sessions": 21.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 31.88,
+        "median_spread_bps": 31.97,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "IDEX",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 36.4,
+        "pct_silent_sessions": 39.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 43.96,
+        "median_spread_bps": 44.43,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LA",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 84.1,
+        "pct_silent_sessions": 84.8,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 19.86,
+        "median_spread_bps": 19.66,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "LISTA",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 14,
-        "pct_silent_sessions": 15.6,
+        "pct_silent_sessions": 19.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4944,14 +4944,14 @@
     },
     {
       "symbol": "MASK",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 19,
+        "median_posts_last_cycle": 18,
         "p90_posts_last_cycle": 43,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -4963,45 +4963,45 @@
     },
     {
       "symbol": "MITO",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 5,
         "p90_posts_last_cycle": 30,
-        "pct_silent_sessions": 22.7,
+        "pct_silent_sessions": 26.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 28.95,
+        "median_spread_bps": 27.72,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "NEWT",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 61.4,
+        "pct_silent_sessions": 63.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 30.36,
+        "median_spread_bps": 30.61,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "PIXEL",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
@@ -5020,90 +5020,90 @@
     },
     {
       "symbol": "PUNDIX",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 68.9,
+        "pct_silent_sessions": 70.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 74.45,
+        "median_spread_bps": 76.18,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "RVN",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 3,
-        "pct_silent_sessions": 33.3,
+        "pct_silent_sessions": 31.9,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 28.99,
+        "median_spread_bps": 29.03,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SKL",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 8,
         "p90_posts_last_cycle": 14,
-        "pct_silent_sessions": 2.2,
+        "pct_silent_sessions": 2.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 36.63,
+        "median_spread_bps": 37.07,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SOPH",
-      "sessions": 43,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
-        "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 58.1,
+        "p90_posts_last_cycle": 6,
+        "pct_silent_sessions": 54.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 16.31,
+        "median_spread_bps": 16.08,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SSV",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 42.2,
+        "pct_silent_sessions": 42.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -5115,33 +5115,33 @@
     },
     {
       "symbol": "STEEM",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 4,
-        "pct_silent_sessions": 35.6,
+        "pct_silent_sessions": 34.0,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 31.4,
+        "median_spread_bps": 31.5,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "SYN",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 16,
         "p90_posts_last_cycle": 28,
-        "pct_silent_sessions": 2.3,
+        "pct_silent_sessions": 2.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -5153,52 +5153,52 @@
     },
     {
       "symbol": "T",
-      "sessions": 45,
+      "sessions": 47,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 68.9,
+        "pct_silent_sessions": 70.2,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 63.42,
+        "median_spread_bps": 58.58,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TLM",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
-        "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 43.2,
+        "p90_posts_last_cycle": 3,
+        "pct_silent_sessions": 41.3,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 46.84,
+        "median_spread_bps": 46.73,
         "median_liq_qv_usd": null
       }
     },
     {
       "symbol": "TOWNS",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 0,
         "p90_posts_last_cycle": 1,
-        "pct_silent_sessions": 75.0,
+        "pct_silent_sessions": 76.1,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -5210,14 +5210,14 @@
     },
     {
       "symbol": "UMA",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 1,
         "p90_posts_last_cycle": 2,
-        "pct_silent_sessions": 29.5,
+        "pct_silent_sessions": 30.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -5229,14 +5229,14 @@
     },
     {
       "symbol": "UTK",
-      "sessions": 44,
+      "sessions": 46,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-14",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 3,
-        "p90_posts_last_cycle": 9,
-        "pct_silent_sessions": 6.8,
+        "p90_posts_last_cycle": 10,
+        "pct_silent_sessions": 6.5,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -5248,14 +5248,14 @@
     },
     {
       "symbol": "AT",
-      "sessions": 35,
+      "sessions": 38,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-16",
       "last_seen": "2025-12-20",
       "sentiment": {
         "median_posts_last_cycle": 12,
-        "p90_posts_last_cycle": 21,
-        "pct_silent_sessions": 2.9,
+        "p90_posts_last_cycle": 22,
+        "pct_silent_sessions": 2.6,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
@@ -5267,20 +5267,20 @@
     },
     {
       "symbol": "DYM",
-      "sessions": 35,
+      "sessions": 38,
       "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
       "first_seen": "2025-12-16",
       "last_seen": "2025-12-20",
       "sentiment": {
-        "median_posts_last_cycle": 4,
+        "median_posts_last_cycle": 3,
         "p90_posts_last_cycle": 7,
-        "pct_silent_sessions": 14.3,
+        "pct_silent_sessions": 18.4,
         "median_hybrid_mean_score": null,
         "p10_hybrid_mean_score": null,
         "p90_hybrid_mean_score": null
       },
       "market_context": {
-        "median_spread_bps": 57.47,
+        "median_spread_bps": 57.64,
         "median_liq_qv_usd": null
       }
     }

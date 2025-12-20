@@ -198,6 +198,62 @@ def test_symbol_table(data: dict) -> bool:
     return True
 
 
+def test_cross_file_consistency(coverage: dict, summary: dict, symbols: dict) -> bool:
+    """Test cross-file consistency invariants."""
+    print("\n--- Testing cross-file consistency ---")
+    
+    all_pass = True
+    
+    # Symbol counts must match
+    summary_symbols = summary["scale"]["distinct_symbols"]
+    symbol_table_total = symbols["total_symbols"]
+    symbol_table_count = len(symbols["symbols"])
+    
+    if summary_symbols == symbol_table_total == symbol_table_count:
+        print(f"[PASS] PASS: Symbol counts match ({summary_symbols})")
+    else:
+        print(f"[FAIL] FAIL: Symbol counts mismatch - summary={summary_symbols}, symbol_table.total={symbol_table_total}, symbol_table.len={symbol_table_count}")
+        all_pass = False
+    
+    # Activity regime bins sum must equal total usable
+    regimes = summary.get("activity_regimes", {})
+    bins = regimes.get("bins", [])
+    if bins:
+        bins_sum = sum(b["n_entries"] for b in bins)
+        summary_usable = summary["scale"]["total_usable_entries"]
+        
+        if bins_sum == summary_usable:
+            print(f"[PASS] PASS: Activity bins sum matches total ({bins_sum})")
+        else:
+            print(f"[FAIL] FAIL: Activity bins sum mismatch - bins_sum={bins_sum}, total={summary_usable}")
+            all_pass = False
+    
+    # Coverage total must match summary total
+    coverage_total = coverage["total_entries"]
+    summary_usable = summary["scale"]["total_usable_entries"]
+    
+    if coverage_total == summary_usable:
+        print(f"[PASS] PASS: Coverage total matches summary ({coverage_total})")
+    else:
+        print(f"[FAIL] FAIL: Coverage total mismatch - coverage={coverage_total}, summary={summary_usable}")
+        all_pass = False
+    
+    # Check partial_scan consistency
+    is_partial_coverage = coverage.get("partial_scan", False)
+    is_partial_summary = summary.get("partial_scan", False)
+    
+    if is_partial_coverage == is_partial_summary:
+        if is_partial_coverage:
+            print(f"[PASS] PASS: Both artifacts marked as partial_scan")
+        else:
+            print(f"[PASS] PASS: Neither artifact marked as partial_scan")
+    else:
+        print(f"[FAIL] FAIL: Partial scan mismatch - coverage={is_partial_coverage}, summary={is_partial_summary}")
+        all_pass = False
+    
+    return all_pass
+
+
 def main():
     """Run all tests."""
     print("=" * 60)
@@ -216,6 +272,9 @@ def main():
     symbol_path = output_dir / "symbol_table.json"
     
     all_pass = True
+    coverage_data = None
+    summary_data = None
+    symbol_data = None
     
     # Test coverage_table.json
     if test_file_exists(coverage_path, "coverage_table.json"):
@@ -249,6 +308,11 @@ def main():
             all_pass = False
     else:
         all_pass = False
+    
+    # Test cross-file consistency (only if all files loaded)
+    if coverage_data and summary_data and symbol_data:
+        if not test_cross_file_consistency(coverage_data, summary_data, symbol_data):
+            all_pass = False
     
     # Final result
     print("\n" + "=" * 60)

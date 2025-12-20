@@ -2,30 +2,30 @@
   "description": "Hybrid decision breakdown showing how sentiment decisions are made. Transparency into primary vs referee roles.",
   "data_version": "v7",
   "coverage": {
-    "total_usable_entries": 10972,
-    "entries_with_decision_sources": 8664
+    "total_usable_entries": 0,
+    "entries_with_decision_sources": 0
   },
   "decision_sources": {
     "primary_lexicon": {
       "count": 0,
-      "percentage": 0.0
+      "percentage": 0
     },
     "primary_ai": {
       "count": 0,
-      "percentage": 0.0
+      "percentage": 0
     },
     "referee_override": {
-      "count": 314,
-      "percentage": 1.0
+      "count": 0,
+      "percentage": 0
     },
     "full_agreement": {
       "count": 0,
-      "percentage": 0.0
+      "percentage": 0
     },
-    "total": 314
+    "total": 0
   },
   "posts_scored": {
-    "total": 184221,
-    "entries_with_posts": 8664
+    "total": 0,
+    "entries_with_posts": 0
   }
 }
