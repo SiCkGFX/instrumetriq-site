@@ -8,6 +8,31 @@ import {
   formatDuration,
   formatReturnPercent
 } from '../lib/artifactsData';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Load Phase 4E-1 artifacts
+const coverageTablePath = path.join(process.cwd(), 'public/data/coverage_table.json');
+const datasetSummaryPath = path.join(process.cwd(), 'public/data/dataset_summary.json');
+const symbolTablePath = path.join(process.cwd(), 'public/data/symbol_table.json');
+
+let coverageTable = null;
+let datasetSummary = null;
+let symbolTable = null;
+
+try {
+  if (fs.existsSync(coverageTablePath)) {
+    coverageTable = JSON.parse(fs.readFileSync(coverageTablePath, 'utf-8'));
+  }
+  if (fs.existsSync(datasetSummaryPath)) {
+    datasetSummary = JSON.parse(fs.readFileSync(datasetSummaryPath, 'utf-8'));
+  }
+  if (fs.existsSync(symbolTablePath)) {
+    symbolTable = JSON.parse(fs.readFileSync(symbolTablePath, 'utf-8'));
+  }
+} catch (error) {
+  console.error('Error loading Phase 4E-1 artifacts:', error);
+}
 
 const artifacts = loadArtifacts();
 ---
@@ -32,18 +57,16 @@ const artifacts = loadArtifacts();
   )}
   
   <!-- Readiness banner -->
-  {artifacts.ready && artifacts.scale && artifacts.scale.date_range && (
-    <div class={`readiness-banner ${artifacts.ready.status.toLowerCase()}`}>
+  {datasetSummary && datasetSummary.scale && (
+    <div class="readiness-banner pass">
       <div class="banner-main">
         <strong>Dataset snapshot:</strong> v7 validated entries
-        <span class="badge">{artifacts.ready.status}</span>
+        <span class="badge">READY</span>
       </div>
       <div class="banner-details">
-        {artifacts.scale.date_range.first_day} to {artifacts.scale.date_range.last_day} 
-        • {formatNumber(artifacts.scale.v7_usable_total)} usable entries
-        {artifacts.ready.status === 'FAIL' && artifacts.ready.errors.length > 0 && (
-          <span class="error-hint">• Error: {artifacts.ready.errors[0]}</span>
-        )}
+        {datasetSummary.scale.days_running} days 
+        • {formatNumber(datasetSummary.scale.total_usable_entries)} usable entries
+        • {formatNumber(datasetSummary.scale.distinct_symbols)} symbols
       </div>
       <div class="banner-link">
         See <a href="/status">Status</a> for collection counters
@@ -53,7 +76,7 @@ const artifacts = loadArtifacts();
   
   <div class="pageContent">
     <!-- Section 1: Coverage -->
-    {artifacts.coverage && (
+    {coverageTable && coverageTable.feature_groups && (
       <section>
         <h2>What We Collect</h2>
         <p>
@@ -71,14 +94,30 @@ const artifacts = loadArtifacts();
               </tr>
             </thead>
             <tbody>
-              {artifacts.coverage.groups.map(group => (
-                <tr>
-                  <td><code>{group.group_name}</code></td>
-                  <td>{formatPercent(group.present_rate)}</td>
-                  <td>{group.notes || '—'}</td>
-                  <td>{group.example_metric || '—'}</td>
-                </tr>
-              ))}
+              {coverageTable.feature_groups.map(group => {
+                const rate = group.present_rate_pct / 100;
+                let exampleText = '—';
+                
+                if (typeof group.example_metric_value === 'number') {
+                  // Numeric value - format with label
+                  const formattedValue = Number.isInteger(group.example_metric_value) 
+                    ? formatNumber(group.example_metric_value)
+                    : group.example_metric_value.toFixed(2);
+                  exampleText = `${group.example_metric_label}: ${formattedValue}`;
+                } else if (typeof group.example_metric_value === 'string') {
+                  // String explanation for 0% groups
+                  exampleText = group.example_metric_value;
+                }
+                
+                return (
+                  <tr>
+                    <td><code>{group.group}</code></td>
+                    <td>{formatPercent(rate)}</td>
+                    <td class={rate === 0 ? 'text-muted' : ''}>{group.example_metric_note || '—'}</td>
+                    <td class={rate === 0 ? 'text-muted' : ''}>{exampleText}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -86,39 +125,33 @@ const artifacts = loadArtifacts();
     )}
     
     <!-- Section 2: Scale -->
-    {artifacts.scale && (
+    {datasetSummary && datasetSummary.scale && (
       <section>
         <h2>Scale</h2>
         <div class="scale-grid">
           <div class="scale-card">
             <div class="scale-label">Days Running</div>
-            <div class="scale-value">{artifacts.scale.days_running}</div>
+            <div class="scale-value">{datasetSummary.scale.days_running}</div>
           </div>
           <div class="scale-card">
             <div class="scale-label">Total Usable</div>
-            <div class="scale-value">{formatNumber(artifacts.scale.v7_usable_total)}</div>
+            <div class="scale-value">{formatNumber(datasetSummary.scale.total_usable_entries)}</div>
           </div>
           <div class="scale-card">
             <div class="scale-label">Avg Per Day</div>
-            <div class="scale-value">{formatNumber(Math.round(artifacts.scale.avg_usable_per_day))}</div>
+            <div class="scale-value">{formatNumber(datasetSummary.scale.avg_entries_per_day)}</div>
           </div>
           <div class="scale-card">
             <div class="scale-label">Distinct Symbols</div>
-            <div class="scale-value">{formatNumber(artifacts.scale.distinct_symbols_total)}</div>
+            <div class="scale-value">{formatNumber(datasetSummary.scale.distinct_symbols)}</div>
           </div>
-          {artifacts.scale.cycles_completed !== undefined && (
-            <div class="scale-card">
-              <div class="scale-label">Cycles Completed</div>
-              <div class="scale-value">{formatNumber(artifacts.scale.cycles_completed)}</div>
-            </div>
-          )}
-          {artifacts.scale.date_range && (
-            <div class="scale-card">
-              <div class="scale-label">Date Range</div>
-              <div class="scale-value">{artifacts.scale.date_range.first_day} to {artifacts.scale.date_range.last_day}</div>
-            </div>
-          )}
         </div>
+        {datasetSummary.posts_scored && (
+          <p class="posts-scored-line">
+            Posts scored: {formatNumber(datasetSummary.posts_scored.total_posts)} 
+            (from {formatNumber(datasetSummary.posts_scored.from_entries)} entries)
+          </p>
+        )}
       </section>
     )}
     
@@ -130,7 +163,7 @@ const artifacts = loadArtifacts();
           Example entry showing typical fields. This row is redacted: no timestamps, no URLs, forward return is bucketed.
         </p>
         <div class="table-wrapper">
-          <table class="data-table preview-table">
+          <table class="data-table preview-table-mono">
             <thead>
               <tr>
                 <th>Field</th>
@@ -141,7 +174,7 @@ const artifacts = loadArtifacts();
               {Object.entries(artifacts.preview.row).map(([key, value]) => (
                 <tr>
                   <td><code>{key}</code></td>
-                  <td>{typeof value === 'number' ? value.toFixed(6) : String(value)}</td>
+                  <td class="mono-value">{typeof value === 'number' ? value.toFixed(6) : String(value)}</td>
                 </tr>
               ))}
             </tbody>
@@ -150,159 +183,82 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 4: Behavior Summaries -->
-    {artifacts.sentiment && (
+    <!-- Section 4: Sentiment Buckets -->
+    {datasetSummary && datasetSummary.sentiment_buckets && (
       <section>
-        <h2>Sentiment Buckets vs Forward Return</h2>
-        <p>
-          Forward return distributions bucketed by hybrid sentiment mean score. 
-          This is descriptive distribution, not a trading signal or correlation claim.
-        </p>
-        <div class="table-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Sentiment Bucket</th>
-                <th>N</th>
-                <th>Median Return</th>
-                <th>IQR (p25..p75)</th>
-                <th>% Positive</th>
-              </tr>
-            </thead>
-            <tbody>
-              {artifacts.sentiment.bins
-                .filter(bin => bin.sample_count > 0)
-                .map(bin => (
+        <h2>Sentiment Distribution</h2>
+        {datasetSummary.sentiment_buckets.reason_unavailable ? (
+          <div class="unavailable-notice">
+            <p><strong>Not available yet:</strong> {datasetSummary.sentiment_buckets.reason_unavailable}</p>
+            <p class="text-muted">This section will show the distribution of sentiment scores across entries when the data becomes available. This is purely descriptive and makes no claims about predictive value or market correlation.</p>
+          </div>
+        ) : datasetSummary.sentiment_buckets.buckets && datasetSummary.sentiment_buckets.buckets.length > 0 ? (
+          <>
+            <p>
+              Distribution of entries across sentiment score ranges. 
+              <strong>This is descriptive only</strong> — it shows what was observed, not what might predict future outcomes. 
+              No correlation with returns or trading edge is implied or claimed.
+            </p>
+            <p class="disclaimer-emphasis">{datasetSummary.sentiment_buckets.disclaimer}</p>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
                   <tr>
-                    <td><code>{bin.bin_label}</code></td>
-                    <td>{formatNumber(bin.sample_count)}</td>
-                    <td>{formatReturnPercent(bin.median)}</td>
-                    <td>{formatReturnPercent(bin.p25)}..{formatReturnPercent(bin.p75)}</td>
-                    <td>{formatPercent(bin.pct_positive)}</td>
+                    <th>Sentiment Range</th>
+                    <th>Entry Count</th>
                   </tr>
-                ))}
+                </thead>
+                <tbody>
+                  {datasetSummary.sentiment_buckets.buckets.map(bucket => (
+                    <tr>
+                      <td><code>{bucket.label}</code></td>
+                      <td>{formatNumber(bucket.n_entries)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          <p class="text-muted">No sentiment bucket data available.</p>
+        )}
+      </section>
+    )}
+    
+    {datasetSummary && datasetSummary.activity_regimes && datasetSummary.activity_regimes.bins && (
+      <section>
+        <h2>Activity Regimes by Post Volume</h2>
+        <p>
+          <strong>Activity regime</strong> is based on posts_total observed in the sentiment window for a session. 
+          Entries are grouped by post volume to show market characteristics across different activity levels.
+        </p>
+        <p class="definition-note">{datasetSummary.activity_regimes.definition}</p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Posts Range</th>
+                <th>Entries</th>
+                <th>Median Spread (bps)</th>
+                <th>P90 Spread (bps)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {datasetSummary.activity_regimes.bins.map(bin => (
+                <tr>
+                  <td><code>{bin.label}</code></td>
+                  <td>{formatNumber(bin.n_entries)}</td>
+                  <td>{bin.metrics.median_spread_bps ? bin.metrics.median_spread_bps.toFixed(2) : '—'}</td>
+                  <td>{bin.metrics.p90_spread_bps ? bin.metrics.p90_spread_bps.toFixed(2) : '—'}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </section>
     )}
     
-    {artifacts.regimes && (
-      <section>
-        <h2>Activity vs Silence Regimes</h2>
-        <p>
-          Comparison of metrics between silent and active regimes. 
-          "Silent" = no recent Twitter activity detected (is_silent=true).
-        </p>
-        <div class="table-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>Silent (N={formatNumber(artifacts.regimes.groups.silent.sample_count)})</th>
-                <th>Active (N={formatNumber(artifacts.regimes.groups.active.sample_count)})</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Abs Return (median)</td>
-                <td>{formatReturnPercent(artifacts.regimes.groups.silent.abs_return_over_window.median)}</td>
-                <td>{formatReturnPercent(artifacts.regimes.groups.active.abs_return_over_window.median)}</td>
-              </tr>
-              <tr>
-                <td>Abs Return (p90)</td>
-                <td>{formatReturnPercent(artifacts.regimes.groups.silent.abs_return_over_window.p90)}</td>
-                <td>{formatReturnPercent(artifacts.regimes.groups.active.abs_return_over_window.p90)}</td>
-              </tr>
-              <tr>
-                <td>Spread (median bps)</td>
-                <td>{artifacts.regimes.groups.silent.spread_bps.median?.toFixed(2) || '—'}</td>
-                <td>{artifacts.regimes.groups.active.spread_bps.median?.toFixed(2) || '—'}</td>
-              </tr>
-              <tr>
-                <td>Spread (p90 bps)</td>
-                <td>{artifacts.regimes.groups.silent.spread_bps.p90?.toFixed(2) || '—'}</td>
-                <td>{artifacts.regimes.groups.active.spread_bps.p90?.toFixed(2) || '—'}</td>
-              </tr>
-              <tr>
-                <td>Liq QV USD (median)</td>
-                <td>{formatNumber(Math.round(artifacts.regimes.groups.silent.liq_qv_usd.median || 0))}</td>
-                <td>{formatNumber(Math.round(artifacts.regimes.groups.active.liq_qv_usd.median || 0))}</td>
-              </tr>
-              <tr>
-                <td>Liq QV USD (p90)</td>
-                <td>{formatNumber(Math.round(artifacts.regimes.groups.silent.liq_qv_usd.p90 || 0))}</td>
-                <td>{formatNumber(Math.round(artifacts.regimes.groups.active.liq_qv_usd.p90 || 0))}</td>
-              </tr>
-              <tr>
-                <td>Liq Global % (median)</td>
-                <td>{formatPercent(artifacts.regimes.groups.silent.liq_global_pct.median)}</td>
-                <td>{formatPercent(artifacts.regimes.groups.active.liq_global_pct.median)}</td>
-              </tr>
-              <tr>
-                <td>Liq Global % (p90)</td>
-                <td>{formatPercent(artifacts.regimes.groups.silent.liq_global_pct.p90)}</td>
-                <td>{formatPercent(artifacts.regimes.groups.active.liq_global_pct.p90)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    )}
-    
-    <!-- Section 5: Hybrid Transparency -->
-    {artifacts.hybrid && (
-      <section>
-        <h2>Hybrid Decision Breakdown</h2>
-        <p>
-          How sentiment decisions are made in the hybrid system. Shows the distribution of decision sources.
-        </p>
-        <div class="table-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Decision Source</th>
-                <th>Count</th>
-                <th>Percentage</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Primary Lexicon</td>
-                <td>{formatNumber(artifacts.hybrid.decision_sources.primary_lexicon.count)}</td>
-                <td>{formatPercent(artifacts.hybrid.decision_sources.primary_lexicon.percentage)}</td>
-              </tr>
-              <tr>
-                <td>Primary AI</td>
-                <td>{formatNumber(artifacts.hybrid.decision_sources.primary_ai.count)}</td>
-                <td>{formatPercent(artifacts.hybrid.decision_sources.primary_ai.percentage)}</td>
-              </tr>
-              <tr>
-                <td>Referee Override</td>
-                <td>{formatNumber(artifacts.hybrid.decision_sources.referee_override.count)}</td>
-                <td>{formatPercent(artifacts.hybrid.decision_sources.referee_override.percentage)}</td>
-              </tr>
-              <tr>
-                <td>Full Agreement</td>
-                <td>{formatNumber(artifacts.hybrid.decision_sources.full_agreement.count)}</td>
-                <td>{formatPercent(artifacts.hybrid.decision_sources.full_agreement.percentage)}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td><strong>Total</strong></td>
-                <td><strong>{formatNumber(artifacts.hybrid.decision_sources.total)}</strong></td>
-                <td><strong>100%</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <p class="note">
-          Posts scored: {formatNumber(artifacts.hybrid.posts_scored.total)} 
-          (from {formatNumber(artifacts.hybrid.coverage.entries_with_decision_sources)} entries)
-        </p>
-      </section>
-    )}
+    <!-- Hybrid Decision Breakdown removed per Phase 4E-2 requirements -->
     
     {artifacts.confidence && (
       <section>
@@ -335,50 +291,44 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 6: Lifecycle -->
-    {artifacts.lifecycle && (
+    <!-- Section 6: Symbol Table -->
+    {symbolTable && symbolTable.symbols && (
       <section>
-        <h2>Temporal Structure: Lifecycle Summary</h2>
-        <p>
-          Per-symbol aggregates showing session counts, durations, and date ranges. 
-          A session is an admission-to-expiry observation window.
+        <h2>Symbol Table</h2>
+        <p class="session-definition">
+          A session is one monitoring window (about 2 hours) for a symbol in the active watchlist.
         </p>
+        <div class="symbol-table-controls">
+          <input 
+            type="text" 
+            id="symbolSearch" 
+            placeholder="Search symbols..."
+            class="symbol-search-input"
+          />
+          <div class="symbol-count-display" id="symbolCount">
+            Showing <span id="visibleCount">50</span> of <span id="totalCount">{symbolTable.total_symbols}</span> symbols
+          </div>
+        </div>
         <div class="table-wrapper">
-          <table class="data-table lifecycle-table">
+          <table class="data-table symbol-table" id="symbolTableElement">
             <thead>
               <tr>
-                <th>Symbol</th>
-                <th>Sessions</th>
-                <th>Median Duration</th>
-                <th>First Seen</th>
-                <th>Last Seen</th>
-                <th>Median Score</th>
+                <th data-sort="symbol" class="sortable">Symbol <span class="sort-indicator"></span></th>
+                <th data-sort="sessions" class="sortable">Sessions <span class="sort-indicator"></span></th>
+                <th data-sort="first_seen" class="sortable">First Seen <span class="sort-indicator"></span></th>
+                <th data-sort="last_seen" class="sortable">Last Seen <span class="sort-indicator"></span></th>
+                <th data-sort="median_posts" class="sortable">Median Posts <span class="sort-indicator"></span></th>
+                <th data-sort="p90_posts" class="sortable">P90 Posts <span class="sort-indicator"></span></th>
+                <th data-sort="pct_silent" class="sortable">% Silent <span class="sort-indicator"></span></th>
+                <th data-sort="median_spread" class="sortable">Median Spread (bps) <span class="sort-indicator"></span></th>
               </tr>
             </thead>
-            <tbody>
-              {artifacts.lifecycle.symbols
-                .sort((a, b) => b.sessions_count - a.sessions_count)
-                .slice(0, 50)
-                .map(sym => (
-                  <tr>
-                    <td><code>{sym.symbol}</code></td>
-                    <td>{formatNumber(sym.sessions_count)}</td>
-                    <td>
-                      {sym.median_duration_sec ? 
-                        `${formatDuration(sym.median_duration_sec)} (${Math.round(sym.median_duration_sec)}s)` 
-                        : '—'}
-                    </td>
-                    <td>{sym.first_seen_day || '—'}</td>
-                    <td>{sym.last_seen_day || '—'}</td>
-                    <td>{sym.median_final_score?.toFixed(2) || '—'}</td>
-                  </tr>
-                ))}
+            <tbody id="symbolTableBody">
+              {/* Rows populated by client-side script */}
             </tbody>
           </table>
         </div>
-        {artifacts.lifecycle.symbols_count > 50 && (
-          <p class="note">Showing top 50 of {formatNumber(artifacts.lifecycle.symbols_count)} symbols (sorted by session count)</p>
-        )}
+        <button id="showAllButton" class="show-all-btn" style="display: none;">Show all results</button>
       </section>
     )}
     
@@ -421,6 +371,157 @@ const artifacts = loadArtifacts();
     </section>
   </div>
 </BaseLayout>
+
+<script is:inline define:vars={{ symbolTableData: symbolTable }}>
+  // Symbol table client-side functionality
+  if (symbolTableData && symbolTableData.symbols) {
+    const symbols = symbolTableData.symbols;
+    const tbody = document.getElementById('symbolTableBody');
+    const searchInput = document.getElementById('symbolSearch');
+    const showAllButton = document.getElementById('showAllButton');
+    const visibleCountSpan = document.getElementById('visibleCount');
+    
+    let filteredSymbols = [...symbols];
+    let currentSort = { column: null, direction: 'asc' };
+    let showAll = false;
+    
+    function formatValue(value) {
+      if (value === null || value === undefined) return '\u2014';
+      if (typeof value === 'number') {
+        return Number.isInteger(value) ? value.toLocaleString() : value.toFixed(2);
+      }
+      return String(value);
+    }
+    
+    function renderTable() {
+      const displayLimit = showAll ? filteredSymbols.length : Math.min(50, filteredSymbols.length);
+      const displaySymbols = filteredSymbols.slice(0, displayLimit);
+      
+      tbody.innerHTML = displaySymbols.map(sym => {
+        return `
+          <tr>
+            <td><code>${sym.symbol}</code></td>
+            <td>${formatValue(sym.sessions)}</td>
+            <td>${formatValue(sym.first_seen)}</td>
+            <td>${formatValue(sym.last_seen)}</td>
+            <td>${formatValue(sym.sentiment?.median_posts_last_cycle)}</td>
+            <td>${formatValue(sym.sentiment?.p90_posts_last_cycle)}</td>
+            <td>${formatValue(sym.sentiment?.pct_silent_sessions)}</td>
+            <td>${formatValue(sym.market_context?.median_spread_bps)}</td>
+          </tr>
+        `;
+      }).join('');
+      
+      visibleCountSpan.textContent = displayLimit;
+      
+      if (filteredSymbols.length > 50 && !showAll) {
+        showAllButton.style.display = 'inline-block';
+      } else {
+        showAllButton.style.display = 'none';
+      }
+    }
+    
+    function sortSymbols(column) {
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.column = column;
+        currentSort.direction = 'asc';
+      }
+      
+      filteredSymbols.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch (column) {
+          case 'symbol':
+            aVal = a.symbol;
+            bVal = b.symbol;
+            break;
+          case 'sessions':
+            aVal = a.sessions || 0;
+            bVal = b.sessions || 0;
+            break;
+          case 'first_seen':
+            aVal = a.first_seen || '';
+            bVal = b.first_seen || '';
+            break;
+          case 'last_seen':
+            aVal = a.last_seen || '';
+            bVal = b.last_seen || '';
+            break;
+          case 'median_posts':
+            aVal = a.sentiment?.median_posts_last_cycle || 0;
+            bVal = b.sentiment?.median_posts_last_cycle || 0;
+            break;
+          case 'p90_posts':
+            aVal = a.sentiment?.p90_posts_last_cycle || 0;
+            bVal = b.sentiment?.p90_posts_last_cycle || 0;
+            break;
+          case 'pct_silent':
+            aVal = a.sentiment?.pct_silent_sessions || 0;
+            bVal = b.sentiment?.pct_silent_sessions || 0;
+            break;
+          case 'median_spread':
+            aVal = a.market_context?.median_spread_bps || 0;
+            bVal = b.market_context?.median_spread_bps || 0;
+            break;
+          default:
+            return 0;
+        }
+        
+        if (typeof aVal === 'string') {
+          const cmp = aVal.localeCompare(bVal);
+          return currentSort.direction === 'asc' ? cmp : -cmp;
+        } else {
+          return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+      });
+      
+      // Update sort indicators
+      document.querySelectorAll('.symbol-table th.sortable').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.dataset.sort === column) {
+          th.classList.add(`sort-${currentSort.direction}`);
+        }
+      });
+      
+      showAll = false;
+      renderTable();
+    }
+    
+    function filterSymbols() {
+      const query = searchInput.value.toLowerCase().trim();
+      
+      if (!query) {
+        filteredSymbols = [...symbols];
+      } else {
+        filteredSymbols = symbols.filter(sym => 
+          sym.symbol.toLowerCase().includes(query)
+        );
+      }
+      
+      showAll = false;
+      renderTable();
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', filterSymbols);
+    
+    showAllButton.addEventListener('click', () => {
+      showAll = true;
+      renderTable();
+    });
+    
+    document.querySelectorAll('.symbol-table th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        sortSymbols(th.dataset.sort);
+      });
+    });
+    
+    // Initial render (sort by sessions descending)
+    sortSymbols('sessions');
+  }
+</script>
 
 <style>
   .warning-banner {
@@ -550,13 +651,129 @@ const artifacts = loadArtifacts();
     color: var(--accent);
   }
   
-  .preview-table td {
-    font-family: 'Courier New', monospace;
+  .preview-table-mono .mono-value {
+    font-family: 'Lucida Sans Typewriter', 'Lucida Console', 'Consolas', 'Monaco', monospace;
     font-size: 0.85rem;
   }
   
-  .lifecycle-table {
+  .posts-scored-line {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background-color: var(--panel2);
+    border-left: 3px solid var(--accent);
+    font-size: 0.95rem;
+  }
+  
+  .text-muted {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  
+  .unavailable-notice {
+    padding: var(--space-4);
+    background-color: rgba(255, 193, 7, 0.1);
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    margin-top: var(--space-3);
+  }
+  
+  .unavailable-notice strong {
+    color: #f59e0b;
+  }
+  
+  .disclaimer-emphasis {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+  
+  .definition-note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: var(--space-3);
+  }
+  
+  .session-definition {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--panel2);
+    border-left: 3px solid var(--accent-dim);
+  }
+  
+  .symbol-table-controls {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
+  }
+  
+  .symbol-search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--accent-dim);
+    border-radius: 4px;
+    background-color: var(--panel2);
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+  
+  .symbol-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .symbol-count-display {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  .symbol-table {
     font-size: 0.85rem;
+  }
+  
+  .symbol-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .symbol-table th.sortable:hover {
+    background-color: var(--accent-dim);
+  }
+  
+  .symbol-table .sort-indicator {
+    display: inline-block;
+    width: 12px;
+    margin-left: 4px;
+  }
+  
+  .symbol-table th.sort-asc .sort-indicator::after {
+    content: '▲';
+    font-size: 0.7em;
+  }
+  
+  .symbol-table th.sort-desc .sort-indicator::after {
+    content: '▼';
+    font-size: 0.7em;
+  }
+  
+  .show-all-btn {
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .show-all-btn:hover {
+    background-color: var(--accent-bright);
   }
   
   .note {
