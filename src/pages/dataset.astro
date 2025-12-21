@@ -315,11 +315,9 @@ const artifacts = loadArtifacts();
               <tr>
                 <th data-sort="symbol" class="sortable">Symbol <span class="sort-indicator"></span></th>
                 <th data-sort="sessions" class="sortable">Sessions <span class="sort-indicator"></span></th>
-                <th data-sort="first_seen" class="sortable">First Seen <span class="sort-indicator"></span></th>
-                <th data-sort="last_seen" class="sortable">Last Seen <span class="sort-indicator"></span></th>
                 <th data-sort="median_posts" class="sortable">Median Posts <span class="sort-indicator"></span></th>
                 <th data-sort="p90_posts" class="sortable">P90 Posts <span class="sort-indicator"></span></th>
-                <th data-sort="pct_silent" class="sortable">% Silent <span class="sort-indicator"></span></th>
+                <th data-sort="silence_rate" class="sortable">Silence Rate % <span class="sort-indicator"></span></th>
                 <th data-sort="median_spread" class="sortable">Median Spread (bps) <span class="sort-indicator"></span></th>
               </tr>
             </thead>
@@ -402,11 +400,9 @@ const artifacts = loadArtifacts();
           <tr>
             <td><code>${sym.symbol}</code></td>
             <td>${formatValue(sym.sessions)}</td>
-            <td>${formatValue(sym.first_seen)}</td>
-            <td>${formatValue(sym.last_seen)}</td>
-            <td>${formatValue(sym.sentiment?.median_posts_last_cycle)}</td>
-            <td>${formatValue(sym.sentiment?.p90_posts_last_cycle)}</td>
-            <td>${formatValue(sym.sentiment?.pct_silent_sessions)}</td>
+            <td>${formatValue(sym.activity?.median_posts_last_cycle)}</td>
+            <td>${formatValue(sym.activity?.p90_posts_last_cycle)}</td>
+            <td>${formatValue(sym.activity?.silence_rate_pct)}</td>
             <td>${formatValue(sym.market_context?.median_spread_bps)}</td>
           </tr>
         `;
@@ -441,25 +437,17 @@ const artifacts = loadArtifacts();
             aVal = a.sessions || 0;
             bVal = b.sessions || 0;
             break;
-          case 'first_seen':
-            aVal = a.first_seen || '';
-            bVal = b.first_seen || '';
-            break;
-          case 'last_seen':
-            aVal = a.last_seen || '';
-            bVal = b.last_seen || '';
-            break;
           case 'median_posts':
-            aVal = a.sentiment?.median_posts_last_cycle || 0;
-            bVal = b.sentiment?.median_posts_last_cycle || 0;
+            aVal = a.activity?.median_posts_last_cycle || 0;
+            bVal = b.activity?.median_posts_last_cycle || 0;
             break;
           case 'p90_posts':
-            aVal = a.sentiment?.p90_posts_last_cycle || 0;
-            bVal = b.sentiment?.p90_posts_last_cycle || 0;
+            aVal = a.activity?.p90_posts_last_cycle || 0;
+            bVal = b.activity?.p90_posts_last_cycle || 0;
             break;
-          case 'pct_silent':
-            aVal = a.sentiment?.pct_silent_sessions || 0;
-            bVal = b.sentiment?.pct_silent_sessions || 0;
+          case 'silence_rate':
+            aVal = a.activity?.silence_rate_pct || 0;
+            bVal = b.activity?.silence_rate_pct || 0;
             break;
           case 'median_spread':
             aVal = a.market_context?.median_spread_bps || 0;

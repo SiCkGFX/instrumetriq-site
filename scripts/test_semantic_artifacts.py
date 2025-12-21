@@ -51,16 +51,11 @@ def test_coverage_table(data: dict) -> bool:
         print(f"[FAIL] FAIL: 'feature_groups' is not a list")
         return False
     
+    # Only verify groups that should exist (verified fields only)
     required_groups = [
         "market_microstructure",
-        "liquidity",
-        "order_book_depth",
         "spot_prices",
-        "lexicon_sentiment",
-        "ai_sentiment",
         "activity_and_silence",
-        "platform_engagement",
-        "author_stats"
     ]
     
     found_groups = {g["group"] for g in groups}
@@ -75,7 +70,7 @@ def test_coverage_table(data: dict) -> bool:
     empty_metrics = []
     for group in groups:
         if not group.get("example_metric_label") or group.get("example_metric_value") is None:
-            # Allow string explanations for 0% groups
+            # Allow string explanations for unavailable groups
             if group["present_rate_pct"] == 0.0 and isinstance(group.get("example_metric_value"), str):
                 continue
             if group.get("example_metric_label") != "N/A":
@@ -170,30 +165,27 @@ def test_symbol_table(data: dict) -> bool:
     
     print(f"[PASS] PASS: Symbol table has {len(symbols)} symbols")
     
-    # Check first symbol structure
+    # Check first symbol structure (verified fields only)
     first_symbol = symbols[0]
-    required_keys = ["symbol", "sessions", "first_seen", "last_seen", "sentiment", "market_context"]
+    required_keys = ["symbol", "sessions", "activity", "market_context"]
     for key in required_keys:
         if key not in first_symbol:
             print(f"[FAIL] FAIL: Missing key '{key}' in symbol entry")
             return False
     
-    # Check sentiment sub-keys
-    sentiment = first_symbol["sentiment"]
-    sentiment_keys = [
+    # Check activity sub-keys
+    activity = first_symbol["activity"]
+    activity_keys = [
         "median_posts_last_cycle",
         "p90_posts_last_cycle",
-        "pct_silent_sessions",
-        "median_hybrid_mean_score",
-        "p10_hybrid_mean_score",
-        "p90_hybrid_mean_score"
+        "silence_rate_pct",
     ]
-    for key in sentiment_keys:
-        if key not in sentiment:
-            print(f"[FAIL] FAIL: Missing sentiment key '{key}'")
+    for key in activity_keys:
+        if key not in activity:
+            print(f"[FAIL] FAIL: Missing activity key '{key}'")
             return False
     
-    print(f"[PASS] PASS: Symbol table structure valid")
+    print(f"[PASS] PASS: Symbol table structure valid (verified fields only)")
     
     return True
 

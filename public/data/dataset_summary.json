@@ -1,22 +1,22 @@
 {
-  "generated_at_utc": "2025-12-20T13:11:23.722477+00:00",
+  "generated_at_utc": "2025-12-21T07:42:57.216364+00:00",
   "scale": {
-    "days_running": 7,
-    "total_usable_entries": 13235,
-    "avg_entries_per_day": 1891,
+    "days_running": 8,
+    "total_usable_entries": 15230,
+    "avg_entries_per_day": 1904,
     "distinct_symbols": 278,
     "cycles_completed": 0
   },
   "posts_scored": {
-    "total_posts": 672268,
-    "from_entries": 10609,
+    "total_posts": 763460,
+    "from_entries": 12192,
     "window_definition": "posts counted from twitter_sentiment_windows.last_cycle and last_2_cycles"
   },
   "sentiment_buckets": {
     "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
     "buckets": [],
     "disclaimer": "Descriptive distribution only. No trading signal or correlation claim.",
-    "reason_unavailable": "hybrid_mean_score not found in archive entries"
+    "reason_unavailable": "Sentiment scoring not available in v7 entries - dataset is in pre-scoring phase"
   },
   "activity_regimes": {
     "definition": "Regimes based on posts_total in last_cycle",
@@ -25,12 +25,12 @@
         "label": "0",
         "min": 0,
         "max": 0,
-        "n_entries": 2626,
+        "n_entries": 3038,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 18.94,
-          "p90_spread_bps": 51.41,
+          "median_spread_bps": 18.79,
+          "p90_spread_bps": 51.47,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -39,12 +39,12 @@
         "label": "1-2",
         "min": 1,
         "max": 2,
-        "n_entries": 2079,
+        "n_entries": 2415,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 18.61,
-          "p90_spread_bps": 49.68,
+          "median_spread_bps": 18.47,
+          "p90_spread_bps": 49.88,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -53,12 +53,12 @@
         "label": "3-9",
         "min": 3,
         "max": 9,
-        "n_entries": 2644,
+        "n_entries": 3090,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
           "median_spread_bps": 15.81,
-          "p90_spread_bps": 44.02,
+          "p90_spread_bps": 43.77,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -67,12 +67,12 @@
         "label": "10-24",
         "min": 10,
         "max": 24,
-        "n_entries": 2033,
+        "n_entries": 2326,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 13.7,
-          "p90_spread_bps": 38.9,
+          "median_spread_bps": 13.47,
+          "p90_spread_bps": 38.91,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -81,12 +81,12 @@
         "label": "25-49",
         "min": 25,
         "max": 49,
-        "n_entries": 2508,
+        "n_entries": 2854,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 9.78,
-          "p90_spread_bps": 39.6,
+          "median_spread_bps": 9.67,
+          "p90_spread_bps": 39.17,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }
@@ -95,12 +95,12 @@
         "label": "50+",
         "min": 50,
         "max": 999999,
-        "n_entries": 1345,
+        "n_entries": 1507,
         "metrics": {
           "median_abs_return": null,
           "p90_abs_return": null,
-          "median_spread_bps": 7.98,
-          "p90_spread_bps": 31.09,
+          "median_spread_bps": 7.96,
+          "p90_spread_bps": 31.36,
           "median_liq_qv_usd": null,
           "p90_liq_qv_usd": null
         }

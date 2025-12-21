@@ -104,27 +104,22 @@ def safe_percentile(values: List[float], p: float) -> Optional[float]:
 
 
 class CoverageTableBuilder:
-    """Build coverage_table.json with real example metrics."""
+    """Build coverage_table.json with real example metrics (verified fields only)."""
     
     def __init__(self):
+        # Only track groups that have verified fields in v7 entries
         self.group_stats = {
             "market_microstructure": {"present": 0, "spread_values": []},
-            "liquidity": {"present": 0, "liq_qv_usd_values": []},
-            "order_book_depth": {"present": 0, "depth_values": []},
             "spot_prices": {"present": 0, "sample_counts": []},
-            "lexicon_sentiment": {"present": 0, "scores": []},
-            "ai_sentiment": {"present": 0, "scores": []},
             "activity_and_silence": {"present": 0, "posts_counts": []},
-            "platform_engagement": {"present": 0, "engagement_values": []},
-            "author_stats": {"present": 0, "author_counts": []},
         }
         self.total_entries = 0
     
     def process_entry(self, entry: dict):
-        """Process one usable v7 entry."""
+        """Process one usable v7 entry (verified fields only)."""
         self.total_entries += 1
         
-        # Market microstructure
+        # Market microstructure (VERIFIED: spot_raw.spread_bps)
         spot_raw = entry.get("spot_raw", {})
         if spot_raw.get("spread_bps") is not None:
             self.group_stats["market_microstructure"]["present"] += 1
@@ -132,71 +127,26 @@ class CoverageTableBuilder:
                 safe_float(spot_raw.get("spread_bps"))
             )
         
-        # Liquidity
-        liq = entry.get("liquidity", {})
-        if liq.get("liq_qv_usd") is not None:
-            self.group_stats["liquidity"]["present"] += 1
-            self.group_stats["liquidity"]["liq_qv_usd_values"].append(
-                safe_float(liq.get("liq_qv_usd"))
-            )
-        
-            # Order book depth
-            if liq.get("depth_snapshot_usd") is not None:
-                self.group_stats["order_book_depth"]["present"] += 1
-                depth = liq.get("depth_snapshot_usd", {})
-                bid_depth = safe_float(depth.get("bid", 0), 0.0)
-                ask_depth = safe_float(depth.get("ask", 0), 0.0)
-                total_depth = (bid_depth or 0.0) + (ask_depth or 0.0)
-                self.group_stats["order_book_depth"]["depth_values"].append(total_depth)
-        
-        # Spot prices
+        # Spot prices (VERIFIED: spot_prices array >= 700)
         spot_prices = entry.get("spot_prices", [])
         if len(spot_prices) >= 700:
             self.group_stats["spot_prices"]["present"] += 1
             self.group_stats["spot_prices"]["sample_counts"].append(len(spot_prices))
         
-        # Sentiment
+        # Activity (VERIFIED: twitter_sentiment_windows.last_cycle.posts_total)
         tsw = entry.get("twitter_sentiment_windows", {})
         last_cycle = tsw.get("last_cycle") or tsw.get("last_2_cycles")
         if last_cycle:
-            lexicon = last_cycle.get("lexicon_sentiment")
-            if lexicon and lexicon.get("mean_score") is not None:
-                self.group_stats["lexicon_sentiment"]["present"] += 1
-                self.group_stats["lexicon_sentiment"]["scores"].append(
-                    safe_float(lexicon.get("mean_score"))
-                )
-            
-            ai = last_cycle.get("ai_sentiment")
-            if ai and ai.get("mean_score") is not None:
-                self.group_stats["ai_sentiment"]["present"] += 1
-                self.group_stats["ai_sentiment"]["scores"].append(
-                    safe_float(ai.get("mean_score"))
-                )
-            
-            # Activity
-            posts_total = last_cycle.get("posts_total", 0)
+            posts_total = last_cycle.get("posts_total")
             if posts_total is not None:
                 self.group_stats["activity_and_silence"]["present"] += 1
                 self.group_stats["activity_and_silence"]["posts_counts"].append(posts_total)
-            
-            # Platform engagement (likes, retweets, etc.)
-            engagement = last_cycle.get("engagement", {})
-            if engagement:
-                self.group_stats["platform_engagement"]["present"] += 1
-                total_likes = safe_float(engagement.get("total_likes", 0), 0)
-                self.group_stats["platform_engagement"]["engagement_values"].append(total_likes)
-            
-            # Author stats
-            authors = last_cycle.get("distinct_authors", 0)
-            if authors:
-                self.group_stats["author_stats"]["present"] += 1
-                self.group_stats["author_stats"]["author_counts"].append(authors)
     
     def build(self, is_partial_scan: bool = False, scan_limit: int | None = None) -> dict:
-        """Build coverage_table.json structure with partial scan indicator."""
+        """Build coverage_table.json structure (verified fields only)."""
         feature_groups = []
         
-        # Market microstructure
+        # Market microstructure (VERIFIED)
         present_rate = (self.group_stats["market_microstructure"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
         median_spread = safe_median(self.group_stats["market_microstructure"]["spread_values"])
         feature_groups.append({
@@ -204,50 +154,10 @@ class CoverageTableBuilder:
             "present_rate_pct": round(present_rate, 2),
             "example_metric_label": "Median spread (bps)",
             "example_metric_value": round(median_spread, 2) if median_spread else None,
-            "example_metric_note": "Computed across all usable v7 entries"
+            "example_metric_note": "Bid-ask spread in basis points"
         })
         
-        # Liquidity
-        present_rate = (self.group_stats["liquidity"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
-        median_liq = safe_median(self.group_stats["liquidity"]["liq_qv_usd_values"])
-        if present_rate == 0 or median_liq is None:
-            feature_groups.append({
-                "group": "liquidity",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "N/A",
-                "example_metric_value": "Not present in v7 entries",
-                "example_metric_note": "Liquidity data not collected for this dataset"
-            })
-        else:
-            feature_groups.append({
-                "group": "liquidity",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "Median liq_qv_usd",
-                "example_metric_value": round(median_liq),
-                "example_metric_note": "Quote volume in USD at admission"
-            })
-        
-        # Order book depth
-        present_rate = (self.group_stats["order_book_depth"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
-        median_depth = safe_median(self.group_stats["order_book_depth"]["depth_values"])
-        if present_rate == 0 or median_depth is None:
-            feature_groups.append({
-                "group": "order_book_depth",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "N/A",
-                "example_metric_value": "Not present in v7 entries",
-                "example_metric_note": "Order book depth not collected for this dataset"
-            })
-        else:
-            feature_groups.append({
-                "group": "order_book_depth",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "Median total depth (USD)",
-                "example_metric_value": round(median_depth),
-                "example_metric_note": "Bid + ask depth snapshot"
-            })
-        
-        # Spot prices
+        # Spot prices (VERIFIED)
         present_rate = (self.group_stats["spot_prices"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
         median_samples = safe_median(self.group_stats["spot_prices"]["sample_counts"])
         feature_groups.append({
@@ -258,47 +168,7 @@ class CoverageTableBuilder:
             "example_metric_note": "High-resolution price samples per entry"
         })
         
-        # Lexicon sentiment
-        present_rate = (self.group_stats["lexicon_sentiment"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
-        median_score = safe_median(self.group_stats["lexicon_sentiment"]["scores"])
-        if present_rate == 0 or median_score is None:
-            feature_groups.append({
-                "group": "lexicon_sentiment",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "N/A",
-                "example_metric_value": "Not present in v7 entries",
-                "example_metric_note": "Lexicon sentiment not available for this dataset"
-            })
-        else:
-            feature_groups.append({
-                "group": "lexicon_sentiment",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "Median lexicon mean score",
-                "example_metric_value": round(median_score, 3),
-                "example_metric_note": "Lexicon-based sentiment [-1, +1]"
-            })
-        
-        # AI sentiment
-        present_rate = (self.group_stats["ai_sentiment"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
-        median_score = safe_median(self.group_stats["ai_sentiment"]["scores"])
-        if present_rate == 0 or median_score is None:
-            feature_groups.append({
-                "group": "ai_sentiment",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "N/A",
-                "example_metric_value": "Not present in v7 entries",
-                "example_metric_note": "AI sentiment not available for this dataset"
-            })
-        else:
-            feature_groups.append({
-                "group": "ai_sentiment",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "Median AI mean score",
-                "example_metric_value": round(median_score, 3),
-                "example_metric_note": "AI-based sentiment [-1, +1]"
-            })
-        
-        # Activity and silence
+        # Activity and silence (VERIFIED)
         present_rate = (self.group_stats["activity_and_silence"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
         median_posts = safe_median(self.group_stats["activity_and_silence"]["posts_counts"])
         feature_groups.append({
@@ -308,46 +178,6 @@ class CoverageTableBuilder:
             "example_metric_value": int(median_posts) if median_posts else 0,
             "example_metric_note": "Post count in most recent cycle"
         })
-        
-        # Platform engagement
-        present_rate = (self.group_stats["platform_engagement"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
-        if present_rate == 0:
-            feature_groups.append({
-                "group": "platform_engagement",
-                "present_rate_pct": 0.0,
-                "example_metric_label": "N/A",
-                "example_metric_value": "Not collected in v7 schema",
-                "example_metric_note": "Engagement metrics deprecated in current pipeline"
-            })
-        else:
-            median_likes = safe_median(self.group_stats["platform_engagement"]["engagement_values"])
-            feature_groups.append({
-                "group": "platform_engagement",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "Median total likes",
-                "example_metric_value": int(median_likes) if median_likes else 0,
-                "example_metric_note": "Total likes across posts in cycle"
-            })
-        
-        # Author stats
-        present_rate = (self.group_stats["author_stats"]["present"] / self.total_entries * 100) if self.total_entries > 0 else 0
-        if present_rate == 0:
-            feature_groups.append({
-                "group": "author_stats",
-                "present_rate_pct": 0.0,
-                "example_metric_label": "N/A",
-                "example_metric_value": "Not collected in v7 schema",
-                "example_metric_note": "Author metrics deprecated in current pipeline"
-            })
-        else:
-            median_authors = safe_median(self.group_stats["author_stats"]["author_counts"])
-            feature_groups.append({
-                "group": "author_stats",
-                "present_rate_pct": round(present_rate, 2),
-                "example_metric_label": "Median distinct authors",
-                "example_metric_value": int(median_authors) if median_authors else 0,
-                "example_metric_note": "Unique authors per cycle"
-            })
         
         result = {
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -487,37 +317,20 @@ class DatasetSummaryBuilder:
                 self.activity_bins[bin_key]["liq_qv_usd"].append(liq_qv_usd)
     
     def build(self, is_partial_scan: bool = False, scan_limit: int | None = None) -> dict:
-        """Build dataset_summary.json structure with partial scan indicator."""
+        """Build dataset_summary.json structure (verified fields only)."""
         days_list = sorted(self.days_seen)
         days_running = len(days_list)
         avg_per_day = self.total_entries / days_running if days_running > 0 else 0
         
-        # Build sentiment buckets
-        sentiment_buckets_data = []
-        for i in range(10):
-            bucket_data = self.sentiment_buckets[i]
-            n = len(bucket_data["entries"])
-            if n == 0:
-                continue
-            
-            returns = bucket_data["forward_returns"]
-            median_return = safe_median(returns)
-            p25 = safe_percentile(returns, 25)
-            p75 = safe_percentile(returns, 75)
-            pct_positive = sum(1 for r in returns if r > 0) / len(returns) * 100 if returns else 0
-            
-            range_min = -1.0 + i * 0.2
-            range_max = -1.0 + (i + 1) * 0.2
-            
-            sentiment_buckets_data.append({
-                "range": f"[{range_min:.1f}, {range_max:.1f})",
-                "n": n,
-                "median_forward_return_bucket": f"{median_return:+.2f}" if median_return is not None else "N/A",
-                "iqr_bucket": f"{p25:+.2f} to {p75:+.2f}" if p25 is not None and p75 is not None else "N/A",
-                "pct_positive": round(pct_positive, 1)
-            })
+        # Sentiment buckets NOT AVAILABLE in v7 (no hybrid_mean_score field)
+        sentiment_buckets_result = {
+            "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
+            "buckets": [],
+            "disclaimer": "Descriptive distribution only. No trading signal or correlation claim.",
+            "reason_unavailable": "Sentiment scoring not available in v7 entries - dataset is in pre-scoring phase"
+        }
         
-        # Build activity regimes
+        # Build activity regimes (VERIFIED: posts_total exists)
         activity_regimes_data = []
         for bin_label in ["0", "1-2", "3-9", "10-24", "25-49", "50+"]:
             bin_data = self.activity_bins[bin_label]
@@ -557,15 +370,6 @@ class DatasetSummaryBuilder:
                 }
             })
         
-        # Add reason if sentiment buckets are empty
-        sentiment_buckets_result = {
-            "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
-            "buckets": sentiment_buckets_data,
-            "disclaimer": "Descriptive distribution only. No trading signal or correlation claim."
-        }
-        if len(sentiment_buckets_data) == 0:
-            sentiment_buckets_result["reason_unavailable"] = "hybrid_mean_score not found in archive entries"
-        
         result = {
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scale": {
@@ -595,21 +399,17 @@ class DatasetSummaryBuilder:
 
 
 class SymbolTableBuilder:
-    """Build symbol_table.json with per-symbol sentiment and market context."""
+    """Build symbol_table.json with per-symbol activity and market context (verified fields only)."""
     
     def __init__(self):
         self.symbol_data: Dict[str, Dict[str, Any]] = defaultdict(lambda: {
             "sessions": 0,
-            "first_seen": None,
-            "last_seen": None,
             "posts_last_cycle": [],
-            "hybrid_scores": [],
             "spread_bps": [],
-            "liq_qv_usd": [],
         })
     
     def process_entry(self, entry: dict):
-        """Process one usable v7 entry."""
+        """Process one usable v7 entry (verified fields only)."""
         symbol = entry.get("symbol")
         if not symbol:
             return
@@ -617,102 +417,45 @@ class SymbolTableBuilder:
         data = self.symbol_data[symbol]
         data["sessions"] += 1
         
-        # Track first/last seen - try multiple timestamp fields
-        day = None
-        # Try snapshot_ts first (ISO string)
-        snapshot_ts = entry.get("snapshot_ts")
-        if snapshot_ts:
-            try:
-                dt = datetime.fromisoformat(snapshot_ts.replace('Z', '+00:00'))
-                day = dt.date().isoformat()
-            except (ValueError, AttributeError):
-                pass
-        
-        # Try meta.added_ts (ISO string)
-        if not day:
-            meta = entry.get("meta", {})
-            added_ts = meta.get("added_ts")
-            if added_ts:
-                try:
-                    dt = datetime.fromisoformat(added_ts.replace('Z', '+00:00'))
-                    day = dt.date().isoformat()
-                except (ValueError, AttributeError):
-                    pass
-        
-        # Try meta.admitted_at_unix_ms (Unix milliseconds)
-        if not day:
-            meta = entry.get("meta", {})
-            admitted_at = meta.get("admitted_at_unix_ms")
-            if admitted_at:
-                try:
-                    dt = datetime.fromtimestamp(admitted_at / 1000, tz=timezone.utc)
-                    day = dt.date().isoformat()
-                except (ValueError, OSError):
-                    pass
-        
-        if day:
-            if data["first_seen"] is None or day < data["first_seen"]:
-                data["first_seen"] = day
-            if data["last_seen"] is None or day > data["last_seen"]:
-                data["last_seen"] = day
-        
-        # Sentiment metrics
+        # Activity metrics (VERIFIED)
         tsw = entry.get("twitter_sentiment_windows", {})
         last_cycle = tsw.get("last_cycle")
         if last_cycle:
             posts_total = last_cycle.get("posts_total", 0)
             data["posts_last_cycle"].append(posts_total)
         
-        hybrid_score = entry.get("hybrid_mean_score")
-        if hybrid_score is not None:
-            data["hybrid_scores"].append(hybrid_score)
-        
-        # Market context
+        # Market context (VERIFIED)
         spread_bps = entry.get("spot_raw", {}).get("spread_bps")
         if spread_bps is not None:
             data["spread_bps"].append(spread_bps)
-        
-        liq_qv_usd = entry.get("liquidity", {}).get("liq_qv_usd")
-        if liq_qv_usd is not None:
-            data["liq_qv_usd"].append(liq_qv_usd)
     
     def build(self) -> dict:
-        """Build symbol_table.json structure."""
+        """Build symbol_table.json structure (verified fields only)."""
         symbols = []
         
         for symbol, data in self.symbol_data.items():
-            # Calculate metrics
+            # Activity metrics
             median_posts = safe_median(data["posts_last_cycle"])
             p90_posts = safe_percentile(data["posts_last_cycle"], 90)
             
-            # % silent sessions (0 posts)
+            # Silence rate (% sessions with 0 posts)
             silent_count = sum(1 for p in data["posts_last_cycle"] if p == 0)
-            pct_silent = (silent_count / len(data["posts_last_cycle"]) * 100) if data["posts_last_cycle"] else 0
+            silence_rate = (silent_count / len(data["posts_last_cycle"]) * 100) if data["posts_last_cycle"] else 0
             
-            median_hybrid = safe_median(data["hybrid_scores"])
-            p10_hybrid = safe_percentile(data["hybrid_scores"], 10)
-            p90_hybrid = safe_percentile(data["hybrid_scores"], 90)
-            
+            # Market context
             median_spread = safe_median(data["spread_bps"])
-            median_liq = safe_median(data["liq_qv_usd"])
             
             symbols.append({
                 "symbol": symbol,
                 "sessions": data["sessions"],
                 "definition": "One session equals one admission-to-expiry monitoring window (~2h)",
-                "first_seen": data["first_seen"],
-                "last_seen": data["last_seen"],
-                "sentiment": {
+                "activity": {
                     "median_posts_last_cycle": int(median_posts) if median_posts is not None else 0,
                     "p90_posts_last_cycle": int(p90_posts) if p90_posts is not None else 0,
-                    "pct_silent_sessions": round(pct_silent, 1),
-                    "median_hybrid_mean_score": round(median_hybrid, 2) if median_hybrid is not None else None,
-                    "p10_hybrid_mean_score": round(p10_hybrid, 2) if p10_hybrid is not None else None,
-                    "p90_hybrid_mean_score": round(p90_hybrid, 2) if p90_hybrid is not None else None,
+                    "silence_rate_pct": round(silence_rate, 1),
                 },
                 "market_context": {
                     "median_spread_bps": round(median_spread, 2) if median_spread is not None else None,
-                    "median_liq_qv_usd": round(median_liq) if median_liq is not None else None,
                 }
             })
         
