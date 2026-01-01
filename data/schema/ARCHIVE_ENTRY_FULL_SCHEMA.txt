@@ -1,0 +1,68 @@
+V7 Archive Entry Schema
+=======================
+
+This describes the structure of a v7 entry in the CryptoBot archive.
+Archive location: D:/Sentiment-Data/CryptoBot/data/archive/YYYYMMDD/HH.jsonl.gz
+
+Top-Level Keys
+--------------
+[
+  'symbol',           # string - ticker (e.g. "BTCUSDT")
+  'snapshot_ts',      # float - Unix timestamp
+  'meta',             # object - entry metadata
+  'spot_raw',         # object - spot market data
+  'futures_raw',      # object - futures market data
+  'derived',          # object - calculated metrics
+  'norm',             # object - normalized metrics
+  'scores',           # object - scoring results
+  'flags',            # object - boolean flags
+  'diag',             # object - diagnostics
+  'labels',           # object - classification labels
+  'twitter_sentiment_windows',  # object - Twitter data windows
+  'twitter_sentiment_meta',     # object - Twitter metadata
+  'spot_prices'       # object - spot price data
+]
+
+twitter_sentiment_windows Structure
+------------------------------------
+{
+  "last_cycle": {
+    "posts_total": int,    # Total posts in last cycle
+    "nested": {
+      "a": int            # Placeholder/version marker (always 1 in v7)
+    }
+  },
+  "last_2_cycles": { ... }
+}
+
+twitter_sentiment_meta Structure
+---------------------------------
+{
+  "source": string,           # Data source identifier
+  "captured_at_utc": string,  # ISO timestamp of capture
+  "bucket_meta": {
+    "is_silent": bool         # True if no posts in window
+  },
+  "key_used": string          # API key identifier
+}
+
+scores Structure
+----------------
+{
+  "final": float              # Always 0.0 in current v7 entries
+}
+
+IMPORTANT NOTES
+---------------
+1. Sentiment scoring fields (hybrid_mean_score, mean_score, lexicon_mean_score, 
+   ai_mean_score) DO NOT EXIST in current v7 entries.
+
+2. Decision confidence fields (primary_confidence, referee_confidence, 
+   decision_source) DO NOT EXIST in current v7 entries.
+
+3. The "nested" object contains only a version marker integer, not sentiment data.
+
+4. This schema was validated by inspecting real v7 entries from the archive.
+   See TEMP_V7_SENTIMENT_AUDIT.md for detailed investigation results.
+
+Last Updated: 2026-01-01

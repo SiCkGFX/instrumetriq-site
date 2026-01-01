@@ -1,6 +1,0 @@
-{
-  "description": "Lifecycle summary per symbol. Aggregated session counts, durations, date ranges, and final scores. No raw session data exposed.",
-  "data_version": "v7",
-  "symbols_count": 0,
-  "symbols": []
-}

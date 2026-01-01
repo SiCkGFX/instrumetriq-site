@@ -8,6 +8,7 @@
     "build": "npm run lint:wording && astro build",
     "preview": "astro preview",
     "publish": "python scripts/publish.py",
+    "sync-sample": "python scripts/tools/sync_cryptobot_sample.py",
     "astro": "astro"
   },
   "dependencies": {

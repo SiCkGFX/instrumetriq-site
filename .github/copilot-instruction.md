@@ -45,7 +45,17 @@ Copilot should behave as if it cannot see the rendered UI.
 - Identify the exact files/classes involved.
 - Summarize intended changes in **3–6 bullets**.
 - If the request touches copy/claims: open `docs/WORDING_RULES.md` and confirm wording is allowed.
+### **Investigate, don't assume**
+Before referencing any field/path, Copilot must:
+1. **Open the provided schema file**, and
+2. **Inspect at least 20 real v7 entries** from a recent `*.jsonl.gz` and print a short "field availability report" (path → % present → example value).
 
+Only after that is it allowed to write aggregation code.
+
+Any "Not available yet" message must cite the **exact missing paths** and the **inspection counts**.
+
+### **No "fallback narratives"**
+No silent substitutes, no "maybe this field is called…". If a path is unknown, **STOP and inspect**.
 ### Implement
 - Make the smallest change that achieves the request.
 - Keep diffs scoped and reversible.

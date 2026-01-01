@@ -902,6 +902,114 @@ python scripts/publish.py
 4. **Verified reasons** - If unavailable, explain which fields are missing
 5. **ASCII only** - No unicode characters in console output or artifacts
 
+## Archive Sample Sync Workflow
+
+### Purpose
+
+Before building any artifact that reads from the CryptoBot archive, you MUST:
+1. Sync a local sample
+2. Inspect the actual field structure
+3. Verify field paths exist
+4. Only then write aggregation code
+
+This prevents assumptions and ensures accuracy.
+
+### Quick Start
+
+**Sync latest archive sample:**
+```bash
+npm run sync-sample
+```
+
+Or with explicit path:
+```bash
+python scripts/tools/sync_cryptobot_sample.py --cryptobot-root "D:\Sentiment-Data\CryptoBot"
+```
+
+**Outputs created:**
+- `data/samples/cryptobot_latest.jsonl.gz` - Latest archive file (deterministic name)
+- `data/samples/cryptobot_YYYYMMDD_HHMM.jsonl.gz` - Timestamped copy
+- `data/samples/cryptobot_latest_head200.jsonl` - First 200 lines (decompressed, ready to inspect)
+
+### Schema Reference
+
+**Canonical schema:** `data/schema/ARCHIVE_ENTRY_FULL_SCHEMA.txt`
+
+This file documents the verified v7 structure based on real archive inspection. Refer to this before writing any field path code.
+
+### Field Path Verification Workflow
+
+**Step 1: Sync sample**
+```bash
+npm run sync-sample
+```
+
+**Step 2: Inspect field structure**
+```python
+import json
+with open('data/samples/cryptobot_latest_head200.jsonl', 'r') as f:
+    entry = json.loads(f.readline())
+    print(json.dumps(entry, indent=2))
+```
+
+**Step 3: Verify paths exist**
+Before writing code like:
+```python
+sentiment_score = entry['twitter_sentiment_windows']['last_cycle']['hybrid_mean_score']
+```
+
+First verify that path exists in at least 20 entries:
+```python
+path_found = 0
+with open('data/samples/cryptobot_latest_head200.jsonl', 'r') as f:
+    for i, line in enumerate(f):
+        if i >= 20:
+            break
+        entry = json.loads(line)
+        if 'hybrid_mean_score' in entry.get('twitter_sentiment_windows', {}).get('last_cycle', {}):
+            path_found += 1
+
+print(f"Path present: {path_found}/20 entries ({path_found/20*100:.0f}%)")
+```
+
+**Step 4: Only then write aggregation code**
+
+If path availability < 90%, mark the feature as unavailable and document the missing paths.
+
+### Investigation-First Rule
+
+**From .github/copilot-instruction.md:**
+
+> **Investigate, don't assume**: Before referencing any field/path, Copilot must:
+> 1. Open the provided schema file, and
+> 2. Inspect at least 20 real v7 entries from a recent `*.jsonl.gz` and print a short "field availability report" (path → % present → example value).
+>
+> Only after that is it allowed to write aggregation code.
+>
+> Any "Not available yet" message must cite the **exact missing paths** and the **inspection counts**.
+
+**No "fallback narratives"**: No silent substitutes, no "maybe this field is called...". If a path is unknown, **STOP and inspect**.
+
+### Current v7 Reality (as of 2026-01-01)
+
+Based on audit of 200+ entries:
+
+**PRESENT (100%):**
+- `twitter_sentiment_windows.last_cycle.posts_total`
+- `twitter_sentiment_meta.bucket_meta.is_silent`
+- `scores.final` (always 0.0)
+
+**MISSING (0%):**
+- `last_cycle.hybrid_mean_score`
+- `last_cycle.mean_score`
+- `last_cycle.lexicon_mean_score`
+- `last_cycle.ai_mean_score`
+- `last_cycle.primary_confidence`
+- `last_cycle.referee_confidence`
+- `last_cycle.decision_source`
+
+See `TEMP_V7_SENTIMENT_AUDIT.md` for full investigation details.
+
 ## Future Enhancements
 
 Potential additions:
