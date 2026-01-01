@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-01-01T18:10:53.100696Z",
+  "total_entries_analyzed": 42307,
+  "bins": [
+    {
+      "label": "Silent",
+      "posts_range": "0 posts",
+      "n_entries": 8463,
+      "median_spread_bps": 17.97
+    },
+    {
+      "label": "Very Low",
+      "posts_range": "1-2 posts",
+      "n_entries": 7003,
+      "median_spread_bps": 17.95
+    },
+    {
+      "label": "Low",
+      "posts_range": "3-9 posts",
+      "n_entries": 8972,
+      "median_spread_bps": 15.42
+    },
+    {
+      "label": "Medium",
+      "posts_range": "10-24 posts",
+      "n_entries": 6440,
+      "median_spread_bps": 12.19
+    },
+    {
+      "label": "High",
+      "posts_range": "25-49 posts",
+      "n_entries": 7549,
+      "median_spread_bps": 9.14
+    },
+    {
+      "label": "Very High",
+      "posts_range": "50+ posts",
+      "n_entries": 3879,
+      "median_spread_bps": 7.92
+    }
+  ],
+  "notes": [
+    "Activity bins based on posts_total in last sentiment cycle",
+    "Descriptive statistics only - no predictive claims",
+    "Missing metrics omitted (not filled with nulls)"
+  ]
+}

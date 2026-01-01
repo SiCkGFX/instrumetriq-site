@@ -94,7 +94,7 @@ const artifacts = loadArtifacts();
               </tr>
             </thead>
             <tbody>
-              {coverageTable.feature_groups.map(group => {
+              {coverageTable.feature_groups.map((group: any) => {
                 const rate = group.present_rate_pct / 100;
                 let exampleText = '—';
                 
@@ -209,7 +209,7 @@ const artifacts = loadArtifacts();
                   </tr>
                 </thead>
                 <tbody>
-                  {datasetSummary.sentiment_buckets.buckets.map(bucket => (
+                  {datasetSummary.sentiment_buckets.buckets.map((bucket: any) => (
                     <tr>
                       <td><code>{bucket.label}</code></td>
                       <td>{formatNumber(bucket.n_entries)}</td>
@@ -244,7 +244,7 @@ const artifacts = loadArtifacts();
               </tr>
             </thead>
             <tbody>
-              {datasetSummary.activity_regimes.bins.map(bin => (
+              {datasetSummary.activity_regimes.bins.map((bin: any) => (
                 <tr>
                   <td><code>{bin.label}</code></td>
                   <td>{formatNumber(bin.n_entries)}</td>

@@ -1,27 +1,25 @@
 {
-  "generated_at_utc": "2025-12-21T07:42:57.200667+00:00",
-  "total_entries": 15230,
+  "generated_at": "2026-01-01T18:09:49.593353Z",
+  "total_entries_scanned": 42307,
   "feature_groups": [
     {
-      "group": "market_microstructure",
-      "present_rate_pct": 100.0,
-      "example_metric_label": "Median spread (bps)",
-      "example_metric_value": 14.73,
-      "example_metric_note": "Bid-ask spread in basis points"
+      "label": "Market Microstructure",
+      "description": "Bid-ask dynamics and order book depth metrics",
+      "availability_pct": 100.0,
+      "example_metric_label": "Median spread",
+      "example_metric_value": "14.21 bps"
     },
     {
-      "group": "spot_prices",
-      "present_rate_pct": 100.0,
-      "example_metric_label": "Median sample count",
-      "example_metric_value": 750,
-      "example_metric_note": "High-resolution price samples per entry"
-    },
-    {
-      "group": "activity_and_silence",
-      "present_rate_pct": 100.0,
-      "example_metric_label": "Median posts (last_cycle)",
-      "example_metric_value": 7,
-      "example_metric_note": "Post count in most recent cycle"
+      "label": "Sentiment Activity Windows",
+      "description": "Twitter sentiment aggregated over rolling time windows",
+      "availability_pct": 100.0,
+      "example_metric_label": "Sessions with sentiment data",
+      "example_metric_value": "80.0%"
     }
+  ],
+  "notes": [
+    "Feature groups shown only if field availability exceeds 90% threshold",
+    "Example metrics computed from real archive data",
+    "All percentages reflect verified field presence in v7 entries"
   ]
 }
