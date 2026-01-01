@@ -822,6 +822,86 @@ For production updates:
 - Check frontmatter is valid
 - Ensure date is not in the future
 
+## Dataset Artifacts Verification
+
+### Overview
+
+Dataset artifacts power the /dataset overview page. These must be accurate, verifiable, and non-contradictory.
+
+### Verification Checklist
+
+Run these commands in order to verify dataset artifacts are correct:
+
+```bash
+# 1. Inspect field paths from real v7 entries
+python scripts/inspect_v7_paths.py --sample 200
+
+# 2. Build dataset overview artifacts
+python scripts/build_dataset_overview_artifacts.py
+
+# 3. Run tests
+python scripts/test_dataset_overview_artifacts.py
+
+# 4. Full publish workflow (includes overview artifacts)
+python scripts/publish.py
+```
+
+### Expected Outcomes
+
+**Field Path Inspection:**
+- Should show [VERIFIED] for fields with >= 90% availability
+- Should show [MISSING] for fields not present in v7 entries
+- Sentiment scoring fields (hybrid_mean_score, etc.) are MISSING in current data
+- Decision confidence fields are MISSING in current data
+
+**Coverage Table (coverage_table.json):**
+- NO NaN present rates
+- NO 0% present rate rows shown
+- All feature groups have non-empty example_metric_value
+- Present rates should be 95-100% for shown groups
+
+**Dataset Summary (dataset_summary.json):**
+- Scale metrics (days, entries, symbols) must be > 0
+- posts_scored must have total_posts and from_entries
+- sentiment_distribution.available = false with verified reason
+- confidence_disagreement.available = false with verified reason
+
+**Confidence Disagreement (confidence_disagreement.json):**
+- available = false
+- reason_unavailable contains verified field path explanation
+
+**Tests:**
+- All tests must pass
+- No NaN values
+- No 0% present rates
+- No empty example values
+- Entry counts match across artifacts
+
+### Troubleshooting
+
+**If present rates show NaN:**
+- Check denominator in coverage table builder
+- Verify total_usable_v7_entries is being computed correctly
+- Run field inspection to verify paths
+
+**If "Not available yet" shows for existing fields:**
+- Run field inspection to verify actual field availability
+- Check availability flags in dataset_summary.json
+- Update availability logic based on inspection results
+
+**If Confidence vs Disagreement is empty but should have data:**
+- Run field inspection to verify confidence fields exist
+- Check if primary_confidence, referee_confidence, decision_source are present
+- If fields are MISSING, artifact should show reason_unavailable
+
+### Design Principles
+
+1. **Never assume field names** - Always verify from real data
+2. **No contradictions** - If preview shows sentiment fields, distribution cannot claim they're unavailable
+3. **No 0% rows** - Don't show groups that aren't present in the data
+4. **Verified reasons** - If unavailable, explain which fields are missing
+5. **ASCII only** - No unicode characters in console output or artifacts
+
 ## Future Enhancements
 
 Potential additions:

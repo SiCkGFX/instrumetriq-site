@@ -1,110 +1,21 @@
 {
-  "generated_at_utc": "2025-12-21T07:42:57.216364+00:00",
+  "generated_at_utc": "2026-01-01T18:32:58.593754Z",
   "scale": {
-    "days_running": 8,
-    "total_usable_entries": 15230,
-    "avg_entries_per_day": 1904,
-    "distinct_symbols": 278,
-    "cycles_completed": 0
+    "days_running": 18,
+    "total_usable_entries": 42308,
+    "avg_entries_per_day": 2350,
+    "distinct_symbols": 282
   },
   "posts_scored": {
-    "total_posts": 763460,
-    "from_entries": 12192,
-    "window_definition": "posts counted from twitter_sentiment_windows.last_cycle and last_2_cycles"
+    "total_posts": 675850,
+    "from_entries": 33843
   },
-  "sentiment_buckets": {
-    "bucket_definition": "hybrid_mean_score buckets [-1.0, +1.0]",
-    "buckets": [],
-    "disclaimer": "Descriptive distribution only. No trading signal or correlation claim.",
-    "reason_unavailable": "Sentiment scoring not available in v7 entries - dataset is in pre-scoring phase"
+  "sentiment_distribution": {
+    "available": false,
+    "reason_unavailable": "Sentiment scoring fields (hybrid_mean_score, ai_mean_score, etc.) not present in current v7 entries. Only post volume (posts_total) is tracked."
   },
-  "activity_regimes": {
-    "definition": "Regimes based on posts_total in last_cycle",
-    "bins": [
-      {
-        "label": "0",
-        "min": 0,
-        "max": 0,
-        "n_entries": 3038,
-        "metrics": {
-          "median_abs_return": null,
-          "p90_abs_return": null,
-          "median_spread_bps": 18.79,
-          "p90_spread_bps": 51.47,
-          "median_liq_qv_usd": null,
-          "p90_liq_qv_usd": null
-        }
-      },
-      {
-        "label": "1-2",
-        "min": 1,
-        "max": 2,
-        "n_entries": 2415,
-        "metrics": {
-          "median_abs_return": null,
-          "p90_abs_return": null,
-          "median_spread_bps": 18.47,
-          "p90_spread_bps": 49.88,
-          "median_liq_qv_usd": null,
-          "p90_liq_qv_usd": null
-        }
-      },
-      {
-        "label": "3-9",
-        "min": 3,
-        "max": 9,
-        "n_entries": 3090,
-        "metrics": {
-          "median_abs_return": null,
-          "p90_abs_return": null,
-          "median_spread_bps": 15.81,
-          "p90_spread_bps": 43.77,
-          "median_liq_qv_usd": null,
-          "p90_liq_qv_usd": null
-        }
-      },
-      {
-        "label": "10-24",
-        "min": 10,
-        "max": 24,
-        "n_entries": 2326,
-        "metrics": {
-          "median_abs_return": null,
-          "p90_abs_return": null,
-          "median_spread_bps": 13.47,
-          "p90_spread_bps": 38.91,
-          "median_liq_qv_usd": null,
-          "p90_liq_qv_usd": null
-        }
-      },
-      {
-        "label": "25-49",
-        "min": 25,
-        "max": 49,
-        "n_entries": 2854,
-        "metrics": {
-          "median_abs_return": null,
-          "p90_abs_return": null,
-          "median_spread_bps": 9.67,
-          "p90_spread_bps": 39.17,
-          "median_liq_qv_usd": null,
-          "p90_liq_qv_usd": null
-        }
-      },
-      {
-        "label": "50+",
-        "min": 50,
-        "max": 999999,
-        "n_entries": 1507,
-        "metrics": {
-          "median_abs_return": null,
-          "p90_abs_return": null,
-          "median_spread_bps": 7.96,
-          "p90_spread_bps": 31.36,
-          "median_liq_qv_usd": null,
-          "p90_liq_qv_usd": null
-        }
-      }
-    ]
+  "confidence_disagreement": {
+    "available": false,
+    "reason_unavailable": "Decision confidence fields (primary_confidence, referee_confidence, decision_source) not present in current v7 entries."
   }
 }

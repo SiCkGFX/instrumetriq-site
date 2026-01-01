@@ -1,0 +1,6 @@
+{
+  "generated_at_utc": "2026-01-01T18:32:58.594606Z",
+  "available": false,
+  "reason_unavailable": "Decision confidence fields (primary_confidence, referee_confidence, decision_source) not present in current v7 schema",
+  "bins": null
+}

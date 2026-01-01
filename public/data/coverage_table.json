@@ -1,25 +1,43 @@
 {
-  "generated_at": "2026-01-01T18:09:49.593353Z",
-  "total_entries_scanned": 42307,
+  "generated_at_utc": "2026-01-01T18:31:28.008252Z",
+  "total_usable_v7_entries": 42308,
   "feature_groups": [
     {
+      "group_id": "market_microstructure",
       "label": "Market Microstructure",
-      "description": "Bid-ask dynamics and order book depth metrics",
-      "availability_pct": 100.0,
+      "note": "Bid-ask dynamics, spreads, order book metrics",
+      "present_rate_pct": 100.0,
       "example_metric_label": "Median spread",
       "example_metric_value": "14.21 bps"
     },
     {
+      "group_id": "time_series_sampling",
+      "label": "Time-Series Price Sampling",
+      "note": "Granular spot price captures throughout sessions",
+      "present_rate_pct": 100.0,
+      "example_metric_label": "Median samples per session",
+      "example_metric_value": "754 prices"
+    },
+    {
+      "group_id": "sentiment_activity_windows",
       "label": "Sentiment Activity Windows",
-      "description": "Twitter sentiment aggregated over rolling time windows",
-      "availability_pct": 100.0,
-      "example_metric_label": "Sessions with sentiment data",
+      "note": "Twitter post volume aggregated over rolling time windows",
+      "present_rate_pct": 100.0,
+      "example_metric_label": "Sessions with posts",
       "example_metric_value": "80.0%"
+    },
+    {
+      "group_id": "liquidity_metrics",
+      "label": "Liquidity Metrics",
+      "note": "Global and pair-specific liquidity indicators",
+      "present_rate_pct": 100.0,
+      "example_metric_label": "Median global liquidity percentile",
+      "example_metric_value": "50.4%"
     }
   ],
   "notes": [
-    "Feature groups shown only if field availability exceeds 90% threshold",
-    "Example metrics computed from real archive data",
-    "All percentages reflect verified field presence in v7 entries"
+    "Feature groups shown only if present in usable v7 entries",
+    "Present rate = percentage of usable entries containing this group",
+    "Example metrics computed from real archive data"
   ]
 }
