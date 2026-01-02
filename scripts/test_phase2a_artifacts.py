@@ -68,6 +68,10 @@ def test_metadata_present(artifact_name: str, data: dict) -> bool:
             errors.append(f"Missing field: {field}")
         elif field == 'entries_scanned' and (not isinstance(data[field], int) or data[field] <= 0):
             errors.append(f"entries_scanned must be positive int, got: {data[field]}")
+        elif field == 'generated_at_utc':
+            # Verify UTC format ends with Z
+            if not isinstance(data[field], str) or not data[field].endswith('Z'):
+                errors.append(f"generated_at_utc must be ISO string ending with 'Z', got: {data[field]}")
     
     if errors:
         print(f"  FAIL: {artifact_name} metadata issues:")
@@ -144,6 +148,13 @@ def test_session_lifecycle(data: dict) -> bool:
     if 'session' not in data['definition']:
         print("  FAIL: Missing 'session' definition")
         return False
+    
+    # note_sample_bias is OPTIONAL - if present, must be a string
+    if 'note_sample_bias' in data:
+        if not isinstance(data['note_sample_bias'], str):
+            print("  FAIL: note_sample_bias must be a string if present")
+            return False
+        print("  INFO: note_sample_bias present (sample concentration detected)")
     
     print("  PASS: Session definition present")
     return True

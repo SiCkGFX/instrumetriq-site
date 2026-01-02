@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-01-02T18:04:38.813793Z",
+  "generated_at_utc": "2026-01-02T18:51:53.390622Z",
   "entries_scanned": 147,
   "source": {
     "sample_file": "data/samples/cryptobot_latest_head200.jsonl",
@@ -121,5 +121,6 @@
       "count": 0
     }
   ],
-  "unavailable_fields": []
+  "unavailable_fields": [],
+  "note_sample_bias": "Admission hours are highly concentrated in this sample; this may reflect the sample window rather than global behavior."
 }

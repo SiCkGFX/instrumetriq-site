@@ -18,7 +18,7 @@ import json
 import math
 import statistics
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -178,7 +178,7 @@ def build_activity_regimes(entries: List[Dict], coverage: Dict[str, Any]) -> Dic
     
     # Build artifact
     artifact = {
-        'generated_at_utc': datetime.utcnow().isoformat() + 'Z',
+        'generated_at_utc': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'entries_scanned': len(entries),
         'total_binned': total_entries,
         'source': {
@@ -284,7 +284,7 @@ def build_sampling_density(entries: List[Dict], coverage: Dict[str, Any]) -> Dic
     
     # Build artifact
     artifact = {
-        'generated_at_utc': datetime.utcnow().isoformat() + 'Z',
+        'generated_at_utc': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'entries_scanned': len(entries),
         'source': {
             'sample_file': 'data/samples/cryptobot_latest_head200.jsonl',
@@ -371,8 +371,15 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
                     if duration_sec > 0:
                         durations.append(duration_sec)
                     
-                    # Track admission hour
-                    admission_hours[added_dt.hour] += 1
+                    # Track admission hour in UTC
+                    # If timestamp has timezone info, convert to UTC; if naive, assume UTC
+                    if added_dt.tzinfo is not None:
+                        added_utc = added_dt.astimezone(timezone.utc)
+                    else:
+                        # Naive timestamp: assume UTC
+                        added_utc = added_dt.replace(tzinfo=timezone.utc)
+                    
+                    admission_hours[added_utc.hour] += 1
                 except:
                     pass
     
@@ -390,9 +397,17 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
     print(f"  Durations computed: {len(durations)}")
     print(f"  Admission hours tracked: {sum(admission_hours.values())}")
     
+    # Check for highly concentrated admission hours
+    total_admissions = sum(admission_hours.values())
+    max_hour_count = max(admission_hours.values()) if admission_hours else 0
+    has_concentration_bias = (max_hour_count / total_admissions >= 0.90) if total_admissions > 0 else False
+    
+    if has_concentration_bias:
+        print(f"  NOTE: Admission hours are highly concentrated ({max_hour_count}/{total_admissions} = {max_hour_count/total_admissions:.1%})")
+    
     # Build artifact
     artifact = {
-        'generated_at_utc': datetime.utcnow().isoformat() + 'Z',
+        'generated_at_utc': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'entries_scanned': len(entries),
         'source': {
             'sample_file': 'data/samples/cryptobot_latest_head200.jsonl',
@@ -419,6 +434,10 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
         'admission_hour_distribution': hour_dist,
         'unavailable_fields': []
     }
+    
+    # Add concentration note if detected
+    if has_concentration_bias:
+        artifact['note_sample_bias'] = 'Admission hours are highly concentrated in this sample; this may reflect the sample window rather than global behavior.'
     
     # Note unavailable fields
     if not added_path:
