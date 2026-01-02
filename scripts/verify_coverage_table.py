@@ -1,22 +1,51 @@
 #!/usr/bin/env python3
 """
-Verify Coverage Table (Phase 1B-check)
+Verify Coverage Table (Phase 1B-fix)
 
 Independently verifies that public/data/coverage_table.json is correct,
 consistent with Phase 1A's field_coverage_report.json, and that example
-values are real (pulled from actual entries), not placeholders.
+values are REAL numeric values (not descriptive placeholders).
 
 Hard requirements:
 - Use ONLY what exists in field_coverage_report.json and sample entries
 - Do NOT assume any field paths
 - Zero tolerance for 0% rows or empty examples
+- Examples MUST be numeric (not descriptions)
 - ASCII-only output
 """
 
 import json
+import math
+import re
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+
+
+def is_numeric_example(example):
+    """Check if example is a numeric value or numeric-formatted string."""
+    if not example or example == '':
+        return False
+    
+    example = str(example).strip()
+    
+    # Pattern 1: Simple number (int or float): "42", "3.14", "-0.5"
+    if re.match(r'^-?\d+(\.\d+)?$', example):
+        return True
+    
+    # Pattern 2: Range: "0.5 to 1.2", "10-20"
+    if re.match(r'^-?\d+(\.\d+)?\s*(to|-)\s*-?\d+(\.\d+)?$', example):
+        return True
+    
+    # Pattern 3: Number with suffix: "42K", "3.5%"
+    if re.match(r'^-?\d+(\.\d+)?[KMB%]$', example):
+        return True
+    
+    # Pattern 4: Percentage: "15.5%"
+    if re.match(r'^-?\d+(\.\d+)?%$', example):
+        return True
+    
+    return False
 
 
 def get_nested_value(data: Dict[str, Any], path: str) -> Any:
@@ -244,9 +273,9 @@ def check_consistency(coverage_table: Dict[str, Any],
 
 
 def check_examples_real(coverage_table: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    """Check D: Examples must be real (from actual entries)."""
+    """Check D: Examples must be real numeric values (not descriptive)."""
     print("\n" + "=" * 70)
-    print("CHECK D: Examples Must Be Real")
+    print("CHECK D: Examples Must Be Real Numeric Values")
     print("=" * 70)
     
     errors = []
@@ -266,6 +295,7 @@ def check_examples_real(coverage_table: Dict[str, Any]) -> Tuple[bool, List[str]
     
     # Check each example
     checked_examples = 0
+    non_numeric = []
     for row in coverage_table.get('rows', []):
         row_label = row.get('label', 'unknown')
         
@@ -277,7 +307,14 @@ def check_examples_real(coverage_table: Dict[str, Any]) -> Tuple[bool, List[str]
             if not path or not example:
                 continue
             
-            # Find first entry with this path
+            # Verify example is numeric (not descriptive)
+            if not is_numeric_example(example):
+                errors.append(f"{row_label}/{check_label}: example '{example}' is not numeric")
+                non_numeric.append(f"{row_label}/{check_label}: '{example}'")
+                print(f"  FAIL: '{path}' - example '{example}' is descriptive, not numeric")
+                continue
+            
+            # Find first entry with this path to verify it exists
             real_value = None
             for entry in entries:
                 val = get_nested_value(entry, path)
@@ -290,34 +327,15 @@ def check_examples_real(coverage_table: Dict[str, Any]) -> Tuple[bool, List[str]
                 print(f"  FAIL: '{path}' not in sample (but Phase 1A says present)")
                 continue
             
-            # Compare example to real value
-            # Allow for formatting differences (e.g., "14.2 bps" vs 14.2)
-            # But check that example is derived from real data
-            real_str = str(real_value)
-            
-            # For numeric values, check if example contains the number
-            if isinstance(real_value, (int, float)):
-                # Check if the number appears in the example
-                real_num_str = f"{real_value:.1f}".rstrip('0').rstrip('.')
-                if real_num_str not in example and str(int(real_value)) not in example:
-                    warnings.append(f"{row_label}/{check_label}: example '{example}' "
-                                  f"doesn't clearly match real value {real_value}")
-                    print(f"  WARN: '{path}' - example='{example}' vs real={real_value}")
-            else:
-                # For non-numeric, check substring match
-                if real_str not in example and example not in real_str:
-                    # Check if example is a description rather than the actual value
-                    if len(example) < 50 and not any(word in example.lower() 
-                        for word in ['ratio', 'metrics', 'indicators', 'comparison', 'depth', 'signals']):
-                        warnings.append(f"{row_label}/{check_label}: example '{example}' "
-                                      f"doesn't match real value '{real_str[:50]}'")
-            
             checked_examples += 1
     
     print(f"  Verified: {checked_examples} examples")
     
+    if non_numeric:
+        print(f"  Found {len(non_numeric)} non-numeric examples (FAIL)")
+    
     if len(errors) == 0:
-        print("  PASS: All examples found in real entries")
+        print("  PASS: All examples are numeric and found in real entries")
     
     return len(errors) == 0, errors, warnings
 

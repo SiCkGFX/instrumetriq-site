@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-01-02T08:16:59.288172Z",
+  "generated_at_utc": "2026-01-02T10:44:54.271035Z",
   "entries_scanned": 147,
   "rows": [
     {
@@ -11,22 +11,15 @@
           "label": "Spread (bps)",
           "path": "derived.spread_bps",
           "present_pct": 100.0,
-          "example": "14.2 bps",
-          "notes": "Bid-ask spread in basis points"
+          "example": "14.2",
+          "notes": "Median bid-ask spread in basis points"
         },
         {
           "label": "Depth imbalance",
           "path": "derived.depth_imbalance",
           "present_pct": 100.0,
-          "example": "bid/ask volume ratio",
-          "notes": "Order book depth asymmetry"
-        },
-        {
-          "label": "Flow indicators",
-          "path": "derived.flow",
-          "present_pct": 100.0,
-          "example": "momentum metrics",
-          "notes": "Trade flow and momentum signals"
+          "example": "0.0",
+          "notes": "Median bid/ask volume ratio"
         }
       ]
     },
@@ -39,15 +32,15 @@
           "label": "Global liquidity %",
           "path": "derived.liq_global_pct",
           "present_pct": 100.0,
-          "example": "cross-market comparison",
-          "notes": "Liquidity relative to global market"
+          "example": "38.2",
+          "notes": "Median liquidity vs global market"
         },
         {
           "label": "Self liquidity %",
           "path": "derived.liq_self_pct",
           "present_pct": 100.0,
-          "example": "symbol-specific depth",
-          "notes": "Liquidity relative to own history"
+          "example": "38.6",
+          "notes": "Median liquidity vs own history"
         }
       ]
     },
@@ -60,15 +53,15 @@
           "label": "Weighted depth",
           "path": "derived.depth_weighted",
           "present_pct": 100.0,
-          "example": "volume-weighted book",
-          "notes": "Depth across price levels"
+          "example": "676.26",
+          "notes": "Median volume-weighted depth"
         },
         {
           "label": "Depth skew",
           "path": "derived.depth_skew",
           "present_pct": 100.0,
-          "example": "bid vs ask asymmetry",
-          "notes": "Order book balance"
+          "example": "0.0",
+          "notes": "Median bid vs ask asymmetry"
         }
       ]
     },
@@ -78,67 +71,67 @@
       "present_pct": 100.0,
       "checks": [
         {
-          "label": "Spot prices",
+          "label": "Spot price samples",
           "path": "spot_prices",
           "present_pct": 100.0,
-          "example": "OHLCV snapshots",
-          "notes": "Current and recent prices"
+          "example": "742",
+          "notes": "Median OHLCV snapshots per session"
         }
       ]
     },
     {
       "group": "sentiment_last_cycle",
       "label": "Sentiment (Last Cycle)",
-      "present_pct": 100.0,
+      "present_pct": 73.5,
       "checks": [
         {
-          "label": "AI sentiment",
-          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment",
+          "label": "Posts per cycle",
+          "path": "twitter_sentiment_windows.last_cycle.posts_total",
           "present_pct": 100.0,
-          "example": "transformer-based scoring",
-          "notes": "ML model sentiment classification"
+          "example": "6",
+          "notes": "Median tweet volume per window"
         },
         {
-          "label": "Lexicon sentiment",
-          "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment",
+          "label": "Lexicon score range",
+          "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment.score",
           "present_pct": 100.0,
-          "example": "dictionary-based scoring",
-          "notes": "Keyword-based sentiment"
+          "example": "-0.04 to 0.88",
+          "notes": "p10-p90 sentiment score range"
         },
         {
-          "label": "Hybrid decisions",
-          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats",
-          "present_pct": 100.0,
-          "example": "referee-arbitrated scoring",
-          "notes": "Combined sentiment logic"
+          "label": "Posts scored",
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.posts_scored",
+          "present_pct": 73.5,
+          "example": "17",
+          "notes": "Median posts with sentiment scores"
         }
       ]
     },
     {
       "group": "sentiment_last_2_cycles",
       "label": "Sentiment (Last 2 Cycles)",
-      "present_pct": 100.0,
+      "present_pct": 79.6,
       "checks": [
         {
-          "label": "AI sentiment (2-cycle)",
-          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment",
+          "label": "Posts (2-cycle)",
+          "path": "twitter_sentiment_windows.last_2_cycles.posts_total",
           "present_pct": 100.0,
-          "example": "extended window scoring",
-          "notes": "ML sentiment over 2 cycles"
+          "example": "12",
+          "notes": "Median tweets over 2 cycles"
         },
         {
-          "label": "Lexicon sentiment (2-cycle)",
-          "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment",
+          "label": "Lexicon score (2-cycle)",
+          "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment.score",
           "present_pct": 100.0,
-          "example": "extended window scoring",
-          "notes": "Lexicon sentiment over 2 cycles"
+          "example": "0.340",
+          "notes": "Median sentiment over 2 cycles"
         },
         {
-          "label": "Hybrid decisions (2-cycle)",
-          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats",
-          "present_pct": 100.0,
-          "example": "extended window decisions",
-          "notes": "Combined logic over 2 cycles"
+          "label": "Posts scored (2-cycle)",
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.posts_scored",
+          "present_pct": 79.6,
+          "example": "33",
+          "notes": "Median scored posts over 2 cycles"
         }
       ]
     },
@@ -148,18 +141,11 @@
       "present_pct": 100.0,
       "checks": [
         {
-          "label": "Posts per cycle",
+          "label": "Silence rate",
           "path": "twitter_sentiment_windows.last_cycle.posts_total",
           "present_pct": 100.0,
-          "example": "6 posts",
-          "notes": "Tweet volume per time window"
-        },
-        {
-          "label": "Silence detection",
-          "path": "twitter_sentiment_windows.last_cycle.bucket_status",
-          "present_pct": 100.0,
-          "example": "active/silent classification",
-          "notes": "Detects periods with no posts"
+          "example": "26.5%",
+          "notes": "Percent of periods with zero posts"
         }
       ]
     },
@@ -172,15 +158,15 @@
           "label": "Distinct authors",
           "path": "twitter_sentiment_windows.last_cycle.author_stats.distinct_authors_total",
           "present_pct": 73.5,
-          "example": "unique users per cycle",
-          "notes": "Number of unique posters"
+          "example": "11",
+          "notes": "Median unique posters per cycle"
         },
         {
           "label": "Follower reach",
           "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_mean",
           "present_pct": 73.5,
-          "example": "audience size metrics",
-          "notes": "Average follower counts"
+          "example": "5K",
+          "notes": "Median follower count (thousands)"
         }
       ]
     }

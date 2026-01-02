@@ -152,19 +152,33 @@ python scripts/build_coverage_table.py
 python scripts/test_coverage_table.py
 ```
 
+**Verification command:**
+```bash
+python scripts/verify_coverage_table.py
+```
+
 **Output location:**
 - `public/data/coverage_table.json`
 
 **Requirements:**
-- NO 0% rows (excluded: sampling_density)
-- ALL examples populated (never empty)
+- NO 0% rows (excluded groups with 0% presence)
+- ALL examples are REAL numeric values computed from sample data
+- Examples use median, p10-p90, or counts from `data/samples/cryptobot_latest_head200.jsonl`
 - ASCII-only output
 - Uses canonical field paths only
+
+**Example computation methods:**
+- Numeric fields: median value (e.g., "14.2" for spread_bps)
+- Score ranges: p10-p90 (e.g., "-0.04 to 0.88")
+- Counts: median count or array length (e.g., "742" snapshots)
+- Percentages: computed from sample (e.g., "0.7%" silence rate)
+- No descriptive placeholders allowed
 
 **Structure:**
 ```json
 {
-  "generated_at": "2025-01-01T12:00:00Z",
+  "generated_at_utc": "2026-01-02T10:44:54Z",
+  "entries_scanned": 147,
   "rows": [
     {
       "group": "market_microstructure",
@@ -172,10 +186,11 @@ python scripts/test_coverage_table.py
       "present_pct": 100.0,
       "checks": [
         {
-          "path": "market_microstructure.spread_bps",
-          "label": "Bid-Ask Spread",
+          "path": "derived.spread_bps",
+          "label": "Spread (bps)",
           "present_pct": 100.0,
-          "example": "4.20"
+          "example": "14.2",
+          "notes": "Median bid-ask spread in basis points"
         }
       ]
     }

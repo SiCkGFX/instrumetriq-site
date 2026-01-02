@@ -1,17 +1,45 @@
 #!/usr/bin/env python3
 """
-Test Coverage Table (Phase 1B)
+Test Coverage Table (Phase 1B-fix)
 
 Validates that public/data/coverage_table.json meets all requirements:
 - NO 0% rows
 - NO empty examples
+- ALL examples are REAL numeric values (not descriptive placeholders)
 - All paths exist in field_coverage_report.json
 - Valid group keys only
 """
 
 import json
+import re
 import sys
 from pathlib import Path
+
+
+def is_numeric_example(example):
+    """Check if example is a numeric value or numeric-formatted string."""
+    if not example or example == '':
+        return False
+    
+    example = str(example).strip()
+    
+    # Pattern 1: Simple number (int or float): "42", "3.14", "-0.5"
+    if re.match(r'^-?\d+(\.\d+)?$', example):
+        return True
+    
+    # Pattern 2: Range: "0.5 to 1.2", "10-20"
+    if re.match(r'^-?\d+(\.\d+)?\s*(to|-)\s*-?\d+(\.\d+)?$', example):
+        return True
+    
+    # Pattern 3: Number with suffix: "42K", "3.5%", "15.2%"
+    if re.match(r'^-?\d+(\.\d+)?[KMB%]$', example):
+        return True
+    
+    # Pattern 4: Percentage value: "15.5%"
+    if re.match(r'^-?\d+(\.\d+)?%$', example):
+        return True
+    
+    return False
 
 
 def test_coverage_table():
@@ -95,6 +123,23 @@ def test_coverage_table():
         print(f"  FAIL: {empty_examples}")
     else:
         print("  PASS: All examples populated")
+    
+    # Test 6b: All examples must be numeric (not descriptive)
+    print("[TEST 6b] Check examples are numeric (not descriptive)...")
+    non_numeric_examples = []
+    for row in table.get('rows', []):
+        for check in row.get('checks', []):
+            example = check.get('example')
+            if example and not is_numeric_example(example):
+                non_numeric_examples.append(f"{row['label']}/{check['label']}: '{example}'")
+    
+    if non_numeric_examples:
+        errors.append(f"Found {len(non_numeric_examples)} non-numeric examples")
+        print(f"  FAIL: Examples must be numeric values, not descriptions")
+        for ex in non_numeric_examples[:5]:
+            print(f"       {ex}")
+    else:
+        print("  PASS: All examples are numeric")
     
     # Test 7: All paths exist in coverage report
     print("[TEST 7] Check all paths exist in coverage report...")
