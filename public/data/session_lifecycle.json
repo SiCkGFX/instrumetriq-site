@@ -1,0 +1,125 @@
+{
+  "generated_at_utc": "2026-01-02T18:04:38.813793Z",
+  "entries_scanned": 147,
+  "source": {
+    "sample_file": "data/samples/cryptobot_latest_head200.jsonl",
+    "ssot_file": "data/field_coverage_report.json"
+  },
+  "definition": {
+    "session": "One admitted watchlist window from added_ts to expires_ts",
+    "typical_duration": "~2 hours per monitoring window"
+  },
+  "fields_used": {
+    "added_ts": "meta.added_ts",
+    "expires_ts": "meta.expires_ts"
+  },
+  "duration_stats": {
+    "n_entries_with_duration": 147,
+    "duration_sec": {
+      "median": 7200,
+      "p10": 7200,
+      "p90": 7200,
+      "min": 7200,
+      "max": 7200
+    }
+  },
+  "admission_hour_distribution": [
+    {
+      "hour": 0,
+      "count": 0
+    },
+    {
+      "hour": 1,
+      "count": 0
+    },
+    {
+      "hour": 2,
+      "count": 0
+    },
+    {
+      "hour": 3,
+      "count": 0
+    },
+    {
+      "hour": 4,
+      "count": 0
+    },
+    {
+      "hour": 5,
+      "count": 0
+    },
+    {
+      "hour": 6,
+      "count": 0
+    },
+    {
+      "hour": 7,
+      "count": 0
+    },
+    {
+      "hour": 8,
+      "count": 0
+    },
+    {
+      "hour": 9,
+      "count": 0
+    },
+    {
+      "hour": 10,
+      "count": 0
+    },
+    {
+      "hour": 11,
+      "count": 0
+    },
+    {
+      "hour": 12,
+      "count": 0
+    },
+    {
+      "hour": 13,
+      "count": 0
+    },
+    {
+      "hour": 14,
+      "count": 0
+    },
+    {
+      "hour": 15,
+      "count": 0
+    },
+    {
+      "hour": 16,
+      "count": 0
+    },
+    {
+      "hour": 17,
+      "count": 14
+    },
+    {
+      "hour": 18,
+      "count": 133
+    },
+    {
+      "hour": 19,
+      "count": 0
+    },
+    {
+      "hour": 20,
+      "count": 0
+    },
+    {
+      "hour": 21,
+      "count": 0
+    },
+    {
+      "hour": 22,
+      "count": 0
+    },
+    {
+      "hour": 23,
+      "count": 0
+    }
+  ],
+  "unavailable_fields": []
+}

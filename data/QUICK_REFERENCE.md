@@ -210,3 +210,52 @@ python scripts/verify_coverage_table.py
 
 **Excluded groups (1):**
 - Sampling Density (0% - all fields missing)
+
+---
+
+## Phase 2A: Descriptive Behavior Artifacts
+
+**Purpose:** Generate descriptive statistics about dataset behavior for Updates/Research pages (NO predictive claims).
+
+**Build command:**
+```bash
+python scripts/build_phase2a_artifacts.py
+```
+
+**Test command:**
+```bash
+python scripts/test_phase2a_artifacts.py
+```
+
+**Output files:**
+- `public/data/activity_regimes.json` - Tweet volume bins with descriptive stats
+- `public/data/sampling_density.json` - Sampling resolution quality metrics
+- `public/data/session_lifecycle.json` - Monitoring window lifecycle patterns
+
+**Artifacts:**
+
+1. **activity_regimes.json**
+   - Bins entries by tweet volume (0, 1-2, 3-9, 10-24, 25-49, 50+ posts)
+   - Shows n_entries, share_pct, median spread/liquidity per bin
+   - NO predictive claims - descriptive only
+
+2. **sampling_density.json**
+   - Sample count distribution (median, p10, p90, histogram)
+   - Spot price sample lengths
+   - Histogram buckets: <600, 600-699, 700-749, 750-799, 800-899, 900+
+
+3. **session_lifecycle.json**
+   - Monitoring window duration stats (median, p10, p90)
+   - Admission hour distribution (0-23)
+   - Definition: One watchlist window from added_ts to expires_ts
+
+**Rules:**
+- Use ONLY paths from `field_coverage_report.json` (Phase 1A SSOT)
+- NO correlations, NO predictive claims
+- Deterministic output (except timestamp)
+- ASCII-only JSON
+
+**Field discovery:**
+- Builder auto-discovers paths from SSOT
+- If field unavailable, artifact includes unavailable_reason
+- No hardcoded assumptions

@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-01-02T18:04:38.782486Z",
+  "entries_scanned": 147,
+  "source": {
+    "sample_file": "data/samples/cryptobot_latest_head200.jsonl",
+    "ssot_file": "data/field_coverage_report.json"
+  },
+  "fields_used": {
+    "sample_count": "meta.sample_count",
+    "spot_prices": "spot_prices"
+  },
+  "sample_count_stats": {
+    "n_entries": 147,
+    "median": 742,
+    "p10": 732,
+    "p90": 752,
+    "min": 726,
+    "max": 756
+  },
+  "sample_count_histogram": [
+    {
+      "bucket": "<600",
+      "count": 0,
+      "share_pct": 0.0
+    },
+    {
+      "bucket": "600-699",
+      "count": 0,
+      "share_pct": 0.0
+    },
+    {
+      "bucket": "700-749",
+      "count": 122,
+      "share_pct": 83.0
+    },
+    {
+      "bucket": "750-799",
+      "count": 25,
+      "share_pct": 17.0
+    },
+    {
+      "bucket": "800-899",
+      "count": 0,
+      "share_pct": 0.0
+    },
+    {
+      "bucket": "900+",
+      "count": 0,
+      "share_pct": 0.0
+    }
+  ],
+  "spot_prices_len_stats": {
+    "n_entries": 147,
+    "median": 742,
+    "p10": 732,
+    "p90": 752,
+    "min": 726,
+    "max": 756
+  },
+  "unavailable_fields": []
+}
