@@ -2,6 +2,17 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { PLATFORM } from '../data/ssot_copy';
+import { 
+  loadActivityRegimes, 
+  loadSamplingDensity, 
+  loadSessionLifecycle,
+  formatNumber
+} from '../lib/artifactsData';
+
+// Load Phase 2A artifacts
+const activityRegimes = loadActivityRegimes();
+const samplingDensity = loadSamplingDensity();
+const sessionLifecycle = loadSessionLifecycle();
 ---
 
 <BaseLayout 
@@ -63,6 +74,351 @@ import { PLATFORM } from '../data/ssot_copy';
         We aim to keep collection and storage conservative, and publish only claims that are supported by documented pipeline behavior.
       </p>
     </section>
+
+    <!-- Phase 2A: Dataset Behavior Summaries -->
+    <section>
+      <h2>Dataset Behavior Summaries</h2>
+      <p>
+        The following sections describe how the dataset behaves in the sample of archived sessions. These are purely descriptive summaries—not predictive signals or trading recommendations.
+      </p>
+    </section>
+
+    <!-- Section 1: Activity vs Silence -->
+    {activityRegimes ? (
+      <section>
+        <h3>Activity vs Silence</h3>
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          Sessions binned by tweet volume (using last 2 cycles). Total sessions: {formatNumber(activityRegimes.total_binned)}.
+        </p>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Activity Bin</th>
+                <th>Posts Range</th>
+                <th>Sessions</th>
+                <th>Share</th>
+                <th>Median Spread (bps)</th>
+                <th>Median Liq Global (%)</th>
+                <th>Median Liq Self (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {activityRegimes.regimes.map(regime => (
+                <tr>
+                  <td>{regime.bin.replace('_', ' ')}</td>
+                  <td class="numeric">{regime.posts_range}</td>
+                  <td class="numeric">{formatNumber(regime.n_entries)}</td>
+                  <td class="numeric">{regime.share_pct.toFixed(1)}%</td>
+                  <td class="numeric">{regime.median_spread_bps !== undefined ? regime.median_spread_bps.toFixed(1) : '—'}</td>
+                  <td class="numeric">{regime.median_liq_global_pct !== undefined ? regime.median_liq_global_pct.toFixed(1) : '—'}</td>
+                  <td class="numeric">{regime.median_liq_self_pct !== undefined ? regime.median_liq_self_pct.toFixed(1) : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {activityRegimes.unavailable_fields.length > 0 && (
+          <div class="warning-note">
+            <strong>Note:</strong> Some fields unavailable: {activityRegimes.unavailable_fields.map(f => f.field).join(', ')}
+          </div>
+        )}
+        
+        <p class="disclaimer">Descriptive summary of archived sessions. Not a signal.</p>
+      </section>
+    ) : (
+      <section>
+        <h3>Activity vs Silence</h3>
+        <p class="text-muted">Artifact unavailable (activity_regimes.json not found).</p>
+      </section>
+    )}
+
+    <!-- Section 2: Sampling Density -->
+    {samplingDensity ? (
+      <section>
+        <h3>Sampling Density</h3>
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          How many samples were collected per session. Sessions analyzed: {formatNumber(samplingDensity.entries_scanned)}.
+        </p>
+        
+        {samplingDensity.sample_count_stats && (
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Sample Count Statistics</h4>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-label">Median</span>
+                <span class="stat-value">{samplingDensity.sample_count_stats.median !== null ? formatNumber(samplingDensity.sample_count_stats.median) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">p10</span>
+                <span class="stat-value">{samplingDensity.sample_count_stats.p10 !== null ? formatNumber(samplingDensity.sample_count_stats.p10) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">p90</span>
+                <span class="stat-value">{samplingDensity.sample_count_stats.p90 !== null ? formatNumber(samplingDensity.sample_count_stats.p90) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Min</span>
+                <span class="stat-value">{samplingDensity.sample_count_stats.min !== null ? formatNumber(samplingDensity.sample_count_stats.min) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Max</span>
+                <span class="stat-value">{samplingDensity.sample_count_stats.max !== null ? formatNumber(samplingDensity.sample_count_stats.max) : '—'}</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {samplingDensity.sample_count_histogram && samplingDensity.sample_count_histogram.length > 0 && (
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Sample Count Distribution</h4>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Bucket</th>
+                    <th>Sessions</th>
+                    <th>Share</th>
+                    <th>Distribution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {samplingDensity.sample_count_histogram.map(bucket => (
+                    <tr>
+                      <td>{bucket.bucket}</td>
+                      <td class="numeric">{formatNumber(bucket.count)}</td>
+                      <td class="numeric">{bucket.share_pct.toFixed(1)}%</td>
+                      <td>
+                        <div class="bar-container">
+                          <div class="bar" style={`width: ${bucket.share_pct}%`}></div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        
+        {samplingDensity.spot_prices_len_stats && (
+          <div>
+            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Spot Prices Length Statistics</h4>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-label">Median</span>
+                <span class="stat-value">{samplingDensity.spot_prices_len_stats.median !== null ? formatNumber(samplingDensity.spot_prices_len_stats.median) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">p10</span>
+                <span class="stat-value">{samplingDensity.spot_prices_len_stats.p10 !== null ? formatNumber(samplingDensity.spot_prices_len_stats.p10) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">p90</span>
+                <span class="stat-value">{samplingDensity.spot_prices_len_stats.p90 !== null ? formatNumber(samplingDensity.spot_prices_len_stats.p90) : '—'}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+    ) : (
+      <section>
+        <h3>Sampling Density</h3>
+        <p class="text-muted">Artifact unavailable (sampling_density.json not found).</p>
+      </section>
+    )}
+
+    <!-- Section 3: Session Lifecycle -->
+    {sessionLifecycle ? (
+      <section>
+        <h3>Session Lifecycle</h3>
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          {sessionLifecycle.definition.session}. Sessions analyzed: {formatNumber(sessionLifecycle.entries_scanned)}.
+        </p>
+        
+        {sessionLifecycle.note_sample_bias && (
+          <div class="info-note">
+            <strong>Sample Note:</strong> {sessionLifecycle.note_sample_bias}
+          </div>
+        )}
+        
+        {sessionLifecycle.duration_stats && (
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Duration Statistics</h4>
+            <p class="text-muted" style="margin-bottom: 0.75rem;">
+              Sessions with duration data: {formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)}
+            </p>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-label">Median (sec)</span>
+                <span class="stat-value">{sessionLifecycle.duration_stats.duration_sec.median !== null ? formatNumber(sessionLifecycle.duration_stats.duration_sec.median) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">p10 (sec)</span>
+                <span class="stat-value">{sessionLifecycle.duration_stats.duration_sec.p10 !== null ? formatNumber(sessionLifecycle.duration_stats.duration_sec.p10) : '—'}</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">p90 (sec)</span>
+                <span class="stat-value">{sessionLifecycle.duration_stats.duration_sec.p90 !== null ? formatNumber(sessionLifecycle.duration_stats.duration_sec.p90) : '—'}</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {sessionLifecycle.admission_hour_distribution && (
+          <div>
+            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Admission Hour Distribution (UTC)</h4>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Hour (UTC)</th>
+                    <th>Sessions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sessionLifecycle.admission_hour_distribution
+                    .filter(h => h.count > 0)
+                    .map(h => (
+                      <tr>
+                        <td>{h.hour.toString().padStart(2, '0')}:00</td>
+                        <td class="numeric">{formatNumber(h.count)}</td>
+                      </tr>
+                    ))}
+                  {sessionLifecycle.admission_hour_distribution.every(h => h.count === 0) && (
+                    <tr>
+                      <td colspan="2" class="text-muted">No admission data available</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </section>
+    ) : (
+      <section>
+        <h3>Session Lifecycle</h3>
+        <p class="text-muted">Artifact unavailable (session_lifecycle.json not found).</p>
+      </section>
+    )}
   </div>
 </BaseLayout>
 
+<style>
+  .table-container {
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border-radius: var(--radius-md);
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .data-table th {
+    background: var(--panel2);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .data-table td.numeric {
+    font-family: 'Courier New', monospace;
+    text-align: right;
+  }
+  
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .data-table tbody tr:hover {
+    background: var(--panel2);
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .stat-card {
+    background: var(--panel);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .stat-value {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .bar-container {
+    width: 100%;
+    height: 20px;
+    background: var(--panel2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  
+  .bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  
+  .disclaimer {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--panel2);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+  
+  .warning-note {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 152, 0, 0.1);
+    border-left: 3px solid #ff9800;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+  
+  .info-note {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--accent-subtle);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+  }
+</style>

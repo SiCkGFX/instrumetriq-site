@@ -1010,6 +1010,92 @@ Based on audit of 200+ entries:
 
 See `TEMP_V7_SENTIMENT_AUDIT.md` for full investigation details.
 
+## Phase 2A/2B: Dataset Behavior Artifacts
+
+### Overview
+
+Phase 2A generates descriptive behavior artifacts from the dataset sample. These artifacts show how the dataset behaves (activity patterns, sampling density, session lifecycle) without making predictive claims or correlations.
+
+Phase 2B wires these artifacts into the `/research` page for frontend display.
+
+### Phase 2A Artifacts
+
+Three JSON artifacts are generated from the sample data:
+
+1. **activity_regimes.json**: Tweet volume bins with market microstructure stats
+   - 6 activity bins (0 posts, 1-2, 3-9, 10-24, 25-49, 50+)
+   - Median spread, liquidity metrics per bin
+   - Purely descriptive - no correlation claims
+
+2. **sampling_density.json**: Sampling resolution quality metrics
+   - Sample count distribution (median, p10, p90, histogram)
+   - Spot prices length distribution
+   - Shows data collection consistency
+
+3. **session_lifecycle.json**: Monitoring window lifecycle patterns
+   - Duration statistics (median, p10, p90)
+   - Admission hour distribution (UTC)
+   - Includes `note_sample_bias` if hours are highly concentrated (≥90%)
+
+### Generating Phase 2A Artifacts
+
+**Prerequisites:**
+- Python 3.x with `dateutil` library
+- Sample data: `data/samples/cryptobot_latest_head200.jsonl`
+- SSOT: `data/field_coverage_report.json` (from Phase 1A)
+
+**Commands:**
+```bash
+# Generate all 3 artifacts
+python scripts/build_phase2a_artifacts.py
+
+# Test artifacts
+python scripts/test_phase2a_artifacts.py
+```
+
+**Output location:** `public/data/`
+- `activity_regimes.json`
+- `sampling_density.json`
+- `session_lifecycle.json`
+
+**Important notes:**
+- All artifacts use ONLY paths from `field_coverage_report.json` (SSOT)
+- Graceful degradation: unavailable fields reported with reasons
+- Deterministic output (except `generated_at_utc` timestamp)
+- ASCII-only JSON enforced
+- Timezone-aware UTC timestamps (no deprecation warnings)
+
+### Phase 2B Frontend Integration
+
+**Page:** `/research` (src/pages/research.astro)
+
+**Loader functions:** `src/lib/artifactsData.ts`
+- `loadActivityRegimes()`: Returns `ActivityRegimesData | null`
+- `loadSamplingDensity()`: Returns `SamplingDensityData | null`
+- `loadSessionLifecycle()`: Returns `SessionLifecycleData | null`
+
+**Display sections:**
+1. Activity vs Silence table (6 bins, share %, median stats)
+2. Sampling Density stats + histogram with CSS bar visualization
+3. Session Lifecycle duration stats + admission hour distribution
+
+**Graceful degradation:**
+- If artifact missing, shows "Artifact unavailable" note
+- If `note_sample_bias` present, displays as info box
+- No crashes on missing fields - uses artifact's `unavailable_fields`
+
+**Sample size warning:**
+The artifacts are generated from `cryptobot_latest_head200.jsonl` (147 entries). This is a small sample for demonstration. For production use with full archive:
+1. Point `build_phase2a_artifacts.py` to full archive JSONL
+2. Expect longer build times (minutes vs seconds)
+3. Histogram buckets and percentiles will be more representative
+
+**Wording rules:**
+- NO correlation claims ("correlates", "predicts", "signal")
+- Use: "In this sample, higher activity bins show..." (descriptive)
+- Avoid: "Higher activity correlates with..." (predictive)
+- Disclaimer on page: "Descriptive summary of archived sessions. Not a signal."
+
 ## Future Enhancements
 
 Potential additions:
