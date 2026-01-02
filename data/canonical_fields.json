@@ -1,0 +1,3194 @@
+{
+  "source": "field_coverage_report.json",
+  "entries_scanned": 147,
+  "selection_rules": {
+    "min_presence_pct": 90,
+    "notes": "Fields below threshold may be allowed ONLY with explicit justification"
+  },
+  "groups": {
+    "other": {
+      "included": [],
+      "excluded": [
+        {
+          "path": "derived",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "diag",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "flags",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "labels",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "meta",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "norm",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "scores",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "snapshot_ts",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "symbol",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "twitter_sentiment_windows",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        }
+      ]
+    },
+    "market_microstructure": {
+      "included": [
+        {
+          "path": "derived.depth_imbalance",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.depth_skew",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.depth_spread_bps",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.depth_weighted",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.flow",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.spread_bps",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.spread_pct",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.ask",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.avg_impact_pct",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.bid",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.depth_10bps_quote",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.depth_25bps_quote",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.depth_5bps_quote",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.depth_ask_qty_quote",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.depth_bid_qty_quote",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.last",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.liq_eff_raw",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.liq_qv_usd",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.micro_premium_pct",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.mid",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.obi_5",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.range_pct_24h",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.spread_bps",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.spread_eff_raw",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.taker_buy_ratio_5m",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "spot_raw.ticker24_chg",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        }
+      ],
+      "excluded": [
+        {
+          "path": "futures_raw",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "spot_raw",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        }
+      ]
+    },
+    "liquidity": {
+      "included": [
+        {
+          "path": "derived.liq_global_pct",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "derived.liq_self_pct",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "scores.liq_eff_score",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        }
+      ],
+      "excluded": []
+    },
+    "data_quality": {
+      "included": [
+        {
+          "path": "diag.build_duration_ms",
+          "present_pct": 100.0,
+          "reason": "Data quality and provenance tracking"
+        },
+        {
+          "path": "diag.builder_version",
+          "present_pct": 100.0,
+          "reason": "Data quality and provenance tracking"
+        },
+        {
+          "path": "flags.compression_enabled",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.futures_data_ok",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.futures_stale",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.mom_fallback",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.pair_bonus_applied",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.spot_data_ok",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.spread_fallback",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        },
+        {
+          "path": "flags.vol_fallback",
+          "present_pct": 100.0,
+          "reason": "Data quality flags for filtering"
+        }
+      ],
+      "excluded": []
+    },
+    "entry_metadata": {
+      "included": [
+        {
+          "path": "meta.added_ts",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.archive_schema_version",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.duration_sec",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.expired_ts",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.expires_ts",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.futures_api_base",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.last_sample_ts",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.normalization_version",
+          "present_pct": 100.0,
+          "reason": "Core market microstructure data"
+        },
+        {
+          "path": "meta.pairbonus_version",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.sample_count",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.schema_version",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.scoring_version",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.session_id",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.source",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.total_samples",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.universe_page",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.universe_page_size",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.universe_snapshot_id",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.universe_snapshot_lag_sec",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        },
+        {
+          "path": "meta.universe_snapshot_ts",
+          "present_pct": 100.0,
+          "reason": "Entry metadata for provenance"
+        }
+      ],
+      "excluded": []
+    },
+    "scores": {
+      "included": [
+        {
+          "path": "scores.compression_score",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.depth",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.final",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.flow",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.liq",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.microstruct",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.mom",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.spread",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.spread_eff_score",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.str",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.taker",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        },
+        {
+          "path": "scores.vol",
+          "present_pct": 100.0,
+          "reason": "Aggregated scoring"
+        }
+      ],
+      "excluded": []
+    },
+    "spot_prices": {
+      "included": [],
+      "excluded": [
+        {
+          "path": "spot_prices",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        },
+        {
+          "path": "spot_prices.ask",
+          "present_pct": 0.0,
+          "reason": "Availability 0.0% below threshold"
+        },
+        {
+          "path": "spot_prices.bid",
+          "present_pct": 0.0,
+          "reason": "Availability 0.0% below threshold"
+        },
+        {
+          "path": "spot_prices.mid",
+          "present_pct": 0.0,
+          "reason": "Availability 0.0% below threshold"
+        },
+        {
+          "path": "spot_prices.spread_bps",
+          "present_pct": 0.0,
+          "reason": "Availability 0.0% below threshold"
+        },
+        {
+          "path": "spot_prices.ts",
+          "present_pct": 0.0,
+          "reason": "Availability 0.0% below threshold"
+        }
+      ]
+    },
+    "sentiment_metadata": {
+      "included": [
+        {
+          "path": "twitter_sentiment_meta.bucket_meta",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.asset_unified_id",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.bucket_span",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.coin",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.created_at_utc",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.cycle_end_utc",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.cycle_id",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.cycle_start_utc",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.date",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.is_silent",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.lexicon_version",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.platform",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.platform_cycle_id",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.scraper_version",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.bucket_meta.sentiment_model_version",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.captured_at_utc",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.key_used",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        },
+        {
+          "path": "twitter_sentiment_meta.source",
+          "present_pct": 100.0,
+          "reason": "Sentiment data provenance"
+        }
+      ],
+      "excluded": [
+        {
+          "path": "twitter_sentiment_meta",
+          "present_pct": 100.0,
+          "reason": "Top-level container, no direct value"
+        }
+      ]
+    },
+    "sentiment_last_2_cycles": {
+      "included": [
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.label_3class_mean",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.posts_neg",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.posts_neu",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.posts_pos",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.posts_scored",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.primary_model",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.prob_max",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.prob_mean",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.prob_min",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.referee_model",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment.scoring_system",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.decision_sources",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.decision_sources.primary_default",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.decision_sources.referee_neutral_band",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.decision_sources.referee_override",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.decision_sources.single_model",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.mean_score",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.neg_ratio",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.neu_ratio",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.pos_ratio",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.posts_neg",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.posts_neu",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.posts_pos",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.posts_scored",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.primary_conf_mean",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.referee_conf_mean",
+          "present_pct": 79.6,
+          "reason": "Extended window sentiment (availability 79.6%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment.scale",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment.score",
+          "present_pct": 100.0,
+          "reason": "Extended window sentiment scoring"
+        }
+      ],
+      "excluded": [
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.bucket_has_valid_sentiment",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.bucket_min_posts_for_score",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.cashtag_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.emoji_neg",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.emoji_pos",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.fud_fear",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.meme_slang",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.negative_general",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.positive_general",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.pump_hype",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.category_counts.scam_rug",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_original",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_retweets",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_with_cashtags",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_with_hashtags",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_with_links",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_with_media",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.content_stats.posts_with_mentions",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.cycle_end_utc",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.cycle_start_utc",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.from_cycle_id",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.media_count",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.mention_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.avg_likes",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.avg_replies",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.avg_retweets",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.avg_views",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.total_likes",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.total_replies",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.total_retweets",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.platform_engagement.total_views",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.posts_neg",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.posts_neu",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.posts_pos",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.sentiment_activity",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.sentiment_activity.has_recent_activity",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.sentiment_activity.latest_tweet_at",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.sentiment_activity.recent_posts_count",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.tag_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.to_cycle_id",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms.fud_fear",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms.meme_slang",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms.negative_general",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms.positive_general",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms.pump_hype",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.top_terms.scam_rug",
+          "present_pct": 79.6,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.access-chain.link",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.airindia.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.alluniqueness.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.alphatacticus101.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.binance.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.hyperliquid.xyz",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.hypersurface.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.justlend.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.parcllabs.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.smartonchain.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.app.wingriders.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.archive.md",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.arena.chronoeffector.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.aztecanoticias.info",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.bags.fm",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.base.meme",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.bit.ly",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.bloockberg.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.bonk.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.bonk.nt34.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.brgy10k.world",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.broccoli.ngo",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.btvnovinite.bg",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cexplorer.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cheknews.ca",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.coalusd1.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.coinfubi.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.conta.cc",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.coupononlinecourses24.blogspot.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cryptocoinradar.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cryptodailyalert.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cryptonews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cryptoslate.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cryptotreemap.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cryptwerk.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.cvj.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.decibel.trade",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.defi.teller.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.dexscreener.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.discord.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.discord.gg",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.dlvr.it",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.docs.tronscan.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.download.mewwallet.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.dune.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ebx.sh",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.eltelescopiodigital.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.eng.primexbt.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.enter-curve.finance",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.exa.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.exchange.kuma.bid",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.explorer.multiversx.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.f.mtr.cool",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.fallrace.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.fetch.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.finaxus.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.finbold.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.forms.gle",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.fraservalleytoday.ca",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.fsignal.xyz",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.github.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.gleam.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.go-aave.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.go.bitrss.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.goblin.fi",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.goblin.fi?invitedby=ymq4p9",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.gomining.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.gossipwirenews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.guinnessworldrecords.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.hibachi.xyz",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.husika.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ift.tt",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.info-aave.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.innovationlab.fetch.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.insiderpaper.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.inversornovato.substack.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ismartgadgetry.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.jmpto.net",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.jp.mercari.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.kamino.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.karta.trade",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.kienmoitruong.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.kstyle.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.l.smartnews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.learing.solgrid.trade",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.line.me",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.linkly.link",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.livetrading.club",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.lnk.fuga.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.luma.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.mafia-animals.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.magiceden.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.magiceden.us",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.manta-io.digital",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.medium.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.meneseprotocol.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.metronomehaiti.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.mlb.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.naciodigital.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.nakamotonotes.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.near.ad",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ngntoday.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.nmst.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ntm.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.okai.hk",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.onlyup.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.open.spotify.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.open.substack.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.opensea.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.orbitaltoday.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.outlight.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ow.ly",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.pelop.gr",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.phemex.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.pic.x.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.play.immutable.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.portal.swapper.finance?referralcode=awesome-desert-9619",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.psta.rs",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ptivideos.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.publer.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.pump.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.reply.tips",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.richbycoin.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.riyasewana.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.rumble.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.rwa.xyz",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.sco.lt",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.share.google",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.solscan.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.sportsnewstimes.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.springboard.pancakeswap.finance",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.stacker.news",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.stakely.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.steemit.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.stefanodonnomrs.blogspot.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.story.snapchat.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.t.me",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.taggr.link",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.taotensorlaw.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.telegra.ph",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.theccpress.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.tinyurl.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.use.foldapp.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.vederesport.online",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.venezuela-news.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.virtuals.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.vm.tiktok.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.volume-sol-app.vercel.app",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.wa.me",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.web3.binance.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.web3.okx.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.world.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.worldcoin.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.ws.tc",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.aljazeera.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.apuntmedia.es",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.avax.network",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.bitunix.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.btc-echo.de",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.ceroacero.com.co",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.cexscan.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.coinbase.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.coindesk.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.cryptyolo.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.ctvnews.ca",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.dailymail.co.uk",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.diaridegirona.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.dnews.gr",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.douyin.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.elnacional.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.elperiodico.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.ethgas.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.facebook.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.friatider.se",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.htx.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.indiatvnews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.infobae.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.intothecryptoverse.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.juventusnews24.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.kriptohavadis.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.kucoin.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.laziostories.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.lebombedivlad.it",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.linkedin.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.livebitcoinnews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.marketprophit.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.meteomolins.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.mirror.co.uk",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.mlb.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.mobyscreener.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.msn.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.news18.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.newsbeast.gr",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.nu.nl",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.okmag.gr",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.racocatala.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.reddit.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.t-online.de",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.thelocalreport.in",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.tuttosport.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.youtube.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.www.zerozero.com.mx",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.x.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.xp-chatroom.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.youtu.be",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.youtube.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.url_domain_counts.zenodo.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.window_cycles",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        }
+      ]
+    },
+    "author_stats": {
+      "included": [
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.author_stats",
+          "present_pct": 100.0,
+          "reason": "Extended window engagement (availability 100.0%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.author_stats.followers_count_max",
+          "present_pct": 100.0,
+          "reason": "Extended window engagement (availability 100.0%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.author_stats.followers_count_mean",
+          "present_pct": 100.0,
+          "reason": "Extended window engagement (availability 100.0%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.author_stats.followers_count_median",
+          "present_pct": 100.0,
+          "reason": "Extended window engagement (availability 100.0%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.author_stats.followers_count_sum",
+          "present_pct": 100.0,
+          "reason": "Extended window engagement (availability 100.0%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats",
+          "present_pct": 100.0,
+          "reason": "Engagement metrics (availability 100.0%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.distinct_authors_blue",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.distinct_authors_total",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.distinct_authors_verified",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_max",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_mean",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_median",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_sum",
+          "present_pct": 73.5,
+          "reason": "Engagement metrics (availability 73.5%)"
+        }
+      ],
+      "excluded": []
+    },
+    "activity_vs_silence": {
+      "included": [
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.bucket_status",
+          "present_pct": 100.0,
+          "reason": "Extended window activity tracking"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_2_cycles.posts_total",
+          "present_pct": 100.0,
+          "reason": "Extended window activity tracking"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.bucket_has_valid_sentiment",
+          "present_pct": 100.0,
+          "reason": "Activity and silence detection"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.bucket_status",
+          "present_pct": 100.0,
+          "reason": "Activity and silence detection"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.posts_total",
+          "present_pct": 100.0,
+          "reason": "Activity and silence detection"
+        }
+      ],
+      "excluded": []
+    },
+    "sentiment_last_cycle": {
+      "included": [
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.label_3class_mean",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.posts_neg",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.posts_neu",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.posts_pos",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.posts_scored",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.primary_model",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.prob_max",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.prob_mean",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.prob_min",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.prob_std",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.referee_model",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment.scoring_system",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.decision_sources",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.decision_sources.primary_default",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.decision_sources.referee_neutral_band",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.decision_sources.referee_override",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.decision_sources.single_model",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.mean_score",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.neg_ratio",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.neu_ratio",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.pos_ratio",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.posts_neg",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.posts_neu",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.posts_pos",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.posts_scored",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.primary_conf_mean",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.referee_conf_mean",
+          "present_pct": 73.5,
+          "reason": "Critical sentiment field (availability 73.5%)"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment.scale",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment.score",
+          "present_pct": 100.0,
+          "reason": "Core sentiment scoring data"
+        }
+      ],
+      "excluded": [
+        {
+          "path": "twitter_sentiment_windows.last_cycle",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.bucket_min_posts_for_score",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.cashtag_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.emoji_neg",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.emoji_pos",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.fud_fear",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.meme_slang",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.negative_general",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.positive_general",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.pump_hype",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.category_counts.scam_rug",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_original",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_retweets",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_with_cashtags",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_with_hashtags",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_with_links",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_with_media",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.content_stats.posts_with_mentions",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.media_count",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.mention_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.avg_likes",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.avg_replies",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.avg_retweets",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.avg_views",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_bookmarks",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_impressions",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_likes",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_quotes",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_replies",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_retweets",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.platform_engagement.total_views",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.posts_neg",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.posts_neu",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.posts_pos",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.config",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.config.min_recent_posts_for_activity",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.config.recent_horizon_hours",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.config.silence_threshold_hours",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.has_recent_activity",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.hours_since_latest_tweet",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.is_silent",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.latest_tweet_at",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.recent_posts_1h",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.recent_posts_24h",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.recent_posts_4h",
+          "present_pct": 26.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.sentiment_activity.recent_posts_count",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.tag_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms.fud_fear",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms.meme_slang",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms.negative_general",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms.positive_general",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms.pump_hype",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.top_terms.scam_rug",
+          "present_pct": 73.5,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts",
+          "present_pct": 100.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.alphatacticus101.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.app.binance.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.app.justlend.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.app.parcllabs.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.app.smartonchain.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.archive.md",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.bags.fm",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.base.meme",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.bit.ly",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.bonk.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.bonk.nt34.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.broccoli.ngo",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.btvnovinite.bg",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.cheknews.ca",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.coinfubi.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.cryptocoinradar.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.cryptwerk.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.defi.teller.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.dexscreener.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.discord.gg",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.dlvr.it",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.download.mewwallet.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.eltelescopiodigital.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.eng.primexbt.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.enter-curve.finance",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.exa.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.explorer.multiversx.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.fetch.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.finaxus.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.fraservalleytoday.ca",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.fsignal.xyz",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.github.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.go-aave.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.go.bitrss.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.goblin.fi",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.goblin.fi?invitedby=ymq4p9",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.gomining.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.gossipwirenews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.ift.tt",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.info-aave.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.innovationlab.fetch.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.ismartgadgetry.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.jmpto.net",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.jp.mercari.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.karta.trade",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.kstyle.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.linkly.link",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.livetrading.club",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.luma.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.magiceden.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.magiceden.us",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.manta-io.digital",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.mlb.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.nakamotonotes.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.ngntoday.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.ntm.ai",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.onlyup.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.opensea.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.outlight.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.ow.ly",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.pelop.gr",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.phemex.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.pic.x.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.play.immutable.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.portal.swapper.finance?referralcode=awesome-desert-9619",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.publer.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.pump.fun",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.richbycoin.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.rwa.xyz",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.sco.lt",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.solscan.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.springboard.pancakeswap.finance",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.stakely.io",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.steemit.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.story.snapchat.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.t.me",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.taggr.link",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.tinyurl.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.vederesport.online",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.venezuela-news.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.volume-sol-app.vercel.app",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.wa.me",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.world.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.worldcoin.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.ws.tc",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.aljazeera.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.avax.network",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.btc-echo.de",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.cexscan.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.coinbase.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.coindesk.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.dnews.gr",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.douyin.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.elnacional.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.elperiodico.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.ethgas.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.facebook.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.friatider.se",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.indiatvnews.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.infobae.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.kriptohavadis.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.lebombedivlad.it",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.marketprophit.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.meteomolins.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.mirror.co.uk",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.mlb.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.news18.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.nu.nl",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.racocatala.cat",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.reddit.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.www.tuttosport.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.x.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.xp-chatroom.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.youtu.be",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.youtube.com",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        },
+        {
+          "path": "twitter_sentiment_windows.last_cycle.url_domain_counts.zenodo.org",
+          "present_pct": 0.0,
+          "reason": "Not categorized for artifact use"
+        }
+      ]
+    }
+  }
+}

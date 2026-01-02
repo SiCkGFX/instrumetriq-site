@@ -1,0 +1,188 @@
+{
+  "generated_at_utc": "2026-01-02T08:16:59.288172Z",
+  "entries_scanned": 147,
+  "rows": [
+    {
+      "group": "market_microstructure",
+      "label": "Market Microstructure",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "Spread (bps)",
+          "path": "derived.spread_bps",
+          "present_pct": 100.0,
+          "example": "14.2 bps",
+          "notes": "Bid-ask spread in basis points"
+        },
+        {
+          "label": "Depth imbalance",
+          "path": "derived.depth_imbalance",
+          "present_pct": 100.0,
+          "example": "bid/ask volume ratio",
+          "notes": "Order book depth asymmetry"
+        },
+        {
+          "label": "Flow indicators",
+          "path": "derived.flow",
+          "present_pct": 100.0,
+          "example": "momentum metrics",
+          "notes": "Trade flow and momentum signals"
+        }
+      ]
+    },
+    {
+      "group": "liquidity",
+      "label": "Liquidity Metrics",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "Global liquidity %",
+          "path": "derived.liq_global_pct",
+          "present_pct": 100.0,
+          "example": "cross-market comparison",
+          "notes": "Liquidity relative to global market"
+        },
+        {
+          "label": "Self liquidity %",
+          "path": "derived.liq_self_pct",
+          "present_pct": 100.0,
+          "example": "symbol-specific depth",
+          "notes": "Liquidity relative to own history"
+        }
+      ]
+    },
+    {
+      "group": "order_book_depth",
+      "label": "Order Book Depth",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "Weighted depth",
+          "path": "derived.depth_weighted",
+          "present_pct": 100.0,
+          "example": "volume-weighted book",
+          "notes": "Depth across price levels"
+        },
+        {
+          "label": "Depth skew",
+          "path": "derived.depth_skew",
+          "present_pct": 100.0,
+          "example": "bid vs ask asymmetry",
+          "notes": "Order book balance"
+        }
+      ]
+    },
+    {
+      "group": "spot_prices",
+      "label": "Spot Prices",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "Spot prices",
+          "path": "spot_prices",
+          "present_pct": 100.0,
+          "example": "OHLCV snapshots",
+          "notes": "Current and recent prices"
+        }
+      ]
+    },
+    {
+      "group": "sentiment_last_cycle",
+      "label": "Sentiment (Last Cycle)",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "AI sentiment",
+          "path": "twitter_sentiment_windows.last_cycle.ai_sentiment",
+          "present_pct": 100.0,
+          "example": "transformer-based scoring",
+          "notes": "ML model sentiment classification"
+        },
+        {
+          "label": "Lexicon sentiment",
+          "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment",
+          "present_pct": 100.0,
+          "example": "dictionary-based scoring",
+          "notes": "Keyword-based sentiment"
+        },
+        {
+          "label": "Hybrid decisions",
+          "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats",
+          "present_pct": 100.0,
+          "example": "referee-arbitrated scoring",
+          "notes": "Combined sentiment logic"
+        }
+      ]
+    },
+    {
+      "group": "sentiment_last_2_cycles",
+      "label": "Sentiment (Last 2 Cycles)",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "AI sentiment (2-cycle)",
+          "path": "twitter_sentiment_windows.last_2_cycles.ai_sentiment",
+          "present_pct": 100.0,
+          "example": "extended window scoring",
+          "notes": "ML sentiment over 2 cycles"
+        },
+        {
+          "label": "Lexicon sentiment (2-cycle)",
+          "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment",
+          "present_pct": 100.0,
+          "example": "extended window scoring",
+          "notes": "Lexicon sentiment over 2 cycles"
+        },
+        {
+          "label": "Hybrid decisions (2-cycle)",
+          "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats",
+          "present_pct": 100.0,
+          "example": "extended window decisions",
+          "notes": "Combined logic over 2 cycles"
+        }
+      ]
+    },
+    {
+      "group": "activity_vs_silence",
+      "label": "Activity vs Silence",
+      "present_pct": 100.0,
+      "checks": [
+        {
+          "label": "Posts per cycle",
+          "path": "twitter_sentiment_windows.last_cycle.posts_total",
+          "present_pct": 100.0,
+          "example": "6 posts",
+          "notes": "Tweet volume per time window"
+        },
+        {
+          "label": "Silence detection",
+          "path": "twitter_sentiment_windows.last_cycle.bucket_status",
+          "present_pct": 100.0,
+          "example": "active/silent classification",
+          "notes": "Detects periods with no posts"
+        }
+      ]
+    },
+    {
+      "group": "engagement_and_authors",
+      "label": "Engagement & Authors",
+      "present_pct": 73.5,
+      "checks": [
+        {
+          "label": "Distinct authors",
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.distinct_authors_total",
+          "present_pct": 73.5,
+          "example": "unique users per cycle",
+          "notes": "Number of unique posters"
+        },
+        {
+          "label": "Follower reach",
+          "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_mean",
+          "present_pct": 73.5,
+          "example": "audience size metrics",
+          "notes": "Average follower counts"
+        }
+      ]
+    }
+  ]
+}
