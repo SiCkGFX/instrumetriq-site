@@ -164,36 +164,22 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 3: Preview Row -->
-    {datasetOverview && datasetOverview.preview_row && (
+    <!-- Section 3: Featured Sample (Phase 3B) -->
+    {publicSampleEntries && publicSampleEntries.entries && publicSampleEntries.entries.length > 0 && (
       <section>
-        <h2>Preview Row</h2>
+        <h2>Featured Sample</h2>
         <p>
-          One redacted sample entry from the dataset. 
-          No timestamps, author names, tweet text, or IDs are shown.
+          Explore individual entries with readable formatting. Use Previous/Next to rotate through samples.
         </p>
-        <div class="table-wrapper">
-          <table class="data-table preview-table">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(datasetOverview.preview_row).map(([key, value]) => (
-                <tr>
-                  <td><code>{key}</code></td>
-                  <td>
-                    {typeof value === 'number' 
-                      ? (Number.isInteger(value) ? formatNumber(value) : value.toFixed(4))
-                      : String(value)
-                    }
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div class="featured-sample-card" id="featuredSampleCard">
+          <div class="featured-sample-content" id="featuredSampleContent">
+            <!-- Populated by JavaScript -->
+          </div>
+          <div class="featured-sample-nav">
+            <button id="featuredPrev" class="nav-btn">← Previous</button>
+            <span id="featuredCounter" class="counter">1 / {publicSampleEntries.entries.length}</span>
+            <button id="featuredNext" class="nav-btn">Next →</button>
+          </div>
         </div>
       </section>
     )}
@@ -218,14 +204,11 @@ const artifacts = loadArtifacts();
         <h2>Public Dataset Preview</h2>
         <div class="sample-preview-intro">
           <p>
-            Browse {publicSampleEntries.entry_count} real entries from the dataset below. 
-            Each row shows key fields. Click any row to expand the full JSON structure.
+            Browse {publicSampleEntries.entry_count} recent archived entries. Each row shows key metrics with expandable detail views.
           </p>
-          <div class="preview-disclaimer">
-            <strong>⚠ Limited Preview Extract:</strong> {publicSampleEntries.note}
-            <br />
+          <div class="preview-info">
             <a href="/data/sample_entries_v7.jsonl" download class="download-link">
-              📥 Download Preview ({publicSampleEntries.entry_count} entries, JSONL format)
+              📥 Download JSONL ({publicSampleEntries.entry_count} entries) — ideal for quick integration tests
             </a>
           </div>
         </div>
@@ -249,7 +232,7 @@ const artifacts = loadArtifacts();
                 <th data-sort="posts_total" class="numeric">Posts (L2C)</th>
                 <th data-sort="mean_score" class="numeric">Mean Score</th>
                 <th data-sort="added_ts">Added (UTC)</th>
-                <th class="expand-col">Expand</th>
+                <th class="expand-col">Details</th>
               </tr>
             </thead>
             <tbody>
@@ -259,6 +242,15 @@ const artifacts = loadArtifacts();
                 const postsTotal = entry.twitter_sentiment_windows?.last_2_cycles?.posts_total ?? 'N/A';
                 const meanScore = entry.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats?.mean_score?.toFixed(4) ?? 'N/A';
                 const addedTs = entry.meta?.added_ts ? entry.meta.added_ts.substring(0, 19).replace('T', ' ') : 'N/A';
+                
+                // Prepare entry without spot_prices for Fields view
+                const entryWithoutSpots = {...entry};
+                delete entryWithoutSpots.spot_prices;
+                
+                const spotPrices = entry.spot_prices || [];
+                const spotSummary = spotPrices.length > 0 
+                  ? `${spotPrices.length} samples` 
+                  : 'No spot prices';
                 
                 return (
                   <>
@@ -270,12 +262,25 @@ const artifacts = loadArtifacts();
                       <td class="numeric">{meanScore}</td>
                       <td>{addedTs}</td>
                       <td class="expand-cell">
-                        <button class="expand-btn" aria-label="Expand JSON">▶</button>
+                        <button class="expand-btn fields-btn" data-target="fields" aria-label="View Fields">Fields</button>
+                        <button class="expand-btn spots-btn" data-target="spots" aria-label="View Spot Prices">Spots</button>
                       </td>
                     </tr>
-                    <tr class="json-row" id={`json-${idx}`} style="display: none;">
+                    <tr class="json-row fields-row" id={`fields-${idx}`} style="display: none;">
                       <td colspan="7">
-                        <pre class="json-content"><code>{JSON.stringify(entry, null, 2)}</code></pre>
+                        <div class="json-header">Entry Fields (spot_prices excluded)</div>
+                        <pre class="json-content"><code>{JSON.stringify(entryWithoutSpots, null, 2)}</code></pre>
+                      </td>
+                    </tr>
+                    <tr class="json-row spots-row" id={`spots-${idx}`} style="display: none;">
+                      <td colspan="7">
+                        <div class="json-header">Spot Prices — {spotSummary}</div>
+                        {spotPrices.length > 0 && (
+                          <pre class="json-content"><code>{JSON.stringify(spotPrices, null, 2)}</code></pre>
+                        )}
+                        {spotPrices.length === 0 && (
+                          <div class="no-data">No spot price data available for this entry.</div>
+                        )}
                       </td>
                     </tr>
                   </>
@@ -991,16 +996,6 @@ const artifacts = loadArtifacts();
     font-size: 0.9rem;
   }
   
-  .preview-table tbody td:first-child {
-    font-family: 'Courier New', monospace;
-    color: var(--accent);
-  }
-  
-  .preview-table tbody td:last-child {
-    font-family: 'Courier New', monospace;
-    color: var(--text);
-  }
-  
   .non-claims-box {
     padding: var(--space-4);
     background-color: var(--panel2);
@@ -1019,6 +1014,83 @@ const artifacts = loadArtifacts();
     color: var(--text-muted);
     line-height: 1.6;
   }
+
+  /* Phase 3B: Featured Sample widget */
+  .featured-sample-card {
+    background-color: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  
+  .featured-sample-content {
+    margin-bottom: var(--space-4);
+  }
+  
+  .featured-field {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .featured-field:last-child {
+    border-bottom: none;
+  }
+  
+  .featured-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  .featured-value {
+    font-family: 'Courier New', monospace;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  
+  .featured-value.symbol {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  .featured-sample-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+  }
+  
+  .nav-btn {
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  
+  .nav-btn:hover {
+    background-color: var(--panel3);
+    border-color: var(--accent);
+  }
+  
+  .nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .counter {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
   /* Phase 3B: Public sample entries */
   .sample-preview-intro {
     margin-bottom: var(--space-4);
@@ -1029,10 +1101,9 @@ const artifacts = loadArtifacts();
     color: var(--text-muted);
   }
   
-  .preview-disclaimer {
+  .preview-info {
     padding: var(--space-3);
     background-color: var(--panel2);
-    border-left: 4px solid #f59e0b;
     border-radius: 4px;
     font-size: 0.9rem;
     margin-top: var(--space-3);
@@ -1100,7 +1171,7 @@ const artifacts = loadArtifacts();
   }
   
   .sample-table thead th.expand-col {
-    width: 80px;
+    width: 120px;
     cursor: default;
   }
   
@@ -1129,25 +1200,43 @@ const artifacts = loadArtifacts();
   
   .expand-btn {
     background: none;
-    border: none;
+    border: 1px solid var(--border);
     color: var(--accent);
     cursor: pointer;
-    font-size: 1rem;
-    padding: var(--space-1);
-    transition: transform 0.2s;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 3px;
+    margin-right: 4px;
+    transition: all 0.2s;
   }
   
   .expand-btn:hover {
-    color: var(--accent-hover);
+    background-color: var(--panel2);
+    border-color: var(--accent);
   }
   
-  .expand-btn.expanded {
-    transform: rotate(90deg);
+  .expand-btn:last-child {
+    margin-right: 0;
+  }
+  
+  .expand-btn.active {
+    background-color: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
   }
   
   .json-row td {
     padding: 0 !important;
     background-color: var(--panel3);
+  }
+  
+  .json-header {
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--panel2);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-muted);
   }
   
   .json-content {
@@ -1161,12 +1250,89 @@ const artifacts = loadArtifacts();
     max-height: 500px;
     overflow-y: auto;
   }
+  
+  .no-data {
+    padding: var(--space-3);
+    color: var(--text-muted);
+    font-style: italic;
+  }
 </style>
 
-<script>
+<script define:vars={{ entries: publicSampleEntries?.entries || [] }}>
   // Phase 3B: Public sample entries interactivity
   document.addEventListener('DOMContentLoaded', () => {
-    // Expand/collapse JSON
+    // Helper: parse numeric value robustly, returning null for N/A or invalid
+    function parseNumericValue(text) {
+      if (!text || text === 'N/A') return null;
+      const num = parseFloat(text);
+      return isNaN(num) ? null : num;
+    }
+    
+    // Featured Sample widget
+    const featuredCard = document.getElementById('featuredSampleCard');
+    const featuredContent = document.getElementById('featuredSampleContent');
+    const featuredCounter = document.getElementById('featuredCounter');
+    const featuredPrev = document.getElementById('featuredPrev');
+    const featuredNext = document.getElementById('featuredNext');
+    
+    if (featuredCard && entries.length > 0) {
+      let currentIndex = 0;
+      
+      function renderFeaturedSample(idx) {
+        const entry = entries[idx];
+        if (!entry) return;
+        
+        const spreadBps = entry.derived?.spread_bps?.toFixed(2) ?? 'N/A';
+        const liqGlobalPct = entry.derived?.liq_global_pct?.toFixed(2) ?? 'N/A';
+        const postsTotal = entry.twitter_sentiment_windows?.last_2_cycles?.posts_total ?? 'N/A';
+        const meanScore = entry.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats?.mean_score?.toFixed(4) ?? 'N/A';
+        const addedTs = entry.meta?.added_ts ? entry.meta.added_ts.substring(0, 19).replace('T', ' ') : 'N/A';
+        
+        featuredContent.innerHTML = `
+          <div class="featured-field">
+            <span class="featured-label">Symbol</span>
+            <span class="featured-value symbol">${entry.symbol}</span>
+          </div>
+          <div class="featured-field">
+            <span class="featured-label">Spread (bps)</span>
+            <span class="featured-value">${spreadBps}</span>
+          </div>
+          <div class="featured-field">
+            <span class="featured-label">Liquidity Global %</span>
+            <span class="featured-value">${liqGlobalPct}</span>
+          </div>
+          <div class="featured-field">
+            <span class="featured-label">Posts (Last 2 Cycles)</span>
+            <span class="featured-value">${postsTotal}</span>
+          </div>
+          <div class="featured-field">
+            <span class="featured-label">Mean Score</span>
+            <span class="featured-value">${meanScore}</span>
+          </div>
+          <div class="featured-field">
+            <span class="featured-label">Added (UTC)</span>
+            <span class="featured-value">${addedTs}</span>
+          </div>
+        `;
+        
+        featuredCounter.textContent = `${idx + 1} / ${entries.length}`;
+      }
+      
+      featuredPrev.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + entries.length) % entries.length;
+        renderFeaturedSample(currentIndex);
+      });
+      
+      featuredNext.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % entries.length;
+        renderFeaturedSample(currentIndex);
+      });
+      
+      // Initial render
+      renderFeaturedSample(0);
+    }
+    
+    // Fields/Spots expand buttons
     const expandButtons = document.querySelectorAll('.expand-btn');
     expandButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -1177,26 +1343,26 @@ const artifacts = loadArtifacts();
         const idx = row.getAttribute('data-idx');
         if (!idx) return;
         
-        const jsonRow = document.getElementById(`json-${idx}`);
-        if (!jsonRow) return;
+        const target = btn.getAttribute('data-target');
+        const targetRow = document.getElementById(`${target}-${idx}`);
+        if (!targetRow) return;
         
-        if (jsonRow.style.display === 'none') {
-          jsonRow.style.display = 'table-row';
-          btn.classList.add('expanded');
-          btn.textContent = '▼';
+        // Toggle this row
+        if (targetRow.style.display === 'none' || !targetRow.style.display) {
+          targetRow.style.display = 'table-row';
+          btn.classList.add('active');
         } else {
-          jsonRow.style.display = 'none';
-          btn.classList.remove('expanded');
-          btn.textContent = '▶';
+          targetRow.style.display = 'none';
+          btn.classList.remove('active');
         }
       });
     });
     
     // Search by symbol
-    const searchInput = document.getElementById('symbolSearch') as HTMLInputElement | null;
+    const searchInput = document.getElementById('symbolSearch');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
-        const target = e.target as HTMLInputElement;
+        const target = e.target;
         if (!target) return;
         
         const query = target.value.toLowerCase();
@@ -1207,23 +1373,25 @@ const artifacts = loadArtifacts();
           if (!symbolCell || !symbolCell.textContent) return;
           
           const symbol = symbolCell.textContent.toLowerCase();
-          const idx = (row as HTMLElement).getAttribute('data-idx');
-          const jsonRow = idx ? document.getElementById(`json-${idx}`) : null;
+          const idx = row.getAttribute('data-idx');
           
-          const htmlRow = row as HTMLElement;
           if (symbol.includes(query)) {
-            htmlRow.style.display = '';
+            row.style.display = '';
           } else {
-            htmlRow.style.display = 'none';
-            if (jsonRow) jsonRow.style.display = 'none';
+            row.style.display = 'none';
+            // Hide all related rows
+            const fieldsRow = idx ? document.getElementById(`fields-${idx}`) : null;
+            const spotsRow = idx ? document.getElementById(`spots-${idx}`) : null;
+            if (fieldsRow) fieldsRow.style.display = 'none';
+            if (spotsRow) spotsRow.style.display = 'none';
           }
         });
       });
     }
     
-    // Column sorting
+    // Column sorting with robust N/A handling
     const headers = document.querySelectorAll('.sample-table thead th[data-sort]');
-    let sortState: { column: string | null; ascending: boolean } = { column: null, ascending: true };
+    let sortState = { column: null, ascending: true };
     
     headers.forEach(header => {
       header.addEventListener('click', () => {
@@ -1248,15 +1416,13 @@ const artifacts = loadArtifacts();
         
         // Sort rows
         rows.sort((a, b) => {
-          let aVal, bVal;
-          
           switch (column) {
             case 'symbol':
               const aSymbol = a.querySelector('.symbol-cell');
               const bSymbol = b.querySelector('.symbol-cell');
               if (!aSymbol?.textContent || !bSymbol?.textContent) return 0;
-              aVal = aSymbol.textContent;
-              bVal = bSymbol.textContent;
+              const aVal = aSymbol.textContent;
+              const bVal = bSymbol.textContent;
               return sortState.ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
             
             case 'spread_bps':
@@ -1268,9 +1434,16 @@ const artifacts = loadArtifacts();
               const colIdx = Array.from(headerParent.children).indexOf(header);
               const aElem = a.children[colIdx];
               const bElem = b.children[colIdx];
-              aVal = aElem?.textContent ? parseFloat(aElem.textContent) : 0;
-              bVal = bElem?.textContent ? parseFloat(bElem.textContent) : 0;
-              return sortState.ascending ? aVal - bVal : bVal - aVal;
+              
+              const aNum = parseNumericValue(aElem?.textContent || '');
+              const bNum = parseNumericValue(bElem?.textContent || '');
+              
+              // Sort: numeric values first, nulls at end
+              if (aNum === null && bNum === null) return 0;
+              if (aNum === null) return 1;  // a is null, goes to end
+              if (bNum === null) return -1; // b is null, goes to end
+              
+              return sortState.ascending ? aNum - bNum : bNum - aNum;
             
             case 'added_ts':
               const headerParent2 = header.parentElement;
@@ -1279,21 +1452,24 @@ const artifacts = loadArtifacts();
               const aTs = a.children[tsIdx];
               const bTs = b.children[tsIdx];
               if (!aTs?.textContent || !bTs?.textContent) return 0;
-              aVal = aTs.textContent;
-              bVal = bTs.textContent;
-              return sortState.ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+              const aTsVal = aTs.textContent;
+              const bTsVal = bTs.textContent;
+              return sortState.ascending ? aTsVal.localeCompare(bTsVal) : bTsVal.localeCompare(aTsVal);
             
             default:
               return 0;
           }
         });
         
-        // Rebuild tbody
+        // Rebuild tbody (include all related rows)
         rows.forEach(row => {
           const idx = row.getAttribute('data-idx');
-          const jsonRow = idx ? document.getElementById(`json-${idx}`) : null;
           tbody.appendChild(row);
-          if (jsonRow) tbody.appendChild(jsonRow);
+          
+          const fieldsRow = idx ? document.getElementById(`fields-${idx}`) : null;
+          const spotsRow = idx ? document.getElementById(`spots-${idx}`) : null;
+          if (fieldsRow) tbody.appendChild(fieldsRow);
+          if (spotsRow) tbody.appendChild(spotsRow);
         });
         
         // Update header indicators

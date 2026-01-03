@@ -145,8 +145,14 @@ def test_json_jsonl_match(json_data: dict, jsonl_entries: list):
 
 
 def test_determinism():
-    """Test that rebuilding produces same output (except timestamp)."""
-    print("[TEST] Determinism...")
+    """Test that rebuilding produces same output for same day."""
+    print("[TEST] Determinism (same-day rebuild)...")
+    
+    # Save original first symbol
+    with open(OUTPUT_JSON, 'r', encoding='ascii') as f:
+        original_data = json.load(f)
+    original_first_symbol = original_data['entries'][0].get('symbol') if original_data['entries'] else None
+    original_count = original_data['entry_count']
     
     try:
         # Suppress subprocess output on Windows
@@ -165,10 +171,17 @@ def test_determinism():
         with open(OUTPUT_JSON, 'r', encoding='ascii') as f:
             rebuilt_data = json.load(f)
         
-        # Compare entry count (should be identical)
-        original_count = rebuilt_data['entry_count']
+        # Compare entry count and first symbol
+        rebuilt_first_symbol = rebuilt_data['entries'][0].get('symbol') if rebuilt_data['entries'] else None
+        rebuilt_count = rebuilt_data['entry_count']
         
-        print(f"  ✓ Deterministic rebuild ({original_count} entries)")
+        assert rebuilt_count == original_count, \
+            f"Entry count changed: {original_count} -> {rebuilt_count}"
+        
+        assert rebuilt_first_symbol == original_first_symbol, \
+            f"First symbol changed: {original_first_symbol} -> {rebuilt_first_symbol} (day may have changed)"
+        
+        print(f"  ✓ Deterministic same-day rebuild ({rebuilt_count} entries, first={rebuilt_first_symbol})")
         
     except (FileNotFoundError, OSError) as e:
         print(f"  ⚠ Determinism test skipped ({e})")

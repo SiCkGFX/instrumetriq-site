@@ -1401,6 +1401,43 @@ python scripts/test_public_sample_entries.py
 - JSONL is slightly smaller (no outer wrapper or array brackets)
 - Full v7 entries include all nested fields (posts, decisions, regimes, etc.)
 
+### Phase 3B Updates (3B-fix)
+
+**Date-based rotation (January 2026):**
+- Builder now uses date-based deterministic selection
+- Offset calculated as `YYYYMMDD % total_entries`
+- Same date = same entries; different date = rotated selection
+- Ensures preview freshness while maintaining determinism
+
+**UI improvements:**
+1. **Featured Sample widget:** Replaced "Preview Row" with rotating card
+   - Shows 6 key fields in readable format
+   - Previous/Next buttons rotate through all 100 entries
+   - No internal/redaction messaging
+   
+2. **Split expand controls:** Two buttons per row
+   - "Fields" button: Shows entry without `spot_prices` array
+   - "Spots" button: Shows only spot prices with summary
+   - Prevents spot price array from dominating view
+   
+3. **Neutral messaging:** Removed internal disclaimers
+   - No "limited extract" or "not suitable for training" warnings
+   - Focuses on capability: "Browse recent archived entries"
+   - Download link emphasizes "quick integration tests"
+   
+4. **Robust sorting:** Fixed N/A handling in numeric columns
+   - Ascending: valid numbers first (low→high), nulls at end
+   - Descending: valid numbers first (high→low), nulls at end
+   - Prevents N/A interleaving with numeric values
+
+**Updated note field:**
+- Old: "Public preview extract. Non-exhaustive. Not suitable for training."
+- New: "Rotating public preview. Selection rotates daily based on build date."
+
+**Test updates:**
+- Determinism test now checks same-day consistency (not fixed first 100)
+- Validates entry count and first symbol remain stable for same date
+
 ---
 
 ## Future Enhancements

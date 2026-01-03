@@ -3,7 +3,7 @@
 Public Sample Entries Builder
 
 Generates public preview artifacts (JSON and JSONL) from archive sample data.
-Provides a limited, non-exhaustive extract for website visitors to browse.
+Uses date-based deterministic rotation to vary the preview over time.
 """
 
 import json
@@ -18,13 +18,12 @@ OUTPUT_JSONL = Path("public/data/sample_entries_v7.jsonl")
 ENTRY_COUNT = 100  # Number of entries to include in public preview
 
 
-def load_sample_entries(sample_file: Path, limit: int) -> list:
+def load_all_entries(sample_file: Path) -> list:
     """
-    Load entries from JSONL sample file.
+    Load all entries from JSONL sample file.
     
     Args:
         sample_file: Path to JSONL file
-        limit: Maximum number of entries to load
     
     Returns:
         List of parsed entry dictionaries
@@ -32,9 +31,7 @@ def load_sample_entries(sample_file: Path, limit: int) -> list:
     entries = []
     try:
         with open(sample_file, 'r', encoding='utf-8') as f:
-            for i, line in enumerate(f):
-                if i >= limit:
-                    break
+            for line in f:
                 entry = json.loads(line)
                 entries.append(entry)
         print(f"[INFO] Loaded {len(entries)} entries from {sample_file}")
@@ -47,22 +44,55 @@ def load_sample_entries(sample_file: Path, limit: int) -> list:
         sys.exit(1)
 
 
-def build_json_artifact(entries: list) -> dict:
+def select_entries_for_date(all_entries: list, limit: int, date: datetime) -> list:
+    """
+    Select entries deterministically based on date.
+    Uses date-based offset to rotate through entries over time.
+    
+    Args:
+        all_entries: Full list of entries
+        limit: Number of entries to select
+        date: Date to use for offset calculation (UTC)
+    
+    Returns:
+        List of selected entries
+    """
+    if len(all_entries) <= limit:
+        return all_entries
+    
+    # Calculate offset from date: YYYYMMDD % total_entries
+    date_int = int(date.strftime("%Y%m%d"))
+    offset = date_int % len(all_entries)
+    
+    # Select entries with wrap-around
+    selected = []
+    for i in range(limit):
+        idx = (offset + i) % len(all_entries)
+        selected.append(all_entries[idx])
+    
+    print(f"[INFO] Date-based offset: {offset} (from {date.strftime('%Y-%m-%d')})")
+    print(f"[INFO] Selected entries [{offset}:{offset+limit}) with wrap-around")
+    
+    return selected
+
+
+def build_json_artifact(entries: list, generation_date: datetime) -> dict:
     """
     Build the JSON artifact structure.
     
     Args:
         entries: List of full v7 entry dictionaries
+        generation_date: Date used for generation (UTC)
     
     Returns:
         Complete artifact dictionary
     """
     return {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+        "generated_at_utc": generation_date.isoformat().replace('+00:00', 'Z'),
         "schema_version": "v7",
         "entry_count": len(entries),
         "source": SAMPLE_DATA_FILE.name,
-        "note": "Public preview extract. Non-exhaustive. Not suitable for training.",
+        "note": "Rotating public preview. Selection rotates daily based on build date.",
         "entries": entries
     }
 
@@ -108,25 +138,32 @@ def main():
     print("=" * 60)
     print()
     
-    # Load entries (deterministic: first N entries)
-    entries = load_sample_entries(SAMPLE_DATA_FILE, ENTRY_COUNT)
+    # Get current date for deterministic rotation
+    generation_date = datetime.now(timezone.utc)
+    print(f"[INFO] Generation date: {generation_date.strftime('%Y-%m-%d')}")
     
-    if len(entries) == 0:
+    # Load all entries
+    all_entries = load_all_entries(SAMPLE_DATA_FILE)
+    
+    if len(all_entries) == 0:
         print("[ERROR] No entries loaded", file=sys.stderr)
         sys.exit(1)
     
+    # Select entries based on date
+    selected_entries = select_entries_for_date(all_entries, ENTRY_COUNT, generation_date)
+    
     # Build JSON artifact
-    artifact = build_json_artifact(entries)
+    artifact = build_json_artifact(selected_entries, generation_date)
     
     # Write JSON output
     write_json_artifact(artifact, OUTPUT_JSON)
     
     # Write JSONL output (same entries, same order)
-    write_jsonl_artifact(entries, OUTPUT_JSONL)
+    write_jsonl_artifact(selected_entries, OUTPUT_JSONL)
     
     print()
     print("[SUCCESS] Public sample entries generated")
-    print(f"  Entry count: {len(entries)}")
+    print(f"  Entry count: {len(selected_entries)}")
     print(f"  JSON: {OUTPUT_JSON}")
     print(f"  JSONL: {OUTPUT_JSONL}")
 
