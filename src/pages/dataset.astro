@@ -19,6 +19,9 @@ const datasetOverview = loadDatasetOverview();
 // Load Phase 3B artifact (public sample entries)
 const publicSampleEntries = loadPublicSampleEntries();
 
+// Build stamp for cache-busting verification
+const buildStamp = import.meta.env.PUBLIC_BUILD_STAMP || new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+
 // Load semantic artifacts (coverage table and dataset summary)
 const coverageTablePath = path.join(process.cwd(), 'public/data/coverage_table.json');
 const datasetSummaryPath = path.join(process.cwd(), 'public/data/dataset_summary.json');
@@ -55,14 +58,10 @@ const artifacts = loadArtifacts();
     subtitle="Validated market snapshots: v7 schema with coverage details, scale metrics, and behavioral summaries."
   />
   
-  <!-- Warning banner if artifacts unavailable -->
-  {!artifacts.available && (
-    <div class="warning-banner">
-      <strong>Artifacts Status:</strong> Some artifacts are unavailable or failed validation. 
-      {artifacts.warnings.map(w => <div>• {w}</div>)}
-      Data below may be incomplete.
-    </div>
-  )}
+  <!-- Build stamp for deployment verification -->
+  <div class="build-stamp">
+    Build: {buildStamp}
+  </div>
   
   <!-- Readiness banner (Phase 3A) -->
   {datasetOverview && datasetOverview.scale && (
@@ -210,6 +209,9 @@ const artifacts = loadArtifacts();
             <a href="/data/sample_entries_v7.jsonl" download class="download-link">
               📥 Download JSONL ({publicSampleEntries.entry_count} entries) — ideal for quick integration tests
             </a>
+            {publicSampleEntries.generated_at_utc && (
+              <p class="preview-timestamp">Preview updated: {publicSampleEntries.generated_at_utc}</p>
+            )}
           </div>
         </div>
         
@@ -321,34 +323,6 @@ const artifacts = loadArtifacts();
             (from {formatNumber(datasetSummary.posts_scored.from_entries)} entries)
           </p>
         )}
-      </section>
-    )}
-    
-    <!-- Section 3: Preview Row -->
-    {artifacts.preview && (
-      <section>
-        <h2>Dataset Preview Row</h2>
-        <p>
-          Example entry showing typical fields. This row is redacted: no timestamps, no URLs, forward return is bucketed.
-        </p>
-        <div class="table-wrapper">
-          <table class="data-table preview-table-mono">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(artifacts.preview.row).map(([key, value]) => (
-                <tr>
-                  <td><code>{key}</code></td>
-                  <td class="mono-value">{typeof value === 'number' ? value.toFixed(6) : String(value)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </section>
     )}
     
@@ -1119,6 +1093,22 @@ const artifacts = loadArtifacts();
   
   .download-link:hover {
     text-decoration: underline;
+  }
+  
+  .preview-timestamp {
+    margin-top: var(--space-2);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  
+  .build-stamp {
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--panel2);
+    border-left: 2px solid var(--accent-dim);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+    margin-bottom: var(--space-4);
   }
   
   .sample-table-wrapper {

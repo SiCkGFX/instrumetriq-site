@@ -12,7 +12,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 # Configuration
-SAMPLE_DATA_FILE = Path("data/samples/cryptobot_latest_head200.jsonl")
+SAMPLE_DATA_FILE = Path("data/samples/cryptobot_latest_tail200.jsonl")
 OUTPUT_JSON = Path("public/data/sample_entries_v7.json")
 OUTPUT_JSONL = Path("public/data/sample_entries_v7.jsonl")
 ENTRY_COUNT = 100  # Number of entries to include in public preview

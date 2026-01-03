@@ -3,14 +3,30 @@
 ## Before Writing ANY Aggregation Code
 
 ```bash
-# Step 1: Sync latest archive sample
-npm run sync-sample
+# Step 1: Sync latest archive sample (200 most recent entries)
+python scripts/sync_archive_sample.py --n 200
 
 # Step 2: Read the schema
 cat data/schema/ARCHIVE_ENTRY_FULL_SCHEMA.txt
 
 # Step 3: Inspect actual data
-python -c "import json; f = open('data/samples/cryptobot_latest_head200.jsonl', 'r'); entry = json.loads(f.readline()); print(json.dumps(entry, indent=2))"
+python -c "import json; f = open('data/samples/cryptobot_latest_tail200.jsonl', 'r'); entry = json.loads(f.readline()); print(json.dumps(entry, indent=2))"
+```
+
+## Archive Data Source
+
+**SSOT Archive Location:** `D:\Sentiment-Data\CryptoBot\data\archive\`
+
+The archive contains dated folders (YYYYMMDD format) with compressed `.jsonl.gz` files. The sync script:
+- Automatically finds the latest archive folder
+- Extracts the most recent N entries (tail, not head)
+- Supports both `.jsonl` and `.jsonl.gz` formats
+- Outputs to `data/samples/cryptobot_latest_tail200.jsonl`
+- Generates metadata in `data/samples/cryptobot_latest_tail200.meta.json`
+
+```bash
+# Sync with custom parameters
+python scripts/sync_archive_sample.py --n 200 --archive-path "D:\Sentiment-Data\CryptoBot\data\archive"
 ```
 
 ## Field Path Verification Template
@@ -22,7 +38,7 @@ field_path = "twitter_sentiment_windows.last_cycle.YOUR_FIELD_HERE"
 found = 0
 total = 20
 
-with open('data/samples/cryptobot_latest_head200.jsonl', 'r') as f:
+with open('data/samples/cryptobot_latest_tail200.jsonl', 'r') as f:
     for i, line in enumerate(f):
         if i >= total:
             break
