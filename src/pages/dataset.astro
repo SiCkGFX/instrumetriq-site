@@ -15,7 +15,7 @@ import path from 'node:path';
 // Load Phase 3A artifact (surface-level overview)
 const datasetOverview = loadDatasetOverview();
 
-// Load Phase 4E-1 artifacts (existing coverage table)
+// Load semantic artifacts (coverage table and dataset summary)
 const coverageTablePath = path.join(process.cwd(), 'public/data/coverage_table.json');
 const datasetSummaryPath = path.join(process.cwd(), 'public/data/dataset_summary.json');
 const symbolTablePath = path.join(process.cwd(), 'public/data/symbol_table.json');
@@ -35,7 +35,7 @@ try {
     symbolTable = JSON.parse(fs.readFileSync(symbolTablePath, 'utf-8'));
   }
 } catch (error) {
-  console.error('Error loading Phase 4E-1 artifacts:', error);
+  console.error('Error loading semantic artifacts:', error);
 }
 
 const artifacts = loadArtifacts();
@@ -111,7 +111,7 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 2: Coverage (existing Phase 4E-1 table) -->
+    <!-- Section 2: Coverage (What We Collect) -->
     {coverageTable && coverageTable.feature_groups && (
       <section>
         <h2>What We Collect</h2>
@@ -208,7 +208,7 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- OLD SECTIONS BELOW (Phase 4E-1) - keep for backwards compatibility -->
+    <!-- Legacy sections below - available when semantic artifacts are built -->
     <!-- Section OLD-2: Scale -->
     {datasetSummary && datasetSummary.scale && (
       <section>
@@ -274,7 +274,7 @@ const artifacts = loadArtifacts();
         <h2>Sentiment Distribution</h2>
         {datasetSummary.sentiment_buckets.reason_unavailable ? (
           <div class="unavailable-notice">
-            <p><strong>Not available yet:</strong> {datasetSummary.sentiment_buckets.reason_unavailable}</p>
+            <p><strong>Unavailable:</strong> {datasetSummary.sentiment_buckets.reason_unavailable}</p>
             <p class="text-muted">This section will show the distribution of sentiment scores across entries when the data becomes available. This is purely descriptive and makes no claims about predictive value or market correlation.</p>
           </div>
         ) : datasetSummary.sentiment_buckets.buckets && datasetSummary.sentiment_buckets.buckets.length > 0 ? (
@@ -343,7 +343,7 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Hybrid Decision Breakdown removed per Phase 4E-2 requirements -->
+
     
     {artifacts.confidence && (
       <section>

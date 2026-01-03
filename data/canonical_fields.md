@@ -242,7 +242,7 @@ From both last_cycle and last_2_cycles:
 
 ### For Future Phases
 
-- Phase 1C will reference this map for aggregation logic
+- Future artifact builders will reference this map for aggregation logic
 - Website artifacts will use this map to determine what to display
 - Any field additions require updating this map and re-verifying
 

@@ -280,7 +280,7 @@ import datasetSummaryRaw from '@/public/data/dataset_summary.json';
 {datasetSummary && datasetSummary.sentiment_buckets && (
   datasetSummary.sentiment_buckets.reason_unavailable ? (
     <div class="unavailable-notice">
-      <p><strong>Not available yet:</strong> {datasetSummary.sentiment_buckets.reason_unavailable}</p>
+      <p><strong>Unavailable:</strong> {datasetSummary.sentiment_buckets.reason_unavailable}</p>
     </div>
   ) : ...
 )}

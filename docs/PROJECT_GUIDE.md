@@ -669,7 +669,7 @@ python scripts/build_artifacts_master.py --self-test
 
 ---
 
-## Phase 4.E: Frontend Wiring (Dataset Page)
+## Semantic Artifacts: Frontend Wiring (Dataset Page)
 
 **Purpose:** Wire JSON artifacts into the website `/dataset` page with clear sections, tables (not charts), and honest disclaimers.
 
@@ -716,8 +716,6 @@ python scripts/build_artifacts_master.py --self-test
 - Build succeeds with all artifacts present
 - Graceful degradation tested: Loader returns warnings if artifacts missing, page renders without crashing
 - Preview server confirmed working at http://localhost:4321/
-
-**Documentation:** See Phase 4.A-4.D above for artifact generation and validation details.
 
 ---
 
@@ -1160,7 +1158,7 @@ python scripts/test_dataset_page_artifacts.py
 **Display sections (4 total):**
 1. **Scale & Freshness:** 4-card grid showing entries, symbols, date range, last entry
    - Freshness note below: source file + sample disclaimer
-2. **Coverage:** Existing Phase 4E-1 coverage table (unchanged)
+2. **Coverage:** Existing Phase 1B coverage table (unchanged)
 3. **Preview Row:** Simple 2-column table showing redacted entry fields
    - No timestamps, no authors, no text
 4. **Non-Claims:** Bullet list with disclaimers
@@ -1169,7 +1167,7 @@ python scripts/test_dataset_page_artifacts.py
 
 **Graceful degradation:**
 - If `dataset_overview.json` missing, sections 1/3/4 don't render
-- Existing coverage section (Phase 4E-1) remains independent
+- Existing coverage section (Phase 1B) remains independent
 
 **Styling:**
 - `.overview-grid`: 4-column grid for scale cards

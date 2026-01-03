@@ -138,7 +138,7 @@ for entry in entries:
 
 ---
 
-## Phase 1B Part 2: Coverage Table for Website
+## Phase 1B: Coverage Table for Website
 
 **Purpose:** Generate `public/data/coverage_table.json` for the "What We Collect" section on the Dataset page.
 
