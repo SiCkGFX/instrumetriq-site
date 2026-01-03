@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { 
   loadArtifacts, 
+  loadDatasetOverview,
   formatPercent, 
   formatNumber, 
   formatDuration,
@@ -11,7 +12,10 @@ import {
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Load Phase 4E-1 artifacts
+// Load Phase 3A artifact (surface-level overview)
+const datasetOverview = loadDatasetOverview();
+
+// Load Phase 4E-1 artifacts (existing coverage table)
 const coverageTablePath = path.join(process.cwd(), 'public/data/coverage_table.json');
 const datasetSummaryPath = path.join(process.cwd(), 'public/data/dataset_summary.json');
 const symbolTablePath = path.join(process.cwd(), 'public/data/symbol_table.json');
@@ -56,26 +60,58 @@ const artifacts = loadArtifacts();
     </div>
   )}
   
-  <!-- Readiness banner -->
-  {datasetSummary && datasetSummary.scale && (
+  <!-- Readiness banner (Phase 3A) -->
+  {datasetOverview && datasetOverview.scale && (
     <div class="readiness-banner pass">
       <div class="banner-main">
         <strong>Dataset snapshot:</strong> v7 validated entries
         <span class="badge">READY</span>
       </div>
       <div class="banner-details">
-        {datasetSummary.scale.days_running} days 
-        • {formatNumber(datasetSummary.scale.total_usable_entries)} usable entries
-        • {formatNumber(datasetSummary.scale.distinct_symbols)} symbols
+        {datasetOverview.scale.entries_scanned} entries scanned
+        • {formatNumber(datasetOverview.scale.distinct_symbols)} symbols
+        • {datasetOverview.scale.date_range_utc}
       </div>
       <div class="banner-link">
-        See <a href="/status">Status</a> for collection counters
+        Source: {datasetOverview.freshness.archive_sample_source}
       </div>
     </div>
   )}
   
   <div class="pageContent">
-    <!-- Section 1: Coverage -->
+    <!-- Section 1: Scale & Freshness -->
+    {datasetOverview && (
+      <section>
+        <h2>Scale & Freshness</h2>
+        <div class="overview-grid">
+          <div class="overview-card">
+            <div class="card-label">Entries Scanned</div>
+            <div class="card-value">{formatNumber(datasetOverview.scale.entries_scanned)}</div>
+          </div>
+          <div class="overview-card">
+            <div class="card-label">Distinct Symbols</div>
+            <div class="card-value">{formatNumber(datasetOverview.scale.distinct_symbols)}</div>
+          </div>
+          <div class="overview-card">
+            <div class="card-label">Date Range (UTC)</div>
+            <div class="card-value">{datasetOverview.scale.date_range_utc}</div>
+          </div>
+          {datasetOverview.scale.last_entry_ts_utc && (
+            <div class="overview-card">
+              <div class="card-label">Last Entry</div>
+              <div class="card-value">{datasetOverview.scale.last_entry_ts_utc}</div>
+            </div>
+          )}
+        </div>
+        <p class="freshness-note">
+          <strong>Source:</strong> {datasetOverview.freshness.archive_sample_source}
+          <br />
+          <em>{datasetOverview.freshness.notes}</em>
+        </p>
+      </section>
+    )}
+    
+    <!-- Section 2: Coverage (existing Phase 4E-1 table) -->
     {coverageTable && coverageTable.feature_groups && (
       <section>
         <h2>What We Collect</h2>
@@ -124,10 +160,59 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 2: Scale -->
+    <!-- Section 3: Preview Row -->
+    {datasetOverview && datasetOverview.preview_row && (
+      <section>
+        <h2>Preview Row</h2>
+        <p>
+          One redacted sample entry from the dataset. 
+          No timestamps, author names, tweet text, or IDs are shown.
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table preview-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(datasetOverview.preview_row).map(([key, value]) => (
+                <tr>
+                  <td><code>{key}</code></td>
+                  <td>
+                    {typeof value === 'number' 
+                      ? (Number.isInteger(value) ? formatNumber(value) : value.toFixed(4))
+                      : String(value)
+                    }
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 4: Non-Claims -->
+    {datasetOverview && datasetOverview.non_claims_block && (
+      <section>
+        <h2>Dataset Disclaimers</h2>
+        <div class="non-claims-box">
+          <ul>
+            {datasetOverview.non_claims_block.map((item: string) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+    
+    <!-- OLD SECTIONS BELOW (Phase 4E-1) - keep for backwards compatibility -->
+    <!-- Section OLD-2: Scale -->
     {datasetSummary && datasetSummary.scale && (
       <section>
-        <h2>Scale</h2>
+        <h2>Scale (Legacy)</h2>
         <div class="scale-grid">
           <div class="scale-card">
             <div class="scale-label">Days Running</div>
@@ -788,4 +873,70 @@ const artifacts = loadArtifacts();
     margin-bottom: var(--space-2);
     color: var(--text-muted);
   }
-</style>
+  
+  /* Phase 3A styles */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+  
+  .overview-card {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .card-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .card-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    word-break: break-all;
+  }
+  
+  .freshness-note {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background-color: var(--panel2);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .preview-table tbody td:first-child {
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+  }
+  
+  .preview-table tbody td:last-child {
+    font-family: 'Courier New', monospace;
+    color: var(--text);
+  }
+  
+  .non-claims-box {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-left: 4px solid #f59e0b;
+    border-radius: 4px;
+    margin-top: var(--space-4);
+  }
+  
+  .non-claims-box ul {
+    margin: 0;
+    padding-left: var(--space-4);
+  }
+  
+  .non-claims-box li {
+    margin-bottom: var(--space-3);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }

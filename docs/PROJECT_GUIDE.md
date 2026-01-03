@@ -1096,6 +1096,106 @@ The artifacts are generated from `cryptobot_latest_head200.jsonl` (147 entries).
 - Avoid: "Higher activity correlates with..." (predictive)
 - Disclaimer on page: "Descriptive summary of archived sessions. Not a signal."
 
+## Phase 3A: Dataset Page Overview Artifact
+
+### Overview
+
+Phase 3A generates a single surface-level overview artifact (`dataset_overview.json`) for the Dataset page. This artifact provides essential scale metrics, freshness info, one redacted preview row, and non-claims disclaimers.
+
+**Guiding principles:**
+- **Credibility-first:** No invented fields, all paths verified from SSOT
+- **Fast:** Single artifact, minimal data
+- **Surface-level only:** No deep research insights (those belong on `/research`)
+- **Investigate-first workflow:** Always verify field paths from `field_coverage_report.json` before implementing
+
+### Phase 3A Artifact
+
+**File:** `dataset_overview.json`
+
+**Structure:**
+- `generated_at_utc`: ISO timestamp (ends with 'Z')
+- `scale`: Entries scanned, distinct symbols, date range, last entry timestamp
+- `freshness`: Archive sample source, notes about sample vs full dataset
+- `preview_row`: One redacted entry with 4-5 metrics (symbol, spread_bps, liq_global_pct, posts_total, optionally mean_score)
+- `non_claims_block`: 4+ descriptive bullet points (no correlation, no real-time, no predictions)
+
+**Redaction rules:**
+- NO timestamps (snapshot_ts, meta.added_ts, etc.)
+- NO author names or handles
+- NO tweet text or content
+- NO IDs (tweet_id, session_id, etc.)
+- Include ONLY: symbol + verified numeric metrics
+
+### Generating Phase 3A Artifact
+
+**Prerequisites:**
+- Python 3.x (timezone-aware datetime.now(timezone.utc))
+- Sample data: `data/samples/cryptobot_latest_head200.jsonl`
+- SSOT: `data/field_coverage_report.json` (from Phase 1A)
+
+**Commands:**
+```bash
+# Generate artifact
+python scripts/build_dataset_page_artifacts.py
+
+# Test artifact
+python scripts/test_dataset_page_artifacts.py
+```
+
+**Output location:** `public/data/dataset_overview.json`
+
+**Important notes:**
+- All preview_row fields must exist in `field_coverage_report.json`
+- Graceful degradation: If no suitable entry found, `preview_row` is null
+- Deterministic output (except `generated_at_utc` timestamp)
+- ASCII-only JSON enforced
+
+### Phase 3A Frontend Integration
+
+**Page:** `/dataset` (src/pages/dataset.astro)
+
+**Loader function:** `src/lib/artifactsData.ts`
+- `loadDatasetOverview()`: Returns `DatasetOverviewData | null`
+
+**Display sections (4 total):**
+1. **Scale & Freshness:** 4-card grid showing entries, symbols, date range, last entry
+   - Freshness note below: source file + sample disclaimer
+2. **Coverage:** Existing Phase 4E-1 coverage table (unchanged)
+3. **Preview Row:** Simple 2-column table showing redacted entry fields
+   - No timestamps, no authors, no text
+4. **Non-Claims:** Bullet list with disclaimers
+   - Orange left border (warning color)
+   - 4+ bullet points about descriptive-only data
+
+**Graceful degradation:**
+- If `dataset_overview.json` missing, sections 1/3/4 don't render
+- Existing coverage section (Phase 4E-1) remains independent
+
+**Styling:**
+- `.overview-grid`: 4-column grid for scale cards
+- `.overview-card`: Dark panel with label + value
+- `.freshness-note`: Info box below scale grid
+- `.preview-table`: Monospace font for field names and values
+- `.non-claims-box`: Bordered box with orange accent
+
+### Testing
+
+**Test suite:** `scripts/test_dataset_page_artifacts.py`
+
+**Validates:**
+- File exists and is valid JSON
+- ASCII-only encoding
+- `generated_at_utc` ends with 'Z'
+- Required fields present (scale, freshness, preview_row, non_claims_block)
+- Scale metrics > 0
+- Date format: YYYY-MM-DD or "YYYY-MM-DD to YYYY-MM-DD"
+- Preview row has required fields (symbol, spread_bps, liq_global_pct, posts_total)
+- No redacted fields leaked into preview_row
+- Non-claims block has 3+ items
+- Determinism (rebuild produces same output except timestamp)
+
+**Note:** Determinism test may skip on Windows due to subprocess stdout encoding issues. Manual rebuild verification recommended.
+
 ## Future Enhancements
 
 Potential additions:

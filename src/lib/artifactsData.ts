@@ -99,6 +99,29 @@ export interface SessionLifecycleData {
   note_sample_bias?: string;
 }
 
+// Phase 3A artifact types
+export interface DatasetOverviewData {
+  generated_at_utc: string;
+  scale: {
+    entries_scanned: number;
+    distinct_symbols: number;
+    date_range_utc: string;
+    last_entry_ts_utc?: string;
+  };
+  freshness: {
+    archive_sample_source: string;
+    notes: string;
+  };
+  preview_row: {
+    symbol: string;
+    spread_bps: number;
+    liq_global_pct: number;
+    posts_total: number;
+    mean_score?: number;
+  } | null;
+  non_claims_block: string[];
+}
+
 export interface ArtifactsReadyData {
   status: 'PASS' | 'FAIL';
   generated_at_utc: string;
@@ -385,6 +408,22 @@ export function loadSessionLifecycle(): SessionLifecycleData | null {
     return JSON.parse(content) as SessionLifecycleData;
   } catch (error) {
     console.error('Failed to load session_lifecycle.json:', error);
+    return null;
+  }
+}
+// Phase 3A loaders
+export function loadDatasetOverview(): DatasetOverviewData | null {
+  try {
+    const filepath = path.join(process.cwd(), 'public/data/dataset_overview.json');
+    
+    if (!fs.existsSync(filepath)) {
+      return null;
+    }
+    
+    const content = fs.readFileSync(filepath, 'utf-8');
+    return JSON.parse(content) as DatasetOverviewData;
+  } catch (error) {
+    console.error('Failed to load dataset_overview.json:', error);
     return null;
   }
 }
