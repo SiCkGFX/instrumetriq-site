@@ -427,3 +427,55 @@ export function loadDatasetOverview(): DatasetOverviewData | null {
     return null;
   }
 }
+
+// ============================================================================
+// Phase 3B: Public sample entries
+// ============================================================================
+
+// Minimal v7 entry interface (only fields we need for display)
+export interface PublicSampleEntry {
+  symbol: string;
+  meta: {
+    added_ts: string;
+    schema_version: number;
+  };
+  derived: {
+    spread_bps: number;
+    liq_global_pct: number;
+  };
+  twitter_sentiment_windows: {
+    last_2_cycles: {
+      posts_total: number;
+      hybrid_decision_stats: {
+        mean_score: number;
+      };
+    };
+  };
+  [key: string]: any; // Allow other fields
+}
+
+export interface PublicSampleEntriesData {
+  generated_at_utc: string;
+  schema_version: string;
+  entry_count: number;
+  source: string;
+  note: string;
+  entries: PublicSampleEntry[];
+}
+
+export function loadPublicSampleEntries(): PublicSampleEntriesData | null {
+  try {
+    const filepath = path.join(process.cwd(), 'public/data/sample_entries_v7.json');
+    
+    if (!fs.existsSync(filepath)) {
+      console.warn('Public sample entries not found - run scripts/build_public_sample_entries.py');
+      return null;
+    }
+    
+    const content = fs.readFileSync(filepath, 'utf-8');
+    return JSON.parse(content) as PublicSampleEntriesData;
+  } catch (error) {
+    console.error('Failed to load sample_entries_v7.json:', error);
+    return null;
+  }
+}

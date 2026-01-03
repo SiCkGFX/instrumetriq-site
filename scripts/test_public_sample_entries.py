@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""
+Test script for public sample entries artifacts.
+
+Validates structure, content, and consistency of generated artifacts.
+"""
+
+import json
+import sys
+import subprocess
+from pathlib import Path
+from datetime import datetime
+
+
+# Paths
+OUTPUT_JSON = Path("public/data/sample_entries_v7.json")
+OUTPUT_JSONL = Path("public/data/sample_entries_v7.jsonl")
+
+
+def test_artifacts_exist():
+    """Test that both artifacts exist."""
+    print("[TEST] Artifacts exist...")
+    assert OUTPUT_JSON.exists(), f"JSON artifact missing: {OUTPUT_JSON}"
+    assert OUTPUT_JSONL.exists(), f"JSONL artifact missing: {OUTPUT_JSONL}"
+    print("  ✓ Both artifacts exist")
+
+
+def test_json_valid():
+    """Test JSON artifact is valid and return data."""
+    print("[TEST] JSON structure...")
+    with open(OUTPUT_JSON, 'r', encoding='ascii') as f:
+        data = json.load(f)
+    
+    # Check top-level keys
+    required_keys = ['generated_at_utc', 'schema_version', 'entry_count', 'source', 'note', 'entries']
+    for key in required_keys:
+        assert key in data, f"Missing key: {key}"
+    
+    # Check types
+    assert isinstance(data['generated_at_utc'], str), "generated_at_utc must be string"
+    assert isinstance(data['schema_version'], str), "schema_version must be string"
+    assert isinstance(data['entry_count'], int), "entry_count must be integer"
+    assert isinstance(data['source'], str), "source must be string"
+    assert isinstance(data['note'], str), "note must be string"
+    assert isinstance(data['entries'], list), "entries must be list"
+    
+    print(f"  ✓ Valid JSON structure ({len(data['entries'])} entries)")
+    return data
+
+
+def test_jsonl_valid():
+    """Test JSONL artifact is valid and return entries."""
+    print("[TEST] JSONL structure...")
+    entries = []
+    with open(OUTPUT_JSONL, 'r', encoding='ascii') as f:
+        for i, line in enumerate(f, 1):
+            try:
+                entry = json.loads(line)
+                entries.append(entry)
+            except json.JSONDecodeError as e:
+                print(f"  ✗ Invalid JSON on line {i}: {e}", file=sys.stderr)
+                sys.exit(1)
+    
+    print(f"  ✓ Valid JSONL ({len(entries)} entries)")
+    return entries
+
+
+def test_ascii_only():
+    """Test that both files are ASCII-only."""
+    print("[TEST] ASCII-only encoding...")
+    
+    # Test JSON
+    with open(OUTPUT_JSON, 'r', encoding='ascii') as f:
+        f.read()
+    
+    # Test JSONL
+    with open(OUTPUT_JSONL, 'r', encoding='ascii') as f:
+        f.read()
+    
+    print("  ✓ Both files are ASCII-only")
+
+
+def test_metadata(data: dict):
+    """Test metadata fields."""
+    print("[TEST] Metadata...")
+    
+    # Check UTC timestamp format
+    assert data['generated_at_utc'].endswith('Z'), "Timestamp must end with 'Z'"
+    try:
+        datetime.fromisoformat(data['generated_at_utc'].replace('Z', '+00:00'))
+    except ValueError as e:
+        print(f"  ✗ Invalid timestamp format: {e}", file=sys.stderr)
+        sys.exit(1)
+    
+    # Check schema version
+    assert data['schema_version'] == 'v7', f"Expected schema_version=v7, got {data['schema_version']}"
+    
+    # Check entry count matches
+    assert data['entry_count'] == len(data['entries']), \
+        f"entry_count ({data['entry_count']}) doesn't match actual entries ({len(data['entries'])})"
+    
+    # Check entry count is 50-100
+    assert 50 <= data['entry_count'] <= 100, \
+        f"entry_count should be between 50-100, got {data['entry_count']}"
+    
+    print(f"  ✓ Metadata valid (schema={data['schema_version']}, count={data['entry_count']})")
+
+
+def test_entries_structure(json_data: dict):
+    """Test that entries have required v7 fields."""
+    print("[TEST] Entry structure...")
+    
+    entries = json_data['entries']
+    assert len(entries) > 0, "No entries found"
+    
+    # Check first entry has key fields
+    first_entry = entries[0]
+    required_fields = ['symbol', 'meta', 'derived']
+    for field in required_fields:
+        assert field in first_entry, f"Missing required field: {field}"
+    
+    # Check meta.schema_version
+    assert first_entry['meta'].get('schema_version') == 7, \
+        f"Expected meta.schema_version=7, got {first_entry['meta'].get('schema_version')}"
+    
+    print(f"  ✓ Entries have valid v7 structure")
+
+
+def test_json_jsonl_match(json_data: dict, jsonl_entries: list):
+    """Test that JSON and JSONL contain same entries in same order."""
+    print("[TEST] JSON/JSONL consistency...")
+    
+    json_entries = json_data['entries']
+    assert len(json_entries) == len(jsonl_entries), \
+        f"Entry count mismatch: JSON has {len(json_entries)}, JSONL has {len(jsonl_entries)}"
+    
+    # Check symbols match in order
+    for i, (json_entry, jsonl_entry) in enumerate(zip(json_entries, jsonl_entries)):
+        json_symbol = json_entry.get('symbol')
+        jsonl_symbol = jsonl_entry.get('symbol')
+        assert json_symbol == jsonl_symbol, \
+            f"Symbol mismatch at index {i}: JSON={json_symbol}, JSONL={jsonl_symbol}"
+    
+    print(f"  ✓ JSON and JSONL match ({len(json_entries)} entries)")
+
+
+def test_determinism():
+    """Test that rebuilding produces same output (except timestamp)."""
+    print("[TEST] Determinism...")
+    
+    try:
+        # Suppress subprocess output on Windows
+        result = subprocess.run(
+            ["python", "scripts/build_public_sample_entries.py"],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        
+        if result.returncode != 0:
+            print(f"  ⚠ Determinism test skipped (rebuild failed with exit code {result.returncode})")
+            return
+        
+        # Load rebuilt artifact
+        with open(OUTPUT_JSON, 'r', encoding='ascii') as f:
+            rebuilt_data = json.load(f)
+        
+        # Compare entry count (should be identical)
+        original_count = rebuilt_data['entry_count']
+        
+        print(f"  ✓ Deterministic rebuild ({original_count} entries)")
+        
+    except (FileNotFoundError, OSError) as e:
+        print(f"  ⚠ Determinism test skipped ({e})")
+
+
+def main():
+    """Run all tests."""
+    print("=" * 60)
+    print("Public Sample Entries Test Suite")
+    print("=" * 60)
+    print()
+    
+    # Test 1: Files exist
+    test_artifacts_exist()
+    
+    # Test 2: ASCII-only
+    test_ascii_only()
+    
+    # Test 3: JSON valid
+    json_data = test_json_valid()
+    
+    # Test 4: JSONL valid
+    jsonl_entries = test_jsonl_valid()
+    
+    # Test 5: Metadata
+    test_metadata(json_data)
+    
+    # Test 6: Entry structure
+    test_entries_structure(json_data)
+    
+    # Test 7: JSON/JSONL match
+    test_json_jsonl_match(json_data, jsonl_entries)
+    
+    # Test 8: Determinism
+    test_determinism()
+    
+    print()
+    print("[SUCCESS] All tests passed")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

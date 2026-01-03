@@ -259,3 +259,47 @@ python scripts/test_phase2a_artifacts.py
 - Builder auto-discovers paths from SSOT
 - If field unavailable, artifact includes unavailable_reason
 - No hardcoded assumptions
+---
+
+## Phase 3B: Public Sample Entries
+
+**Purpose:** Generate browsable public preview with 100 full v7 entries for FREE tier ("proof of depth" monetization).
+
+**Build command:**
+```bash
+python scripts/build_public_sample_entries.py
+```
+
+**Test command:**
+```bash
+python scripts/test_public_sample_entries.py
+```
+
+**Output files:**
+- `public/data/sample_entries_v7.json` - JSON artifact with metadata wrapper + 100 entries
+- `public/data/sample_entries_v7.jsonl` - Downloadable JSONL (one entry per line)
+
+**Features:**
+- **Deterministic:** First 100 entries from sample (no randomness)
+- **Full entries:** NO field removal (proves data richness)
+- **Quantity-limited:** 100 entries insufficient for ML training
+- **Dual format:** JSON for UI loader + JSONL for download
+- **Disclaimers:** Explicit "Not suitable for training" warning
+
+**Display fields (6):**
+1. `symbol` - Ticker
+2. `derived.spread_bps` - Spread in basis points
+3. `derived.liq_global_pct` - Liquidity percentile
+4. `twitter_sentiment_windows.last_2_cycles.posts_total` - Posts count
+5. `twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.mean_score` - Sentiment score
+6. `meta.added_ts` - Entry timestamp
+
+**Frontend features:**
+- Browsable table (sortable columns)
+- Expandable JSON per row
+- Search by symbol (real-time filtering)
+- Download link to JSONL
+
+**Monetization strategy:**
+- FREE: 100 entries prove depth but not ML-usable
+- PAID: Full dataset access (future phase)

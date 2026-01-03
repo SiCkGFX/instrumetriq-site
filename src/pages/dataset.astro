@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import { 
   loadArtifacts, 
   loadDatasetOverview,
+  loadPublicSampleEntries,
   formatPercent, 
   formatNumber, 
   formatDuration,
@@ -14,6 +15,9 @@ import path from 'node:path';
 
 // Load Phase 3A artifact (surface-level overview)
 const datasetOverview = loadDatasetOverview();
+
+// Load Phase 3B artifact (public sample entries)
+const publicSampleEntries = loadPublicSampleEntries();
 
 // Load semantic artifacts (coverage table and dataset summary)
 const coverageTablePath = path.join(process.cwd(), 'public/data/coverage_table.json');
@@ -204,6 +208,81 @@ const artifacts = loadArtifacts();
               <li>{item}</li>
             ))}
           </ul>
+        </div>
+      </section>
+    )}
+    
+    <!-- Section 5: Public Sample Entries (Phase 3B) -->
+    {publicSampleEntries && publicSampleEntries.entries && publicSampleEntries.entries.length > 0 && (
+      <section>
+        <h2>Public Dataset Preview</h2>
+        <div class="sample-preview-intro">
+          <p>
+            Browse {publicSampleEntries.entry_count} real entries from the dataset below. 
+            Each row shows key fields. Click any row to expand the full JSON structure.
+          </p>
+          <div class="preview-disclaimer">
+            <strong>⚠ Limited Preview Extract:</strong> {publicSampleEntries.note}
+            <br />
+            <a href="/data/sample_entries_v7.jsonl" download class="download-link">
+              📥 Download Preview ({publicSampleEntries.entry_count} entries, JSONL format)
+            </a>
+          </div>
+        </div>
+        
+        <div class="sample-table-wrapper">
+          <div class="table-controls">
+            <input 
+              type="text" 
+              id="symbolSearch" 
+              placeholder="Search by symbol..." 
+              class="search-input"
+            />
+          </div>
+          
+          <table class="sample-table" id="sampleTable">
+            <thead>
+              <tr>
+                <th data-sort="symbol">Symbol</th>
+                <th data-sort="spread_bps" class="numeric">Spread (bps)</th>
+                <th data-sort="liq_global_pct" class="numeric">Liq Global %</th>
+                <th data-sort="posts_total" class="numeric">Posts (L2C)</th>
+                <th data-sort="mean_score" class="numeric">Mean Score</th>
+                <th data-sort="added_ts">Added (UTC)</th>
+                <th class="expand-col">Expand</th>
+              </tr>
+            </thead>
+            <tbody>
+              {publicSampleEntries.entries.map((entry, idx) => {
+                const spreadBps = entry.derived?.spread_bps?.toFixed(2) ?? 'N/A';
+                const liqGlobalPct = entry.derived?.liq_global_pct?.toFixed(2) ?? 'N/A';
+                const postsTotal = entry.twitter_sentiment_windows?.last_2_cycles?.posts_total ?? 'N/A';
+                const meanScore = entry.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats?.mean_score?.toFixed(4) ?? 'N/A';
+                const addedTs = entry.meta?.added_ts ? entry.meta.added_ts.substring(0, 19).replace('T', ' ') : 'N/A';
+                
+                return (
+                  <>
+                    <tr class="sample-row" data-idx={idx}>
+                      <td class="symbol-cell">{entry.symbol}</td>
+                      <td class="numeric">{spreadBps}</td>
+                      <td class="numeric">{liqGlobalPct}</td>
+                      <td class="numeric">{postsTotal}</td>
+                      <td class="numeric">{meanScore}</td>
+                      <td>{addedTs}</td>
+                      <td class="expand-cell">
+                        <button class="expand-btn" aria-label="Expand JSON">▶</button>
+                      </td>
+                    </tr>
+                    <tr class="json-row" id={`json-${idx}`} style="display: none;">
+                      <td colspan="7">
+                        <pre class="json-content"><code>{JSON.stringify(entry, null, 2)}</code></pre>
+                      </td>
+                    </tr>
+                  </>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
     )}
@@ -940,3 +1019,293 @@ const artifacts = loadArtifacts();
     color: var(--text-muted);
     line-height: 1.6;
   }
+  /* Phase 3B: Public sample entries */
+  .sample-preview-intro {
+    margin-bottom: var(--space-4);
+  }
+  
+  .sample-preview-intro p {
+    margin-bottom: var(--space-3);
+    color: var(--text-muted);
+  }
+  
+  .preview-disclaimer {
+    padding: var(--space-3);
+    background-color: var(--panel2);
+    border-left: 4px solid #f59e0b;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-top: var(--space-3);
+  }
+  
+  .download-link {
+    display: inline-block;
+    margin-top: var(--space-2);
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .download-link:hover {
+    text-decoration: underline;
+  }
+  
+  .sample-table-wrapper {
+    margin-top: var(--space-4);
+    overflow-x: auto;
+  }
+  
+  .table-controls {
+    margin-bottom: var(--space-3);
+  }
+  
+  .search-input {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--panel);
+    color: var(--text);
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .sample-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  
+  .sample-table thead th {
+    background-color: var(--panel2);
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .sample-table thead th:hover {
+    background-color: var(--panel3);
+  }
+  
+  .sample-table thead th.numeric {
+    text-align: right;
+  }
+  
+  .sample-table thead th.expand-col {
+    width: 80px;
+    cursor: default;
+  }
+  
+  .sample-table tbody tr.sample-row {
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .sample-table tbody tr.sample-row:hover {
+    background-color: var(--panel2);
+  }
+  
+  .sample-table tbody td {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .sample-table tbody td.symbol-cell {
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  
+  .sample-table tbody td.numeric {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .expand-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: var(--space-1);
+    transition: transform 0.2s;
+  }
+  
+  .expand-btn:hover {
+    color: var(--accent-hover);
+  }
+  
+  .expand-btn.expanded {
+    transform: rotate(90deg);
+  }
+  
+  .json-row td {
+    padding: 0 !important;
+    background-color: var(--panel3);
+  }
+  
+  .json-content {
+    margin: 0;
+    padding: var(--space-3);
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    color: #d4d4d4;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+</style>
+
+<script>
+  // Phase 3B: Public sample entries interactivity
+  document.addEventListener('DOMContentLoaded', () => {
+    // Expand/collapse JSON
+    const expandButtons = document.querySelectorAll('.expand-btn');
+    expandButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const row = btn.closest('tr');
+        if (!row) return;
+        
+        const idx = row.getAttribute('data-idx');
+        if (!idx) return;
+        
+        const jsonRow = document.getElementById(`json-${idx}`);
+        if (!jsonRow) return;
+        
+        if (jsonRow.style.display === 'none') {
+          jsonRow.style.display = 'table-row';
+          btn.classList.add('expanded');
+          btn.textContent = '▼';
+        } else {
+          jsonRow.style.display = 'none';
+          btn.classList.remove('expanded');
+          btn.textContent = '▶';
+        }
+      });
+    });
+    
+    // Search by symbol
+    const searchInput = document.getElementById('symbolSearch') as HTMLInputElement | null;
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        if (!target) return;
+        
+        const query = target.value.toLowerCase();
+        const rows = document.querySelectorAll('.sample-row');
+        
+        rows.forEach(row => {
+          const symbolCell = row.querySelector('.symbol-cell');
+          if (!symbolCell || !symbolCell.textContent) return;
+          
+          const symbol = symbolCell.textContent.toLowerCase();
+          const idx = (row as HTMLElement).getAttribute('data-idx');
+          const jsonRow = idx ? document.getElementById(`json-${idx}`) : null;
+          
+          const htmlRow = row as HTMLElement;
+          if (symbol.includes(query)) {
+            htmlRow.style.display = '';
+          } else {
+            htmlRow.style.display = 'none';
+            if (jsonRow) jsonRow.style.display = 'none';
+          }
+        });
+      });
+    }
+    
+    // Column sorting
+    const headers = document.querySelectorAll('.sample-table thead th[data-sort]');
+    let sortState: { column: string | null; ascending: boolean } = { column: null, ascending: true };
+    
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.getAttribute('data-sort');
+        if (!column) return;
+        
+        const table = document.getElementById('sampleTable');
+        if (!table) return;
+        
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+        
+        const rows = Array.from(tbody.querySelectorAll('.sample-row'));
+        
+        // Toggle sort direction if clicking same column
+        if (sortState.column === column) {
+          sortState.ascending = !sortState.ascending;
+        } else {
+          sortState.column = column;
+          sortState.ascending = true;
+        }
+        
+        // Sort rows
+        rows.sort((a, b) => {
+          let aVal, bVal;
+          
+          switch (column) {
+            case 'symbol':
+              const aSymbol = a.querySelector('.symbol-cell');
+              const bSymbol = b.querySelector('.symbol-cell');
+              if (!aSymbol?.textContent || !bSymbol?.textContent) return 0;
+              aVal = aSymbol.textContent;
+              bVal = bSymbol.textContent;
+              return sortState.ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            
+            case 'spread_bps':
+            case 'liq_global_pct':
+            case 'posts_total':
+            case 'mean_score':
+              const headerParent = header.parentElement;
+              if (!headerParent) return 0;
+              const colIdx = Array.from(headerParent.children).indexOf(header);
+              const aElem = a.children[colIdx];
+              const bElem = b.children[colIdx];
+              aVal = aElem?.textContent ? parseFloat(aElem.textContent) : 0;
+              bVal = bElem?.textContent ? parseFloat(bElem.textContent) : 0;
+              return sortState.ascending ? aVal - bVal : bVal - aVal;
+            
+            case 'added_ts':
+              const headerParent2 = header.parentElement;
+              if (!headerParent2) return 0;
+              const tsIdx = Array.from(headerParent2.children).indexOf(header);
+              const aTs = a.children[tsIdx];
+              const bTs = b.children[tsIdx];
+              if (!aTs?.textContent || !bTs?.textContent) return 0;
+              aVal = aTs.textContent;
+              bVal = bTs.textContent;
+              return sortState.ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            
+            default:
+              return 0;
+          }
+        });
+        
+        // Rebuild tbody
+        rows.forEach(row => {
+          const idx = row.getAttribute('data-idx');
+          const jsonRow = idx ? document.getElementById(`json-${idx}`) : null;
+          tbody.appendChild(row);
+          if (jsonRow) tbody.appendChild(jsonRow);
+        });
+        
+        // Update header indicators
+        headers.forEach(h => {
+          const text = h.textContent;
+          if (text) h.textContent = text.replace(/[▲▼]/g, '').trim();
+        });
+        const headerText = header.textContent;
+        if (headerText) {
+          header.textContent = headerText + (sortState.ascending ? ' ▲' : ' ▼');
+        }
+      });
+    });
+  });
+</script>

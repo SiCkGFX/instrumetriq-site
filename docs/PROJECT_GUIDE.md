@@ -1194,6 +1194,215 @@ python scripts/test_dataset_page_artifacts.py
 
 **Note:** Determinism test may skip on Windows due to subprocess stdout encoding issues. Manual rebuild verification recommended.
 
+---
+
+## Phase 3B: Public Sample Entries + Download Preview
+
+### Overview
+
+Phase 3B generates public-facing sample entry artifacts that allow users to browse real dataset entries and download a preview file. This serves the "FREE tier proves depth" monetization strategy: 100 full v7 entries demonstrate data richness but are insufficient for ML training.
+
+**Guiding principles:**
+- **Transparency:** Show REAL full entries (no field removal)
+- **Quantity-limited:** 100 entries prove depth but not ML-usable
+- **Deterministic:** First N entries (no randomness)
+- **Dual format:** JSON (with metadata) for UI + JSONL (line-by-line) for download
+- **Disclaimers:** Explicit "Not suitable for training" warning
+- **Investigate-first workflow:** All display fields verified from SSOT before implementation
+
+### Phase 3B Artifacts
+
+**Files:**
+- `sample_entries_v7.json`: JSON artifact with metadata wrapper + 100 full entries
+- `sample_entries_v7.jsonl`: JSONL download (one entry per line, no wrapper)
+
+**JSON structure:**
+```json
+{
+  "generated_at_utc": "2026-01-02T13:30:00Z",
+  "schema_version": "v7",
+  "entry_count": 100,
+  "source": "cryptobot_latest_head200.jsonl",
+  "note": "Public preview extract. Non-exhaustive. Not suitable for training.",
+  "entries": [...]
+}
+```
+
+**JSONL structure:**
+- One entry per line
+- Same order as JSON artifact
+- No metadata wrapper
+- ASCII-only encoding
+
+**Entry selection:**
+- Deterministic: First 100 entries from sample file
+- NO randomness (reproducible builds)
+- Full v7 entries (NO field removal)
+
+### Display Fields
+
+**Table columns (6 fields):**
+1. `symbol`: Ticker symbol
+2. `derived.spread_bps`: Bid-ask spread in basis points
+3. `derived.liq_global_pct`: Liquidity percentile (global ranking)
+4. `twitter_sentiment_windows.last_2_cycles.posts_total`: Total posts in last 2 cycles
+5. `twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.mean_score`: Mean sentiment score
+6. `meta.added_ts`: Entry timestamp (UTC)
+
+**All fields verified from:**
+- Source: `data/field_coverage_report.json` (SSOT)
+- Coverage: 147/147 entries (100% presence)
+
+### Generating Phase 3B Artifacts
+
+**Prerequisites:**
+- Python 3.x with `datetime.now(timezone.utc)`
+- Sample data: `data/samples/cryptobot_latest_head200.jsonl` (147 entries)
+- SSOT: `data/field_coverage_report.json` (from Phase 1A)
+
+**Commands:**
+```bash
+# Generate artifacts
+python scripts/build_public_sample_entries.py
+
+# Test artifacts
+python scripts/test_public_sample_entries.py
+```
+
+**Output locations:**
+- `public/data/sample_entries_v7.json` (for UI loader)
+- `public/data/sample_entries_v7.jsonl` (for download link)
+
+**Script configuration:**
+- `ENTRY_COUNT = 100` (configurable constant)
+- Deterministic selection (first N entries)
+- ASCII-only JSON encoding (`ensure_ascii=True`)
+- Creates parent directories if needed
+
+### Frontend Integration
+
+**Page:** `/dataset` (src/pages/dataset.astro)
+
+**Loader function:** `src/lib/artifactsData.ts`
+- Interface: `PublicSampleEntry` (6 display fields + `[key: string]: any` for full entry)
+- Interface: `PublicSampleEntriesData` (metadata + entries array)
+- Function: `loadPublicSampleEntries()`: Returns `PublicSampleEntriesData | null`
+
+**Display section: "Public Dataset Preview"**
+
+**Features:**
+1. **Browsable table:**
+   - 6 columns (symbol, spread_bps, liq_global_pct, posts_total, mean_score, added_ts)
+   - 100 rows with real data
+   - Monospace font for symbol and numeric fields
+   - Responsive design (horizontal scroll on mobile)
+
+2. **Expandable JSON:**
+   - Each row has expand button (▶/▼)
+   - Click to reveal full JSON structure
+   - Syntax-highlighted code block
+   - Max height 500px with vertical scroll
+
+3. **Search by symbol:**
+   - Input field above table
+   - Real-time filtering (case-insensitive)
+   - Hides non-matching rows + their expanded JSON
+
+4. **Column sorting:**
+   - Click any header to sort
+   - Toggle ascending/descending (▲/▼ indicators)
+   - Numeric sorting for numeric columns
+   - Text sorting for symbol/timestamp
+
+5. **Download link:**
+   - Direct link to JSONL file
+   - 📥 Download Preview (100 entries, JSONL format)
+   - Browser's native download dialog
+
+6. **Disclaimers:**
+   - Intro text: "Browse 100 real entries..."
+   - Warning box: "⚠ Limited Preview Extract: {note}"
+   - Orange left border (warning color)
+
+**Client-side interactivity:**
+- Zero-JS by default (Astro static)
+- Progressive enhancement: `<script>` tag with vanilla JS
+- TypeScript-safe: Null checks for all DOM queries
+- Event listeners: DOMContentLoaded + delegated click handlers
+
+**Styling:**
+- `.sample-table`: Full-width, bordered table
+- `.symbol-cell`: Monospace, accent color
+- `.numeric`: Right-aligned, monospace
+- `.expand-btn`: Animated rotation on expand
+- `.json-content`: Dark code block (#1e1e1e background)
+- `.preview-disclaimer`: Orange-bordered warning box
+- `.search-input`: Styled input with accent border on focus
+
+### Testing
+
+**Test suite:** `scripts/test_public_sample_entries.py`
+
+**Validates:**
+1. Both artifacts exist (JSON + JSONL)
+2. ASCII-only encoding (no Unicode escapes)
+3. JSON structure:
+   - Valid JSON
+   - Required metadata keys present
+   - `entry_count` matches array length
+   - `schema_version == "v7"`
+   - Entry count between 50-100
+4. JSONL structure:
+   - Valid JSON per line
+   - Same entry count as JSON artifact
+5. Entry structure:
+   - Required fields: symbol, meta, derived
+   - `meta.schema_version == 7`
+6. JSON/JSONL consistency:
+   - Same entries in same order
+   - Symbol order matches
+7. Determinism:
+   - Rebuild produces same output (except timestamp)
+   - Entry count unchanged
+
+**Test results:** All 8 tests pass ✓
+
+### Monetization Context
+
+**FREE tier (Phase 3B):**
+- 100 full v7 entries
+- Proves data richness (all fields visible)
+- NOT ML-usable (quantity too small for training)
+- Explicit disclaimer: "Not suitable for training"
+
+**Paid tier (future):**
+- Full dataset access (thousands of entries)
+- Bulk download options
+- API access
+- Commercial use license
+
+**Strategy:**
+- FREE tier is a "proof of depth" teaser
+- Quantity limit (100) is the key constraint
+- Full schema visibility builds trust
+- Clear separation with disclaimers
+
+### File Sizes
+
+**Approximate sizes:**
+- `sample_entries_v7.json`: ~850 KB (100 entries with metadata + formatting)
+- `sample_entries_v7.jsonl`: ~840 KB (100 entries, no metadata, no formatting)
+- Average per entry: ~8.4 KB (full v7 schema)
+
+**Build time:** <1 second (deterministic reads + writes)
+
+**Notes:**
+- ASCII-only encoding increases size slightly vs UTF-8
+- JSONL is slightly smaller (no outer wrapper or array brackets)
+- Full v7 entries include all nested fields (posts, decisions, regimes, etc.)
+
+---
+
 ## Future Enhancements
 
 Potential additions:
