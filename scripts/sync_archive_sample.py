@@ -16,7 +16,7 @@ import argparse
 import sys
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 
 
 # Default paths
@@ -65,7 +65,7 @@ def get_archive_files(folder: Path) -> List[Tuple[Path, float]]:
     return [f for f, _ in files]
 
 
-def read_entries_from_file(filepath: Path, limit: int = None) -> List[Dict]:
+def read_entries_from_file(filepath: Path, limit: Optional[int] = None) -> List[Dict]:
     """Read entries from a .jsonl or .jsonl.gz file."""
     entries = []
     
@@ -93,12 +93,12 @@ def read_entries_from_file(filepath: Path, limit: int = None) -> List[Dict]:
     return entries
 
 
-def extract_tail_entries(archive_files: List[Path], n: int) -> Tuple[List[Dict], List[str]]:
+def extract_tail_entries(archive_files: List[Tuple[Path, float]], n: int) -> Tuple[List[Dict], List[str]]:
     """Extract the most recent N entries across archive files."""
     all_entries = []
     source_files = []
     
-    for filepath in archive_files:
+    for filepath, _ in archive_files:
         if len(all_entries) >= n:
             break
         
