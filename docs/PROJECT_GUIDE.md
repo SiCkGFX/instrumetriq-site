@@ -1463,9 +1463,211 @@ Potential additions:
 - Keep status.json current
 - Update legal pages as needed
 
+---
+
+## Phase 3B-hotfix: Cloudflare 25 MiB Limit Fix + UI/Scale Fixes
+
+### Problem (Deployment Blocker)
+
+Cloudflare Pages has a **hard 25 MiB limit per file**. The `/dataset` page was **25.7 MiB** due to server-side embedding of `sample_entries_v7.json` (100 entries with large `spot_prices` arrays), causing deployment failures.
+
+### Solution: Split Artifacts + Client-Side Fetch
+
+**Architecture change:**
+1. **Split JSON files:**
+   - `sample_entries_v7.json` - 100 entries WITHOUT `spot_prices` (~120 KB)
+   - `sample_entries_spots_v7.json` - Separate file with ONLY spot prices arrays (~720 KB)
+   - `sample_entries_v7.jsonl` - Download file WITHOUT spot_prices (for size)
+
+2. **Client-side loading:**
+   - Removed server-side `loadPublicSampleEntries()` call
+   - Rewrote `dataset.astro` with `<script is:inline>` that fetches JSON at runtime
+   - Lazy-load spot_prices file only when user clicks "Spots" button
+
+3. **Result:**
+   - HTML size reduced from **25.7 MiB → 23.24 KB** (99.9% reduction!)
+   - Well under Cloudflare limit (24.98 MB remaining)
+   - All functionality preserved
+
+### Implementation
+
+**Builder script:** `scripts/build_public_sample_entries.py` (modified)
+- Lines 82-124: `build_json_artifact()` removes `spot_prices` from each entry
+- Lines 127-146: `build_spots_artifact()` creates separate spots file with `[{symbol, spot_prices}, ...]`
+- Lines 149-167: `write_jsonl_artifact()` excludes `spot_prices` for smaller download
+- Lines 180-197: Generates 3 files instead of 2
+
+**Test script:** `scripts/test_public_sample_entries.py` (updated)
+- Validates 3 files exist
+- Verifies NO `spot_prices` in main JSON (critical for size)
+- Validates spots file structure and count
+
+**Frontend:** `src/pages/dataset.astro` (heavily rewritten)
+- Lines 1-18: Removed `loadPublicSampleEntries` import
+- Lines 176-198: Replaced server-rendered table with placeholder div:
+  ```html
+  <div id="public-dataset-preview" 
+       data-json="/data/sample_entries_v7.json" 
+       data-spots="/data/sample_entries_spots_v7.json">
+    <p class="loading-message">Loading dataset preview...</p>
+  </div>
+  ```
+- Lines 418-430: Added CSS for loading/error messages
+- Lines 432-710: `<script is:inline>` with full client-side logic:
+  * Fetches `sample_entries_v7.json` on DOMContentLoaded
+  * Renders table dynamically with `entries.map()`
+  * Lazy-loads `sample_entries_spots_v7.json` on first "Spots" button click
+  * Implements search, sort, expand functionality in vanilla JS
+
+**Verification:** `scripts/check_build_size.py` (created)
+- Checks `dist/dataset/index.html` file size
+- Reports human-readable size + pass/fail status
+- Thresholds: Cloudflare 25 MiB (hard limit), target 1 MB, ideal 300 KB
+- Current result: **23.24 KB** ✅
+
+### UI/Scale Fixes (Phase 3B Cleanup)
+
+**Problem:** After hotfix, the Dataset page showed misleading metrics and lost some styling:
+- Displayed sample size (147 entries) instead of full archive scale (55,965 entries)
+- Showed internal "Build: <timestamp>" message (not public-facing)
+- Table styling degraded during hotfix implementation
+- Mean Score sorting didn't handle N/A values correctly
+
+**Solution: Archive Statistics + UI Updates**
+
+**Archive stats generation:**
+1. **Builder script:** `scripts/build_archive_stats.py` (created, 200 lines)
+   - Scans full CryptoBot archive: `D:\Sentiment-Data\CryptoBot\data\archive\`
+   - Discovers all YYYYMMDD folders, counts entries in `.jsonl` and `.jsonl.gz` files
+   - Extracts date range and last entry timestamp
+   - Outputs `public/data/archive_stats.json`:
+     ```json
+     {
+       "total_entries_all_time": 55965,
+       "total_days": 27,
+       "first_day_utc": "2025-12-09",
+       "last_day_utc": "2026-01-04",
+       "last_entry_ts_utc": "2026-01-04T05:27:38.815294Z",
+       "source_path": "D:\\Sentiment-Data\\CryptoBot\\data\\archive",
+       "generated_at_utc": "2026-01-04T13:30:00Z"
+     }
+     ```
+   - CLI: `python scripts/build_archive_stats.py [--archive-path PATH]`
+
+2. **Test script:** `scripts/test_archive_stats.py` (created, 128 lines)
+   - Validates file exists, ASCII-only, valid JSON
+   - Checks required keys and types
+   - Sanity checks: positive counts, valid dates, last_day >= first_day
+   - All tests pass ✓
+
+3. **Committed artifact:** `public/data/archive_stats.json`
+   - Must be in repo since Cloudflare build cannot access local D:\ paths
+   - Regenerate locally when archive grows, then commit
+
+**Frontend updates:**
+1. **Dataset page readiness banner:** (lines 66-80)
+   - Changed from sample size to full archive metrics
+   - Old: "Dataset snapshot: 147 entries scanned"
+   - New: "Full Archive: 55,965 validated entries"
+   - Shows days archived + date range
+   - Clarifies preview is 100-entry rotating sample
+
+2. **Scale & Freshness section:** (lines 84-113)
+   - Title: "Archive Scale & Freshness" (was "Scale & Freshness")
+   - Cards show: Total Entries (55,965), Days Archived (27), Date Range, Last Entry
+   - Note clarifies: "Preview sample: 100-entry rotating snapshot (updated daily)"
+
+3. **Removed build stamp:** (lines 54-58 deleted)
+   - Internal messaging not suitable for public page
+   - Removed `buildStamp` variable and display div
+   - Cleaned up unused `.build-stamp` CSS
+
+4. **Mean Score sorting fix:** (lines 651-659)
+   - N/A values now always go to bottom regardless of sort direction
+   - Prevents N/A from interleaving with numeric values
+   - Both ascending and descending work correctly
+
+**Key principle:** Show **full archive scale** in prominent sections, clarify **preview is sample** in explanatory text. No misleading "147 entries scanned" messaging.
+
+### Workflow: Updating Archive Stats
+
+**When archive grows:**
+```bash
+# 1. Scan full archive (requires local CryptoBot path)
+cd D:\Sentiment-Data\instrumetriq
+python scripts\build_archive_stats.py
+
+# 2. Validate
+python scripts\test_archive_stats.py
+
+# 3. Commit updated artifact
+git add public/data/archive_stats.json
+git commit -m "Update archive statistics (XX,XXX entries)"
+git push
+```
+
+**On Cloudflare Pages build:**
+- Uses committed `archive_stats.json` file (no local archive access)
+- Builds dataset page with accurate full-scale metrics
+
+**Important notes:**
+- Archive stats artifact is COMMITTED (required for Cloudflare build)
+- Must regenerate manually when archive grows
+- Test script validates sanity but doesn't verify absolute accuracy
+- Full audit requires comparing with CryptoBot exporter counts
+
+### File Sizes
+
+**Before hotfix:**
+- `dist/dataset/index.html`: 25.7 MiB (deployment failed)
+
+**After hotfix:**
+- `dist/dataset/index.html`: **23.24 KB** (99.9% reduction)
+- `public/data/sample_entries_v7.json`: ~120 KB (without spot_prices)
+- `public/data/sample_entries_spots_v7.json`: ~720 KB (lazy-loaded)
+- `public/data/sample_entries_v7.jsonl`: ~110 KB (download, without spot_prices)
+- `public/data/archive_stats.json`: ~300 bytes
+
+**Total public/data/ size:** ~950 KB (all files combined)
+
+**Cloudflare limit remaining:** 24.98 MB (well within limits)
+
+### Key Lessons
+
+1. **Never embed large JSON server-side:** Cloudflare has hard 25 MiB per-file limits
+2. **Client-side fetch for large data:** Moves loading cost to runtime, not build time
+3. **Lazy loading:** Only fetch heavy data (spot_prices) when user requests it
+4. **Split artifacts by access pattern:** Main data vs optional heavy fields
+5. **Always verify build sizes:** Create verification scripts before deployment
+6. **Show real scale, clarify sample:** Full archive metrics in main sections, preview notes in explanatory text
+7. **Keep internal messaging internal:** Build stamps and debug info not suitable for public pages
+8. **Commit generated files needed by Cloudflare:** Build environment can't access local paths
+
+### Testing Checklist
+
+Before deploying:
+```bash
+# 1. Build the site
+npm run build
+
+# 2. Check HTML size
+python scripts/check_build_size.py
+
+# 3. Verify preview works
+npm run preview
+# Open http://localhost:4321/dataset
+# Test search, sort, expand, spots lazy-load
+
+# 4. Verify archive stats
+python scripts/test_archive_stats.py
+```
+
+All must pass before pushing to main.
+
 ## Resources
 
 - [Astro Documentation](https://docs.astro.build)
 - [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - [MDN Web Docs](https://developer.mozilla.org/)
+- [Cloudflare Pages Limits](https://developers.cloudflare.com/pages/platform/limits/)
