@@ -1,5 +1,21 @@
 # Quick Reference: Artifact Development Workflow
 
+## Cloudflare Pages Deployment
+
+**CRITICAL**: The `dataset/index.html` file must stay under Cloudflare's **25 MiB per-file limit**.
+
+**Solution**: Public sample entries use **client-side fetch** instead of inline JSON.
+- Main entries (without spot_prices): `/data/sample_entries_v7.json`
+- Spot prices (lazy-loaded): `/data/sample_entries_spots_v7.json`
+- Download preview: `/data/sample_entries_v7.jsonl`
+
+**To rebuild public previews**:
+```bash
+python scripts/build_public_sample_entries.py
+python scripts/test_public_sample_entries.py  # Validate split artifacts
+python scripts/check_build_size.py            # Verify < 25 MiB
+```
+
 ## Before Writing ANY Aggregation Code
 
 ```bash

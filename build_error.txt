@@ -1,0 +1,35 @@
+
+> instrumetriq@0.0.1 build
+> npm run lint:wording && astro build
+
+
+> instrumetriq@0.0.1 lint:wording
+> node scripts/lint_wording.mjs
+
+lint:wording passed
+[2m09:06:38[22m [34m[content][39m Syncing content
+[2m09:06:38[22m [34m[content][39m Synced content
+[2m09:06:38[22m [34m[types][39m Generated [2m344ms[22m
+[2m09:06:38[22m [34m[build][39m output: [34m"static"[39m
+[2m09:06:38[22m [34m[build][39m mode: [34m"static"[39m
+[2m09:06:38[22m [34m[build][39m directory: [34mD:\Sentiment-Data\instrumetriq\dist\[39m
+[2m09:06:38[22m [34m[build][39m Collecting build info...
+[2m09:06:38[22m [34m[build][39m [32mΓ£ô Completed in 359ms.[39m
+[2m09:06:38[22m [34m[build][39m Building static entrypoints...
+09:06:38 [ERROR] [vite] Γ£ù Build failed in 512ms
+Expected "}" but found ":"
+  Hint:
+    Browser APIs are not available on the server.
+    
+    Move your code to a <script> tag outside of the frontmatter, so the code runs on the client.
+    
+    See https://docs.astro.build/en/guides/troubleshooting/#document-or-window-is-not-defined for more information.
+    		
+  Location:
+    D:/Sentiment-Data/instrumetriq/src/pages/dataset.astro:161:26
+  Stack trace:
+    at failureErrorWithLog (D:\Sentiment-Data\instrumetriq\node_modules\esbuild\lib\main.js:1467:15)
+    at responseCallbacks.<computed> (D:\Sentiment-Data\instrumetriq\node_modules\esbuild\lib\main.js:603:9)
+    at Socket.readFromStdout (D:\Sentiment-Data\instrumetriq\node_modules\esbuild\lib\main.js:581:7)
+    at addChunk (node:internal/streams/readable:559:12)
+    at Readable.push (node:internal/streams/readable:390:5)

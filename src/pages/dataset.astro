@@ -4,7 +4,6 @@ import PageHero from '../components/PageHero.astro';
 import { 
   loadArtifacts, 
   loadDatasetOverview,
-  loadPublicSampleEntries,
   formatPercent, 
   formatNumber, 
   formatDuration,
@@ -15,9 +14,6 @@ import path from 'node:path';
 
 // Load Phase 3A artifact (surface-level overview)
 const datasetOverview = loadDatasetOverview();
-
-// Load Phase 3B artifact (public sample entries)
-const publicSampleEntries = loadPublicSampleEntries();
 
 // Build stamp for cache-busting verification
 const buildStamp = import.meta.env.PUBLIC_BUILD_STAMP || new Date().toISOString().replace(/\.\d+Z$/, 'Z');
@@ -163,33 +159,13 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 3: Featured Sample (Phase 3B) -->
-    {publicSampleEntries && publicSampleEntries.entries && publicSampleEntries.entries.length > 0 && (
-      <section>
-        <h2>Featured Sample</h2>
-        <p>
-          Explore individual entries with readable formatting. Use Previous/Next to rotate through samples.
-        </p>
-        <div class="featured-sample-card" id="featuredSampleCard">
-          <div class="featured-sample-content" id="featuredSampleContent">
-            <!-- Populated by JavaScript -->
-          </div>
-          <div class="featured-sample-nav">
-            <button id="featuredPrev" class="nav-btn">← Previous</button>
-            <span id="featuredCounter" class="counter">1 / {publicSampleEntries.entries.length}</span>
-            <button id="featuredNext" class="nav-btn">Next →</button>
-          </div>
-        </div>
-      </section>
-    )}
-    
     <!-- Section 4: Non-Claims -->
     {datasetOverview && datasetOverview.non_claims_block && (
       <section>
         <h2>Dataset Disclaimers</h2>
         <div class="non-claims-box">
           <ul>
-            {datasetOverview.non_claims_block.map((item: string) => (
+            {datasetOverview.non_claims_block.map((item) => (
               <li>{item}</li>
             ))}
           </ul>
@@ -197,102 +173,30 @@ const artifacts = loadArtifacts();
       </section>
     )}
     
-    <!-- Section 5: Public Sample Entries (Phase 3B) -->
-    {publicSampleEntries && publicSampleEntries.entries && publicSampleEntries.entries.length > 0 && (
-      <section>
-        <h2>Public Dataset Preview</h2>
-        <div class="sample-preview-intro">
-          <p>
-            Browse {publicSampleEntries.entry_count} recent archived entries. Each row shows key metrics with expandable detail views.
-          </p>
-          <div class="preview-info">
-            <a href="/data/sample_entries_v7.jsonl" download class="download-link">
-              📥 Download JSONL ({publicSampleEntries.entry_count} entries) — ideal for quick integration tests
-            </a>
-            {publicSampleEntries.generated_at_utc && (
-              <p class="preview-timestamp">Preview updated: {publicSampleEntries.generated_at_utc}</p>
-            )}
-          </div>
+    <!-- Section 5: Public Sample Entries (Phase 3B-hotfix: client-side fetch) -->
+    <section>
+      <h2>Public Dataset Preview</h2>
+      <div class="sample-preview-intro">
+        <p>
+          Browse recent archived entries and inspect full field structure.
+        </p>
+        <div class="preview-info">
+          <a href="/data/sample_entries_v7.jsonl" download class="download-link">
+            📥 Download JSONL — ideal for quick integration tests
+          </a>
+          <p class="preview-timestamp" id="previewTimestamp">Loading...</p>
         </div>
-        
-        <div class="sample-table-wrapper">
-          <div class="table-controls">
-            <input 
-              type="text" 
-              id="symbolSearch" 
-              placeholder="Search by symbol..." 
-              class="search-input"
-            />
-          </div>
-          
-          <table class="sample-table" id="sampleTable">
-            <thead>
-              <tr>
-                <th data-sort="symbol">Symbol</th>
-                <th data-sort="spread_bps" class="numeric">Spread (bps)</th>
-                <th data-sort="liq_global_pct" class="numeric">Liq Global %</th>
-                <th data-sort="posts_total" class="numeric">Posts (L2C)</th>
-                <th data-sort="mean_score" class="numeric">Mean Score</th>
-                <th data-sort="added_ts">Added (UTC)</th>
-                <th class="expand-col">Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {publicSampleEntries.entries.map((entry, idx) => {
-                const spreadBps = entry.derived?.spread_bps?.toFixed(2) ?? 'N/A';
-                const liqGlobalPct = entry.derived?.liq_global_pct?.toFixed(2) ?? 'N/A';
-                const postsTotal = entry.twitter_sentiment_windows?.last_2_cycles?.posts_total ?? 'N/A';
-                const meanScore = entry.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats?.mean_score?.toFixed(4) ?? 'N/A';
-                const addedTs = entry.meta?.added_ts ? entry.meta.added_ts.substring(0, 19).replace('T', ' ') : 'N/A';
-                
-                // Prepare entry without spot_prices for Fields view
-                const entryWithoutSpots = {...entry};
-                delete entryWithoutSpots.spot_prices;
-                
-                const spotPrices = entry.spot_prices || [];
-                const spotSummary = spotPrices.length > 0 
-                  ? `${spotPrices.length} samples` 
-                  : 'No spot prices';
-                
-                return (
-                  <>
-                    <tr class="sample-row" data-idx={idx}>
-                      <td class="symbol-cell">{entry.symbol}</td>
-                      <td class="numeric">{spreadBps}</td>
-                      <td class="numeric">{liqGlobalPct}</td>
-                      <td class="numeric">{postsTotal}</td>
-                      <td class="numeric">{meanScore}</td>
-                      <td>{addedTs}</td>
-                      <td class="expand-cell">
-                        <button class="expand-btn fields-btn" data-target="fields" aria-label="View Fields">Fields</button>
-                        <button class="expand-btn spots-btn" data-target="spots" aria-label="View Spot Prices">Spots</button>
-                      </td>
-                    </tr>
-                    <tr class="json-row fields-row" id={`fields-${idx}`} style="display: none;">
-                      <td colspan="7">
-                        <div class="json-header">Entry Fields (spot_prices excluded)</div>
-                        <pre class="json-content"><code>{JSON.stringify(entryWithoutSpots, null, 2)}</code></pre>
-                      </td>
-                    </tr>
-                    <tr class="json-row spots-row" id={`spots-${idx}`} style="display: none;">
-                      <td colspan="7">
-                        <div class="json-header">Spot Prices — {spotSummary}</div>
-                        {spotPrices.length > 0 && (
-                          <pre class="json-content"><code>{JSON.stringify(spotPrices, null, 2)}</code></pre>
-                        )}
-                        {spotPrices.length === 0 && (
-                          <div class="no-data">No spot price data available for this entry.</div>
-                        )}
-                      </td>
-                    </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    )}
+      </div>
+      
+      <!-- Placeholder container for client-side rendering -->
+      <div 
+        id="public-dataset-preview" 
+        data-json="/data/sample_entries_v7.json" 
+        data-spots="/data/sample_entries_spots_v7.json"
+      >
+        <p class="loading-message">Loading dataset preview...</p>
+      </div>
+    </section>
     
     <!-- Legacy sections below - available when semantic artifacts are built -->
     <!-- Section OLD-2: Scale -->
@@ -512,6 +416,283 @@ const artifacts = loadArtifacts();
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .loading-message {
+    padding: var(--space-4);
+    text-align: center;
+    color: var(--text-muted);
+  }
+  
+  .error-message {
+    padding: var(--space-4);
+    text-align: center;
+    color: #ef4444;
+  }
+</style>
+
+<script is:inline>
+  // Phase 3B-hotfix: Client-side fetch to avoid 25 MiB HTML limit
+  document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById('public-dataset-preview');
+    const timestampElem = document.getElementById('previewTimestamp');
+    
+    if (!container) return;
+    
+    const jsonUrl = container.getAttribute('data-json');
+    const spotsUrl = container.getAttribute('data-spots');
+    
+    if (!jsonUrl) {
+      container.innerHTML = '<p class="error-message">Configuration error: missing data URL</p>';
+      return;
+    }
+    
+    let spotsData = null;
+    
+    try {
+      const response = await fetch(jsonUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to load dataset preview: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const entries = data.entries || [];
+      
+      if (timestampElem && data.generated_at_utc) {
+        timestampElem.textContent = `Preview updated: ${data.generated_at_utc}`;
+      }
+      
+      function parseNumericValue(text) {
+        if (!text || text === 'N/A') return null;
+        const num = parseFloat(text);
+        return isNaN(num) ? null : num;
+      }
+      
+      const tableHTML = `
+        <div class="sample-table-wrapper">
+          <div class="table-controls">
+            <input type="text" id="symbolSearch" placeholder="Search by symbol..." class="search-input" />
+          </div>
+          <table class="sample-table" id="sampleTable">
+            <thead>
+              <tr>
+                <th data-sort="symbol">Symbol</th>
+                <th data-sort="spread_bps" class="numeric">Spread (bps)</th>
+                <th data-sort="liq_global_pct" class="numeric">Liq Global %</th>
+                <th data-sort="posts_total" class="numeric">Posts (L2C)</th>
+                <th data-sort="mean_score" class="numeric">Mean Score</th>
+                <th data-sort="added_ts">Added (UTC)</th>
+                <th class="expand-col">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${entries.map((entry, idx) => {
+                const spreadBps = entry.derived?.spread_bps?.toFixed(2) ?? 'N/A';
+                const liqGlobalPct = entry.derived?.liq_global_pct?.toFixed(2) ?? 'N/A';
+                const postsTotal = entry.twitter_sentiment_windows?.last_2_cycles?.posts_total ?? 'N/A';
+                const meanScore = entry.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats?.mean_score?.toFixed(4) ?? 'N/A';
+                const addedTs = entry.meta?.added_ts ? entry.meta.added_ts.substring(0, 19).replace('T', ' ') : 'N/A';
+                
+                return `
+                  <tr class="sample-row" data-idx="${idx}">
+                    <td class="symbol-cell">${entry.symbol}</td>
+                    <td class="numeric">${spreadBps}</td>
+                    <td class="numeric">${liqGlobalPct}</td>
+                    <td class="numeric">${postsTotal}</td>
+                    <td class="numeric">${meanScore}</td>
+                    <td>${addedTs}</td>
+                    <td class="expand-cell">
+                      <button class="expand-btn fields-btn" data-target="fields">Fields</button>
+                      <button class="expand-btn spots-btn" data-target="spots">Spots</button>
+                    </td>
+                  </tr>
+                  <tr class="json-row fields-row" id="fields-${idx}" style="display: none;">
+                    <td colspan="7">
+                      <div class="json-header">Entry Fields</div>
+                      <pre class="json-content"><code>${JSON.stringify(entry, null, 2)}</code></pre>
+                    </td>
+                  </tr>
+                  <tr class="json-row spots-row" id="spots-${idx}" style="display: none;">
+                    <td colspan="7">
+                      <div class="json-header">Spot Prices</div>
+                      <div class="spot-content" data-symbol="${entry.symbol}">Loading...</div>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      
+      container.innerHTML = tableHTML;
+      
+      async function loadSpotsData() {
+        if (spotsData) return spotsData;
+        if (!spotsUrl) throw new Error('Spots data URL not configured');
+        
+        const response = await fetch(spotsUrl);
+        if (!response.ok) throw new Error(`Failed to load spots data: ${response.status}`);
+        
+        const data = await response.json();
+        spotsData = {};
+        (data.spots || []).forEach(item => {
+          spotsData[item.symbol] = item.spot_prices || [];
+        });
+        return spotsData;
+      }
+      
+      const expandButtons = document.querySelectorAll('.expand-btn');
+      expandButtons.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const row = btn.closest('tr');
+          if (!row) return;
+          
+          const idx = row.getAttribute('data-idx');
+          if (!idx) return;
+          
+          const target = btn.getAttribute('data-target');
+          const targetRow = document.getElementById(`${target}-${idx}`);
+          if (!targetRow) return;
+          
+          if (target === 'spots' && targetRow.style.display === 'none') {
+            const spotContent = targetRow.querySelector('.spot-content');
+            if (spotContent && spotContent.textContent === 'Loading...') {
+              try {
+                const spots = await loadSpotsData();
+                const symbol = spotContent.getAttribute('data-symbol');
+                const spotPrices = spots[symbol] || [];
+                
+                if (spotPrices.length > 0) {
+                  spotContent.innerHTML = `<div class="json-header">Spot prices — ${spotPrices.length} samples</div><pre class="json-content"><code>${JSON.stringify(spotPrices, null, 2)}</code></pre>`;
+                } else {
+                  spotContent.innerHTML = '<div class="no-data">No spot price data available for this entry.</div>';
+                }
+              } catch (err) {
+                spotContent.innerHTML = `<div class="error-message">Failed to load spot prices: ${err.message}</div>`;
+              }
+            }
+          }
+          
+          if (targetRow.style.display === 'none' || !targetRow.style.display) {
+            targetRow.style.display = 'table-row';
+            btn.classList.add('active');
+          } else {
+            targetRow.style.display = 'none';
+            btn.classList.remove('active');
+          }
+        });
+      });
+      
+      const searchInput = document.getElementById('symbolSearch');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase();
+          const rows = document.querySelectorAll('.sample-row');
+          
+          rows.forEach(row => {
+            const symbol = row.querySelector('.symbol-cell');
+            const idx = row.getAttribute('data-idx');
+            
+            if (symbol && symbol.textContent.toLowerCase().includes(query)) {
+              row.style.display = 'table-row';
+            } else {
+              row.style.display = 'none';
+              const fieldsRow = idx ? document.getElementById(`fields-${idx}`) : null;
+              const spotsRow = idx ? document.getElementById(`spots-${idx}`) : null;
+              if (fieldsRow) fieldsRow.style.display = 'none';
+              if (spotsRow) spotsRow.style.display = 'none';
+            }
+          });
+        });
+      }
+      
+      const headers = document.querySelectorAll('.sample-table thead th[data-sort]');
+      let sortState = { column: null, ascending: true };
+      
+      headers.forEach(header => {
+        header.addEventListener('click', () => {
+          const column = header.getAttribute('data-sort');
+          if (!column) return;
+          
+          const table = document.getElementById('sampleTable');
+          if (!table) return;
+          
+          const tbody = table.querySelector('tbody');
+          if (!tbody) return;
+          
+          const rows = Array.from(tbody.querySelectorAll('.sample-row'));
+          
+          if (sortState.column === column) {
+            sortState.ascending = !sortState.ascending;
+          } else {
+            sortState.column = column;
+            sortState.ascending = true;
+          }
+          
+          rows.sort((a, b) => {
+            switch (column) {
+              case 'symbol':
+                const aSymbol = a.querySelector('.symbol-cell');
+                const bSymbol = b.querySelector('.symbol-cell');
+                if (!aSymbol?.textContent || !bSymbol?.textContent) return 0;
+                return sortState.ascending ? aSymbol.textContent.localeCompare(bSymbol.textContent) : bSymbol.textContent.localeCompare(aSymbol.textContent);
+              
+              case 'spread_bps':
+              case 'liq_global_pct':
+              case 'posts_total':
+              case 'mean_score':
+                const colIdx = Array.from(header.parentElement.children).indexOf(header);
+                const aNum = parseNumericValue(a.children[colIdx]?.textContent || '');
+                const bNum = parseNumericValue(b.children[colIdx]?.textContent || '');
+                
+                if (aNum === null && bNum === null) return 0;
+                if (aNum === null) return 1;
+                if (bNum === null) return -1;
+                
+                return sortState.ascending ? aNum - bNum : bNum - aNum;
+              
+              case 'added_ts':
+                const tsIdx = Array.from(header.parentElement.children).indexOf(header);
+                const aTsVal = a.children[tsIdx]?.textContent || '';
+                const bTsVal = b.children[tsIdx]?.textContent || '';
+                return sortState.ascending ? aTsVal.localeCompare(bTsVal) : bTsVal.localeCompare(aTsVal);
+              
+              default:
+                return 0;
+            }
+          });
+          
+          rows.forEach(row => {
+            const idx = row.getAttribute('data-idx');
+            tbody.appendChild(row);
+            const fieldsRow = idx ? document.getElementById(`fields-${idx}`) : null;
+            const spotsRow = idx ? document.getElementById(`spots-${idx}`) : null;
+            if (fieldsRow) tbody.appendChild(fieldsRow);
+            if (spotsRow) tbody.appendChild(spotsRow);
+          });
+          
+          headers.forEach(h => {
+            const text = h.textContent;
+            if (text) h.textContent = text.replace(/[▲▼]/g, '').trim();
+          });
+          const headerText = header.textContent;
+          if (headerText) {
+            header.textContent = headerText + (sortState.ascending ? ' ▲' : ' ▼');
+          }
+        });
+      });
+      
+    } catch (err) {
+      console.error('Failed to load dataset preview:', err);
+      container.innerHTML = `<p class="error-message">Preview unavailable. ${err.message}</p>`;
+    }
+  });
+</script>
+
+</BaseLayout>
+
 
 <script is:inline define:vars={{ symbolTableData: symbolTable }}>
   // Symbol table client-side functionality
@@ -1246,232 +1427,18 @@ const artifacts = loadArtifacts();
     color: var(--text-muted);
     font-style: italic;
   }
+  
+  .loading-message {
+    padding: var(--space-4);
+    text-align: center;
+    color: var(--text-muted);
+  }
+  
+  .error-message {
+    padding: var(--space-4);
+    text-align: center;
+    color: #ef4444;
+  }
 </style>
 
-<script define:vars={{ entries: publicSampleEntries?.entries || [] }}>
-  // Phase 3B: Public sample entries interactivity
-  document.addEventListener('DOMContentLoaded', () => {
-    // Helper: parse numeric value robustly, returning null for N/A or invalid
-    function parseNumericValue(text) {
-      if (!text || text === 'N/A') return null;
-      const num = parseFloat(text);
-      return isNaN(num) ? null : num;
-    }
-    
-    // Featured Sample widget
-    const featuredCard = document.getElementById('featuredSampleCard');
-    const featuredContent = document.getElementById('featuredSampleContent');
-    const featuredCounter = document.getElementById('featuredCounter');
-    const featuredPrev = document.getElementById('featuredPrev');
-    const featuredNext = document.getElementById('featuredNext');
-    
-    if (featuredCard && entries.length > 0) {
-      let currentIndex = 0;
-      
-      function renderFeaturedSample(idx) {
-        const entry = entries[idx];
-        if (!entry) return;
-        
-        const spreadBps = entry.derived?.spread_bps?.toFixed(2) ?? 'N/A';
-        const liqGlobalPct = entry.derived?.liq_global_pct?.toFixed(2) ?? 'N/A';
-        const postsTotal = entry.twitter_sentiment_windows?.last_2_cycles?.posts_total ?? 'N/A';
-        const meanScore = entry.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats?.mean_score?.toFixed(4) ?? 'N/A';
-        const addedTs = entry.meta?.added_ts ? entry.meta.added_ts.substring(0, 19).replace('T', ' ') : 'N/A';
-        
-        featuredContent.innerHTML = `
-          <div class="featured-field">
-            <span class="featured-label">Symbol</span>
-            <span class="featured-value symbol">${entry.symbol}</span>
-          </div>
-          <div class="featured-field">
-            <span class="featured-label">Spread (bps)</span>
-            <span class="featured-value">${spreadBps}</span>
-          </div>
-          <div class="featured-field">
-            <span class="featured-label">Liquidity Global %</span>
-            <span class="featured-value">${liqGlobalPct}</span>
-          </div>
-          <div class="featured-field">
-            <span class="featured-label">Posts (Last 2 Cycles)</span>
-            <span class="featured-value">${postsTotal}</span>
-          </div>
-          <div class="featured-field">
-            <span class="featured-label">Mean Score</span>
-            <span class="featured-value">${meanScore}</span>
-          </div>
-          <div class="featured-field">
-            <span class="featured-label">Added (UTC)</span>
-            <span class="featured-value">${addedTs}</span>
-          </div>
-        `;
-        
-        featuredCounter.textContent = `${idx + 1} / ${entries.length}`;
-      }
-      
-      featuredPrev.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + entries.length) % entries.length;
-        renderFeaturedSample(currentIndex);
-      });
-      
-      featuredNext.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % entries.length;
-        renderFeaturedSample(currentIndex);
-      });
-      
-      // Initial render
-      renderFeaturedSample(0);
-    }
-    
-    // Fields/Spots expand buttons
-    const expandButtons = document.querySelectorAll('.expand-btn');
-    expandButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const row = btn.closest('tr');
-        if (!row) return;
-        
-        const idx = row.getAttribute('data-idx');
-        if (!idx) return;
-        
-        const target = btn.getAttribute('data-target');
-        const targetRow = document.getElementById(`${target}-${idx}`);
-        if (!targetRow) return;
-        
-        // Toggle this row
-        if (targetRow.style.display === 'none' || !targetRow.style.display) {
-          targetRow.style.display = 'table-row';
-          btn.classList.add('active');
-        } else {
-          targetRow.style.display = 'none';
-          btn.classList.remove('active');
-        }
-      });
-    });
-    
-    // Search by symbol
-    const searchInput = document.getElementById('symbolSearch');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const target = e.target;
-        if (!target) return;
-        
-        const query = target.value.toLowerCase();
-        const rows = document.querySelectorAll('.sample-row');
-        
-        rows.forEach(row => {
-          const symbolCell = row.querySelector('.symbol-cell');
-          if (!symbolCell || !symbolCell.textContent) return;
-          
-          const symbol = symbolCell.textContent.toLowerCase();
-          const idx = row.getAttribute('data-idx');
-          
-          if (symbol.includes(query)) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-            // Hide all related rows
-            const fieldsRow = idx ? document.getElementById(`fields-${idx}`) : null;
-            const spotsRow = idx ? document.getElementById(`spots-${idx}`) : null;
-            if (fieldsRow) fieldsRow.style.display = 'none';
-            if (spotsRow) spotsRow.style.display = 'none';
-          }
-        });
-      });
-    }
-    
-    // Column sorting with robust N/A handling
-    const headers = document.querySelectorAll('.sample-table thead th[data-sort]');
-    let sortState = { column: null, ascending: true };
-    
-    headers.forEach(header => {
-      header.addEventListener('click', () => {
-        const column = header.getAttribute('data-sort');
-        if (!column) return;
-        
-        const table = document.getElementById('sampleTable');
-        if (!table) return;
-        
-        const tbody = table.querySelector('tbody');
-        if (!tbody) return;
-        
-        const rows = Array.from(tbody.querySelectorAll('.sample-row'));
-        
-        // Toggle sort direction if clicking same column
-        if (sortState.column === column) {
-          sortState.ascending = !sortState.ascending;
-        } else {
-          sortState.column = column;
-          sortState.ascending = true;
-        }
-        
-        // Sort rows
-        rows.sort((a, b) => {
-          switch (column) {
-            case 'symbol':
-              const aSymbol = a.querySelector('.symbol-cell');
-              const bSymbol = b.querySelector('.symbol-cell');
-              if (!aSymbol?.textContent || !bSymbol?.textContent) return 0;
-              const aVal = aSymbol.textContent;
-              const bVal = bSymbol.textContent;
-              return sortState.ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-            
-            case 'spread_bps':
-            case 'liq_global_pct':
-            case 'posts_total':
-            case 'mean_score':
-              const headerParent = header.parentElement;
-              if (!headerParent) return 0;
-              const colIdx = Array.from(headerParent.children).indexOf(header);
-              const aElem = a.children[colIdx];
-              const bElem = b.children[colIdx];
-              
-              const aNum = parseNumericValue(aElem?.textContent || '');
-              const bNum = parseNumericValue(bElem?.textContent || '');
-              
-              // Sort: numeric values first, nulls at end
-              if (aNum === null && bNum === null) return 0;
-              if (aNum === null) return 1;  // a is null, goes to end
-              if (bNum === null) return -1; // b is null, goes to end
-              
-              return sortState.ascending ? aNum - bNum : bNum - aNum;
-            
-            case 'added_ts':
-              const headerParent2 = header.parentElement;
-              if (!headerParent2) return 0;
-              const tsIdx = Array.from(headerParent2.children).indexOf(header);
-              const aTs = a.children[tsIdx];
-              const bTs = b.children[tsIdx];
-              if (!aTs?.textContent || !bTs?.textContent) return 0;
-              const aTsVal = aTs.textContent;
-              const bTsVal = bTs.textContent;
-              return sortState.ascending ? aTsVal.localeCompare(bTsVal) : bTsVal.localeCompare(aTsVal);
-            
-            default:
-              return 0;
-          }
-        });
-        
-        // Rebuild tbody (include all related rows)
-        rows.forEach(row => {
-          const idx = row.getAttribute('data-idx');
-          tbody.appendChild(row);
-          
-          const fieldsRow = idx ? document.getElementById(`fields-${idx}`) : null;
-          const spotsRow = idx ? document.getElementById(`spots-${idx}`) : null;
-          if (fieldsRow) tbody.appendChild(fieldsRow);
-          if (spotsRow) tbody.appendChild(spotsRow);
-        });
-        
-        // Update header indicators
-        headers.forEach(h => {
-          const text = h.textContent;
-          if (text) h.textContent = text.replace(/[▲▼]/g, '').trim();
-        });
-        const headerText = header.textContent;
-        if (headerText) {
-          header.textContent = headerText + (sortState.ascending ? ' ▲' : ' ▼');
-        }
-      });
-    });
-  });
-</script>
+

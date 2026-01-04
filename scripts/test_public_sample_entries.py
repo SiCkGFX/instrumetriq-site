@@ -3,6 +3,7 @@
 Test script for public sample entries artifacts.
 
 Validates structure, content, and consistency of generated artifacts.
+Tests split artifacts (main JSON without spot_prices, separate spots file).
 """
 
 import json
@@ -14,15 +15,17 @@ from datetime import datetime
 
 # Paths
 OUTPUT_JSON = Path("public/data/sample_entries_v7.json")
+OUTPUT_SPOTS_JSON = Path("public/data/sample_entries_spots_v7.json")
 OUTPUT_JSONL = Path("public/data/sample_entries_v7.jsonl")
 
 
 def test_artifacts_exist():
-    """Test that both artifacts exist."""
+    """Test that all artifacts exist."""
     print("[TEST] Artifacts exist...")
     assert OUTPUT_JSON.exists(), f"JSON artifact missing: {OUTPUT_JSON}"
+    assert OUTPUT_SPOTS_JSON.exists(), f"Spots JSON artifact missing: {OUTPUT_SPOTS_JSON}"
     assert OUTPUT_JSONL.exists(), f"JSONL artifact missing: {OUTPUT_JSONL}"
-    print("  ✓ Both artifacts exist")
+    print("  ✓ All artifacts exist")
 
 
 def test_json_valid():
@@ -66,18 +69,22 @@ def test_jsonl_valid():
 
 
 def test_ascii_only():
-    """Test that both files are ASCII-only."""
+    """Test that all files are ASCII-only."""
     print("[TEST] ASCII-only encoding...")
     
     # Test JSON
     with open(OUTPUT_JSON, 'r', encoding='ascii') as f:
         f.read()
     
+    # Test Spots JSON
+    with open(OUTPUT_SPOTS_JSON, 'r', encoding='ascii') as f:
+        f.read()
+    
     # Test JSONL
     with open(OUTPUT_JSONL, 'r', encoding='ascii') as f:
         f.read()
     
-    print("  ✓ Both files are ASCII-only")
+    print("  ✓ All files are ASCII-only")
 
 
 def test_metadata(data: dict):
@@ -107,7 +114,7 @@ def test_metadata(data: dict):
 
 
 def test_entries_structure(json_data: dict):
-    """Test that entries have required v7 fields."""
+    """Test that entries have required v7 fields and NO spot_prices."""
     print("[TEST] Entry structure...")
     
     entries = json_data['entries']
@@ -123,11 +130,16 @@ def test_entries_structure(json_data: dict):
     assert first_entry['meta'].get('schema_version') == 7, \
         f"Expected meta.schema_version=7, got {first_entry['meta'].get('schema_version')}"
     
-    print(f"  ✓ Entries have valid v7 structure")
+    # CRITICAL: Verify NO spot_prices in any entry (size reduction)
+    for i, entry in enumerate(entries):
+        assert 'spot_prices' not in entry, \
+            f"Entry {i} contains spot_prices (should be removed for size reduction)"
+    
+    print(f"  ✓ Entries have valid v7 structure (no spot_prices)")
 
 
 def test_json_jsonl_match(json_data: dict, jsonl_entries: list):
-    """Test that JSON and JSONL contain same entries in same order."""
+    """Test that JSON and JSONL contain same entries (both without spot_prices)."""
     print("[TEST] JSON/JSONL consistency...")
     
     json_entries = json_data['entries']
@@ -140,8 +152,48 @@ def test_json_jsonl_match(json_data: dict, jsonl_entries: list):
         jsonl_symbol = jsonl_entry.get('symbol')
         assert json_symbol == jsonl_symbol, \
             f"Symbol mismatch at index {i}: JSON={json_symbol}, JSONL={jsonl_symbol}"
+        
+        # Verify JSONL also has no spot_prices
+        assert 'spot_prices' not in jsonl_entry, \
+            f"JSONL entry {i} contains spot_prices (should be removed)"
     
-    print(f"  ✓ JSON and JSONL match ({len(json_entries)} entries)")
+    print(f"  ✓ JSON and JSONL match ({len(json_entries)} entries, no spot_prices)")
+
+
+def test_spots_artifact(json_data: dict):
+    """Test that spots artifact has correct structure and matches main JSON count."""
+    print("[TEST] Spots artifact...")
+    
+    with open(OUTPUT_SPOTS_JSON, 'r', encoding='ascii') as f:
+        spots_data = json.load(f)
+    
+    # Check structure
+    required_keys = ['generated_at_utc', 'schema_version', 'entry_count', 'note', 'spots']
+    for key in required_keys:
+        assert key in spots_data, f"Spots artifact missing key: {key}"
+    
+    # Check entry count matches main JSON
+    assert spots_data['entry_count'] == json_data['entry_count'], \
+        f"Spots count ({spots_data['entry_count']}) doesn't match main count ({json_data['entry_count']})"
+    
+    # Verify spots array
+    spots = spots_data['spots']
+    assert len(spots) == json_data['entry_count'], \
+        f"Spots array length ({len(spots)}) doesn't match entry_count ({json_data['entry_count']})"
+    
+    # Check symbols match in order
+    for i, (entry, spot_entry) in enumerate(zip(json_data['entries'], spots)):
+        main_symbol = entry.get('symbol')
+        spot_symbol = spot_entry.get('symbol')
+        assert main_symbol == spot_symbol, \
+            f"Symbol mismatch at index {i}: main={main_symbol}, spots={spot_symbol}"
+        
+        # Verify spot_prices field exists (even if empty)
+        assert 'spot_prices' in spot_entry, f"Spots entry {i} missing spot_prices field"
+        assert isinstance(spot_entry['spot_prices'], list), \
+            f"Spots entry {i} spot_prices must be list"
+    
+    print(f"  ✓ Spots artifact valid ({len(spots)} entries with spot_prices)")
 
 
 def test_determinism():
@@ -215,7 +267,10 @@ def main():
     # Test 7: JSON/JSONL match
     test_json_jsonl_match(json_data, jsonl_entries)
     
-    # Test 8: Determinism
+    # Test 8: Spots artifact
+    test_spots_artifact(json_data)
+    
+    # Test 9: Determinism
     test_determinism()
     
     print()
