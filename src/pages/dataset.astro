@@ -15,8 +15,16 @@ import path from 'node:path';
 // Load Phase 3A artifact (surface-level overview)
 const datasetOverview = loadDatasetOverview();
 
-// Build stamp for cache-busting verification
-const buildStamp = import.meta.env.PUBLIC_BUILD_STAMP || new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+// Load archive statistics (full archive scale)
+const archiveStatsPath = path.join(process.cwd(), 'public/data/archive_stats.json');
+let archiveStats = null;
+try {
+  if (fs.existsSync(archiveStatsPath)) {
+    archiveStats = JSON.parse(fs.readFileSync(archiveStatsPath, 'utf-8'));
+  }
+} catch (error) {
+  console.error('Error loading archive stats:', error);
+}
 
 // Load semantic artifacts (coverage table and dataset summary)
 const coverageTablePath = path.join(process.cwd(), 'public/data/coverage_table.json');
@@ -54,58 +62,52 @@ const artifacts = loadArtifacts();
     subtitle="Validated market snapshots: v7 schema with coverage details, scale metrics, and behavioral summaries."
   />
   
-  <!-- Build stamp for deployment verification -->
-  <div class="build-stamp">
-    Build: {buildStamp}
-  </div>
-  
-  <!-- Readiness banner (Phase 3A) -->
-  {datasetOverview && datasetOverview.scale && (
+  <!-- Readiness banner (Phase 3A with archive scale) -->
+  {archiveStats && (
     <div class="readiness-banner pass">
       <div class="banner-main">
-        <strong>Dataset snapshot:</strong> v7 validated entries
+        <strong>Full Archive:</strong> {formatNumber(archiveStats.total_entries_all_time)} validated entries
         <span class="badge">READY</span>
       </div>
       <div class="banner-details">
-        {datasetOverview.scale.entries_scanned} entries scanned
-        • {formatNumber(datasetOverview.scale.distinct_symbols)} symbols
-        • {datasetOverview.scale.date_range_utc}
+        {archiveStats.total_days} days archived
+        • {archiveStats.first_day_utc} to {archiveStats.last_day_utc}
       </div>
       <div class="banner-link">
-        Source: {datasetOverview.freshness.archive_sample_source}
+        Public preview: 100-entry rotating sample updated daily
       </div>
     </div>
   )}
   
   <div class="pageContent">
     <!-- Section 1: Scale & Freshness -->
-    {datasetOverview && (
+    {archiveStats && (
       <section>
-        <h2>Scale & Freshness</h2>
+        <h2>Archive Scale & Freshness</h2>
         <div class="overview-grid">
           <div class="overview-card">
-            <div class="card-label">Entries Scanned</div>
-            <div class="card-value">{formatNumber(datasetOverview.scale.entries_scanned)}</div>
+            <div class="card-label">Total Entries</div>
+            <div class="card-value">{formatNumber(archiveStats.total_entries_all_time)}</div>
           </div>
           <div class="overview-card">
-            <div class="card-label">Distinct Symbols</div>
-            <div class="card-value">{formatNumber(datasetOverview.scale.distinct_symbols)}</div>
+            <div class="card-label">Days Archived</div>
+            <div class="card-value">{archiveStats.total_days}</div>
           </div>
           <div class="overview-card">
             <div class="card-label">Date Range (UTC)</div>
-            <div class="card-value">{datasetOverview.scale.date_range_utc}</div>
+            <div class="card-value">{archiveStats.first_day_utc}<br/>to {archiveStats.last_day_utc}</div>
           </div>
-          {datasetOverview.scale.last_entry_ts_utc && (
+          {archiveStats.last_entry_ts_utc && (
             <div class="overview-card">
               <div class="card-label">Last Entry</div>
-              <div class="card-value">{datasetOverview.scale.last_entry_ts_utc}</div>
+              <div class="card-value">{archiveStats.last_entry_ts_utc.substring(0, 19).replace('T', ' ')}</div>
             </div>
           )}
         </div>
         <p class="freshness-note">
-          <strong>Source:</strong> {datasetOverview.freshness.archive_sample_source}
+          <strong>Preview sample:</strong> 100-entry rotating snapshot from latest archive (updated daily)
           <br />
-          <em>{datasetOverview.freshness.notes}</em>
+          <em>Full archive sourced from: {archiveStats.source_path}</em>
         </p>
       </section>
     )}
@@ -647,9 +649,10 @@ const artifacts = loadArtifacts();
                 const aNum = parseNumericValue(a.children[colIdx]?.textContent || '');
                 const bNum = parseNumericValue(b.children[colIdx]?.textContent || '');
                 
+                // N/A values always go to bottom regardless of sort direction
                 if (aNum === null && bNum === null) return 0;
-                if (aNum === null) return 1;
-                if (bNum === null) return -1;
+                if (aNum === null) return 1;  // a is N/A, goes to bottom
+                if (bNum === null) return -1; // b is N/A, goes to bottom
                 
                 return sortState.ascending ? aNum - bNum : bNum - aNum;
               
@@ -1280,16 +1283,6 @@ const artifacts = loadArtifacts();
     margin-top: var(--space-2);
     font-size: 0.85rem;
     color: var(--text-muted);
-  }
-  
-  .build-stamp {
-    padding: var(--space-2) var(--space-3);
-    background-color: var(--panel2);
-    border-left: 2px solid var(--accent-dim);
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-family: 'Courier New', monospace;
-    margin-bottom: var(--space-4);
   }
   
   .sample-table-wrapper {
