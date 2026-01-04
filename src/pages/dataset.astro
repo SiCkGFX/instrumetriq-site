@@ -174,7 +174,7 @@ const artifacts = loadArtifacts();
     )}
     
     <!-- Section 5: Public Sample Entries (Phase 3B-hotfix: client-side fetch) -->
-    <section>
+    <section id="dataset-sample">
       <h2>Dataset Sample</h2>
       <div class="sample-preview-intro">
         <p>
@@ -472,7 +472,7 @@ const artifacts = loadArtifacts();
       const tableHTML = `
         <div class="sample-table-wrapper">
           <div class="table-controls">
-            <input type="text" id="symbolSearch" placeholder="Search by symbol..." class="search-input" />
+            <input type="text" id="sampleSymbolSearch" placeholder="Search by symbol..." class="search-input" />
           </div>
           <table class="sample-table" id="sampleTable">
             <thead>
@@ -586,7 +586,9 @@ const artifacts = loadArtifacts();
         });
       });
       
-      const searchInput = document.getElementById('symbolSearch');
+      // Scope search input to Dataset Sample section
+      const datasetSampleRoot = document.getElementById('dataset-sample');
+      const searchInput = datasetSampleRoot?.querySelector('#sampleSymbolSearch');
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
           const query = e.target.value.toLowerCase();
@@ -1247,19 +1249,22 @@ const artifacts = loadArtifacts();
     font-size: 0.9rem;
     color: var(--text-muted);
   }
+</style>
 
-  /* Phase 3B: Dataset sample section */
-  .sample-preview-intro {
+<!-- Global styles for Dataset Sample (client-side injected HTML) -->
+<style is:global>
+  /* Phase 3B: Dataset sample section - global styles for dynamic content */
+  #dataset-sample .sample-preview-intro {
     margin-bottom: var(--space-3);
   }
   
-  .sample-preview-intro p {
+  #dataset-sample .sample-preview-intro p {
     font-size: 1rem;
     line-height: 1.6;
     color: var(--text);
   }
   
-  .preview-info-bar {
+  #dataset-sample .preview-info-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1271,7 +1276,7 @@ const artifacts = loadArtifacts();
     border: 1px solid var(--border);
   }
   
-  .download-link {
+  #dataset-sample .download-link {
     display: flex;
     align-items: center;
     gap: var(--space-2);
@@ -1282,32 +1287,32 @@ const artifacts = loadArtifacts();
     transition: all 0.2s;
   }
   
-  .download-link:hover {
+  #dataset-sample .download-link:hover {
     color: var(--text);
     transform: translateX(2px);
   }
   
-  .download-note {
+  #dataset-sample .download-note {
     font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 400;
   }
   
-  .preview-timestamp {
+  #dataset-sample .preview-timestamp {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin: 0;
   }
   
   @media (max-width: 768px) {
-    .preview-info-bar {
+    #dataset-sample .preview-info-bar {
       flex-direction: column;
       align-items: flex-start;
       gap: var(--space-2);
     }
   }
   
-  .sample-table-wrapper {
+  #dataset-sample .sample-table-wrapper {
     margin-top: 0;
     overflow-x: auto;
     border-radius: 8px;
@@ -1315,11 +1320,11 @@ const artifacts = loadArtifacts();
     background-color: var(--panel);
   }
   
-  .table-controls {
+  #dataset-sample .table-controls {
     margin-bottom: var(--space-3);
   }
   
-  .search-input {
+  #dataset-sample .search-input {
     padding: 12px 16px;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -1331,25 +1336,25 @@ const artifacts = loadArtifacts();
     transition: all 0.2s;
   }
   
-  .search-input:focus {
+  #dataset-sample .search-input:focus {
     outline: none;
     border-color: var(--accent);
     background-color: var(--panel2);
     box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1);
   }
   
-  .search-input::placeholder {
+  #dataset-sample .search-input::placeholder {
     color: var(--text-dim);
   }
   
-  .sample-table {
+  #dataset-sample .sample-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
     min-width: 900px;
   }
   
-  .sample-table thead th {
+  #dataset-sample .sample-table thead th {
     position: sticky;
     top: 0;
     background-color: var(--panel2);
@@ -1367,49 +1372,49 @@ const artifacts = loadArtifacts();
     transition: background-color 0.2s;
   }
   
-  .sample-table thead th:hover {
+  #dataset-sample .sample-table thead th:hover {
     background-color: var(--panel3);
   }
   
-  .sample-table thead th.numeric {
+  #dataset-sample .sample-table thead th.numeric {
     text-align: right;
   }
   
-  .sample-table thead th.expand-col {
+  #dataset-sample .sample-table thead th.expand-col {
     min-width: 150px;
     cursor: default;
   }
   
-  .sample-table tbody tr.sample-row {
+  #dataset-sample .sample-table tbody tr.sample-row {
     border-bottom: 1px solid var(--border);
     transition: background-color 0.15s;
   }
   
-  .sample-table tbody tr.sample-row:nth-child(4n+1) {
+  #dataset-sample .sample-table tbody tr.sample-row:nth-child(4n+1) {
     background-color: rgba(255, 255, 255, 0.02);
   }
   
-  .sample-table tbody tr.sample-row:hover {
+  #dataset-sample .sample-table tbody tr.sample-row:hover {
     background-color: var(--panel2);
   }
   
-  .sample-table tbody td {
+  #dataset-sample .sample-table tbody td {
     padding: 12px 16px;
     line-height: 1.5;
   }
   
-  .sample-table tbody td.symbol-cell {
+  #dataset-sample .sample-table tbody td.symbol-cell {
     font-family: 'Courier New', monospace;
     color: var(--accent);
     font-weight: 600;
   }
   
-  .sample-table tbody td.numeric {
+  #dataset-sample .sample-table tbody td.numeric {
     text-align: right;
     font-family: 'Courier New', monospace;
   }
   
-  .expand-btn {
+  #dataset-sample .expand-btn {
     background-color: var(--panel);
     border: 1px solid var(--border);
     color: var(--text);
@@ -1423,31 +1428,31 @@ const artifacts = loadArtifacts();
     white-space: nowrap;
   }
   
-  .expand-btn:hover {
+  #dataset-sample .expand-btn:hover {
     background-color: var(--panel2);
     border-color: var(--accent);
     color: var(--accent);
     transform: translateY(-1px);
   }
   
-  .expand-btn:last-child {
+  #dataset-sample .expand-btn:last-child {
     margin-right: 0;
   }
   
-  .expand-btn.active {
+  #dataset-sample .expand-btn.active {
     background-color: var(--accent);
     color: var(--bg);
     border-color: var(--accent);
     box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
   }
   
-  .json-row td {
+  #dataset-sample .json-row td {
     padding: 0 !important;
     background-color: var(--bg);
     border-top: 2px solid var(--accent-dim);
   }
   
-  .json-header {
+  #dataset-sample .json-header {
     padding: 12px 16px;
     background-color: var(--panel2);
     border-bottom: 1px solid var(--border);
@@ -1458,7 +1463,7 @@ const artifacts = loadArtifacts();
     letter-spacing: 0.5px;
   }
   
-  .json-content {
+  #dataset-sample .json-content {
     margin: 0;
     padding: 20px;
     background-color: #1a1a1a;
@@ -1471,23 +1476,23 @@ const artifacts = loadArtifacts();
     line-height: 1.5;
   }
   
-  .json-content code {
+  #dataset-sample .json-content code {
     font-family: inherit;
   }
   
-  .no-data {
+  #dataset-sample .no-data {
     padding: var(--space-3);
     color: var(--text-muted);
     font-style: italic;
   }
   
-  .loading-message {
+  #dataset-sample .loading-message {
     padding: var(--space-4);
     text-align: center;
     color: var(--text-muted);
   }
   
-  .error-message {
+  #dataset-sample .error-message {
     padding: var(--space-4);
     text-align: center;
     color: #ef4444;

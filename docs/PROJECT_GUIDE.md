@@ -1664,7 +1664,23 @@ python scripts/test_archive_stats.py
 
 All must pass before pushing to main.
 
-## Resources
+### CSS Scoping for Client-Side Rendered Content
+
+**Important: Dataset Sample table styling must be global**
+
+The Dataset Sample section uses client-side JavaScript to dynamically render the table (via `innerHTML`). This is necessary to avoid Cloudflare's 25 MiB file size limit by fetching JSON at runtime instead of embedding it during build.
+
+**Problem:** Astro's default scoped CSS won't apply to dynamically injected HTML because the injected elements don't have Astro's scope attributes.
+
+**Solution:** Dataset Sample styles use `<style is:global>` with `#dataset-sample` prefix:
+- All selectors scoped under `#dataset-sample` wrapper ID
+- Prevents style bleed to other page sections
+- Example: `#dataset-sample .sample-table`, `#dataset-sample .search-input`
+- Located in [src/pages/dataset.astro](../src/pages/dataset.astro)
+
+**Why not global.css?** These are page-specific styles for dynamic content. Keeping them in the page file (as global) maintains locality while solving the scoping issue.
+
+**Duplicate ID warning:** Dataset Sample search uses `id="sampleSymbolSearch"` (not `id="symbolSearch"`) to avoid conflicts with the Symbol Table section's search input. Client-side queries use scoped selectors: `document.getElementById('dataset-sample')?.querySelector('#sampleSymbolSearch')`.
 
 - [Astro Documentation](https://docs.astro.build)
 - [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/)
