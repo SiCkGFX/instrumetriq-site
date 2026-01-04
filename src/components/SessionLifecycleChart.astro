@@ -15,7 +15,6 @@ const chartId = `sessionLifecycleChart-${Math.random().toString(36).substr(2, 9)
 ---
 
 <div class="chart-wrapper">
-  <h4 class="chart-heading">Admission Pattern</h4>
   <div class="chart-container">
     <canvas id={chartId}></canvas>
   </div>
@@ -39,7 +38,7 @@ const chartId = `sessionLifecycleChart-${Math.random().toString(36).substr(2, 9)
         data: {
           labels: labels,
           datasets: [{
-            label: 'Sessions Admitted',
+            label: 'Windows Admitted',
             data: values,
             backgroundColor: 'rgba(0, 188, 212, 0.2)',
             borderColor: '#00bcd4',

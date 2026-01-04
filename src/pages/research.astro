@@ -91,7 +91,7 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Activity vs Silence</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          Sessions binned by tweet volume (using last 2 cycles). Total sessions: {formatNumber(activityRegimes.total_binned)}.
+          Entries binned by tweet volume (using last 2 cycles). Total entries: {formatNumber(activityRegimes.total_binned)}.
         </p>
         
         <div class="table-container">
@@ -99,8 +99,7 @@ const sessionLifecycle = loadSessionLifecycle();
             <thead>
               <tr>
                 <th>Activity Bin</th>
-                <th>Posts Range</th>
-                <th>Sessions</th>
+                <th>Entries</th>
                 <th>Share</th>
                 <th>Median Spread (bps)</th>
                 <th>Median Liq Global (%)</th>
@@ -111,7 +110,6 @@ const sessionLifecycle = loadSessionLifecycle();
               {activityRegimes.regimes.map(regime => (
                 <tr>
                   <td>{regime.bin.replace('_', ' ')}</td>
-                  <td class="numeric">{regime.posts_range}</td>
                   <td class="numeric">{formatNumber(regime.n_entries)}</td>
                   <td class="numeric">{regime.share_pct.toFixed(1)}%</td>
                   <td class="numeric">{regime.median_spread_bps !== undefined ? regime.median_spread_bps.toFixed(1) : '—'}</td>
@@ -131,7 +129,7 @@ const sessionLifecycle = loadSessionLifecycle();
         
         <ActivityRegimesChart data={activityRegimes} />
         
-        <p class="disclaimer">Descriptive summary of archived sessions. Not a signal.</p>
+        <p class="disclaimer">Descriptive summary of archived entries. Not a signal.</p>
       </section>
     ) : (
       <section>
@@ -145,7 +143,7 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Sampling Density</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          How many samples were collected per session. Sessions analyzed: {formatNumber(samplingDensity.entries_scanned)}.
+          How many samples were collected per entry. Entries analyzed: {formatNumber(samplingDensity.entries_scanned)}.
         </p>
         
         {samplingDensity.sample_count_stats && (
@@ -240,9 +238,9 @@ const sessionLifecycle = loadSessionLifecycle();
     <!-- Section 3: Session Lifecycle -->
     {sessionLifecycle ? (
       <section>
-        <h3>Session Lifecycle</h3>
+        <h3>Monitoring Window Lifecycle</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          {sessionLifecycle.definition.session}. Sessions analyzed: {formatNumber(sessionLifecycle.entries_scanned)}.
+          {sessionLifecycle.definition.session}. Entries analyzed: {formatNumber(sessionLifecycle.entries_scanned)}.
         </p>
         
         {sessionLifecycle.note_sample_bias && (
@@ -251,11 +249,19 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
-        {sessionLifecycle.duration_stats && (
+        {sessionLifecycle.duration_stats && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max && (
+          <div style="margin-bottom: 1.5rem;">
+            <p class="text-muted">
+              <strong>Window Duration:</strong> Fixed at {formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds ({(sessionLifecycle.duration_stats.duration_sec.median / 3600).toFixed(1)} hours) by design.
+            </p>
+          </div>
+        )}
+        
+        {sessionLifecycle.duration_stats && !(sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max) && (
           <div style="margin-bottom: 1.5rem;">
             <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Duration Statistics</h4>
             <p class="text-muted" style="margin-bottom: 0.75rem;">
-              Sessions with duration data: {formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)}
+              Windows with duration data: {formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)}
             </p>
             <div class="stats-grid">
               <div class="stat-card">
@@ -282,7 +288,7 @@ const sessionLifecycle = loadSessionLifecycle();
                 <thead>
                   <tr>
                     <th>Hour (UTC)</th>
-                    <th>Sessions</th>
+                    <th>Windows</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -309,7 +315,7 @@ const sessionLifecycle = loadSessionLifecycle();
       </section>
     ) : (
       <section>
-        <h3>Session Lifecycle</h3>
+        <h3>Monitoring Window Lifecycle</h3>
         <p class="text-muted">Artifact unavailable (session_lifecycle.json not found).</p>
       </section>
     )}

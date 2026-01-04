@@ -15,7 +15,6 @@ const chartId = `activityRegimesChart-${Math.random().toString(36).substr(2, 9)}
 ---
 
 <div class="chart-wrapper">
-  <h4 class="chart-heading">Distribution View</h4>
   <div class="chart-container">
     <canvas id={chartId}></canvas>
   </div>
@@ -38,7 +37,7 @@ const chartId = `activityRegimesChart-${Math.random().toString(36).substr(2, 9)}
         data: {
           labels: labels,
           datasets: [{
-            label: 'Sessions',
+            label: 'Entries',
             data: values,
             backgroundColor: 'rgba(0, 188, 212, 0.6)',
             borderColor: '#00bcd4',
