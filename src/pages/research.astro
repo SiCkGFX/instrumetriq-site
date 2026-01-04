@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import ActivityRegimesChart from '../components/ActivityRegimesChart.astro';
+import SamplingDensityChart from '../components/SamplingDensityChart.astro';
+import SessionLifecycleChart from '../components/SessionLifecycleChart.astro';
 import { PLATFORM } from '../data/ssot_copy';
 import { 
   loadActivityRegimes, 
@@ -126,6 +129,8 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
+        <ActivityRegimesChart data={activityRegimes} />
+        
         <p class="disclaimer">Descriptive summary of archived sessions. Not a signal.</p>
       </section>
     ) : (
@@ -222,6 +227,8 @@ const sessionLifecycle = loadSessionLifecycle();
             </div>
           </div>
         )}
+        
+        <SamplingDensityChart data={samplingDensity} />
       </section>
     ) : (
       <section>
@@ -295,6 +302,8 @@ const sessionLifecycle = loadSessionLifecycle();
                 </tbody>
               </table>
             </div>
+            
+            <SessionLifecycleChart data={sessionLifecycle} />
           </div>
         )}
       </section>

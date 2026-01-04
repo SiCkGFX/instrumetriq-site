@@ -1,0 +1,124 @@
+---
+/**
+ * Sampling Density Chart (Phase 4A)
+ * Visualizes sample count histogram from sampling_density.json
+ * Chart shows distribution of sampling resolution across sessions
+ */
+import type { SamplingDensityData } from '../lib/artifactsData';
+
+interface Props {
+  data: SamplingDensityData;
+}
+
+const { data } = Astro.props;
+const chartId = `samplingDensityChart-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="chart-wrapper">
+  <h4 class="chart-heading">Distribution View</h4>
+  <div class="chart-container">
+    <canvas id={chartId}></canvas>
+  </div>
+</div>
+
+<script define:vars={{ data, chartId }}>
+  // Import Chart.js dynamically when page loads
+  import('https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js').then((module) => {
+    const Chart = module.default;
+    
+    // Extract histogram data (filter out zero buckets for clarity)
+    const histogram = data.sample_count_histogram.filter(b => b.count > 0);
+    const labels = histogram.map(b => b.bucket);
+    const values = histogram.map(b => b.count);
+    
+    // Configure Chart.js with dark theme
+    const ctx = document.getElementById(chartId);
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Sessions',
+            data: values,
+            backgroundColor: 'rgba(0, 188, 212, 0.6)',
+            borderColor: '#00bcd4',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 2.5,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#222222',
+              titleColor: '#f0f0f0',
+              bodyColor: '#b0b0b0',
+              borderColor: '#2d2d2d',
+              borderWidth: 1,
+              padding: 12,
+              displayColors: false,
+              callbacks: {
+                afterLabel: function(context) {
+                  const bucket = histogram[context.dataIndex];
+                  return `${bucket.share_pct.toFixed(1)}% of sessions`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#b0b0b0'
+              },
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#b0b0b0'
+              },
+              grid: {
+                color: '#2d2d2d'
+              }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .chart-wrapper {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .chart-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .chart-container {
+    background: var(--panel);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
