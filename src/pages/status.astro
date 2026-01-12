@@ -86,7 +86,7 @@ try {
     <section class="status-grid">
       <div class="stat-card">
         <div class="stat-label">Collection Started</div>
-        <div class="stat-value">{archiveStats?.first_day_utc || statusDisplay.collectionStarted}</div>
+        <div class="stat-value">{archiveStats ? new Date(archiveStats.first_day_utc).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : statusDisplay.collectionStarted}</div>
       </div>
       
       <div class="stat-card">
