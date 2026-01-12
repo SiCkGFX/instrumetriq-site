@@ -7,7 +7,7 @@
     "lint:wording": "node scripts/lint_wording.mjs",
     "build": "npm run lint:wording && astro build",
     "preview": "astro preview",
-    "publish": "python scripts/publish.py",
+    "publish": "python scripts/deploy_to_cloudflare.py",
     "sync-sample": "python scripts/tools/sync_cryptobot_sample.py",
     "astro": "astro"
   },

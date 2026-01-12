@@ -835,13 +835,13 @@ Run these commands in order to verify dataset artifacts are correct:
 python scripts/inspect_v7_paths.py --sample 200
 
 # 2. Build dataset overview artifacts
-python scripts/build_dataset_overview_artifacts.py
+python scripts/generate_dataset_overview.py
 
 # 3. Run tests
 python scripts/test_dataset_overview_artifacts.py
 
 # 4. Full publish workflow (includes overview artifacts)
-python scripts/publish.py
+python scripts/deploy_to_cloudflare.py
 ```
 
 ### Expected Outcomes
@@ -1045,7 +1045,7 @@ Three JSON artifacts are generated from the sample data:
 **Commands:**
 ```bash
 # Generate all 3 artifacts
-python scripts/build_phase2a_artifacts.py
+python scripts/generate_research_artifacts.py
 
 # Test artifacts
 python scripts/test_phase2a_artifacts.py
@@ -1084,7 +1084,7 @@ python scripts/test_phase2a_artifacts.py
 
 **Sample size warning:**
 The artifacts are generated from `cryptobot_latest_head200.jsonl` (147 entries). This is a small sample for demonstration. For production use with full archive:
-1. Point `build_phase2a_artifacts.py` to full archive JSONL
+1. Point `generate_research_artifacts.py` to full archive JSONL
 2. Expect longer build times (minutes vs seconds)
 3. Histogram buckets and percentiles will be more representative
 
@@ -1134,7 +1134,7 @@ Phase 3A generates a single surface-level overview artifact (`dataset_overview.j
 **Commands:**
 ```bash
 # Generate artifact
-python scripts/build_dataset_page_artifacts.py
+python scripts/generate_dataset_overview.py
 
 # Test artifact
 python scripts/test_dataset_page_artifacts.py
@@ -1263,7 +1263,7 @@ Phase 3B generates public-facing sample entry artifacts that allow users to brow
 **Commands:**
 ```bash
 # Generate artifacts
-python scripts/build_public_sample_entries.py
+python scripts/generate_public_samples.py
 
 # Test artifacts
 python scripts/test_public_sample_entries.py
@@ -1491,7 +1491,7 @@ Cloudflare Pages has a **hard 25 MiB limit per file**. The `/dataset` page was *
 
 ### Implementation
 
-**Builder script:** `scripts/build_public_sample_entries.py` (modified)
+**Builder script:** `scripts/generate_public_samples.py` (modified)
 - Lines 82-124: `build_json_artifact()` removes `spot_prices` from each entry
 - Lines 127-146: `build_spots_artifact()` creates separate spots file with `[{symbol, spot_prices}, ...]`
 - Lines 149-167: `write_jsonl_artifact()` excludes `spot_prices` for smaller download
@@ -1536,7 +1536,7 @@ Cloudflare Pages has a **hard 25 MiB limit per file**. The `/dataset` page was *
 **Solution: Archive Statistics + UI Updates**
 
 **Archive stats generation:**
-1. **Builder script:** `scripts/build_archive_stats.py` (created, 200 lines)
+1. **Builder script:** `scripts/generate_archive_stats.py` (created, 200 lines)
    - Scans full CryptoBot archive: `D:\Sentiment-Data\CryptoBot\data\archive\`
    - Discovers all YYYYMMDD folders, counts entries in `.jsonl` and `.jsonl.gz` files
    - Extracts date range and last entry timestamp
@@ -1552,7 +1552,7 @@ Cloudflare Pages has a **hard 25 MiB limit per file**. The `/dataset` page was *
        "generated_at_utc": "2026-01-04T13:30:00Z"
      }
      ```
-   - CLI: `python scripts/build_archive_stats.py [--archive-path PATH]`
+   - CLI: `python scripts/generate_archive_stats.py [--archive-path PATH]`
 
 2. **Test script:** `scripts/test_archive_stats.py` (created, 128 lines)
    - Validates file exists, ASCII-only, valid JSON
@@ -1595,7 +1595,7 @@ Cloudflare Pages has a **hard 25 MiB limit per file**. The `/dataset` page was *
 ```bash
 # 1. Scan full archive (requires local CryptoBot path)
 cd D:\Sentiment-Data\instrumetriq
-python scripts\build_archive_stats.py
+python scripts\generate_archive_stats.py
 
 # 2. Validate
 python scripts\test_archive_stats.py
