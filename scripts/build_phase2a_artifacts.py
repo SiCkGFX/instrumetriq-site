@@ -335,7 +335,12 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
     """Build session_lifecycle.json artifact."""
     print("\n[BUILD] session_lifecycle.json")
     
-    # Find timestamp paths
+    # Find duration and added timestamp paths
+    duration_path = find_path_in_ssot(
+        coverage,
+        'meta.duration_sec'
+    )
+    
     added_path = find_path_in_ssot(
         coverage,
         'meta.added_ts',
@@ -343,35 +348,29 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
         'timestamps.added'
     )
     
-    expires_path = find_path_in_ssot(
-        coverage,
-        'meta.expires_ts',
-        'meta.expires_at',
-        'timestamps.expires'
-    )
-    
+    print(f"  Duration field: {duration_path if duration_path else 'NOT FOUND'}")
     print(f"  Added timestamp: {added_path if added_path else 'NOT FOUND'}")
-    print(f"  Expires timestamp: {expires_path if expires_path else 'NOT FOUND'}")
     
     durations = []
     admission_hours = defaultdict(int)
     
-    # Compute durations if both timestamps available
-    if added_path and expires_path:
+    # Extract durations directly from meta.duration_sec if available
+    if duration_path:
+        for entry in entries:
+            dur = get_nested_value(entry, duration_path)
+            if dur is not None and isinstance(dur, (int, float)) and dur > 0:
+                durations.append(dur)
+    
+    # Track admission hours if timestamp available
+    if added_path:
         from dateutil import parser as date_parser
         
         for entry in entries:
             added_str = get_nested_value(entry, added_path)
-            expires_str = get_nested_value(entry, expires_path)
             
-            if added_str and expires_str:
+            if added_str:
                 try:
                     added_dt = date_parser.isoparse(str(added_str))
-                    expires_dt = date_parser.isoparse(str(expires_str))
-                    
-                    duration_sec = (expires_dt - added_dt).total_seconds()
-                    if duration_sec > 0:
-                        durations.append(duration_sec)
                     
                     # Track admission hour in UTC
                     # If timestamp has timezone info, convert to UTC; if naive, assume UTC
@@ -416,12 +415,12 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
             'ssot_file': 'data/field_coverage_report.json'
         },
         'definition': {
-            'session': 'One admitted watchlist window from added_ts to expires_ts',
-            'typical_duration': '~2 hours per monitoring window'
+            'session': 'One archived watchlist window',
+            'duration_description': 'Entries archived after exceeding 120 minutes in the active watchlist; verification occurs every 10 minutes, so durations typically fall in ~120–130 minutes'
         },
         'fields_used': {
             'added_ts': added_path if added_path else None,
-            'expires_ts': expires_path if expires_path else None
+            'duration_sec': duration_path if duration_path else None
         },
         'duration_stats': {
             'n_entries_with_duration': len(durations),
@@ -442,15 +441,15 @@ def build_session_lifecycle(entries: List[Dict], coverage: Dict[str, Any]) -> Di
         artifact['note_sample_bias'] = 'Admission hours are highly concentrated in this sample; this may reflect the sample window rather than global behavior.'
     
     # Note unavailable fields
+    if not duration_path:
+        artifact['unavailable_fields'].append({
+            'field': 'duration_sec',
+            'reason': 'No meta.duration_sec path found in SSOT'
+        })
     if not added_path:
         artifact['unavailable_fields'].append({
             'field': 'added_ts',
             'reason': 'No meta.added_ts or similar timestamp path found in SSOT'
-        })
-    if not expires_path:
-        artifact['unavailable_fields'].append({
-            'field': 'expires_ts',
-            'reason': 'No meta.expires_ts or similar timestamp path found in SSOT'
         })
     
     return artifact

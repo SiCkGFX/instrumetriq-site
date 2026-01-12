@@ -1,7 +1,7 @@
 {
-  "generated_at_utc": "2026-01-12T11:31:54.162189Z",
-  "entries_scanned": 1361,
-  "total_binned": 1361,
+  "generated_at_utc": "2026-01-12T12:50:21.272800Z",
+  "entries_scanned": 1508,
+  "total_binned": 1508,
   "source": {
     "sample_file": "Full archive: 20260112",
     "ssot_file": "data/field_coverage_report.json"
@@ -17,17 +17,17 @@
     {
       "bin": "0_posts",
       "posts_range": "0-0",
-      "n_entries": 223,
-      "share_pct": 16.4,
-      "median_spread_bps": 21.9,
-      "median_liq_global_pct": 25.8,
-      "median_liq_self_pct": 25.8
+      "n_entries": 238,
+      "share_pct": 15.8,
+      "median_spread_bps": 21.1,
+      "median_liq_global_pct": 27.9,
+      "median_liq_self_pct": 28.3
     },
     {
       "bin": "1-2_posts",
       "posts_range": "1-2",
-      "n_entries": 191,
-      "share_pct": 14.0,
+      "n_entries": 199,
+      "share_pct": 13.2,
       "median_spread_bps": 17.5,
       "median_liq_global_pct": 32.9,
       "median_liq_self_pct": 33.9
@@ -35,37 +35,37 @@
     {
       "bin": "3-9_posts",
       "posts_range": "3-9",
-      "n_entries": 296,
-      "share_pct": 21.7,
-      "median_spread_bps": 15.8,
-      "median_liq_global_pct": 47.0,
-      "median_liq_self_pct": 49.3
+      "n_entries": 326,
+      "share_pct": 21.6,
+      "median_spread_bps": 16.2,
+      "median_liq_global_pct": 47.2,
+      "median_liq_self_pct": 49.6
     },
     {
       "bin": "10-24_posts",
       "posts_range": "10-24",
-      "n_entries": 221,
-      "share_pct": 16.2,
-      "median_spread_bps": 12.2,
-      "median_liq_global_pct": 64.3,
+      "n_entries": 253,
+      "share_pct": 16.8,
+      "median_spread_bps": 12.5,
+      "median_liq_global_pct": 65.4,
       "median_liq_self_pct": 66.7
     },
     {
       "bin": "25-49_posts",
       "posts_range": "25-49",
-      "n_entries": 120,
-      "share_pct": 8.8,
+      "n_entries": 138,
+      "share_pct": 9.2,
       "median_spread_bps": 8.7,
-      "median_liq_global_pct": 71.4,
+      "median_liq_global_pct": 72.1,
       "median_liq_self_pct": 66.7
     },
     {
       "bin": "50+_posts",
       "posts_range": "50+",
-      "n_entries": 310,
-      "share_pct": 22.8,
-      "median_spread_bps": 7.4,
-      "median_liq_global_pct": 78.1,
+      "n_entries": 354,
+      "share_pct": 23.5,
+      "median_spread_bps": 6.8,
+      "median_liq_global_pct": 80.9,
       "median_liq_self_pct": 66.7
     }
   ]

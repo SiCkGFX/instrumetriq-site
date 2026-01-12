@@ -1,9 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import ActivityRegimesChart from '../components/ActivityRegimesChart.astro';
-import SamplingDensityChart from '../components/SamplingDensityChart.astro';
-import SessionLifecycleChart from '../components/SessionLifecycleChart.astro';
 import { PLATFORM } from '../data/ssot_copy';
 import { 
   loadActivityRegimes, 
@@ -91,7 +88,11 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Activity vs Silence</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          Entries binned by tweet volume (last 2 cycles). Computed from {formatNumber(activityRegimes.entries_scanned)} archived entries.
+          <strong>Computed over:</strong> {activityRegimes.source.sample_file}<br/>
+          <strong>Entries analyzed:</strong> {formatNumber(activityRegimes.entries_scanned)}
+        </p>
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          Entries binned by tweet volume. The distribution is shown in the table below; key differences are visible in median spread and liquidity by activity regime.
         </p>
         
         <div class="table-container">
@@ -127,8 +128,6 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
-        <ActivityRegimesChart data={activityRegimes} />
-        
         <p class="disclaimer">Descriptive summary of archived entries. Not a signal.</p>
       </section>
     ) : (
@@ -143,10 +142,12 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Sampling Density</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          Price sampling behavior across {formatNumber(samplingDensity.entries_scanned)} entries. Median spot price samples: {samplingDensity.spot_prices_len_stats?.median ? formatNumber(samplingDensity.spot_prices_len_stats.median) : 'N/A'}.
+          <strong>Computed over:</strong> {samplingDensity.source.sample_file}<br/>
+          <strong>Entries analyzed:</strong> {formatNumber(samplingDensity.entries_scanned)}
         </p>
-        
-        <SamplingDensityChart data={samplingDensity} />
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          Spot prices sampled every ~10 seconds across the monitoring window. Typical samples per entry: {samplingDensity.spot_prices_len_stats?.median ? formatNumber(samplingDensity.spot_prices_len_stats.median) : 'N/A'} (range: {samplingDensity.spot_prices_len_stats?.min ? formatNumber(samplingDensity.spot_prices_len_stats.min) : 'N/A'}–{samplingDensity.spot_prices_len_stats?.max ? formatNumber(samplingDensity.spot_prices_len_stats.max) : 'N/A'}).
+        </p>
       </section>
     ) : (
       <section>
@@ -160,7 +161,8 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Monitoring Window Lifecycle</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          {sessionLifecycle.definition.session}. Sample reflects {formatNumber(sessionLifecycle.entries_scanned)} entries.
+          <strong>Computed over:</strong> {sessionLifecycle.source.sample_file}<br/>
+          <strong>Entries analyzed:</strong> {formatNumber(sessionLifecycle.entries_scanned)}
         </p>
         
         {sessionLifecycle.note_sample_bias && (
@@ -169,18 +171,19 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          {sessionLifecycle.definition.session}. {sessionLifecycle.definition.duration_description}
+        </p>
+        
         {sessionLifecycle.duration_stats && sessionLifecycle.duration_stats.duration_sec.median !== null && (
           <p class="text-muted" style="margin-bottom: 1.5rem;">
-            <strong>Window Duration:</strong> {sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max ? `Fixed at ${formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds (${(sessionLifecycle.duration_stats.duration_sec.median / 3600).toFixed(1)} hours) by design.` : `Median ${formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds across ${formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)} entries.`}
+            <strong>Observed Duration:</strong> Min {Math.round(sessionLifecycle.duration_stats.duration_sec.min / 60)} min, Median {Math.round(sessionLifecycle.duration_stats.duration_sec.median / 60)} min, Max {Math.round(sessionLifecycle.duration_stats.duration_sec.max / 60)} min (across {formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)} entries).
           </p>
         )}
         
-        {sessionLifecycle.admission_hour_distribution && sessionLifecycle.admission_hour_distribution.some(h => h.count > 0) && (
-          <div>
-            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Admission Pattern (UTC)</h4>
-            <SessionLifecycleChart data={sessionLifecycle} />
-          </div>
-        )}
+        <p class="text-muted" style="margin-top: 0.5rem;">
+          <em>Note:</em> Admission timing reflects when assets enter the watchlist and may be influenced by operational schedules and market events.
+        </p>
       </section>
     ) : (
       <section>

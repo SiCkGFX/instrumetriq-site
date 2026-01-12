@@ -1,26 +1,26 @@
 {
-  "generated_at_utc": "2026-01-12T11:31:54.290619Z",
-  "entries_scanned": 1361,
+  "generated_at_utc": "2026-01-12T12:50:21.406206Z",
+  "entries_scanned": 1508,
   "source": {
     "sample_file": "Full archive: 20260112",
     "ssot_file": "data/field_coverage_report.json"
   },
   "definition": {
-    "session": "One admitted watchlist window from added_ts to expires_ts",
-    "typical_duration": "~2 hours per monitoring window"
+    "session": "One archived watchlist window",
+    "duration_description": "Entries archived after exceeding 120 minutes in the active watchlist; verification occurs every 10 minutes, so durations typically fall in ~120\u2013130 minutes"
   },
   "fields_used": {
     "added_ts": "meta.added_ts",
-    "expires_ts": "meta.expires_ts"
+    "duration_sec": "meta.duration_sec"
   },
   "duration_stats": {
-    "n_entries_with_duration": 1361,
+    "n_entries_with_duration": 1508,
     "duration_sec": {
-      "median": 7200,
-      "p10": 7200,
-      "p90": 7200,
-      "min": 7200,
-      "max": 7200
+      "median": 7454,
+      "p10": 7265,
+      "p90": 7715,
+      "min": 7201,
+      "max": 7797
     }
   },
   "admission_hour_distribution": [
@@ -62,11 +62,11 @@
     },
     {
       "hour": 9,
-      "count": 42
+      "count": 89
     },
     {
       "hour": 10,
-      "count": 0
+      "count": 100
     },
     {
       "hour": 11,
