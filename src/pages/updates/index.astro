@@ -2,9 +2,20 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import PageHero from '../../components/PageHero.astro';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const updates = await getCollection('updates');
 const sortedUpdates = updates.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Load archive statistics
+let archiveStats = null;
+try {
+  const archiveStatsPath = path.join(process.cwd(), 'public/data/archive_stats.json');
+  archiveStats = JSON.parse(fs.readFileSync(archiveStatsPath, 'utf-8'));
+} catch (error) {
+  console.error('Failed to load archive stats:', error);
+}
 ---
 
 <BaseLayout 
@@ -17,6 +28,24 @@ const sortedUpdates = updates.sort((a, b) => b.data.date.getTime() - a.data.date
     subtitle="Milestones, notes, and announcements from the project."
   />
   <div class="pageContent">
+    {archiveStats && (
+      <div class="archive-summary">
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <span class="summary-value">{archiveStats.total_entries_all_time.toLocaleString()}</span>
+            <span class="summary-label">entries archived</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-value">{archiveStats.total_days}</span>
+            <span class="summary-label">days</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-value">{new Date(archiveStats.last_entry_ts_utc).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+            <span class="summary-label">last entry</span>
+          </div>
+        </div>
+      </div>
+    )}
     <div class="updates-list">
       {sortedUpdates.map(update => (
         <a href={`/updates/${update.slug}`} class="update-card">
@@ -39,6 +68,39 @@ const sortedUpdates = updates.sort((a, b) => b.data.date.getTime() - a.data.date
 </BaseLayout>
 
 <style>
+  .archive-summary {
+    margin-bottom: var(--space-6);
+    padding: var(--space-4);
+    background: rgba(0, 188, 212, 0.05);
+    border: 1px solid rgba(0, 188, 212, 0.2);
+    border-radius: 4px;
+  }
+
+  .summary-stats {
+    display: flex;
+    gap: var(--space-6);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .summary-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .summary-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .summary-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
   .updates-list {
     display: flex;
     flex-direction: column;

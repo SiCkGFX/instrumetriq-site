@@ -18,6 +18,15 @@ try {
   statusDisplay = parseStatusData(null);
 }
 
+// Load archive statistics for full archive metrics
+let archiveStats = null;
+try {
+  const archiveStatsPath = path.join(process.cwd(), 'public/data/archive_stats.json');
+  archiveStats = JSON.parse(fs.readFileSync(archiveStatsPath, 'utf-8'));
+} catch (error) {
+  console.error('Failed to load archive stats:', error);
+}
+
 // Load artifacts readiness
 let artifactsReady;
 try {
@@ -77,22 +86,22 @@ try {
     <section class="status-grid">
       <div class="stat-card">
         <div class="stat-label">Collection Started</div>
-        <div class="stat-value">{statusDisplay.collectionStarted}</div>
+        <div class="stat-value">{archiveStats?.first_day_utc || statusDisplay.collectionStarted}</div>
       </div>
       
       <div class="stat-card">
-        <div class="stat-label">Days Running</div>
-        <div class="stat-value">{statusDisplay.daysRunning || '—'}</div>
+        <div class="stat-label">Days Archived</div>
+        <div class="stat-value">{archiveStats?.total_days || statusDisplay.daysRunning || '—'}</div>
       </div>
       
       <div class="stat-card">
-        <div class="stat-label">Total Records</div>
-        <div class="stat-value">{statusDisplay.totalRecords.toLocaleString()}</div>
+        <div class="stat-label">Total Entries</div>
+        <div class="stat-value">{archiveStats?.total_entries_all_time.toLocaleString() || statusDisplay.totalRecords.toLocaleString()}</div>
       </div>
       
       <div class="stat-card">
-        <div class="stat-label">Last Updated</div>
-        <div class="stat-value">{statusDisplay.lastUpdated}</div>
+        <div class="stat-label">Last Entry</div>
+        <div class="stat-value">{archiveStats ? new Date(archiveStats.last_entry_ts_utc).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : statusDisplay.lastUpdated}</div>
       </div>
       
       <div class="stat-card">
@@ -104,8 +113,9 @@ try {
     <section class="data-definitions">
       <h2>Data Definitions</h2>
       <ul>
-        <li><strong>Total Records:</strong> Validated v7 snapshots (700+ spot samples) passing dataset health gates.</li>
-        <li><strong>Status Updates:</strong> Status is refreshed when new exports are published.</li>
+        <li><strong>Total Entries:</strong> All validated v7 snapshots archived since collection started.</li>
+        <li><strong>Last Entry:</strong> Timestamp of the most recent entry in the archive.</li>
+        <li><strong>Updates:</strong> Archive statistics are regenerated when new data is exported.</li>
       </ul>
     </section>
   </div>
