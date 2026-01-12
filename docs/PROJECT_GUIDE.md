@@ -1116,6 +1116,44 @@ Raw dataset behavioral statistics belong on the Dataset page, not Research. The 
 - `generate_research_artifacts.py` script (exists for future research artifacts)
 - Phase 3A dataset page artifacts (unchanged)
 
+### Research Page Rebuild (January 2026)
+
+**Status:** Research page rebuilt with "Research & Methodology" structure focusing on hybrid sentiment + methodology overview.
+
+**New Structure:**
+1. **Section 1 - Overview:** Three-line header describing observational approach, monitoring duration (~120-130 min), and disclaimer (observational dataset, not trading advice)
+2. **Section 2 - How scoring works:** Data pipeline (6 bullets covering collection→dedup→dual models→hybrid decisions→aggregates→silence handling) plus Hybrid decisions mini-legend (primary_default, referee_override, referee_neutral_band)
+3. **Section 3 - What we store per entry:** 4-card grid covering Market microstructure, Liquidity quality, Sentiment windows (aggregated), and Outcomes & derived features
+
+**Design approach:**
+- Minimal, card-based layout matching dataset page style
+- Restrained accent usage (cyan for headings/legend items)
+- No charts, no deep dive section, no raw schema dumps (per instructions)
+- Uses "entries" terminology (not "sessions")
+
+**Next phases (NOT implemented yet):**
+- Entry Deep Dive section (charts, computed metrics, random sample)
+- Use cases section
+- Integrity bullets section
+
+**Rationale:** The behavioral summary charts (activity regimes, sampling density, session lifecycle) did not align with the Research page's primary purpose. Research should focus on:
+1. **Hybrid sentiment methodology** - explaining how domain scoring works
+2. **Deep dive visuals** - illustrating the sentiment analysis process and results
+3. **Methodological transparency** - documenting our approach, not raw dataset statistics
+
+Raw dataset behavioral statistics belong on the Dataset page, not Research. The Phase 4A artifacts were experimental and misaligned with these goals, so they were removed to create a clean baseline for redesign.
+
+**Removed:**
+- All Phase 4A artifact files (`activity_regimes.json`, `sampling_density.json`, `session_lifecycle.json`)
+- TypeScript types and loaders from `src/lib/artifactsData.ts`
+- Chart components (`ActivityRegimesChart.astro`, etc.)
+- "Dataset Behavior Summaries" section from research page
+- Chart.js dependency (not needed elsewhere)
+
+**Preserved:**
+- `generate_research_artifacts.py` script (exists for future research artifacts)
+- Phase 3A dataset page artifacts (unchanged)
+
 ## Phase 3A: Dataset Page Overview Artifact
 
 ### Overview

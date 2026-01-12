@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import { PLATFORM } from '../data/ssot_copy';
 ---
 
 <BaseLayout 
@@ -14,54 +13,193 @@ import { PLATFORM } from '../data/ssot_copy';
     subtitle="How we collect and summarize sentiment signals, with ethics, privacy, and documentation as first principles."
   />
   <div class="pageContent">
+    <!-- Section 1: Header -->
     <section>
       <h2>Overview</h2>
       <p>
-        Instrumetriq observes public posts from {PLATFORM} for a defined set of crypto assets.
+        Instrumetriq observes short-lived market narratives by combining high-resolution market microstructure with aggregated social sentiment.
       </p>
       <p>
-        Each post is evaluated for sentiment at ingestion time, then grouped into fixed time windows (“cycles”). Within each cycle, we aggregate both expressed activity and the absence of activity (silence) to produce a structured snapshot of narrative intensity and direction.
+        Each asset is monitored ~120–130 minutes; spot price sampled every 10 seconds.
       </p>
       <p>
-        These aggregated sentiment signals are then compared against external market data to study how public narratives evolve alongside market conditions. Instrumetriq does not predict outcomes or claim causation; it documents observable patterns.
+        This is an observational dataset: we publish measurements and derived statistics, not trading advice.
       </p>
     </section>
 
+    <!-- Section 2: Hybrid Sentiment -->
     <section>
-      <h2>Data Collection Approach</h2>
-      <p>
-        Collection follows platform rules and basic research hygiene:
-      </p>
+      <h2>How scoring works</h2>
+      
+      <h3>Data pipeline</h3>
       <ul>
-        <li>Compliance with X (Twitter) Terms of Service and operational limits</li>
-        <li>Minimize retained personal data; keep records focused on content and timestamps</li>
-        <li>Document query construction and aggregation semantics</li>
-        <li>Deduplicate posts to avoid double-counting across searches</li>
+        <li>Posts are collected for each asset via controlled queries.</li>
+        <li>Posts are deduplicated.</li>
+        <li>Each post is scored by TWO AI models (primary + referee).</li>
+        <li>Referee confidence controls when we accept, override, or label neutral.</li>
+        <li>Cycle-level aggregates are written (pos/neu/neg ratios, mean score, confidence stats).</li>
+        <li>Silence handling is explicit (recent_posts_count, is_silent, hours_since_latest_tweet).</li>
       </ul>
+
+      <h3>Hybrid decisions</h3>
+      <div class="decision-legend">
+        <div class="decision-item">
+          <strong>primary_default</strong>
+          <span>Primary model decision accepted</span>
+        </div>
+        <div class="decision-item">
+          <strong>referee_override</strong>
+          <span>Referee overrides primary</span>
+        </div>
+        <div class="decision-item">
+          <strong>referee_neutral_band</strong>
+          <span>Forced neutral due to uncertainty band</span>
+        </div>
+      </div>
+      <p class="legend-note">
+        These decision sources are tracked per cycle in hybrid_decision_stats.decision_sources.
+      </p>
     </section>
 
+    <!-- Section 3: What we store per entry -->
     <section>
-      <h2>Scoring Framework</h2>
-      <p>
-        Sentiment scoring is performed using two domain-specific models trained on crypto-related language and market discourse. The models are designed to capture both explicit sentiment (positive or negative statements) and contextual language commonly used in crypto narratives.
-      </p>
-      <p>
-        Training combines large, general sentiment datasets with internally curated crypto-specific data. This allows the system to recognize informal phrasing, slang, sarcasm, and market-specific expressions that are poorly handled by generic sentiment tools.
-      </p>
-      <p>
-        Individual post scores are not used in isolation. Instead, scores are aggregated over time into cycle-based summaries, reducing noise from single posts and emphasizing consistent narrative shifts. Explicit handling of inactivity ensures that silence is treated as a signal rather than ignored.
-      </p>
-      <p>
-        The result is a conservative, repeatable sentiment measure intended for research and comparative analysis—not for real-time prediction.
-      </p>
-    </section>
-
-    <section>
-      <h2>Ethics & Privacy</h2>
-      <p>
-        Instrumetriq is observational. It does not predict outcomes or claim causation.
-        We aim to keep collection and storage conservative, and publish only claims that are supported by documented pipeline behavior.
-      </p>
+      <h2>What we store per entry</h2>
+      <div class="storage-grid">
+        <div class="storage-card">
+          <h3>Market microstructure</h3>
+          <p>Spread, depth at multiple bps, order book imbalance, taker ratios.</p>
+        </div>
+        
+        <div class="storage-card">
+          <h3>Liquidity quality</h3>
+          <p>liq_qv_usd plus global/self percentiles for regime comparisons.</p>
+        </div>
+        
+        <div class="storage-card">
+          <h3>Sentiment windows (aggregated)</h3>
+          <p>last_cycle and last_2_cycles aggregates (not raw tweets), including author_stats and engagement.</p>
+        </div>
+        
+        <div class="storage-card">
+          <h3>Outcomes & derived features</h3>
+          <p>Price-path metrics and derived session statistics computed from the recorded series.</p>
+        </div>
+      </div>
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .pageContent {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: var(--space-8);
+  }
+
+  h2 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-4);
+    color: var(--text);
+  }
+
+  h3 {
+    font-size: var(--font-size-xl);
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-3);
+    color: var(--text);
+  }
+
+  p {
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  ul {
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin: var(--space-3) 0;
+    padding-left: var(--space-5);
+  }
+
+  li {
+    margin-bottom: var(--space-2);
+  }
+
+  /* Hybrid decisions legend */
+  .decision-legend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: var(--space-4) 0;
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border-radius: 4px;
+  }
+
+  .decision-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .decision-item strong {
+    color: var(--accent);
+    font-size: 0.9375rem;
+    font-family: monospace;
+  }
+
+  .decision-item span {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  .legend-note {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: var(--space-2);
+  }
+
+  /* Storage cards grid */
+  .storage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .storage-card {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color var(--transition-base);
+  }
+
+  .storage-card:hover {
+    border-color: var(--border2);
+  }
+
+  .storage-card h3 {
+    font-size: 1.125rem;
+    margin: 0 0 var(--space-2) 0;
+    color: var(--text);
+  }
+
+  .storage-card p {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .storage-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
