@@ -248,10 +248,9 @@ import PageHero from '../components/PageHero.astro';
   }
 
   .deep-dive-nav .nav-info .symbol-title {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 600;
-    color: var(--accent);
-    font-family: 'Courier New', monospace;
+    color: var(--text);
     display: block;
     margin-bottom: var(--space-1);
   }
@@ -370,8 +369,7 @@ import PageHero from '../components/PageHero.astro';
   .context-value {
     font-size: 0.9375rem;
     color: var(--text);
-    font-family: 'Courier New', monospace;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .loading-state {
@@ -459,8 +457,8 @@ import PageHero from '../components/PageHero.astro';
   }
 
   .metrics-table td {
-    padding: var(--space-2) 0;
-    border-bottom: 1px solid var(--border);
+    padding: var(--space-3) var(--space-2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .metrics-table tr:last-child td {
@@ -470,6 +468,8 @@ import PageHero from '../components/PageHero.astro';
   .metrics-table .metrics-label {
     color: var(--text-muted);
     font-size: 0.875rem;
+    line-height: 1.4;
+    padding-right: var(--space-4);
   }
 
   .metrics-table .metrics-value {
@@ -477,6 +477,7 @@ import PageHero from '../components/PageHero.astro';
     font-family: monospace;
     color: var(--text);
     font-size: 0.9375rem;
+    font-weight: 600;
   }
 </style>
 
@@ -618,15 +619,15 @@ import PageHero from '../components/PageHero.astro';
             <span class="context-value">${duration !== null ? duration : 'N/A'}</span>
           </div>
           <div class="context-item">
-            <span class="context-label">is_silent</span>
+            <span class="context-label">Silent</span>
             <span class="context-value">${isSilent !== null ? isSilent : 'N/A'}</span>
           </div>
           <div class="context-item">
-            <span class="context-label">futures_data_ok</span>
+            <span class="context-label">Futures data OK</span>
             <span class="context-value">${futuresOk !== null ? futuresOk : 'N/A'}</span>
           </div>
           <div class="context-item">
-            <span class="context-label">Liquidity global percentile (%)</span>
+            <span class="context-label">Liquidity global (%)</span>
             <span class="context-value">${liqGlobal !== null ? liqGlobal : 'N/A'}</span>
           </div>
           <div class="context-item">
@@ -638,7 +639,7 @@ import PageHero from '../components/PageHero.astro';
             <span class="context-value">${spotSamplesCount}</span>
           </div>
           <div class="context-item">
-            <span class="context-label">Posts in last_cycle</span>
+            <span class="context-label">Posts (last_cycle)</span>
             <span class="context-value">${postsLastCycle !== null ? postsLastCycle : 'N/A'}</span>
           </div>
         </div>
@@ -703,14 +704,15 @@ import PageHero from '../components/PageHero.astro';
         </div>
         
         <div class="chart-container">
-          <h3 class="chart-title">Return from Start</h3>
+          <h3 class="chart-title">Spot price samples (latest active window)</h3>
           <canvas id="priceChart" class="chart-canvas"></canvas>
+          <p class="chart-caption">Spot prices sampled ~every 10 seconds during the monitoring window.</p>
         </div>
         
         <div class="chart-container">
-          <h3 class="chart-title">Sentiment Over Time</h3>
+          <h3 class="chart-title">Sentiment history (hybrid mean)</h3>
           <canvas id="sentimentChart" class="chart-canvas"></canvas>
-          <p class="chart-caption">Sentiment shown as aggregated window scores, not individual posts.</p>
+          <p class="chart-caption">Aggregated entry-level sentiment over the observed archive period for this symbol.</p>
         </div>
       </div>
     `;
@@ -741,21 +743,20 @@ import PageHero from '../components/PageHero.astro';
       return;
     }
 
-    const padding = 40;
+    const padding = 50;
     const width = canvas.width - 2 * padding;
     const height = canvas.height - 2 * padding;
 
-    // Calculate return % from initial price
-    const initialPrice = pricePath[0].price;
-    const returns = pricePath.map(p => ((p.price - initialPrice) / initialPrice) * 100);
+    // Use absolute prices
+    const prices = pricePath.map(p => p.price);
 
     // Find ranges
     const minTime = Math.min(...pricePath.map(p => p.elapsed_min));
     const maxTime = Math.max(...pricePath.map(p => p.elapsed_min));
-    const minReturn = Math.min(...returns);
-    const maxReturn = Math.max(...returns);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
 
-    const returnRange = maxReturn - minReturn || 1; // Avoid division by zero
+    const priceRange = maxPrice - minPrice || 1; // Avoid division by zero
     const timeRange = maxTime - minTime || 1;
 
     // Draw axes
@@ -767,27 +768,14 @@ import PageHero from '../components/PageHero.astro';
     ctx.lineTo(padding + width, padding + height);
     ctx.stroke();
 
-    // Draw zero line if it's in range
-    if (minReturn < 0 && maxReturn > 0) {
-      const zeroY = padding + height - ((0 - minReturn) / returnRange) * height;
-      ctx.strokeStyle = '#4a4a4a';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
-      ctx.moveTo(padding, zeroY);
-      ctx.lineTo(padding + width, zeroY);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    // Draw return line
+    // Draw price line
     ctx.strokeStyle = '#00bcd4';
     ctx.lineWidth = 2;
     ctx.beginPath();
 
     pricePath.forEach((point, i) => {
       const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
-      const y = padding + height - ((returns[i] - minReturn) / returnRange) * height;
+      const y = padding + height - ((point.price - minPrice) / priceRange) * height;
 
       if (i === 0) {
         ctx.moveTo(x, y);
@@ -798,6 +786,17 @@ import PageHero from '../components/PageHero.astro';
 
     ctx.stroke();
 
+    // Draw dots at data points
+    ctx.fillStyle = '#00bcd4';
+    pricePath.forEach((point) => {
+      const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
+      const y = padding + height - ((point.price - minPrice) / priceRange) * height;
+      
+      ctx.beginPath();
+      ctx.arc(x, y, 2, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+
     // Labels
     ctx.fillStyle = '#b0b0b0';
     ctx.font = '12px sans-serif';
@@ -807,13 +806,131 @@ import PageHero from '../components/PageHero.astro';
     ctx.save();
     ctx.translate(15, padding + height / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText('Return (%)', 0, 0);
+    ctx.fillText('Spot Price (USD)', 0, 0);
     ctx.restore();
 
     // Y-axis ticks
     ctx.textAlign = 'right';
-    ctx.fillText(minReturn.toFixed(2) + '%', padding - 5, padding + height);
-    ctx.fillText(maxReturn.toFixed(2) + '%', padding - 5, padding + 10);
+    ctx.fillText('$' + minPrice.toFixed(4), padding - 5, padding + height);
+    ctx.fillText('$' + maxPrice.toFixed(4), padding - 5, padding + 10);
+
+    // Add hover tooltip
+    canvas.onmousemove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Find closest point
+      let closestPoint = null;
+      let minDist = Infinity;
+
+      pricePath.forEach((point) => {
+        const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
+        const y = padding + height - ((point.price - minPrice) / priceRange) * height;
+        const dist = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+        
+        if (dist < minDist && dist < 20) {
+          minDist = dist;
+          closestPoint = { point, x, y };
+        }
+      });
+
+      // Redraw chart
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Redraw axes
+      ctx.strokeStyle = '#3a3a3a';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, padding + height);
+      ctx.lineTo(padding + width, padding + height);
+      ctx.stroke();
+
+      // Redraw line
+      ctx.strokeStyle = '#00bcd4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      pricePath.forEach((point, i) => {
+        const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
+        const y = padding + height - ((point.price - minPrice) / priceRange) * height;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Redraw dots
+      ctx.fillStyle = '#00bcd4';
+      pricePath.forEach((point) => {
+        const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
+        const y = padding + height - ((point.price - minPrice) / priceRange) * height;
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+
+      // Redraw labels
+      ctx.fillStyle = '#b0b0b0';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Elapsed Time (minutes)', padding + width / 2, canvas.height - 5);
+      ctx.save();
+      ctx.translate(15, padding + height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Spot Price (USD)', 0, 0);
+      ctx.restore();
+      ctx.textAlign = 'right';
+      ctx.fillText('$' + minPrice.toFixed(4), padding - 5, padding + height);
+      ctx.fillText('$' + maxPrice.toFixed(4), padding - 5, padding + 10);
+
+      // Draw tooltip if hovering over a point
+      if (closestPoint) {
+        const { point, x, y } = closestPoint;
+        
+        // Highlight point
+        ctx.fillStyle = '#00e5ff';
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Draw tooltip box
+        const tooltipText = [
+          `Time: ${point.elapsed_min.toFixed(1)} min`,
+          `Price: $${point.price.toFixed(6)}`
+        ];
+        
+        ctx.font = '13px sans-serif';
+        const tooltipWidth = Math.max(...tooltipText.map(t => ctx.measureText(t).width)) + 16;
+        const tooltipHeight = tooltipText.length * 18 + 8;
+        
+        let tooltipX = x + 10;
+        let tooltipY = y - tooltipHeight - 10;
+        
+        // Keep tooltip in bounds
+        if (tooltipX + tooltipWidth > canvas.width - 10) tooltipX = x - tooltipWidth - 10;
+        if (tooltipY < 10) tooltipY = y + 10;
+
+        ctx.fillStyle = 'rgba(30, 30, 30, 0.95)';
+        ctx.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+        ctx.strokeStyle = '#00bcd4';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        tooltipText.forEach((text, i) => {
+          ctx.fillText(text, tooltipX + 8, tooltipY + 18 + i * 18);
+        });
+      }
+
+      canvas.style.cursor = closestPoint ? 'pointer' : 'default';
+    };
+
+    canvas.onmouseleave = () => {
+      // Redraw chart without tooltip
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      renderPriceChart(pricePath, symbol);
+    };
   }
 
   function renderSentimentChart(symbol: string) {
@@ -844,7 +961,8 @@ import PageHero from '../components/PageHero.astro';
       .map(entry => ({
         elapsed_hours: (new Date(entry.ts).getTime() - firstTs) / (1000 * 60 * 60),
         mean_sent: entry.mean_sent,
-        posts: entry.posts
+        posts: entry.posts,
+        ts: entry.ts
       }));
 
     if (dataPoints.length === 0) {
@@ -855,7 +973,7 @@ import PageHero from '../components/PageHero.astro';
       return;
     }
 
-    const padding = 40;
+    const padding = 50;
     const width = canvas.width - 2 * padding;
     const height = canvas.height - 2 * padding;
 
@@ -934,5 +1052,140 @@ import PageHero from '../components/PageHero.astro';
     ctx.fillText('-1.0', padding - 5, padding + height);
     ctx.fillText('0.0', padding - 5, zeroY + 5);
     ctx.fillText('+1.0', padding - 5, padding + 10);
+
+    // Add hover tooltip
+    canvas.onmousemove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Find closest point
+      let closestPoint = null;
+      let minDist = Infinity;
+
+      dataPoints.forEach((point) => {
+        const x = padding + (point.elapsed_hours / timeRange) * width;
+        const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
+        const dist = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+        
+        if (dist < minDist && dist < 20) {
+          minDist = dist;
+          closestPoint = { point, x, y };
+        }
+      });
+
+      // Redraw chart
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Redraw axes
+      ctx.strokeStyle = '#3a3a3a';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, padding + height);
+      ctx.lineTo(padding + width, padding + height);
+      ctx.stroke();
+
+      // Redraw zero line
+      ctx.strokeStyle = '#555555';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(padding, zeroY);
+      ctx.lineTo(padding + width, zeroY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Redraw line
+      ctx.strokeStyle = '#00bcd4';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      dataPoints.forEach((point, i) => {
+        const x = padding + (point.elapsed_hours / timeRange) * width;
+        const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Redraw dots
+      ctx.fillStyle = '#00bcd4';
+      dataPoints.forEach((point) => {
+        const x = padding + (point.elapsed_hours / timeRange) * width;
+        const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+
+      // Redraw labels
+      ctx.fillStyle = '#b0b0b0';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Time (hours from ${new Date(timeseries[0].ts).toISOString().split('T')[0]})`, padding + width / 2, canvas.height - 5);
+      ctx.save();
+      ctx.translate(15, padding + height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Mean Score (-1 to +1)', 0, 0);
+      ctx.restore();
+      ctx.textAlign = 'right';
+      ctx.fillText('-1.0', padding - 5, padding + height);
+      ctx.fillText('0.0', padding - 5, zeroY + 5);
+      ctx.fillText('+1.0', padding - 5, padding + 10);
+
+      // Draw tooltip if hovering over a point
+      if (closestPoint) {
+        const { point, x, y } = closestPoint;
+        
+        // Highlight point
+        ctx.fillStyle = '#00e5ff';
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Format timestamp
+        const date = new Date(point.ts);
+        const dateStr = date.toISOString().split('T')[0];
+        const timeStr = date.toISOString().split('T')[1].split('.')[0];
+
+        // Draw tooltip box
+        const tooltipText = [
+          `Date: ${dateStr} ${timeStr}`,
+          `Sentiment: ${point.mean_sent.toFixed(4)}`,
+          `Posts: ${point.posts}`
+        ];
+        
+        ctx.font = '13px sans-serif';
+        const tooltipWidth = Math.max(...tooltipText.map(t => ctx.measureText(t).width)) + 16;
+        const tooltipHeight = tooltipText.length * 18 + 8;
+        
+        let tooltipX = x + 10;
+        let tooltipY = y - tooltipHeight - 10;
+        
+        // Keep tooltip in bounds
+        if (tooltipX + tooltipWidth > canvas.width - 10) tooltipX = x - tooltipWidth - 10;
+        if (tooltipY < 10) tooltipY = y + 10;
+
+        ctx.fillStyle = 'rgba(30, 30, 30, 0.95)';
+        ctx.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+        ctx.strokeStyle = '#00bcd4';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        tooltipText.forEach((text, i) => {
+          ctx.fillText(text, tooltipX + 8, tooltipY + 18 + i * 18);
+        });
+      }
+
+      canvas.style.cursor = closestPoint ? 'pointer' : 'default';
+    };
+
+    canvas.onmouseleave = () => {
+      // Redraw chart without tooltip
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      renderSentimentChart(symbol);
+    };
   }
 </script>
