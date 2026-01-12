@@ -12,85 +12,96 @@ interface Props {
 
 const { data } = Astro.props;
 const chartId = `samplingDensityChart-${Math.random().toString(36).substr(2, 9)}`;
+const chartData = JSON.stringify(data);
 ---
 
 <div class="chart-wrapper">
   <div class="chart-container">
-    <canvas id={chartId}></canvas>
+    <canvas id={chartId} data-chart-data={chartData}></canvas>
   </div>
 </div>
 
-<script define:vars={{ data, chartId }}>
-  // Import Chart.js dynamically when page loads
-  import('https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js').then((module) => {
-    const Chart = module.default;
+<script>
+  import Chart from 'chart.js/auto';
+  
+  // Initialize all charts when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvases = document.querySelectorAll('canvas[id^="samplingDensityChart-"]');
     
-    // Extract histogram data (filter out zero buckets for clarity)
-    const histogram = data.sample_count_histogram.filter(b => b.count > 0);
-    const labels = histogram.map(b => b.bucket);
-    const values = histogram.map(b => b.count);
-    
-    // Configure Chart.js with dark theme
-    const ctx = document.getElementById(chartId);
-    if (ctx) {
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Entries',
-            data: values,
-            backgroundColor: 'rgba(0, 188, 212, 0.6)',
-            borderColor: '#00bcd4',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          aspectRatio: 2.5,
-          plugins: {
-            legend: {
-              display: false
+    canvases.forEach((canvas) => {
+      const chartDataStr = canvas.getAttribute('data-chart-data');
+      if (!chartDataStr) return;
+      
+      try {
+        const data = JSON.parse(chartDataStr);
+        
+        // Extract histogram data (filter out zero buckets for clarity)
+        const histogram = data.sample_count_histogram.filter(b => b.count > 0);
+        const labels = histogram.map(b => b.bucket);
+        const values = histogram.map(b => b.count);
+        
+        // Configure Chart.js with dark theme
+        new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Entries',
+              data: values,
+              backgroundColor: 'rgba(0, 188, 212, 0.6)',
+              borderColor: '#00bcd4',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 2.5,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: '#222222',
+                titleColor: '#f0f0f0',
+                bodyColor: '#b0b0b0',
+                borderColor: '#2d2d2d',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: false,
+                callbacks: {
+                  afterLabel: function(context) {
+                    const bucket = histogram[context.dataIndex];
+                    return `${bucket.share_pct.toFixed(1)}% of entries`;
+                  }
+                }
+              }
             },
-            tooltip: {
-              backgroundColor: '#222222',
-              titleColor: '#f0f0f0',
-              bodyColor: '#b0b0b0',
-              borderColor: '#2d2d2d',
-              borderWidth: 1,
-              padding: 12,
-              displayColors: false,
-              callbacks: {
-                afterLabel: function(context) {
-                  const bucket = histogram[context.dataIndex];
-                  return `${bucket.share_pct.toFixed(1)}% of entries`;
+            scales: {
+              x: {
+                ticks: {
+                  color: '#b0b0b0'
+                },
+                grid: {
+                  display: false
+                }
+              },
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#b0b0b0'
+                },
+                grid: {
+                  color: '#2d2d2d'
                 }
               }
             }
-          },
-          scales: {
-            x: {
-              ticks: {
-                color: '#b0b0b0'
-              },
-              grid: {
-                display: false
-              }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#b0b0b0'
-              },
-              grid: {
-                color: '#2d2d2d'
-              }
-            }
           }
-        }
-      });
-    }
+        });
+      } catch (e) {
+        console.error('Failed to initialize sampling density chart:', e);
+      }
+    });
   });
 </script>
 

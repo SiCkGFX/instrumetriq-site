@@ -12,90 +12,101 @@ interface Props {
 
 const { data } = Astro.props;
 const chartId = `sessionLifecycleChart-${Math.random().toString(36).substr(2, 9)}`;
+const chartData = JSON.stringify(data);
 ---
 
 <div class="chart-wrapper">
   <div class="chart-container">
-    <canvas id={chartId}></canvas>
+    <canvas id={chartId} data-chart-data={chartData}></canvas>
   </div>
 </div>
 
-<script define:vars={{ data, chartId }}>
-  // Import Chart.js dynamically when page loads
-  import('https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js').then((module) => {
-    const Chart = module.default;
+<script>
+  import Chart from 'chart.js/auto';
+  
+  // Initialize all charts when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvases = document.querySelectorAll('canvas[id^="sessionLifecycleChart-"]');
     
-    // Extract admission hour distribution
-    const distribution = data.admission_hour_distribution || [];
-    const labels = distribution.map(h => `${String(h.hour).padStart(2, '0')}:00`);
-    const values = distribution.map(h => h.count);
-    
-    // Configure Chart.js with dark theme
-    const ctx = document.getElementById(chartId);
-    if (ctx) {
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Windows Admitted',
-            data: values,
-            backgroundColor: 'rgba(0, 188, 212, 0.2)',
-            borderColor: '#00bcd4',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.1,
-            pointBackgroundColor: '#00bcd4',
-            pointBorderColor: '#00bcd4',
-            pointHoverBackgroundColor: '#f0f0f0',
-            pointHoverBorderColor: '#00bcd4',
-            pointRadius: 3,
-            pointHoverRadius: 5
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          aspectRatio: 3,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: '#222222',
-              titleColor: '#f0f0f0',
-              bodyColor: '#b0b0b0',
-              borderColor: '#2d2d2d',
-              borderWidth: 1,
-              padding: 12,
-              displayColors: false
-            }
+    canvases.forEach((canvas) => {
+      const chartDataStr = canvas.getAttribute('data-chart-data');
+      if (!chartDataStr) return;
+      
+      try {
+        const data = JSON.parse(chartDataStr);
+        
+        // Extract admission hour distribution
+        const distribution = data.admission_hour_distribution || [];
+        const labels = distribution.map(h => `${String(h.hour).padStart(2, '0')}:00`);
+        const values = distribution.map(h => h.count);
+        
+        // Configure Chart.js with dark theme
+        new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Windows Admitted',
+              data: values,
+              backgroundColor: 'rgba(0, 188, 212, 0.2)',
+              borderColor: '#00bcd4',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.1,
+              pointBackgroundColor: '#00bcd4',
+              pointBorderColor: '#00bcd4',
+              pointHoverBackgroundColor: '#f0f0f0',
+              pointHoverBorderColor: '#00bcd4',
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
           },
-          scales: {
-            x: {
-              ticks: {
-                color: '#b0b0b0',
-                maxRotation: 45,
-                minRotation: 45
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 3,
+            plugins: {
+              legend: {
+                display: false
               },
-              grid: {
-                color: '#2d2d2d'
+              tooltip: {
+                backgroundColor: '#222222',
+                titleColor: '#f0f0f0',
+                bodyColor: '#b0b0b0',
+                borderColor: '#2d2d2d',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: false
               }
             },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#b0b0b0',
-                precision: 0
+            scales: {
+              x: {
+                ticks: {
+                  color: '#b0b0b0',
+                  maxRotation: 45,
+                  minRotation: 45
+                },
+                grid: {
+                  color: '#2d2d2d'
+                }
               },
-              grid: {
-                color: '#2d2d2d'
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#b0b0b0',
+                  precision: 0
+                },
+                grid: {
+                  color: '#2d2d2d'
+                }
               }
             }
           }
-        }
-      });
-    }
+        });
+      } catch (e) {
+        console.error('Failed to initialize session lifecycle chart:', e);
+      }
+    });
   });
 </script>
 

@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-01-12T10:58:43.503019Z",
-  "entries_scanned": 200,
+  "generated_at_utc": "2026-01-12T11:31:54.290619Z",
+  "entries_scanned": 1361,
   "source": {
-    "sample_file": "data/samples/cryptobot_latest_head200.jsonl",
+    "sample_file": "Full archive: 20260112",
     "ssot_file": "data/field_coverage_report.json"
   },
   "definition": {
@@ -14,7 +14,7 @@
     "expires_ts": "meta.expires_ts"
   },
   "duration_stats": {
-    "n_entries_with_duration": 200,
+    "n_entries_with_duration": 1361,
     "duration_sec": {
       "median": 7200,
       "p10": 7200,
@@ -26,43 +26,43 @@
   "admission_hour_distribution": [
     {
       "hour": 0,
-      "count": 0
+      "count": 68
     },
     {
       "hour": 1,
-      "count": 0
+      "count": 135
     },
     {
       "hour": 2,
-      "count": 0
+      "count": 123
     },
     {
       "hour": 3,
-      "count": 0
+      "count": 125
     },
     {
       "hour": 4,
-      "count": 0
+      "count": 129
     },
     {
       "hour": 5,
-      "count": 0
+      "count": 89
     },
     {
       "hour": 6,
-      "count": 4
+      "count": 175
     },
     {
       "hour": 7,
-      "count": 31
+      "count": 70
     },
     {
       "hour": 8,
-      "count": 165
+      "count": 167
     },
     {
       "hour": 9,
-      "count": 0
+      "count": 42
     },
     {
       "hour": 10,
@@ -114,11 +114,11 @@
     },
     {
       "hour": 22,
-      "count": 0
+      "count": 43
     },
     {
       "hour": 23,
-      "count": 0
+      "count": 195
     }
   ],
   "unavailable_fields": []

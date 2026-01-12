@@ -82,7 +82,7 @@ const sessionLifecycle = loadSessionLifecycle();
     <section>
       <h2>Dataset Behavior Summaries</h2>
       <p>
-        The following sections describe how the dataset behaves in the sample of archived sessions. These are purely descriptive summaries—not predictive signals or trading recommendations.
+        The following sections describe how the dataset behaves, computed over the current archive. These are purely descriptive summaries—not predictive signals or trading recommendations.
       </p>
     </section>
 
@@ -91,7 +91,7 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Activity vs Silence</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          Entries binned by tweet volume (last 2 cycles). Counts reflect the current research sample window ({formatNumber(activityRegimes.entries_scanned)} entries scanned).
+          Entries binned by tweet volume (last 2 cycles). Computed from {formatNumber(activityRegimes.entries_scanned)} archived entries.
         </p>
         
         <div class="table-container">

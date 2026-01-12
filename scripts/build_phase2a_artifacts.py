@@ -14,9 +14,11 @@ Rules:
 - ASCII-only JSON
 """
 
+import gzip
 import json
 import math
 import statistics
+import sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -469,15 +471,41 @@ def main():
         coverage = json.load(f)
     print(f"  Loaded {coverage['unique_paths_discovered']} paths")
     
-    # Load sample entries
-    print("\n[LOAD] cryptobot_latest_head200.jsonl...")
-    sample_file = root / 'data' / 'samples' / 'cryptobot_latest_head200.jsonl'
+    # Load entries from full archive (stream from compressed file)
+    print("\n[LOAD] Full archive from CryptoBot...")
+    archive_base = Path('/srv/cryptobot/data/archive')
+    
+    # Find latest archive folder
+    date_folders = sorted([d for d in archive_base.iterdir() if d.is_dir() and d.name.isdigit()], reverse=True)
+    if not date_folders:
+        print("  ERROR: No archive folders found")
+        sys.exit(1)
+    
+    latest_folder = date_folders[0]
+    print(f"  Using archive folder: {latest_folder.name}")
+    
+    # Find all .jsonl.gz files in the latest folder, sorted by modification time (newest first)
+    archive_files = sorted(latest_folder.glob('*.jsonl.gz'), key=lambda f: f.stat().st_mtime, reverse=True)
+    
+    if not archive_files:
+        print(f"  ERROR: No .jsonl.gz files found in {latest_folder}")
+        sys.exit(1)
+    
+    print(f"  Found {len(archive_files)} archive file(s)")
+    
+    # Load all entries from all files
     entries = []
-    with open(sample_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            if line.strip():
-                entries.append(json.loads(line))
-    print(f"  Loaded {len(entries)} entries")
+    for archive_file in archive_files:
+        print(f"  Reading {archive_file.name}...")
+        with gzip.open(archive_file, 'rt', encoding='utf-8') as f:
+            for line in f:
+                if line.strip():
+                    try:
+                        entries.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+    
+    print(f"  Loaded {len(entries)} total entries from full archive")
     
     # Build artifacts
     output_dir = root / 'public' / 'data'
@@ -485,6 +513,7 @@ def main():
     
     # 1. Activity regimes
     activity = build_activity_regimes(entries, coverage)
+    activity['source']['sample_file'] = f'Full archive: {latest_folder.name}'
     activity_file = output_dir / 'activity_regimes.json'
     with open(activity_file, 'w', encoding='ascii') as f:
         json.dump(activity, f, indent=2, ensure_ascii=True)
@@ -492,6 +521,7 @@ def main():
     
     # 2. Sampling density
     sampling = build_sampling_density(entries, coverage)
+    sampling['source']['sample_file'] = f'Full archive: {latest_folder.name}'
     sampling_file = output_dir / 'sampling_density.json'
     with open(sampling_file, 'w', encoding='ascii') as f:
         json.dump(sampling, f, indent=2, ensure_ascii=True)
@@ -499,6 +529,7 @@ def main():
     
     # 3. Session lifecycle
     lifecycle = build_session_lifecycle(entries, coverage)
+    lifecycle['source']['sample_file'] = f'Full archive: {latest_folder.name}'
     lifecycle_file = output_dir / 'session_lifecycle.json'
     with open(lifecycle_file, 'w', encoding='ascii') as f:
         json.dump(lifecycle, f, indent=2, ensure_ascii=True)
@@ -507,7 +538,7 @@ def main():
     print("\n" + "=" * 70)
     print("DONE")
     print("=" * 70)
-    print(f"Generated 3 artifacts in {output_dir}")
+    print(f"Generated 3 artifacts from {len(entries)} entries in {output_dir}")
 
 
 if __name__ == '__main__':
