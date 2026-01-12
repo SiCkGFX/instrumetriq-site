@@ -1,0 +1,8 @@
+# Python dependencies for scripts/ directory
+#
+# All scripts currently use Python standard library only.
+# Minimum Python version: 3.8 (for typing features)
+#
+# No external packages required.
+# 
+# To verify: python --version (should be 3.8+)
