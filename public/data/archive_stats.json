@@ -1,9 +1,9 @@
 {
-  "total_entries_all_time": 55965,
-  "total_days": 27,
+  "total_entries_all_time": 73434,
+  "total_days": 35,
   "first_day_utc": "2025-12-09",
-  "last_day_utc": "2026-01-04",
-  "last_entry_ts_utc": "2026-01-04T05:27:38.815294Z",
-  "source_path": "D:\\Sentiment-Data\\CryptoBot\\data\\archive",
-  "generated_at_utc": "2026-01-04T07:30:28.580827Z"
+  "last_day_utc": "2026-01-12",
+  "last_entry_ts_utc": "2026-01-12T09:46:52.270615Z",
+  "source_path": "/srv/cryptobot/data/archive",
+  "generated_at_utc": "2026-01-12T11:54:43.995361Z"
 }
