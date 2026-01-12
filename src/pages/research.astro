@@ -236,60 +236,67 @@ import PageHero from '../components/PageHero.astro';
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-    padding: var(--space-3) var(--space-4);
-    background-color: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-6);
   }
 
   .deep-dive-nav .nav-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-1);
+    flex: 1;
     text-align: center;
   }
 
-  .deep-dive-nav .nav-info strong {
-    font-size: 1.1rem;
+  .deep-dive-nav .nav-info .symbol-title {
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--accent);
     font-family: 'Courier New', monospace;
+    display: block;
+    margin-bottom: var(--space-1);
   }
 
   .deep-dive-nav .nav-counter {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     color: var(--text-muted);
   }
 
   .nav-btn {
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-3) var(--space-5);
     background-color: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     color: var(--text);
-    font-size: 0.9rem;
+    font-size: 0.9375rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   .nav-btn:hover {
     background-color: var(--accent);
     border-color: var(--accent);
     color: var(--bg);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
   }
 
   .nav-btn:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+  }
+
+  .nav-btn:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   @media (max-width: 768px) {
     .deep-dive-nav {
       flex-direction: column;
-      gap: var(--space-2);
+      gap: var(--space-3);
     }
 
     .deep-dive-nav .nav-info {
@@ -299,8 +306,72 @@ import PageHero from '../components/PageHero.astro';
 
     .nav-btn {
       width: 100%;
-      padding: var(--space-3);
+      justify-content: center;
     }
+  }
+
+  /* Context and Metrics grid */
+  .context-metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  @media (max-width: 968px) {
+    .context-metrics-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+  }
+
+  .context-section,
+  .metrics-section {
+    background-color: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: var(--space-4);
+  }
+
+  .context-section h3,
+  .metrics-section h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-2);
+  }
+
+  .context-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .context-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .context-item:last-child {
+    border-bottom: none;
+  }
+
+  .context-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .context-value {
+    font-size: 0.9375rem;
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
   }
 
   .loading-state {
@@ -345,14 +416,12 @@ import PageHero from '../components/PageHero.astro';
 
   /* Charts */
   .chart-container {
-    background-color: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    width: 100%;
   }
 
   .chart-title {
-    font-size: 1rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--text);
     margin-bottom: var(--space-3);
@@ -360,9 +429,19 @@ import PageHero from '../components/PageHero.astro';
 
   .chart-canvas {
     width: 100%;
-    height: 300px;
-    background-color: var(--bg);
-    border-radius: 4px;
+    height: 400px;
+    min-height: 350px;
+    background-color: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .chart-canvas {
+      height: 320px;
+      min-height: 280px;
+    }
   }
 
   .chart-caption {
@@ -373,44 +452,31 @@ import PageHero from '../components/PageHero.astro';
   }
 
   /* Metrics Table */
-  .metrics-table-container {
-    background-color: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: var(--space-4);
-  }
-
+  /* Metrics Table */
   .metrics-table {
     width: 100%;
     border-collapse: collapse;
   }
 
-  .metrics-table th,
   .metrics-table td {
-    padding: var(--space-2) var(--space-3);
-    text-align: left;
+    padding: var(--space-2) 0;
     border-bottom: 1px solid var(--border);
   }
 
-  .metrics-table th {
-    font-weight: 600;
-    color: var(--text);
-    font-size: 0.875rem;
-  }
-
-  .metrics-table td {
-    color: var(--text-muted);
-    font-size: 0.9375rem;
-  }
-
-  .metrics-table tr:last-child th,
   .metrics-table tr:last-child td {
     border-bottom: none;
   }
 
-  .metrics-table td:last-child {
+  .metrics-table .metrics-label {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  .metrics-table .metrics-value {
     text-align: right;
     font-family: monospace;
+    color: var(--text);
+    font-size: 0.9375rem;
   }
 </style>
 
@@ -420,6 +486,7 @@ import PageHero from '../components/PageHero.astro';
 
   let allEntries: any[] = [];
   let spotPricesMap: Map<string, any[]> = new Map();
+  let sentimentTimeseriesMap: Map<string, any[]> = new Map();
   let currentIndex = 0;
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -428,6 +495,7 @@ import PageHero from '../components/PageHero.astro';
 
     const jsonUrl = container.getAttribute('data-json');
     const spotsUrl = container.getAttribute('data-spots');
+    const timeseriesUrl = '/data/sample_symbols_sentiment_timeseries.json';
     
     if (!jsonUrl || !spotsUrl) {
       container.innerHTML = '<div class="error-state">Configuration error: missing data URL</div>';
@@ -435,10 +503,11 @@ import PageHero from '../components/PageHero.astro';
     }
 
     try {
-      // Fetch both entries and spot prices
-      const [entriesResponse, spotsResponse] = await Promise.all([
+      // Fetch entries, spot prices, and sentiment timeseries
+      const [entriesResponse, spotsResponse, timeseriesResponse] = await Promise.all([
         fetch(jsonUrl),
-        fetch(spotsUrl)
+        fetch(spotsUrl),
+        fetch(timeseriesUrl)
       ]);
 
       if (!entriesResponse.ok || !spotsResponse.ok) {
@@ -462,6 +531,18 @@ import PageHero from '../components/PageHero.astro';
           spotPricesMap.set(spot.symbol, spot.spot_prices);
         }
       });
+
+      // Load sentiment timeseries if available
+      if (timeseriesResponse.ok) {
+        const timeseriesData = await timeseriesResponse.json();
+        const seriesBySymbol = timeseriesData.series_by_symbol || {};
+        Object.keys(seriesBySymbol).forEach(symbol => {
+          sentimentTimeseriesMap.set(symbol, seriesBySymbol[symbol]);
+        });
+        console.log(`[INFO] Loaded sentiment timeseries for ${sentimentTimeseriesMap.size} symbols`);
+      } else {
+        console.warn('[WARN] Sentiment timeseries not available');
+      }
 
       // Restore last viewed index from sessionStorage or start at 0
       const savedIndex = sessionStorage.getItem('deepDiveIndex');
@@ -512,46 +593,62 @@ import PageHero from '../components/PageHero.astro';
     const pricePath = extractPricePath(entry, spotPrices);
     const sentimentPath = extractSentimentPath(entry);
 
-    // Context badges
-    const badges: string[] = [];
-    
-    // Monitoring window length
-    if (entry.meta?.duration_sec) {
-      const minutes = Math.round(entry.meta.duration_sec / 60);
-      badges.push(`<div class="context-badge"><strong>Duration:</strong> ${minutes} min</div>`);
-    }
-    
-    // is_silent - from twitter_sentiment_windows.last_cycle.sentiment_activity.is_silent
+    // Context data
+    const duration = entry.meta?.duration_sec ? Math.round(entry.meta.duration_sec / 60) : null;
     const sentimentActivity = entry.twitter_sentiment_windows?.last_cycle?.sentiment_activity;
-    if (sentimentActivity?.is_silent !== undefined) {
-      badges.push(`<div class="context-badge"><strong>is_silent:</strong> ${sentimentActivity.is_silent}</div>`);
-    }
-    
-    // Median spread
-    if (metrics.medianSpread !== null) {
-      badges.push(`<div class="context-badge"><strong>Spread:</strong> ${metrics.medianSpread.toFixed(2)} bps</div>`);
-    }
-    
-    // Liquidity percentile
-    if (entry.derived?.liq_global_pct !== undefined) {
-      badges.push(`<div class="context-badge"><strong>Liq Global:</strong> ${entry.derived.liq_global_pct.toFixed(1)}%</div>`);
-    }
-    
-    // futures_data_ok flag
-    if (entry.flags?.futures_data_ok !== undefined) {
-      badges.push(`<div class="context-badge"><strong>futures_ok:</strong> ${entry.flags.futures_data_ok}</div>`);
-    }
+    const isSilent = sentimentActivity?.is_silent !== undefined ? sentimentActivity.is_silent : null;
+    const futuresOk = entry.flags?.futures_data_ok !== undefined ? entry.flags.futures_data_ok : null;
+    const liqGlobal = entry.derived?.liq_global_pct !== undefined ? entry.derived.liq_global_pct.toFixed(1) : null;
+    const medianSpread = metrics.medianSpread !== null ? metrics.medianSpread.toFixed(2) : null;
+    const spotSamplesCount = spotPrices.length;
+    const postsLastCycle = entry.twitter_sentiment_windows?.last_cycle?.posts_total !== undefined ? 
+      entry.twitter_sentiment_windows.last_cycle.posts_total : null;
 
-    const badgesHTML = badges.length > 0 ? `
-      <div class="context-badges">
-        ${badges.join('')}
+    // Context HTML
+    const contextHTML = `
+      <div class="context-section">
+        <h3>Context</h3>
+        <div class="context-grid">
+          <div class="context-item">
+            <span class="context-label">Symbol</span>
+            <span class="context-value">${entry.symbol}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Duration (min)</span>
+            <span class="context-value">${duration !== null ? duration : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">is_silent</span>
+            <span class="context-value">${isSilent !== null ? isSilent : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">futures_data_ok</span>
+            <span class="context-value">${futuresOk !== null ? futuresOk : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Liquidity global percentile (%)</span>
+            <span class="context-value">${liqGlobal !== null ? liqGlobal : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Median spread (bps)</span>
+            <span class="context-value">${medianSpread !== null ? medianSpread : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Spot samples (count)</span>
+            <span class="context-value">${spotSamplesCount}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Posts in last_cycle</span>
+            <span class="context-value">${postsLastCycle !== null ? postsLastCycle : 'N/A'}</span>
+          </div>
+        </div>
       </div>
-    ` : '';
+    `;
 
     // Metrics table rows
     const metricsRows = [
-      ['Start price', metrics.startPrice !== null ? `$${formatMetric(metrics.startPrice, 2)}` : 'N/A'],
-      ['End price', metrics.endPrice !== null ? `$${formatMetric(metrics.endPrice, 2)}` : 'N/A'],
+      ['Start price', metrics.startPrice !== null ? `$${formatMetric(metrics.startPrice, 4)}` : 'N/A'],
+      ['End price', metrics.endPrice !== null ? `$${formatMetric(metrics.endPrice, 4)}` : 'N/A'],
       ['Absolute return (%)', formatMetric(metrics.absoluteReturn, 2)],
       ['Log return', formatMetric(metrics.logReturn, 4)],
       ['Maximum favorable excursion (MFE, %)', formatMetric(metrics.mfe, 2)],
@@ -562,25 +659,51 @@ import PageHero from '../components/PageHero.astro';
       ['Mean sentiment (hybrid, session)', formatMetric(metrics.meanSentiment, 4)]
     ];
 
+    const metricsHTML = `
+      <div class="metrics-section">
+        <h3>Derived Metrics</h3>
+        <table class="metrics-table">
+          <tbody>
+            ${metricsRows.map(([label, value]) => `
+              <tr>
+                <td class="metrics-label">${label}</td>
+                <td class="metrics-value">${value}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
     // Navigation header
     const navHeader = `
       <div class="deep-dive-nav">
-        <button class="nav-btn" onclick="window.navigatePrevious()">← Previous</button>
+        <button class="nav-btn" onclick="window.navigatePrevious()">
+          <span>←</span>
+          <span>Previous</span>
+        </button>
         <div class="nav-info">
-          <strong>${entry.symbol}</strong>
+          <span class="symbol-title">${entry.symbol}</span>
           <span class="nav-counter">Entry ${currentIndex + 1} of ${allEntries.length}</span>
         </div>
-        <button class="nav-btn" onclick="window.navigateNext()">Next →</button>
+        <button class="nav-btn" onclick="window.navigateNext()">
+          <span>Next</span>
+          <span>→</span>
+        </button>
       </div>
     `;
 
     container.innerHTML = `
       <div class="deep-dive-content">
         ${navHeader}
-        ${badgesHTML}
+        
+        <div class="context-metrics-grid">
+          ${contextHTML}
+          ${metricsHTML}
+        </div>
         
         <div class="chart-container">
-          <h3 class="chart-title">Price Path</h3>
+          <h3 class="chart-title">Return from Start</h3>
           <canvas id="priceChart" class="chart-canvas"></canvas>
         </div>
         
@@ -589,33 +712,13 @@ import PageHero from '../components/PageHero.astro';
           <canvas id="sentimentChart" class="chart-canvas"></canvas>
           <p class="chart-caption">Sentiment shown as aggregated window scores, not individual posts.</p>
         </div>
-        
-        <div class="metrics-table-container">
-          <h3 class="chart-title">Derived Metrics</h3>
-          <table class="metrics-table">
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${metricsRows.map(([label, value]) => `
-                <tr>
-                  <td>${label}</td>
-                  <td>${value}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
       </div>
     `;
 
     // Render charts
     requestAnimationFrame(() => {
       renderPriceChart(pricePath, entry.symbol);
-      renderSentimentChart(sentimentPath);
+      renderSentimentChart(entry.symbol);
     });
   }
 
@@ -642,13 +745,17 @@ import PageHero from '../components/PageHero.astro';
     const width = canvas.width - 2 * padding;
     const height = canvas.height - 2 * padding;
 
+    // Calculate return % from initial price
+    const initialPrice = pricePath[0].price;
+    const returns = pricePath.map(p => ((p.price - initialPrice) / initialPrice) * 100);
+
     // Find ranges
     const minTime = Math.min(...pricePath.map(p => p.elapsed_min));
     const maxTime = Math.max(...pricePath.map(p => p.elapsed_min));
-    const minPrice = Math.min(...pricePath.map(p => p.price));
-    const maxPrice = Math.max(...pricePath.map(p => p.price));
+    const minReturn = Math.min(...returns);
+    const maxReturn = Math.max(...returns);
 
-    const priceRange = maxPrice - minPrice || 1; // Avoid division by zero
+    const returnRange = maxReturn - minReturn || 1; // Avoid division by zero
     const timeRange = maxTime - minTime || 1;
 
     // Draw axes
@@ -660,14 +767,27 @@ import PageHero from '../components/PageHero.astro';
     ctx.lineTo(padding + width, padding + height);
     ctx.stroke();
 
-    // Draw price line
+    // Draw zero line if it's in range
+    if (minReturn < 0 && maxReturn > 0) {
+      const zeroY = padding + height - ((0 - minReturn) / returnRange) * height;
+      ctx.strokeStyle = '#4a4a4a';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(padding, zeroY);
+      ctx.lineTo(padding + width, zeroY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Draw return line
     ctx.strokeStyle = '#00bcd4';
     ctx.lineWidth = 2;
     ctx.beginPath();
 
     pricePath.forEach((point, i) => {
       const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
-      const y = padding + height - ((point.price - minPrice) / priceRange) * height;
+      const y = padding + height - ((returns[i] - minReturn) / returnRange) * height;
 
       if (i === 0) {
         ctx.moveTo(x, y);
@@ -687,16 +807,16 @@ import PageHero from '../components/PageHero.astro';
     ctx.save();
     ctx.translate(15, padding + height / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText('Price ($)', 0, 0);
+    ctx.fillText('Return (%)', 0, 0);
     ctx.restore();
 
     // Y-axis ticks
     ctx.textAlign = 'right';
-    ctx.fillText(minPrice.toFixed(2), padding - 5, padding + height);
-    ctx.fillText(maxPrice.toFixed(2), padding - 5, padding + 10);
+    ctx.fillText(minReturn.toFixed(2) + '%', padding - 5, padding + height);
+    ctx.fillText(maxReturn.toFixed(2) + '%', padding - 5, padding + 10);
   }
 
-  function renderSentimentChart(sentimentPath: SentimentPoint[]) {
+  function renderSentimentChart(symbol: string) {
     const canvas = document.getElementById('sentimentChart') as HTMLCanvasElement;
     if (!canvas) return;
     
@@ -706,11 +826,32 @@ import PageHero from '../components/PageHero.astro';
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    if (sentimentPath.length === 0) {
+    // Get timeseries for this symbol
+    const timeseries = sentimentTimeseriesMap.get(symbol);
+    
+    if (!timeseries || timeseries.length === 0) {
       ctx.fillStyle = '#888888';
       ctx.font = '14px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Sentiment windows not present in this sample entry.', canvas.width / 2, canvas.height / 2);
+      ctx.fillText('Sentiment timeseries not available for this symbol.', canvas.width / 2, canvas.height / 2);
+      return;
+    }
+
+    // Filter out silent entries and convert timestamps to elapsed time
+    const firstTs = new Date(timeseries[0].ts).getTime();
+    const dataPoints = timeseries
+      .filter(entry => !entry.is_silent && entry.mean_sent !== null)
+      .map(entry => ({
+        elapsed_hours: (new Date(entry.ts).getTime() - firstTs) / (1000 * 60 * 60),
+        mean_sent: entry.mean_sent,
+        posts: entry.posts
+      }));
+
+    if (dataPoints.length === 0) {
+      ctx.fillStyle = '#888888';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('No non-silent sentiment data for this symbol.', canvas.width / 2, canvas.height / 2);
       return;
     }
 
@@ -719,8 +860,8 @@ import PageHero from '../components/PageHero.astro';
     const height = canvas.height - 2 * padding;
 
     const minTime = 0;
-    const maxTime = Math.max(...sentimentPath.map(p => p.elapsed_min));
-    const timeRange = maxTime - minTime || 1; // Avoid division by zero
+    const maxTime = Math.max(...dataPoints.map(p => p.elapsed_hours));
+    const timeRange = maxTime - minTime || 1;
 
     // Fixed sentiment range: -1 to +1
     const minSentiment = -1;
@@ -747,29 +888,40 @@ import PageHero from '../components/PageHero.astro';
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Draw sentiment points and lines
-    const colors = ['#00bcd4', '#00e5ff'];
-    sentimentPath.forEach((point, i) => {
-      const x = padding + (point.elapsed_min / timeRange) * width;
-      const y = padding + height - ((point.mean_score - minSentiment) / sentimentRange) * height;
+    // Draw sentiment line
+    ctx.strokeStyle = '#00bcd4';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
 
-      ctx.fillStyle = colors[i % colors.length];
+    dataPoints.forEach((point, i) => {
+      const x = padding + (point.elapsed_hours / timeRange) * width;
+      const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+
+    ctx.stroke();
+
+    // Draw dots at data points
+    ctx.fillStyle = '#00bcd4';
+    dataPoints.forEach((point) => {
+      const x = padding + (point.elapsed_hours / timeRange) * width;
+      const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
+      
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.arc(x, y, 2, 0, 2 * Math.PI);
       ctx.fill();
-
-      // Label
-      ctx.fillStyle = '#b0b0b0';
-      ctx.font = '10px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(point.window_label, x, y - 10);
     });
 
     // Labels
     ctx.fillStyle = '#b0b0b0';
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Time (minutes)', padding + width / 2, canvas.height - 5);
+    ctx.fillText(`Time (hours from ${new Date(timeseries[0].ts).toISOString().split('T')[0]})`, padding + width / 2, canvas.height - 5);
     
     ctx.save();
     ctx.translate(15, padding + height / 2);
