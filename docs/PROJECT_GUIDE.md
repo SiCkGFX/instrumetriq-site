@@ -1094,6 +1094,28 @@ The artifacts are generated from `cryptobot_latest_head200.jsonl` (147 entries).
 - Avoid: "Higher activity correlates with..." (predictive)
 - Disclaimer on page: "Descriptive summary of archived sessions. Not a signal."
 
+### Phase 4A Removal (January 2025)
+
+**Status:** Phase 4A charts and artifacts have been completely removed from the Research page.
+
+**Rationale:** The behavioral summary charts (activity regimes, sampling density, session lifecycle) did not align with the Research page's primary purpose. Research should focus on:
+1. **Hybrid sentiment methodology** - explaining how domain scoring works
+2. **Deep dive visuals** - illustrating the sentiment analysis process and results
+3. **Methodological transparency** - documenting our approach, not raw dataset statistics
+
+Raw dataset behavioral statistics belong on the Dataset page, not Research. The Phase 4A artifacts were experimental and misaligned with these goals, so they were removed to create a clean baseline for redesign.
+
+**Removed:**
+- All Phase 4A artifact files (`activity_regimes.json`, `sampling_density.json`, `session_lifecycle.json`)
+- TypeScript types and loaders from `src/lib/artifactsData.ts`
+- Chart components (`ActivityRegimesChart.astro`, etc.)
+- "Dataset Behavior Summaries" section from research page
+- Chart.js dependency (not needed elsewhere)
+
+**Preserved:**
+- `generate_research_artifacts.py` script (exists for future research artifacts)
+- Phase 3A dataset page artifacts (unchanged)
+
 ## Phase 3A: Dataset Page Overview Artifact
 
 ### Overview
