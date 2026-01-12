@@ -249,7 +249,7 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
-        {sessionLifecycle.duration_stats && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max && (
+        {sessionLifecycle.duration_stats && sessionLifecycle.duration_stats.duration_sec.median !== null && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max && (
           <div style="margin-bottom: 1.5rem;">
             <p class="text-muted">
               <strong>Window Duration:</strong> Fixed at {formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds ({(sessionLifecycle.duration_stats.duration_sec.median / 3600).toFixed(1)} hours) by design.
@@ -257,7 +257,7 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
-        {sessionLifecycle.duration_stats && !(sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max) && (
+        {sessionLifecycle.duration_stats && !(sessionLifecycle.duration_stats.duration_sec.median !== null && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max) && (
           <div style="margin-bottom: 1.5rem;">
             <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Duration Statistics</h4>
             <p class="text-muted" style="margin-bottom: 0.75rem;">
