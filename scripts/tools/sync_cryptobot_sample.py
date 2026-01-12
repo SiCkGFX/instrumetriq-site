@@ -65,6 +65,50 @@ def extract_head_lines(gzip_path: Path, output_path: Path, num_lines: int = 200)
     return lines_written
 
 
+def extract_head_lines_multi(archive_root: Path, output_path: Path, num_lines: int = 200) -> int:
+    """Extract the first N lines across multiple archive files if needed.
+    
+    Starts with the newest file and works backwards until we have N lines.
+    
+    Returns:
+        Number of lines written
+    """
+    # Find all archive files sorted by modification time (newest first)
+    all_files = []
+    for filepath in archive_root.rglob("*.jsonl.gz"):
+        mtime = filepath.stat().st_mtime
+        all_files.append((filepath, mtime))
+    
+    if not all_files:
+        raise FileNotFoundError(f"No *.jsonl.gz files found in {archive_root}")
+    
+    # Sort by modification time, newest first
+    all_files.sort(key=lambda x: x[1], reverse=True)
+    
+    lines_written = 0
+    files_used = []
+    
+    with open(output_path, 'w', encoding='utf-8') as f_out:
+        for filepath, _ in all_files:
+            if lines_written >= num_lines:
+                break
+            
+            files_used.append(filepath.name)
+            remaining = num_lines - lines_written
+            
+            with gzip.open(filepath, 'rt', encoding='utf-8') as f_in:
+                for i, line in enumerate(f_in):
+                    if lines_written >= num_lines:
+                        break
+                    f_out.write(line)
+                    lines_written += 1
+            
+            print(f"  [READ] {filepath.name} → {lines_written}/{num_lines} lines")
+    
+    print(f"  [INFO] Used {len(files_used)} archive file(s) to extract {lines_written} lines")
+    return lines_written
+
+
 def main():
     parser = argparse.ArgumentParser(description="Sync newest CryptoBot archive file to instrumetriq")
     parser.add_argument(
@@ -78,9 +122,9 @@ def main():
     if args.cryptobot_root:
         cryptobot_root = Path(args.cryptobot_root).resolve()
     else:
-        # Auto-detect: assume instrumetriq and CryptoBot are siblings
+        # Auto-detect: assume instrumetriq and cryptobot are siblings
         instrumetriq_root = Path(__file__).resolve().parent.parent.parent
-        cryptobot_root = instrumetriq_root.parent / "CryptoBot"
+        cryptobot_root = instrumetriq_root.parent / "cryptobot"
     
     archive_root = cryptobot_root / "data" / "archive"
     
@@ -121,8 +165,9 @@ def main():
     shutil.copy2(newest_file, output_timestamped)
     print(f"[COPY] {output_timestamped}")
     
-    # Extract first 200 lines
-    lines_written = extract_head_lines(newest_file, output_head, num_lines=200)
+    # Extract first 200 lines (across multiple files if needed)
+    print(f"[EXTRACT] Extracting first 200 lines to {output_head}...")
+    lines_written = extract_head_lines_multi(archive_root, output_head, num_lines=200)
     print(f"[EXTRACT] {output_head} ({lines_written} lines)")
     print()
     

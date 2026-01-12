@@ -1,21 +1,21 @@
 {
-  "generated_at_utc": "2026-01-03T05:59:39.432625Z",
+  "generated_at_utc": "2026-01-12T10:58:50.072154Z",
   "scale": {
-    "entries_scanned": 147,
-    "distinct_symbols": 147,
-    "date_range_utc": "2026-01-01",
-    "last_entry_ts_utc": "2026-01-01T18:38:11.283000Z"
+    "entries_scanned": 200,
+    "distinct_symbols": 200,
+    "date_range_utc": "2026-01-12",
+    "last_entry_ts_utc": "2026-01-12T08:57:14.517000Z"
   },
   "freshness": {
     "archive_sample_source": "cryptobot_latest_head200.jsonl",
     "notes": "This sample represents the first 200 entries from the latest archive snapshot. Full dataset may differ."
   },
   "preview_row": {
-    "symbol": "1000CAT",
-    "spread_bps": 70.18,
-    "liq_global_pct": 41.79,
-    "posts_total": 115,
-    "mean_score": 0.4152
+    "symbol": "AAVE",
+    "spread_bps": 0.61,
+    "liq_global_pct": 89.75,
+    "posts_total": 13,
+    "mean_score": 0.8572
   },
   "non_claims_block": [
     "This dataset is descriptive only. It documents observed patterns in market snapshots and social sentiment, but makes no claims about predictive value.",

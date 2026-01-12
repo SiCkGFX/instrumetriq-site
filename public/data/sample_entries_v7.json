@@ -1,2679 +1,10 @@
 {
-  "generated_at_utc": "2026-01-04T06:57:34.024726Z",
+  "generated_at_utc": "2026-01-12T10:20:45.003300Z",
   "schema_version": "v7",
   "entry_count": 100,
   "source": "cryptobot_latest_tail200.jsonl",
   "note": "Public preview entries. Spot prices in separate file (sample_entries_spots_v7.json).",
   "entries": [
-    {
-      "symbol": "JUV",
-      "snapshot_ts": "2026-01-03T13:15:58.446Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:15:58.446Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:15:58.446360Z",
-        "expires_ts": "2026-01-03T15:15:58.446360Z",
-        "session_id": "5455318a-a7f6-4ad1-a5fd-adae722ba3ce",
-        "sample_count": 747,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7464.428178,
-        "total_samples": 747,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.7615000000000001,
-        "bid": 0.761,
-        "ask": 0.762,
-        "spread_bps": 13.131976362442558,
-        "last": 0.758,
-        "range_pct_24h": 5.145118733509239,
-        "ticker24_chg": 2.019,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 0.0,
-        "depth_25bps_quote": 966.83285,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": 0.24156507038439584,
-        "micro_premium_pct": 0.09340369393139841,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.05128205128205129,
-        "liq_eff_raw": 0.4510805189211242,
-        "liq_qv_usd": 38107.33431
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 26.420079260237802,
-        "depth_weighted": 193.36657000000002,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 17.5,
-        "liq_self_pct": 17.5,
-        "spread_pct": 0.13131976362442557,
-        "spread_bps": 13.131976362442558
-      },
-      "norm": {},
-      "scores": {
-        "final": 53.13517331902717,
-        "mom": 56.057,
-        "vol": 20.58047493403696,
-        "str": 51.28205128205128,
-        "liq": 12.352941176470587,
-        "spread": 75.11711808734046,
-        "taker": 50.0,
-        "spread_eff_score": 94.87179487179486,
-        "liq_eff_score": 24.240879680810593,
-        "flow": 50.0,
-        "depth": 81.85538179562312,
-        "microstruct": 55.92769089781156,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.1307109303495305
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.1
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 61,
-          "posts_pos": 14,
-          "posts_neu": 43,
-          "posts_neg": 4,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": 0.2391
-          },
-          "category_counts": {
-            "positive_general": 1,
-            "negative_general": 1,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 1,
-            "scam_rug": 0,
-            "emoji_pos": 25,
-            "emoji_neg": 5
-          },
-          "top_terms": {
-            "positive_general": [
-              "up",
-              "hold",
-              "good"
-            ],
-            "negative_general": [],
-            "pump_hype": [
-              "calls"
-            ],
-            "fud_fear": [],
-            "meme_slang": [
-              "based"
-            ],
-            "scam_rug": []
-          },
-          "platform_engagement": {
-            "total_likes": 431,
-            "total_retweets": 77,
-            "total_replies": 199,
-            "total_quotes": 9,
-            "total_bookmarks": 44,
-            "total_impressions": null
-          },
-          "tag_counts": {
-            "juventus": 9,
-            "juve": 4,
-            "soccer": 1,
-            "juventuslecce": 1,
-            "calciomercato": 1,
-            "fichajes": 1,
-            "whufc": 1,
-            "schlager": 1,
-            "lipsia": 1,
-            "rakewin": 1,
-            "bahis": 1,
-            "iddaa": 1,
-            "thuram": 1,
-            "transfernews": 1,
-            "juvelecce": 1,
-            "theohernandez": 1,
-            "italy": 1,
-            "hilal": 1,
-            "baldini": 1,
-            "zhegrova": 1
-          },
-          "cashtag_counts": {
-            "JUV": 3,
-            "PSG": 2,
-            "BAR": 2
-          },
-          "mention_counts": {
-            "la_bianconera": 3,
-            "_morik92_": 2,
-            "nufc_kriss": 2,
-            "fantokens": 2,
-            "1": 2,
-            "fromvideocon": 1,
-            "juventus_x": 1,
-            "lxquinhaaa": 1,
-            "mtips01": 1,
-            "pumpking0x": 1,
-            "big_mz064": 1,
-            "betstamp": 1,
-            "hchorseracing": 1,
-            "ableague_": 1,
-            "bovadaofficial": 1,
-            "wealthymin21644": 1,
-            "whiteknightlufc": 1,
-            "lewisdeighton17": 1,
-            "turanshephard": 1,
-            "gazzetta_it": 1
-          },
-          "url_domain_counts": {
-            "dlvr.it": 2,
-            "sports.yahoo.com": 1,
-            "stake.bet": 1,
-            "youtu.be": 1,
-            "footywordy.blogspot.com": 1,
-            "www.bild.de": 1,
-            "t2m.io": 1,
-            "www.passionecalcio.eu": 1,
-            "discord.gg": 1,
-            "ift.tt": 1
-          },
-          "media_count": 22,
-          "author_stats": {
-            "distinct_authors_total": 54,
-            "distinct_authors_verified": 0,
-            "distinct_authors_blue": 14,
-            "followers_count_sum": 21917226,
-            "followers_count_median": 614,
-            "followers_count_max": 7080356,
-            "followers_count_mean": 359298.8
-          },
-          "content_stats": {
-            "posts_original": 61,
-            "posts_retweets": 0,
-            "posts_with_media": 22,
-            "posts_with_links": 14,
-            "posts_with_hashtags": 11,
-            "posts_with_cashtags": 3,
-            "posts_with_mentions": 32
-          },
-          "sentiment_activity": {
-            "recent_posts_count": 60,
-            "has_recent_activity": true,
-            "is_silent": false,
-            "latest_tweet_at": "2026-01-03T12:37:49Z",
-            "hours_since_latest_tweet": 0.05,
-            "config": {
-              "recent_horizon_hours": 24,
-              "min_recent_posts_for_activity": 5,
-              "silence_threshold_hours": 24
-            }
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": true,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 61,
-            "posts_pos": 34,
-            "posts_neu": 9,
-            "posts_neg": 18,
-            "prob_mean": 0.6624,
-            "prob_std": 0.3142,
-            "prob_min": 0.0028,
-            "prob_max": 0.9971,
-            "label_3class_mean": 0.2623
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 61,
-            "posts_pos": 34,
-            "posts_neu": 9,
-            "posts_neg": 18,
-            "mean_score": 0.2623,
-            "pos_ratio": 0.5574,
-            "neg_ratio": 0.2951,
-            "neu_ratio": 0.1475,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 52,
-              "referee_override": 0,
-              "referee_neutral_band": 9
-            },
-            "primary_conf_mean": 0.6624,
-            "referee_conf_mean": 0.4984
-          }
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:02:11Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 119,
-          "posts_pos": 24,
-          "posts_neu": 86,
-          "posts_neg": 9,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": 0.0287
-          },
-          "category_counts": {
-            "positive_general": 1,
-            "negative_general": 1,
-            "pump_hype": 0,
-            "fud_fear": 1,
-            "meme_slang": 2,
-            "scam_rug": 0,
-            "emoji_pos": 38,
-            "emoji_neg": 11
-          },
-          "top_terms": {
-            "positive_general": [
-              "up",
-              "winning",
-              "hold",
-              "good"
-            ],
-            "scam_rug": [],
-            "pump_hype": [
-              "calls"
-            ],
-            "fud_fear": [],
-            "negative_general": [
-              "crash",
-              "red"
-            ],
-            "meme_slang": [
-              "based"
-            ]
-          },
-          "platform_engagement": {
-            "total_likes": 98232,
-            "total_retweets": 14744,
-            "total_replies": 7578,
-            "total_views": 0,
-            "avg_likes": null,
-            "avg_retweets": null,
-            "avg_replies": null,
-            "avg_views": null
-          },
-          "tag_counts": {
-            "juventus": 19,
-            "milan": 2,
-            "atalanta": 2,
-            "rodr\u00edguez": 1,
-            "europacalcio": 1,
-            "forzajuve": 1,
-            "finoallafine": 1,
-            "leoni": 1,
-            "inter": 1,
-            "sempremilan": 1,
-            "betabahis": 1,
-            "betabahisgiri\u015f": 1,
-            "casinoroys": 1,
-            "joaocancelo": 1,
-            "juve": 5,
-            "juventuslecce": 2,
-            "bahisoyna": 1,
-            "bahis": 2,
-            "calcio": 1,
-            "\u00f6zeloran": 1,
-            "soccer": 1,
-            "calciomercato": 1,
-            "fichajes": 1,
-            "whufc": 1,
-            "schlager": 1,
-            "lipsia": 1,
-            "rakewin": 1,
-            "iddaa": 1,
-            "thuram": 1,
-            "transfernews": 1,
-            "juvelecce": 1,
-            "theohernandez": 1,
-            "italy": 1,
-            "hilal": 1,
-            "baldini": 1,
-            "zhegrova": 1
-          },
-          "cashtag_counts": {
-            "JUV": 3,
-            "PSG": 2,
-            "BAR": 2
-          },
-          "mention_counts": {
-            "nufc_kriss": 7,
-            "nicoschira": 3,
-            "_morik92_": 4,
-            "calciolog_tr": 2,
-            "pavelinux": 1,
-            "boboj29": 1,
-            "frig_80": 1,
-            "4macyeter": 1,
-            "mbabualvin": 1,
-            "grok": 1,
-            "officialasroma": 1,
-            "juventus_x": 2,
-            "youtube": 1,
-            "tuttosport": 1,
-            "fabrizioromano": 1,
-            "ddenmark61": 1,
-            "elantraaaa485": 1,
-            "kysituations": 1,
-            "tom_tommisk": 1,
-            "cfcsheikh": 1,
-            "la_bianconera": 3,
-            "fantokens": 2,
-            "1": 2,
-            "fromvideocon": 1,
-            "lxquinhaaa": 1,
-            "mtips01": 1,
-            "pumpking0x": 1,
-            "big_mz064": 1,
-            "betstamp": 1,
-            "hchorseracing": 1,
-            "ableague_": 1,
-            "bovadaofficial": 1,
-            "wealthymin21644": 1,
-            "whiteknightlufc": 1,
-            "lewisdeighton17": 1,
-            "turanshephard": 1,
-            "gazzetta_it": 1
-          },
-          "url_domain_counts": {
-            "t2m.io": 3,
-            "ds.tc": 2,
-            "www.goal.com": 1,
-            "www.europacalcio.it": 1,
-            "www.pianetamilan.it": 1,
-            "www.rainews.it": 1,
-            "www.youtube.com": 1,
-            "casinoroys.ws": 1,
-            "youtu.be": 2,
-            "www.calcioatalanta.it": 1,
-            "dlvr.it": 2,
-            "sports.yahoo.com": 1,
-            "stake.bet": 1,
-            "footywordy.blogspot.com": 1,
-            "www.bild.de": 1,
-            "www.passionecalcio.eu": 1,
-            "discord.gg": 1,
-            "ift.tt": 1
-          },
-          "media_count": 43,
-          "author_stats": {
-            "followers_count_sum": 76722566,
-            "followers_count_median": 912.0,
-            "followers_count_mean": 652109.25,
-            "followers_count_max": 26652621
-          },
-          "content_stats": {
-            "posts_original": 119,
-            "posts_retweets": 0,
-            "posts_with_media": 41,
-            "posts_with_links": 29,
-            "posts_with_hashtags": 26,
-            "posts_with_cashtags": 3,
-            "posts_with_mentions": 58
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": "2026-01-03T12:37:49Z",
-            "recent_posts_count": 60,
-            "has_recent_activity": true
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": true,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 119,
-            "posts_pos": 74,
-            "posts_neu": 17,
-            "posts_neg": 28,
-            "prob_mean": 0.6951,
-            "label_3class_mean": 0.3897,
-            "prob_min": 0.0028,
-            "prob_max": 0.9971
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 119,
-            "posts_pos": 74,
-            "posts_neu": 17,
-            "posts_neg": 28,
-            "mean_score": 0.3897,
-            "primary_conf_mean": 0.6951,
-            "referee_conf_mean": 0.5182,
-            "pos_ratio": 0.6218,
-            "neg_ratio": 0.2353,
-            "neu_ratio": 0.1429,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 102,
-              "referee_override": 0,
-              "referee_neutral_band": 17
-            }
-          }
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:15:58.413752+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "JUVUSDC",
-          "asset_unified_id": "JUVUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": false
-        },
-        "key_used": "JUV"
-      }
-    },
-    {
-      "symbol": "KAIA",
-      "snapshot_ts": "2026-01-03T13:16:04.469Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:04.469Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:04.469222Z",
-        "expires_ts": "2026-01-03T15:16:04.469222Z",
-        "session_id": "bfe2af06-38fa-482a-a358-c33255f11112",
-        "sample_count": 746,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7458.405316,
-        "total_samples": 746,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.05885,
-        "bid": 0.0588,
-        "ask": 0.0589,
-        "spread_bps": 16.99235344095206,
-        "last": 0.0584,
-        "range_pct_24h": 4.965753424657534,
-        "ticker24_chg": 2.098,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 114.72077999999999,
-        "depth_25bps_quote": 114.72077999999999,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": 0.034006709762057344,
-        "micro_premium_pct": 0.09575911789652265,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.03416103653007962,
-        "liq_eff_raw": 1.0244847738425291,
-        "liq_qv_usd": 53356.70066
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 16.9779286926988,
-        "depth_weighted": 57.360389999999995,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 26.071428571428573,
-        "liq_self_pct": 26.071428571428573,
-        "spread_pct": 0.16992353440952057,
-        "spread_bps": 16.99235344095206
-      },
-      "norm": {},
-      "scores": {
-        "final": 69.14696077511297,
-        "mom": 56.294,
-        "vol": 19.863013698630137,
-        "str": 65.5172413793103,
-        "liq": 18.403361344537817,
-        "spread": 84.7310934551945,
-        "taker": 100.0,
-        "spread_eff_score": 96.58389634699203,
-        "liq_eff_score": 37.440412696878006,
-        "flow": 50.0,
-        "depth": 70.3440497443325,
-        "microstruct": 50.17202487216625,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.3609977684058071
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.16
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {},
-          "content_stats": {},
-          "sentiment_activity": {
-            "hours_since_latest_tweet": 581.78,
-            "recent_posts_1h": 0,
-            "recent_posts_4h": 0,
-            "recent_posts_24h": 0,
-            "recent_posts_count": 0
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "prob_std": null,
-            "prob_min": null,
-            "prob_max": null,
-            "label_3class_mean": null
-          },
-          "hybrid_decision_stats": {}
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {
-            "followers_count_sum": 0,
-            "followers_count_median": null,
-            "followers_count_mean": null,
-            "followers_count_max": null
-          },
-          "content_stats": {
-            "posts_original": 0,
-            "posts_retweets": 0,
-            "posts_with_media": 0,
-            "posts_with_links": 0,
-            "posts_with_hashtags": 0,
-            "posts_with_cashtags": 0,
-            "posts_with_mentions": 0
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": null,
-            "recent_posts_count": 0,
-            "has_recent_activity": false
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "label_3class_mean": null,
-            "prob_min": null,
-            "prob_max": null
-          },
-          "hybrid_decision_stats": {}
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:04.431566+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "KAIAUSDC",
-          "asset_unified_id": "KAIAUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T12:40:41Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": true
-        },
-        "key_used": "KAIA"
-      }
-    },
-    {
-      "symbol": "LA",
-      "snapshot_ts": "2026-01-03T13:16:16.705Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:16.705Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:16.705824Z",
-        "expires_ts": "2026-01-03T15:16:16.705824Z",
-        "session_id": "38f08e9f-0b3b-4ff0-883e-ba955a6a49f0",
-        "sample_count": 745,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7446.168714,
-        "total_samples": 745,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.33255,
-        "bid": 0.3324,
-        "ask": 0.3327,
-        "spread_bps": 9.02119981957668,
-        "last": 0.3312,
-        "range_pct_24h": 8.967391304347828,
-        "ticker24_chg": 6.052,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 0.0,
-        "depth_25bps_quote": 1727.67157,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": -0.30461292503412174,
-        "micro_premium_pct": 0.09238714326872799,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.023515772273114518,
-        "liq_eff_raw": 0.582100064979807,
-        "liq_qv_usd": 40012.02517
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 21.109770808202004,
-        "depth_weighted": 345.534314,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 18.214285714285715,
-        "liq_self_pct": 18.214285714285715,
-        "spread_pct": 0.0902119981957668,
-        "spread_bps": 9.02119981957668
-      },
-      "norm": {},
-      "scores": {
-        "final": 49.83605898610072,
-        "mom": 68.156,
-        "vol": 35.86956521739131,
-        "str": 63.636363636363534,
-        "liq": 12.857142857142858,
-        "spread": 80.52294573500501,
-        "taker": 26.818083728959863,
-        "spread_eff_score": 97.64842277268855,
-        "liq_eff_score": 28.344058901586727,
-        "flow": 50.0,
-        "depth": 48.678081805443895,
-        "microstruct": 39.33904090272195,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.10153415633828022
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.07
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {},
-          "content_stats": {},
-          "sentiment_activity": {
-            "hours_since_latest_tweet": 631.95,
-            "recent_posts_1h": 0,
-            "recent_posts_4h": 0,
-            "recent_posts_24h": 0,
-            "recent_posts_count": 0
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "prob_std": null,
-            "prob_min": null,
-            "prob_max": null,
-            "label_3class_mean": null
-          },
-          "hybrid_decision_stats": {}
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {
-            "followers_count_sum": 0,
-            "followers_count_median": null,
-            "followers_count_mean": null,
-            "followers_count_max": null
-          },
-          "content_stats": {
-            "posts_original": 0,
-            "posts_retweets": 0,
-            "posts_with_media": 0,
-            "posts_with_links": 0,
-            "posts_with_hashtags": 0,
-            "posts_with_cashtags": 0,
-            "posts_with_mentions": 0
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": null,
-            "recent_posts_count": 0,
-            "has_recent_activity": false
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "label_3class_mean": null,
-            "prob_min": null,
-            "prob_max": null
-          },
-          "hybrid_decision_stats": {}
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:16.674065+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "LAUSDC",
-          "asset_unified_id": "LAUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T12:40:41Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": true
-        },
-        "key_used": "LA"
-      }
-    },
-    {
-      "symbol": "MAGIC",
-      "snapshot_ts": "2026-01-03T13:16:21.668Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:21.668Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:21.669000Z",
-        "expires_ts": "2026-01-03T15:16:21.669000Z",
-        "session_id": "01a13652-3902-4bf3-b918-4d47fca9584f",
-        "sample_count": 744,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7441.205538,
-        "total_samples": 744,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.09759999999999999,
-        "bid": 0.0973,
-        "ask": 0.0979,
-        "spread_bps": 61.47540983606592,
-        "last": 0.0995,
-        "range_pct_24h": 4.120603015075383,
-        "ticker24_chg": 2.789,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 0.0,
-        "depth_25bps_quote": 1987.82691,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": 0.1100109223525637,
-        "micro_premium_pct": 0.0949290060851929,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.049225745807151736,
-        "liq_eff_raw": 0.521163769043328,
-        "liq_qv_usd": 34794.46948
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 20.304568527917954,
-        "depth_weighted": 397.565382,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 0.0,
-        "liq_global_pct": 15.714285714285714,
-        "liq_self_pct": 15.714285714285714,
-        "spread_pct": 0.6147540983606592,
-        "spread_bps": 61.47540983606592
-      },
-      "norm": {},
-      "scores": {
-        "final": 47.74083126154936,
-        "mom": 58.367000000000004,
-        "vol": 16.482412060301534,
-        "str": 87.8048780487805,
-        "liq": 11.092436974789916,
-        "spread": 81.3428819803792,
-        "taker": 14.671155237739953,
-        "spread_eff_score": 95.07742541928482,
-        "liq_eff_score": 26.56473451265401,
-        "flow": 0.0,
-        "depth": 74.57225777523098,
-        "microstruct": 52.28612888761549,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.06561822695911575
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.09
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 55,
-          "posts_pos": 18,
-          "posts_neu": 32,
-          "posts_neg": 5,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": 0.0159
-          },
-          "category_counts": {
-            "positive_general": 1,
-            "negative_general": 0,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 0,
-            "scam_rug": 0,
-            "emoji_pos": 9,
-            "emoji_neg": 2
-          },
-          "top_terms": {
-            "positive_general": [
-              "gains",
-              "amazing",
-              "strong"
-            ],
-            "negative_general": [
-              "down",
-              "sell"
-            ],
-            "pump_hype": [],
-            "fud_fear": [],
-            "meme_slang": [],
-            "scam_rug": []
-          },
-          "platform_engagement": {
-            "total_likes": 1831,
-            "total_retweets": 286,
-            "total_replies": 41,
-            "total_quotes": 22,
-            "total_bookmarks": 65,
-            "total_impressions": null
-          },
-          "tag_counts": {
-            "treasure": 6,
-            "treasure\u8b72": 5,
-            "treasure\u8cb7\u53d6": 2,
-            "treasure\u6c42": 1,
-            "\u30a2\u30b8\u30a7": 1,
-            "zonauang": 1,
-            "zonaba": 1,
-            "zonajajan": 1,
-            "pulse_on_in_jakarta": 1,
-            "prink": 1,
-            "pulse_on_in_japan": 1,
-            "\u0e15\u0e25\u0e32\u0e14\u0e19\u0e31\u0e14treasure": 1,
-            "\u0e15\u0e25\u0e32\u0e14\u0e19\u0e31\u0e14\u0e2a\u0e21\u0e1a\u0e31\u0e15\u0e34": 1,
-            "\u0e15\u0e25\u0e32\u0e14\u0e19\u0e31\u0e14\u0e40\u0e14\u0e47\u0e01\u0e2a\u0e21\u0e1a\u0e31\u0e15\u0e34": 1,
-            "\u7531\u5229\u7f8e\u685c": 1,
-            "miao": 1,
-            "pulse_on": 1,
-            "treasureinkl": 1,
-            "pulseoninkl": 1,
-            "treasureinmy": 1
-          },
-          "cashtag_counts": {
-            "THOR": 3,
-            "YCBD": 2,
-            "ASST": 2,
-            "BYND": 2,
-            "KITT": 1,
-            "PCLA": 1,
-            "MSOS": 1,
-            "IXHL": 1,
-            "JMIA": 1,
-            "BULL": 1,
-            "QS": 1,
-            "LE": 1,
-            "SLS": 1,
-            "TRIB": 1,
-            "ASTS": 1,
-            "NBIS": 1,
-            "BITF": 1,
-            "YYAI": 1
-          },
-          "mention_counts": {
-            "lootgo_official": 2,
-            "salobremon47": 2,
-            "wealthmoose": 1,
-            "ryansaavedra": 1,
-            "tdaferben95842": 1,
-            "ledev_legods": 1,
-            "teekoned02": 1,
-            "750caitlin": 1,
-            "treasure_dojye": 1,
-            "adamcarolla": 1,
-            "harmeetkdhillon": 1,
-            "thorswap": 1,
-            "npckenz": 1,
-            "jihooniegirl_": 1,
-            "0xphenomenal1": 1,
-            "sophieraiin": 1
-          },
-          "url_domain_counts": {
-            "wa.me": 2,
-            "www.kinejun.com": 1,
-            "u-treasure.jp": 1,
-            "amzn.to": 1
-          },
-          "media_count": 26,
-          "author_stats": {
-            "distinct_authors_total": 53,
-            "distinct_authors_verified": 0,
-            "distinct_authors_blue": 6,
-            "followers_count_sum": 7236215,
-            "followers_count_median": 132,
-            "followers_count_max": 7079008,
-            "followers_count_mean": 131567.5
-          },
-          "content_stats": {
-            "posts_original": 55,
-            "posts_retweets": 0,
-            "posts_with_media": 19,
-            "posts_with_links": 5,
-            "posts_with_hashtags": 12,
-            "posts_with_cashtags": 5,
-            "posts_with_mentions": 14
-          },
-          "sentiment_activity": {
-            "recent_posts_count": 54,
-            "has_recent_activity": true,
-            "is_silent": false,
-            "latest_tweet_at": "2026-01-03T12:15:28Z",
-            "hours_since_latest_tweet": 0.42,
-            "config": {
-              "recent_horizon_hours": 24,
-              "min_recent_posts_for_activity": 5,
-              "silence_threshold_hours": 24
-            }
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": true,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 55,
-            "posts_pos": 42,
-            "posts_neu": 0,
-            "posts_neg": 13,
-            "prob_mean": 0.7432,
-            "prob_std": 0.3354,
-            "prob_min": 0.0557,
-            "prob_max": 0.9987,
-            "label_3class_mean": 0.5273
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 55,
-            "posts_pos": 42,
-            "posts_neu": 0,
-            "posts_neg": 13,
-            "mean_score": 0.5273,
-            "pos_ratio": 0.7636,
-            "neg_ratio": 0.2364,
-            "neu_ratio": 0.0,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 55,
-              "referee_override": 0,
-              "referee_neutral_band": 0
-            },
-            "primary_conf_mean": 0.7432,
-            "referee_conf_mean": 0.6937
-          }
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:02:11Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 89,
-          "posts_pos": 31,
-          "posts_neu": 52,
-          "posts_neg": 6,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": 0.0475
-          },
-          "category_counts": {
-            "positive_general": 1,
-            "negative_general": 0,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 0,
-            "scam_rug": 0,
-            "emoji_pos": 27,
-            "emoji_neg": 3
-          },
-          "top_terms": {
-            "positive_general": [
-              "success",
-              "buy",
-              "gains",
-              "amazing",
-              "strong"
-            ],
-            "scam_rug": [],
-            "pump_hype": [],
-            "fud_fear": [],
-            "negative_general": [
-              "down",
-              "sell"
-            ],
-            "meme_slang": []
-          },
-          "platform_engagement": {
-            "total_likes": 2174,
-            "total_retweets": 344,
-            "total_replies": 55,
-            "total_views": 0,
-            "avg_likes": null,
-            "avg_retweets": null,
-            "avg_replies": null,
-            "avg_views": null
-          },
-          "tag_counts": {
-            "treasure": 11,
-            "treasureinsg": 3,
-            "pulse_on_in_singapore": 3,
-            "muyumonism": 1,
-            "pulse_on": 2,
-            "wts": 1,
-            "treasure\u8b72": 6,
-            "treasureinsingapore": 1,
-            "\ud2b8\ub808\uc800": 1,
-            "funnytreasure": 1,
-            "ygselect": 1,
-            "junghwan": 1,
-            "treasure_t5": 1,
-            "teume": 1,
-            "geniusdao": 1,
-            "crypto": 1,
-            "web3": 1,
-            "treasure_reboot": 1,
-            "treasure\u8cb7\u53d6": 2,
-            "treasure\u6c42": 1,
-            "\u30a2\u30b8\u30a7": 1,
-            "zonauang": 1,
-            "zonaba": 1,
-            "zonajajan": 1,
-            "pulse_on_in_jakarta": 1,
-            "prink": 1,
-            "pulse_on_in_japan": 1,
-            "\u0e15\u0e25\u0e32\u0e14\u0e19\u0e31\u0e14treasure": 1,
-            "\u0e15\u0e25\u0e32\u0e14\u0e19\u0e31\u0e14\u0e2a\u0e21\u0e1a\u0e31\u0e15\u0e34": 1,
-            "\u0e15\u0e25\u0e32\u0e14\u0e19\u0e31\u0e14\u0e40\u0e14\u0e47\u0e01\u0e2a\u0e21\u0e1a\u0e31\u0e15\u0e34": 1,
-            "\u7531\u5229\u7f8e\u685c": 1,
-            "miao": 1,
-            "treasureinkl": 1,
-            "pulseoninkl": 1,
-            "treasureinmy": 1
-          },
-          "cashtag_counts": {
-            "THOR": 3,
-            "YCBD": 2,
-            "ASST": 2,
-            "BYND": 2,
-            "KITT": 1,
-            "PCLA": 1,
-            "MSOS": 1,
-            "IXHL": 1,
-            "JMIA": 1,
-            "BULL": 1,
-            "QS": 1,
-            "LE": 1,
-            "SLS": 1,
-            "TRIB": 1,
-            "ASTS": 1,
-            "NBIS": 1,
-            "BITF": 1,
-            "YYAI": 1
-          },
-          "mention_counts": {
-            "youtube": 2,
-            "kekephatyy": 1,
-            "h714f": 1,
-            "sunweatherman": 1,
-            "diggoryelowunvv": 1,
-            "yuri661387": 1,
-            "davidhundeyin": 1,
-            "kayamyeon": 1,
-            "lootgo_official": 2,
-            "salobremon47": 2,
-            "wealthmoose": 1,
-            "ryansaavedra": 1,
-            "tdaferben95842": 1,
-            "ledev_legods": 1,
-            "teekoned02": 1,
-            "750caitlin": 1,
-            "treasure_dojye": 1,
-            "adamcarolla": 1,
-            "harmeetkdhillon": 1,
-            "thorswap": 1,
-            "npckenz": 1,
-            "jihooniegirl_": 1,
-            "0xphenomenal1": 1,
-            "sophieraiin": 1
-          },
-          "url_domain_counts": {
-            "youtube.com": 3,
-            "www.geniusdao.com": 1,
-            "wa.me": 2,
-            "www.kinejun.com": 1,
-            "u-treasure.jp": 1,
-            "amzn.to": 1
-          },
-          "media_count": 44,
-          "author_stats": {
-            "followers_count_sum": 7619178,
-            "followers_count_median": 334.0,
-            "followers_count_mean": 71415.55,
-            "followers_count_max": 7079008
-          },
-          "content_stats": {
-            "posts_original": 89,
-            "posts_retweets": 0,
-            "posts_with_media": 32,
-            "posts_with_links": 9,
-            "posts_with_hashtags": 21,
-            "posts_with_cashtags": 5,
-            "posts_with_mentions": 23
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": "2026-01-03T12:15:28Z",
-            "recent_posts_count": 54,
-            "has_recent_activity": true
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": true,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 89,
-            "posts_pos": 67,
-            "posts_neu": 1,
-            "posts_neg": 21,
-            "prob_mean": 0.7569,
-            "label_3class_mean": 0.5136,
-            "prob_min": 0.0557,
-            "prob_max": 0.9987
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 89,
-            "posts_pos": 67,
-            "posts_neu": 1,
-            "posts_neg": 21,
-            "mean_score": 0.5136,
-            "primary_conf_mean": 0.7569,
-            "referee_conf_mean": 0.6875,
-            "pos_ratio": 0.7528,
-            "neg_ratio": 0.236,
-            "neu_ratio": 0.0112,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 88,
-              "referee_override": 0,
-              "referee_neutral_band": 1
-            }
-          }
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:21.052685+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "MAGICUSDC",
-          "asset_unified_id": "MAGICUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": false
-        },
-        "key_used": "MAGIC"
-      }
-    },
-    {
-      "symbol": "MANTA",
-      "snapshot_ts": "2026-01-03T13:16:28.172Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:28.172Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:28.172480Z",
-        "expires_ts": "2026-01-03T15:16:28.172480Z",
-        "session_id": "a3c98799-0cf9-4214-a1ed-88e23fa65c1d",
-        "sample_count": 744,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7434.702058,
-        "total_samples": 744,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.0799,
-        "bid": 0.0798,
-        "ask": 0.08,
-        "spread_bps": 25.031289111389952,
-        "last": 0.0802,
-        "range_pct_24h": 6.857855361595999,
-        "ticker24_chg": 1.391,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 132.17174999999997,
-        "depth_25bps_quote": 1210.59759,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": 0.011576426507365612,
-        "micro_premium_pct": 0.09688473520249213,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.018170489946191432,
-        "liq_eff_raw": 0.9364078887745545,
-        "liq_qv_usd": 38209.21908
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 12.468827930174921,
-        "depth_weighted": 281.771043,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 17.857142857142858,
-        "liq_self_pct": 17.857142857142858,
-        "spread_pct": 0.25031289111389954,
-        "spread_bps": 25.031289111389952
-      },
-      "norm": {},
-      "scores": {
-        "final": 65.66675937884396,
-        "mom": 54.173,
-        "vol": 27.431421446383997,
-        "str": 45.45454545454531,
-        "liq": 12.605042016806722,
-        "spread": 89.32544980609029,
-        "taker": 100.0,
-        "spread_eff_score": 98.18295100538086,
-        "liq_eff_score": 35.993918502098126,
-        "flow": 50.0,
-        "depth": 69.44847967143878,
-        "microstruct": 49.724239835719395,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.2445184399837012
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.06
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 1,
-          "posts_pos": 1,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {
-            "positive_general": 1,
-            "negative_general": 0,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 0,
-            "scam_rug": 0,
-            "emoji_pos": 1,
-            "emoji_neg": 0
-          },
-          "top_terms": {
-            "positive_general": [],
-            "negative_general": [],
-            "pump_hype": [
-              "breakout"
-            ],
-            "fud_fear": [],
-            "meme_slang": [],
-            "scam_rug": []
-          },
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 1,
-            "total_quotes": 0,
-            "total_bookmarks": 0,
-            "total_impressions": null
-          },
-          "tag_counts": {
-            "manta": 1
-          },
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {
-            "t.me": 1
-          },
-          "media_count": 0,
-          "author_stats": {
-            "distinct_authors_total": 1,
-            "distinct_authors_verified": 0,
-            "distinct_authors_blue": 0,
-            "followers_count_sum": 801,
-            "followers_count_median": 801,
-            "followers_count_max": 801,
-            "followers_count_mean": 801
-          },
-          "content_stats": {
-            "posts_original": 1,
-            "posts_retweets": 0,
-            "posts_with_media": 0,
-            "posts_with_links": 1,
-            "posts_with_hashtags": 1,
-            "posts_with_cashtags": 0,
-            "posts_with_mentions": 0
-          },
-          "sentiment_activity": {
-            "recent_posts_count": 1,
-            "has_recent_activity": false,
-            "is_silent": false,
-            "latest_tweet_at": "2026-01-03T12:10:55Z",
-            "hours_since_latest_tweet": 0.5,
-            "config": {
-              "recent_horizon_hours": 24,
-              "min_recent_posts_for_activity": 5,
-              "silence_threshold_hours": 24
-            }
-          },
-          "bucket_status": "insufficient_data",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 1,
-            "posts_pos": 1,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": 0.827,
-            "prob_std": 0.0,
-            "prob_min": 0.827,
-            "prob_max": 0.827,
-            "label_3class_mean": 1
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 1,
-            "posts_pos": 1,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "mean_score": 1.0,
-            "pos_ratio": 1.0,
-            "neg_ratio": 0.0,
-            "neu_ratio": 0.0,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 1,
-              "referee_override": 0,
-              "referee_neutral_band": 0
-            },
-            "primary_conf_mean": 0.827,
-            "referee_conf_mean": 0.8645
-          }
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:02:11Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 11,
-          "posts_pos": 4,
-          "posts_neu": 5,
-          "posts_neg": 2,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": 0.1145
-          },
-          "category_counts": {
-            "positive_general": 1,
-            "negative_general": 0,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 3,
-            "scam_rug": 0,
-            "emoji_pos": 2,
-            "emoji_neg": 4
-          },
-          "top_terms": {
-            "positive_general": [],
-            "scam_rug": [],
-            "pump_hype": [
-              "breakout"
-            ],
-            "fud_fear": [],
-            "negative_general": [],
-            "meme_slang": []
-          },
-          "platform_engagement": {
-            "total_likes": 10,
-            "total_retweets": 0,
-            "total_replies": 1,
-            "total_views": 0,
-            "avg_likes": null,
-            "avg_retweets": null,
-            "avg_replies": null,
-            "avg_views": null
-          },
-          "tag_counts": {
-            "truusdt": 1,
-            "tokio": 1,
-            "japanesegp": 1,
-            "texas": 1,
-            "newyear2026": 1,
-            "manta": 1
-          },
-          "cashtag_counts": {
-            "XRP": 13,
-            "ADA": 12,
-            "MANTA": 10,
-            "BTC": 10,
-            "ETH": 10,
-            "DOGE": 10,
-            "TRUMP": 10,
-            "AVAX": 8,
-            "QQQ": 8,
-            "GME": 8,
-            "AMC": 8,
-            "COIN": 7,
-            "HOOD": 7,
-            "ASTER": 7,
-            "SWARMS": 7,
-            "USDT": 7,
-            "SOL": 6,
-            "SPX": 6,
-            "SMCI": 6,
-            "HIPPO": 6
-          },
-          "mention_counts": {},
-          "url_domain_counts": {
-            "manta-io.digital": 11,
-            "t.me": 1
-          },
-          "media_count": 10,
-          "author_stats": {
-            "followers_count_sum": 7843,
-            "followers_count_median": 624.5,
-            "followers_count_mean": 752.6,
-            "followers_count_max": 2403
-          },
-          "content_stats": {
-            "posts_original": 11,
-            "posts_retweets": 0,
-            "posts_with_media": 10,
-            "posts_with_links": 11,
-            "posts_with_hashtags": 3,
-            "posts_with_cashtags": 10,
-            "posts_with_mentions": 0
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": "2026-01-03T12:10:55Z",
-            "recent_posts_count": 10,
-            "has_recent_activity": true
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": true,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 11,
-            "posts_pos": 10,
-            "posts_neu": 0,
-            "posts_neg": 1,
-            "prob_mean": 0.8357,
-            "label_3class_mean": 0.9,
-            "prob_min": 0.3806,
-            "prob_max": 0.9442
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 11,
-            "posts_pos": 10,
-            "posts_neu": 0,
-            "posts_neg": 1,
-            "mean_score": 0.9,
-            "primary_conf_mean": 0.8357,
-            "referee_conf_mean": 0.8344,
-            "pos_ratio": 0.9091,
-            "neg_ratio": 0.0909,
-            "neu_ratio": 0.0,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 11,
-              "referee_override": 0,
-              "referee_neutral_band": 0
-            }
-          }
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:28.125197+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "MANTAUSDC",
-          "asset_unified_id": "MANTAUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": false
-        },
-        "key_used": "MANTA"
-      }
-    },
-    {
-      "symbol": "MITO",
-      "snapshot_ts": "2026-01-03T13:16:34.559Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:34.559Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:34.559553Z",
-        "expires_ts": "2026-01-03T15:16:34.559553Z",
-        "session_id": "059944e7-e824-4867-a1b0-b1dd38bd2a2f",
-        "sample_count": 743,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7428.314985,
-        "total_samples": 743,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.06695000000000001,
-        "bid": 0.0669,
-        "ask": 0.067,
-        "spread_bps": 14.936519790889148,
-        "last": 0.06776,
-        "range_pct_24h": 4.619244391971656,
-        "ticker24_chg": 1.044,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 151.042506,
-        "depth_10bps_quote": 4929.866564,
-        "depth_25bps_quote": 10771.105159,
-        "depth_bid_qty_quote": 106.68448000000001,
-        "depth_ask_qty_quote": 44.358025999999995,
-        "obi_5": 0.7580751285334338,
-        "micro_premium_pct": 0.09562514124368643,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.012749447762260686,
-        "liq_eff_raw": 2.1589986652894093,
-        "liq_qv_usd": 42685.934192
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 5.8910162002943105,
-        "depth_weighted": 3708.7022540000003,
-        "depth_imbalance": 0.41264181620503576,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 21.071428571428573,
-        "liq_self_pct": 21.071428571428573,
-        "spread_pct": 0.1493651979088915,
-        "spread_bps": 14.936519790889148
-      },
-      "norm": {},
-      "scores": {
-        "final": 64.682949060394,
-        "mom": 53.132,
-        "vol": 18.476977567886625,
-        "str": 53.993610223642186,
-        "liq": 14.873949579831933,
-        "spread": 96.0313454003512,
-        "taker": 75.60142913854703,
-        "spread_eff_score": 98.72505522377392,
-        "liq_eff_score": 49.43561327863533,
-        "flow": 50.0,
-        "depth": 98.25005649747456,
-        "microstruct": 71.8672821047403,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.2680202294237799
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.1
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {},
-          "content_stats": {},
-          "sentiment_activity": {
-            "hours_since_latest_tweet": 585.23,
-            "recent_posts_1h": 0,
-            "recent_posts_4h": 0,
-            "recent_posts_24h": 0,
-            "recent_posts_count": 0
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "prob_std": null,
-            "prob_min": null,
-            "prob_max": null,
-            "label_3class_mean": null
-          },
-          "hybrid_decision_stats": {}
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:02:11Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 3,
-          "posts_pos": 1,
-          "posts_neu": 1,
-          "posts_neg": 1,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {
-            "positive_general": 0,
-            "negative_general": 1,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 0,
-            "scam_rug": 0,
-            "emoji_pos": 0,
-            "emoji_neg": 0
-          },
-          "top_terms": {
-            "positive_general": [
-              "gains"
-            ],
-            "fud_fear": [],
-            "negative_general": [],
-            "scam_rug": [],
-            "meme_slang": [],
-            "pump_hype": [
-              "pump"
-            ]
-          },
-          "platform_engagement": {
-            "total_likes": 3,
-            "total_retweets": 0,
-            "total_replies": 1,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {
-            "mmga": 1,
-            "gmorse": 1
-          },
-          "cashtag_counts": {
-            "MITO": 4,
-            "GMITO": 2
-          },
-          "mention_counts": {
-            "mitosisorg": 3,
-            "morse_404": 2,
-            "0xwhysomad": 1
-          },
-          "url_domain_counts": {},
-          "media_count": 2,
-          "author_stats": {
-            "followers_count_sum": 4141,
-            "followers_count_median": 435,
-            "followers_count_mean": 1380.3,
-            "followers_count_max": 3271
-          },
-          "content_stats": {
-            "posts_original": 3,
-            "posts_retweets": 0,
-            "posts_with_media": 2,
-            "posts_with_links": 0,
-            "posts_with_hashtags": 1,
-            "posts_with_cashtags": 3,
-            "posts_with_mentions": 2
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": null,
-            "recent_posts_count": 3,
-            "has_recent_activity": false
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 3,
-            "posts_pos": 2,
-            "posts_neu": 0,
-            "posts_neg": 1,
-            "prob_mean": 0.762,
-            "label_3class_mean": 0.3333,
-            "prob_min": 0.3224,
-            "prob_max": 0.9894
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 3,
-            "posts_pos": 2,
-            "posts_neu": 0,
-            "posts_neg": 1,
-            "mean_score": 0.3333,
-            "primary_conf_mean": 0.762,
-            "referee_conf_mean": 0.7209,
-            "pos_ratio": 0.6667,
-            "neg_ratio": 0.3333,
-            "neu_ratio": 0.0,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 3,
-              "referee_override": 0,
-              "referee_neutral_band": 0
-            }
-          }
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:34.509891+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "MITOUSDC",
-          "asset_unified_id": "MITOUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T12:40:41Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": true
-        },
-        "key_used": "MITO"
-      }
-    },
-    {
-      "symbol": "NIL",
-      "snapshot_ts": "2026-01-03T13:16:40.929Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:40.929Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:40.929442Z",
-        "expires_ts": "2026-01-03T15:16:40.929442Z",
-        "session_id": "7202ee41-ff74-49ed-ae07-7ec4e41e9b6f",
-        "sample_count": 743,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7421.945096,
-        "total_samples": 743,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 0.0775,
-        "bid": 0.0773,
-        "ask": 0.0777,
-        "spread_bps": 51.612903225807926,
-        "last": 0.0766,
-        "range_pct_24h": 6.135770234986958,
-        "ticker24_chg": 0.0,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 0.0,
-        "depth_25bps_quote": 773.8235199999999,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": 0.41264181620503576,
-        "micro_premium_pct": 0.0003708702254,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.04205902539464765,
-        "liq_eff_raw": 0.43260625549857734,
-        "liq_qv_usd": 35775.43186
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 25.83979328165449,
-        "depth_weighted": 154.764704,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 16.428571428571427,
-        "liq_self_pct": 16.428571428571427,
-        "spread_pct": 0.5161290322580793,
-        "spread_bps": 51.612903225807926
-      },
-      "norm": {},
-      "scores": {
-        "final": 62.358431304447365,
-        "mom": 50.0,
-        "vol": 24.54308093994783,
-        "str": 44.6808510638298,
-        "liq": 11.596638655462183,
-        "spread": 75.70770243581228,
-        "taker": 100.0,
-        "spread_eff_score": 95.79409746053523,
-        "liq_eff_score": 23.567983120855114,
-        "flow": 50.0,
-        "depth": 78.95783478896026,
-        "microstruct": 42.453428531231076,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.20371525397543816
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.09
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {},
-          "content_stats": {},
-          "sentiment_activity": {
-            "hours_since_latest_tweet": 581.51,
-            "recent_posts_1h": 0,
-            "recent_posts_4h": 0,
-            "recent_posts_24h": 0,
-            "recent_posts_count": 0
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "prob_std": null,
-            "prob_min": null,
-            "prob_max": null,
-            "label_3class_mean": null
-          },
-          "hybrid_decision_stats": {}
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 0,
-          "posts_pos": 0,
-          "posts_neu": 0,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {},
-          "top_terms": {},
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_views": 0,
-            "avg_likes": 0.0,
-            "avg_retweets": 0.0,
-            "avg_replies": 0.0,
-            "avg_views": 0.0
-          },
-          "tag_counts": {},
-          "cashtag_counts": {},
-          "mention_counts": {},
-          "url_domain_counts": {},
-          "media_count": 0,
-          "author_stats": {
-            "followers_count_sum": 0,
-            "followers_count_median": null,
-            "followers_count_mean": null,
-            "followers_count_max": null
-          },
-          "content_stats": {
-            "posts_original": 0,
-            "posts_retweets": 0,
-            "posts_with_media": 0,
-            "posts_with_links": 0,
-            "posts_with_hashtags": 0,
-            "posts_with_cashtags": 0,
-            "posts_with_mentions": 0
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": null,
-            "recent_posts_count": 0,
-            "has_recent_activity": false
-          },
-          "bucket_status": "silent",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 0,
-            "posts_pos": 0,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": null,
-            "label_3class_mean": null,
-            "prob_min": null,
-            "prob_max": null
-          },
-          "hybrid_decision_stats": {}
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:40.881758+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "NILUSDC",
-          "asset_unified_id": "NILUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T12:40:41Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": true
-        },
-        "key_used": "NIL"
-      }
-    },
-    {
-      "symbol": "NMR",
-      "snapshot_ts": "2026-01-03T13:16:47.151Z",
-      "meta": {
-        "schema_version": 7,
-        "source": "spot+usdsm-futures",
-        "universe_page": 0,
-        "universe_page_size": 40,
-        "normalization_version": "v1",
-        "scoring_version": "v2",
-        "pairbonus_version": "v0",
-        "futures_api_base": "fapi.binance.com",
-        "universe_snapshot_id": "BOOTSTRAP",
-        "universe_snapshot_ts": "2026-01-03T13:16:47.151Z",
-        "universe_snapshot_lag_sec": 0.0,
-        "added_ts": "2026-01-03T13:16:47.151191Z",
-        "expires_ts": "2026-01-03T15:16:47.151191Z",
-        "session_id": "44263dd3-2134-4a92-96fe-daf42391208f",
-        "sample_count": 742,
-        "last_sample_ts": "2026-01-03T15:20:21.437498+00:00",
-        "expired_ts": "2026-01-03T15:20:22.874538+00:00",
-        "duration_sec": 7415.723347,
-        "total_samples": 742,
-        "archive_schema_version": 7
-      },
-      "spot_raw": {
-        "mid": 9.675,
-        "bid": 9.67,
-        "ask": 9.68,
-        "spread_bps": 10.335917312661277,
-        "last": 9.74,
-        "range_pct_24h": 3.388090349075976,
-        "ticker24_chg": 0.828,
-        "taker_buy_ratio_5m": 0.5,
-        "depth_5bps_quote": 0.0,
-        "depth_10bps_quote": 52.1747,
-        "depth_25bps_quote": 274.871,
-        "depth_bid_qty_quote": 0.0,
-        "depth_ask_qty_quote": 0.0,
-        "obi_5": 0.4466659881757539,
-        "micro_premium_pct": 0.09743194658448902,
-        "avg_impact_pct": 0.0,
-        "spread_eff_raw": 0.030318594263123656,
-        "liq_eff_raw": 1.3418881928312663,
-        "liq_qv_usd": 42965.3448
-      },
-      "futures_raw": null,
-      "derived": {
-        "depth_spread_bps": 10.277492291880563,
-        "depth_weighted": 70.62661,
-        "depth_imbalance": 0.0,
-        "depth_skew": 0.0,
-        "flow": 50.0,
-        "liq_global_pct": 21.428571428571427,
-        "liq_self_pct": 21.428571428571427,
-        "spread_pct": 0.10335917312661276,
-        "spread_bps": 10.335917312661277
-      },
-      "norm": {},
-      "scores": {
-        "final": 54.95530273348411,
-        "mom": 52.484,
-        "vol": 13.552361396303906,
-        "str": 48.48484848484852,
-        "liq": 15.126050420168067,
-        "spread": 91.55896565097555,
-        "taker": 50.0,
-        "spread_eff_score": 96.96814057368763,
-        "liq_eff_score": 41.78321099435686,
-        "flow": 50.0,
-        "depth": 95.77273792434084,
-        "microstruct": 62.88636896217042,
-        "compression_score": 50.0
-      },
-      "flags": {
-        "spot_data_ok": true,
-        "futures_data_ok": false,
-        "futures_stale": true,
-        "compression_enabled": false,
-        "mom_fallback": false,
-        "vol_fallback": false,
-        "spread_fallback": false,
-        "pair_bonus_applied": 0.19955378397254597
-      },
-      "diag": {
-        "builder_version": "v1.0",
-        "build_duration_ms": 0.1
-      },
-      "labels": {},
-      "twitter_sentiment_windows": {
-        "last_cycle": {
-          "posts_total": 2,
-          "posts_pos": 0,
-          "posts_neu": 2,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {
-            "positive_general": 0,
-            "negative_general": 0,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 0,
-            "scam_rug": 0,
-            "emoji_pos": 0,
-            "emoji_neg": 0
-          },
-          "top_terms": {
-            "positive_general": [],
-            "negative_general": [],
-            "pump_hype": [],
-            "fud_fear": [],
-            "meme_slang": [],
-            "scam_rug": []
-          },
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 0,
-            "total_quotes": 0,
-            "total_bookmarks": 0,
-            "total_impressions": null
-          },
-          "tag_counts": {},
-          "cashtag_counts": {
-            "NMR": 1
-          },
-          "mention_counts": {},
-          "url_domain_counts": {
-            "spin-spin.com": 1,
-            "discord.gg": 1
-          },
-          "media_count": 0,
-          "author_stats": {
-            "distinct_authors_total": 2,
-            "distinct_authors_verified": 0,
-            "distinct_authors_blue": 0,
-            "followers_count_sum": 1267,
-            "followers_count_median": 633,
-            "followers_count_max": 1248,
-            "followers_count_mean": 633.5
-          },
-          "content_stats": {
-            "posts_original": 2,
-            "posts_retweets": 0,
-            "posts_with_media": 0,
-            "posts_with_links": 2,
-            "posts_with_hashtags": 0,
-            "posts_with_cashtags": 1,
-            "posts_with_mentions": 0
-          },
-          "sentiment_activity": {
-            "recent_posts_count": 2,
-            "has_recent_activity": false,
-            "is_silent": false,
-            "latest_tweet_at": "2026-01-03T12:20:24Z",
-            "hours_since_latest_tweet": 0.34,
-            "config": {
-              "recent_horizon_hours": 24,
-              "min_recent_posts_for_activity": 5,
-              "silence_threshold_hours": 24
-            }
-          },
-          "bucket_status": "insufficient_data",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 2,
-            "posts_pos": 2,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": 0.9021,
-            "prob_std": 0.1358,
-            "prob_min": 0.8061,
-            "prob_max": 0.9981,
-            "label_3class_mean": 1
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 2,
-            "posts_pos": 2,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "mean_score": 1.0,
-            "pos_ratio": 1.0,
-            "neg_ratio": 0.0,
-            "neu_ratio": 0.0,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 2,
-              "referee_override": 0,
-              "referee_neutral_band": 0
-            },
-            "primary_conf_mean": 0.9021,
-            "referee_conf_mean": 0.9726
-          }
-        },
-        "last_2_cycles": {
-          "window_cycles": 2,
-          "from_cycle_id": 771,
-          "to_cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:02:11Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "posts_total": 4,
-          "posts_pos": 0,
-          "posts_neu": 4,
-          "posts_neg": 0,
-          "lexicon_sentiment": {
-            "scale": "-1 to 1",
-            "score": null
-          },
-          "category_counts": {
-            "positive_general": 0,
-            "negative_general": 0,
-            "pump_hype": 0,
-            "fud_fear": 0,
-            "meme_slang": 0,
-            "scam_rug": 0,
-            "emoji_pos": 0,
-            "emoji_neg": 0
-          },
-          "top_terms": {
-            "positive_general": [],
-            "scam_rug": [],
-            "pump_hype": [],
-            "fud_fear": [],
-            "negative_general": [],
-            "meme_slang": []
-          },
-          "platform_engagement": {
-            "total_likes": 0,
-            "total_retweets": 0,
-            "total_replies": 2,
-            "total_views": 0,
-            "avg_likes": null,
-            "avg_retweets": null,
-            "avg_replies": null,
-            "avg_views": null
-          },
-          "tag_counts": {},
-          "cashtag_counts": {
-            "NMR": 1
-          },
-          "mention_counts": {
-            "purplemur": 1,
-            "bitqua": 1,
-            "slickwillie227": 1,
-            "numerai": 1
-          },
-          "url_domain_counts": {
-            "spin-spin.com": 1,
-            "discord.gg": 1
-          },
-          "media_count": 0,
-          "author_stats": {
-            "followers_count_sum": 7080583,
-            "followers_count_median": 1770145.5,
-            "followers_count_mean": 1770145.75,
-            "followers_count_max": 7076907
-          },
-          "content_stats": {
-            "posts_original": 4,
-            "posts_retweets": 0,
-            "posts_with_media": 0,
-            "posts_with_links": 2,
-            "posts_with_hashtags": 0,
-            "posts_with_cashtags": 1,
-            "posts_with_mentions": 1
-          },
-          "sentiment_activity": {
-            "latest_tweet_at": "2026-01-03T12:20:24Z",
-            "recent_posts_count": 2,
-            "has_recent_activity": false
-          },
-          "bucket_status": "ok",
-          "bucket_has_valid_sentiment": false,
-          "bucket_min_posts_for_score": 5,
-          "ai_sentiment": {
-            "scoring_system": "hybrid",
-            "primary_model": "run8_final",
-            "referee_model": "run7_final",
-            "posts_scored": 4,
-            "posts_pos": 4,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "prob_mean": 0.8973,
-            "label_3class_mean": 1.0,
-            "prob_min": 0.8027,
-            "prob_max": 0.9981
-          },
-          "hybrid_decision_stats": {
-            "posts_scored": 4,
-            "posts_pos": 4,
-            "posts_neu": 0,
-            "posts_neg": 0,
-            "mean_score": 1.0,
-            "primary_conf_mean": 0.8973,
-            "referee_conf_mean": 0.8133,
-            "pos_ratio": 1.0,
-            "neg_ratio": 0.0,
-            "neu_ratio": 0.0,
-            "decision_sources": {
-              "single_model": 0,
-              "primary_default": 4,
-              "referee_override": 0,
-              "referee_neutral_band": 0
-            }
-          }
-        }
-      },
-      "twitter_sentiment_meta": {
-        "source": "twscrape_snapshot",
-        "captured_at_utc": "2026-01-03T13:16:47.107259+00:00",
-        "bucket_meta": {
-          "platform": "twitter",
-          "coin": "NMRUSDC",
-          "asset_unified_id": "NMRUSDC",
-          "date": "2026-01-03",
-          "bucket_span": "cycle",
-          "cycle_id": 772,
-          "cycle_start_utc": "2026-01-03T11:51:34Z",
-          "cycle_end_utc": "2026-01-03T12:40:41Z",
-          "created_at_utc": "2026-01-03T12:41:44Z",
-          "scraper_version": "0.3.0",
-          "sentiment_model_version": "v1.0",
-          "lexicon_version": "2025-11-23_v3",
-          "platform_cycle_id": 772,
-          "is_silent": false
-        },
-        "key_used": "NMR"
-      }
-    },
     {
       "symbol": "OSMO",
       "snapshot_ts": "2026-01-03T13:16:58.506Z",
@@ -39091,6 +36422,3482 @@
           "is_silent": false
         },
         "key_used": "ZKC"
+      }
+    },
+    {
+      "symbol": "SYN",
+      "snapshot_ts": "2026-01-03T13:59:15.236Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T13:59:15.236Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T13:59:15.236465Z",
+        "expires_ts": "2026-01-03T15:59:15.236465Z",
+        "session_id": "a14bb114-4a68-4982-81d3-15f366941a55",
+        "sample_count": 727,
+        "last_sample_ts": "2026-01-03T16:00:23.732766+00:00",
+        "expired_ts": "2026-01-03T16:00:24.790763+00:00",
+        "duration_sec": 7269.554298,
+        "total_samples": 727,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 0.05635,
+        "bid": 0.0562,
+        "ask": 0.0565,
+        "spread_bps": 53.23868677905974,
+        "last": 0.057,
+        "range_pct_24h": 10.526315789473681,
+        "ticker24_chg": 5.36,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 0.0,
+        "depth_10bps_quote": 61.912369999999996,
+        "depth_25bps_quote": 61.912369999999996,
+        "depth_bid_qty_quote": 0.0,
+        "depth_ask_qty_quote": 0.0,
+        "obi_5": 0.10591896003717448,
+        "micro_premium_pct": 0.09562554680664904,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.01662292213473364,
+        "liq_eff_raw": 1.1175520674144586,
+        "liq_qv_usd": 65088.09582
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 17.513134851138858,
+        "depth_weighted": 30.956184999999998,
+        "depth_imbalance": 0.0,
+        "depth_skew": 0.0,
+        "flow": 0.0,
+        "liq_global_pct": 29.285714285714285,
+        "liq_self_pct": 29.285714285714285,
+        "spread_pct": 0.5323868677905974,
+        "spread_bps": 53.23868677905974
+      },
+      "norm": {},
+      "scores": {
+        "final": 55.837027690460296,
+        "mom": 66.08,
+        "vol": 42.105263157894726,
+        "str": 56.666666666666686,
+        "liq": 20.672268907563026,
+        "spread": 84.1859053332614,
+        "taker": 48.44081514370584,
+        "spread_eff_score": 98.33770778652664,
+        "liq_eff_score": 38.83954859183563,
+        "flow": 0.0,
+        "depth": 74.6053563248901,
+        "microstruct": 52.302678162445034,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.25887961056579956
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.05
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 15,
+          "posts_pos": 1,
+          "posts_neu": 14,
+          "posts_neg": 0,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.0606
+          },
+          "category_counts": {
+            "positive_general": 0,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 1,
+            "scam_rug": 0,
+            "emoji_pos": 0,
+            "emoji_neg": 0
+          },
+          "top_terms": {
+            "positive_general": [],
+            "negative_general": [
+              "lost"
+            ],
+            "pump_hype": [],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 20,
+            "total_retweets": 1,
+            "total_replies": 3,
+            "total_quotes": 1,
+            "total_bookmarks": 0,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "\u3088\u305d\u306e\u5b50\u306e\u9854\u3060\u3051\u63cf\u304d\u305f\u3044": 1,
+            "\u304a\u984c\u30ac\u30c1\u30e3": 1,
+            "\u6b7b\u306b\u3086\u304f\u8ab0\u304b\u306e\u53f0\u8a5e\u30ac\u30c1\u30e3": 1
+          },
+          "cashtag_counts": {},
+          "mention_counts": {
+            "city_synapse_tl": 7,
+            "ast_84_": 2,
+            "lilliangibson": 1,
+            "maikpi70": 1,
+            "vsyunka26": 1,
+            "kbkbr666": 1,
+            "deltythe73rd": 1,
+            "madddy17dutta": 1,
+            "inunoewanko": 1
+          },
+          "url_domain_counts": {
+            "odaibako.net": 2
+          },
+          "media_count": 4,
+          "author_stats": {
+            "distinct_authors_total": 12,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 1,
+            "followers_count_sum": 9772,
+            "followers_count_median": 158,
+            "followers_count_max": 4153,
+            "followers_count_mean": 651.5
+          },
+          "content_stats": {
+            "posts_original": 15,
+            "posts_retweets": 0,
+            "posts_with_media": 3,
+            "posts_with_links": 2,
+            "posts_with_hashtags": 2,
+            "posts_with_cashtags": 0,
+            "posts_with_mentions": 10
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 14,
+            "has_recent_activity": true,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T12:50:13Z",
+            "hours_since_latest_tweet": 0.66,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 15,
+            "posts_pos": 12,
+            "posts_neu": 2,
+            "posts_neg": 1,
+            "prob_mean": 0.8352,
+            "prob_std": 0.203,
+            "prob_min": 0.1315,
+            "prob_max": 0.9844,
+            "label_3class_mean": 0.7333
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 15,
+            "posts_pos": 12,
+            "posts_neu": 2,
+            "posts_neg": 1,
+            "mean_score": 0.7333,
+            "pos_ratio": 0.8,
+            "neg_ratio": 0.0667,
+            "neu_ratio": 0.1333,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 13,
+              "referee_override": 0,
+              "referee_neutral_band": 2
+            },
+            "primary_conf_mean": 0.8352,
+            "referee_conf_mean": 0.8205
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 772,
+          "to_cycle_id": 773,
+          "cycle_start_utc": "2026-01-03T11:51:34Z",
+          "cycle_end_utc": "2026-01-03T13:29:46Z",
+          "posts_total": 40,
+          "posts_pos": 10,
+          "posts_neu": 30,
+          "posts_neg": 0,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.1626
+          },
+          "category_counts": {
+            "positive_general": 1,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 1,
+            "scam_rug": 0,
+            "emoji_pos": 3,
+            "emoji_neg": 0
+          },
+          "top_terms": {
+            "positive_general": [
+              "growth",
+              "long",
+              "good"
+            ],
+            "scam_rug": [],
+            "pump_hype": [],
+            "fud_fear": [],
+            "negative_general": [
+              "lost"
+            ],
+            "meme_slang": []
+          },
+          "platform_engagement": {
+            "total_likes": 37,
+            "total_retweets": 1,
+            "total_replies": 4,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "\u304a\u984c\u30ac\u30c1\u30e3": 5,
+            "\u6b7b\u306b\u3086\u304f\u8ab0\u304b\u306e\u53f0\u8a5e\u30ac\u30c1\u30e3": 5,
+            "ai": 1,
+            "pharma": 1,
+            "biomed": 1,
+            "rna": 1,
+            "ashg": 1,
+            "eshg": 1,
+            "\u3088\u305d\u306e\u5b50\u306e\u9854\u3060\u3051\u63cf\u304d\u305f\u3044": 1
+          },
+          "cashtag_counts": {
+            "SYN": 4,
+            "ASTER": 4,
+            "AVNT": 4,
+            "SOMI": 4,
+            "FHE": 4,
+            "ALPINE": 4,
+            "GRASS": 4,
+            "THE": 4,
+            "FORM": 4,
+            "USELESS": 4
+          },
+          "mention_counts": {
+            "city_synapse_tl": 19,
+            "synapse_feeds": 2,
+            "grok": 2,
+            "xai": 2,
+            "kikaku929kinen": 1,
+            "kou0006": 1,
+            "sciencemagazine": 1,
+            "e_opore": 1,
+            "star_knight12": 1,
+            "dev___guy": 1,
+            "kirat_tw": 1,
+            "sugoku_synapse": 1,
+            "ast_84_": 2,
+            "lilliangibson": 1,
+            "maikpi70": 1,
+            "vsyunka26": 1,
+            "kbkbr666": 1,
+            "deltythe73rd": 1,
+            "madddy17dutta": 1,
+            "inunoewanko": 1
+          },
+          "url_domain_counts": {
+            "odaibako.net": 9,
+            "t.me": 4,
+            "doi.org": 1
+          },
+          "media_count": 5,
+          "author_stats": {
+            "followers_count_sum": 37430,
+            "followers_count_median": 158.0,
+            "followers_count_mean": 878.9,
+            "followers_count_max": 5370
+          },
+          "content_stats": {
+            "posts_original": 40,
+            "posts_retweets": 0,
+            "posts_with_media": 4,
+            "posts_with_links": 14,
+            "posts_with_hashtags": 7,
+            "posts_with_cashtags": 4,
+            "posts_with_mentions": 29
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T12:50:13Z",
+            "recent_posts_count": 25,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 40,
+            "posts_pos": 34,
+            "posts_neu": 2,
+            "posts_neg": 4,
+            "prob_mean": 0.8316,
+            "label_3class_mean": 0.7467,
+            "prob_min": 0.1158,
+            "prob_max": 0.999
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 40,
+            "posts_pos": 34,
+            "posts_neu": 2,
+            "posts_neg": 4,
+            "mean_score": 0.7467,
+            "primary_conf_mean": 0.8316,
+            "referee_conf_mean": 0.8359,
+            "pos_ratio": 0.85,
+            "neg_ratio": 0.1,
+            "neu_ratio": 0.05,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 38,
+              "referee_override": 0,
+              "referee_neutral_band": 2
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T13:59:15.208739+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "SYNUSDC",
+          "asset_unified_id": "SYNUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 773,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T13:29:46Z",
+          "created_at_utc": "2026-01-03T13:31:06Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 773,
+          "is_silent": false
+        },
+        "key_used": "SYN"
+      }
+    },
+    {
+      "symbol": "UNI",
+      "snapshot_ts": "2026-01-03T14:26:14.634Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:26:14.634Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:26:14.634945Z",
+        "expires_ts": "2026-01-03T16:26:14.634945Z",
+        "session_id": "a6e19d2d-100b-431d-ad83-cbb21ff5808b",
+        "sample_count": 745,
+        "last_sample_ts": "2026-01-03T16:30:23.469795+00:00",
+        "expired_ts": "2026-01-03T16:30:24.477270+00:00",
+        "duration_sec": 7449.842325,
+        "total_samples": 745,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 5.8575,
+        "bid": 5.857,
+        "ask": 5.858,
+        "spread_bps": 1.7072129748176625,
+        "last": 5.829,
+        "range_pct_24h": 6.639217704580553,
+        "ticker24_chg": -0.103,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 2535.62346,
+        "depth_10bps_quote": 6695.485060000001,
+        "depth_25bps_quote": 41953.675050000005,
+        "depth_bid_qty_quote": 1114.7369500000002,
+        "depth_ask_qty_quote": 1420.8865099999998,
+        "obi_5": -0.10175419839720161,
+        "micro_premium_pct": 0.00295742802884,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.007732702406371107,
+        "liq_eff_raw": 8.354165921812266,
+        "liq_qv_usd": 2396470.6684
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 5.135227661759867,
+        "depth_weighted": 11667.192258000003,
+        "depth_imbalance": -0.12073936246038662,
+        "depth_skew": 0.0,
+        "flow": 100.0,
+        "liq_global_pct": 86.42857142857143,
+        "liq_self_pct": 66.66666666666667,
+        "spread_pct": 0.017072129748176627,
+        "spread_bps": 1.7072129748176625
+      },
+      "norm": {},
+      "scores": {
+        "final": 52.60508392107907,
+        "mom": 49.691,
+        "vol": 26.556870818322214,
+        "str": 25.32299741602061,
+        "liq": 51.2436974789916,
+        "spread": 96.80213319177227,
+        "taker": 46.079923142281174,
+        "spread_eff_score": 100.0,
+        "liq_eff_score": 71.20876087675792,
+        "flow": 100.0,
+        "depth": 87.01620509751345,
+        "microstruct": 27.53885965385195,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.8376189996056759
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.09
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 52,
+          "posts_pos": 27,
+          "posts_neu": 21,
+          "posts_neg": 4,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.3812
+          },
+          "category_counts": {
+            "positive_general": 4,
+            "negative_general": 2,
+            "pump_hype": 2,
+            "fud_fear": 1,
+            "meme_slang": 7,
+            "scam_rug": 0,
+            "emoji_pos": 27,
+            "emoji_neg": 10
+          },
+          "top_terms": {
+            "positive_general": [
+              "buy",
+              "higher",
+              "growth"
+            ],
+            "negative_general": [
+              "short",
+              "selling"
+            ],
+            "pump_hype": [
+              "pump"
+            ],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 206,
+            "total_retweets": 30,
+            "total_replies": 18,
+            "total_quotes": 28,
+            "total_bookmarks": 4,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "tao": 3,
+            "g\u00fcll\u00fc": 3,
+            "adalet": 3,
+            "broccoli": 2,
+            "bitcoin": 2,
+            "coinstore": 2,
+            "investing": 2,
+            "hamid": 2,
+            "\u0627\u0628\u0648_\u062d\u0635\u0647": 2,
+            "defi": 2,
+            "binance": 2,
+            "tradingview": 1,
+            "ctx": 1,
+            "uniswap": 1,
+            "uni": 1,
+            "light": 1,
+            "cryptotoken": 1,
+            "cryptocom": 1,
+            "ethereum": 1,
+            "bullish": 1
+          },
+          "cashtag_counts": {
+            "UNI": 20,
+            "TRUMP": 14,
+            "XRP": 13,
+            "SUI": 13,
+            "SOL": 12,
+            "ADA": 12,
+            "ETH": 12,
+            "WIF": 10,
+            "BTC": 9,
+            "MEME": 9,
+            "NXPC": 9,
+            "LA": 9,
+            "DOGE": 7,
+            "PEPE": 6,
+            "AUTICOIN": 5,
+            "AVAX": 4,
+            "BCH": 4,
+            "LEVER": 4,
+            "POL": 3,
+            "ASTER": 3
+          },
+          "mention_counts": {
+            "uniswap": 19,
+            "pepetoken_0xbe": 9,
+            "bankrbot": 9,
+            "base": 9,
+            "aave": 3,
+            "opensea": 3,
+            "fast_protocol": 2,
+            "baumztrade": 2,
+            "dydx": 2,
+            "elynnn217": 1,
+            "genlayer": 1,
+            "jonasoeth": 1,
+            "saintniko": 1,
+            "pendleintern": 1,
+            "rightsideonly": 1,
+            "neoo_nav": 1,
+            "0xcheeezzyyyy": 1,
+            "ethena_eco": 1,
+            "sushiswap": 1,
+            "tervelix": 1
+          },
+          "url_domain_counts": {
+            "t.me": 10,
+            "www.ethgas.com": 3,
+            "x.com": 3,
+            "gmgn.ai": 2,
+            "portal-uniswap.org": 2,
+            "auticoin.cc": 2,
+            "discord.gg": 1
+          },
+          "media_count": 21,
+          "author_stats": {
+            "distinct_authors_total": 36,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 17,
+            "followers_count_sum": 780109,
+            "followers_count_median": 385,
+            "followers_count_max": 472721,
+            "followers_count_mean": 15002.1
+          },
+          "content_stats": {
+            "posts_original": 52,
+            "posts_retweets": 0,
+            "posts_with_media": 16,
+            "posts_with_links": 17,
+            "posts_with_hashtags": 8,
+            "posts_with_cashtags": 22,
+            "posts_with_mentions": 29
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 52,
+            "has_recent_activity": true,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:34:08Z",
+            "hours_since_latest_tweet": 0.75,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 52,
+            "posts_pos": 41,
+            "posts_neu": 6,
+            "posts_neg": 5,
+            "prob_mean": 0.8642,
+            "prob_std": 0.2264,
+            "prob_min": 0.1087,
+            "prob_max": 0.9991,
+            "label_3class_mean": 0.6923
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 52,
+            "posts_pos": 41,
+            "posts_neu": 6,
+            "posts_neg": 5,
+            "mean_score": 0.6923,
+            "pos_ratio": 0.7885,
+            "neg_ratio": 0.0962,
+            "neu_ratio": 0.1154,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 46,
+              "referee_override": 0,
+              "referee_neutral_band": 6
+            },
+            "primary_conf_mean": 0.8642,
+            "referee_conf_mean": 0.7473
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 107,
+          "posts_pos": 56,
+          "posts_neu": 40,
+          "posts_neg": 11,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.1286
+          },
+          "category_counts": {
+            "positive_general": 7,
+            "negative_general": 3,
+            "pump_hype": 5,
+            "fud_fear": 1,
+            "meme_slang": 29,
+            "scam_rug": 0,
+            "emoji_pos": 48,
+            "emoji_neg": 20
+          },
+          "top_terms": {
+            "positive_general": [
+              "up",
+              "buy",
+              "increase",
+              "higher",
+              "growth"
+            ],
+            "scam_rug": [],
+            "pump_hype": [
+              "pump"
+            ],
+            "fud_fear": [],
+            "negative_general": [
+              "loss",
+              "down",
+              "short",
+              "selling"
+            ],
+            "meme_slang": []
+          },
+          "platform_engagement": {
+            "total_likes": 421,
+            "total_retweets": 62,
+            "total_replies": 39,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "uniswap": 3,
+            "ripple": 1,
+            "litecoin": 1,
+            "rollups": 1,
+            "oracles": 1,
+            "wagmi": 1,
+            "alts": 1,
+            "pancakeswap": 1,
+            "airdrophunter": 1,
+            "ethereum": 2,
+            "solanaecosystem": 1,
+            "phantom": 1,
+            "futuressignal": 1,
+            "crypto": 1,
+            "solana": 1,
+            "uni": 2,
+            "tao": 3,
+            "g\u00fcll\u00fc": 3,
+            "adalet": 3,
+            "broccoli": 2,
+            "bitcoin": 2,
+            "coinstore": 2,
+            "investing": 2,
+            "hamid": 2,
+            "\u0627\u0628\u0648_\u062d\u0635\u0647": 2,
+            "defi": 2,
+            "binance": 2,
+            "tradingview": 1,
+            "ctx": 1,
+            "light": 1,
+            "cryptotoken": 1,
+            "cryptocom": 1,
+            "bullish": 1
+          },
+          "cashtag_counts": {
+            "UNI": 49,
+            "SOL": 38,
+            "TRUMP": 40,
+            "BTC": 34,
+            "XRP": 38,
+            "ADA": 37,
+            "ETH": 37,
+            "TRX": 21,
+            "EOSE": 20,
+            "OSCR": 20,
+            "TTD": 20,
+            "DUOL": 20,
+            "APP": 20,
+            "ALAB": 20,
+            "TMDX": 20,
+            "TRON": 20,
+            "USDT": 20,
+            "TON": 20,
+            "TAO": 20,
+            "ZEC": 20,
+            "SUI": 13,
+            "WIF": 10,
+            "MEME": 9,
+            "NXPC": 9,
+            "LA": 9,
+            "DOGE": 7,
+            "PEPE": 6,
+            "AUTICOIN": 5,
+            "AVAX": 4,
+            "BCH": 4,
+            "LEVER": 4,
+            "POL": 3,
+            "ASTER": 3
+          },
+          "mention_counts": {
+            "uniswap": 31,
+            "elynnn217": 3,
+            "genlayer": 3,
+            "aave": 5,
+            "opensea": 5,
+            "liveboost_": 2,
+            "pancakeswap": 2,
+            "uniswap_v3": 2,
+            "aerodromefi": 2,
+            "arbitrum": 1,
+            "etherealnewshq": 1,
+            "juanfranblanco": 1,
+            "imprnt_ai": 1,
+            "base": 10,
+            "grok": 1,
+            "goldzipxgz": 1,
+            "mrcode100": 1,
+            "soneium": 1,
+            "startalegroup": 1,
+            "arkada_gg": 1,
+            "pepetoken_0xbe": 9,
+            "bankrbot": 9,
+            "fast_protocol": 2,
+            "baumztrade": 2,
+            "dydx": 2,
+            "jonasoeth": 1,
+            "saintniko": 1,
+            "pendleintern": 1,
+            "rightsideonly": 1,
+            "neoo_nav": 1,
+            "0xcheeezzyyyy": 1,
+            "ethena_eco": 1,
+            "sushiswap": 1,
+            "tervelix": 1
+          },
+          "url_domain_counts": {
+            "t.me": 36,
+            "www.ethgas.com": 5,
+            "x.com": 5,
+            "discord.gg": 3,
+            "portal-uniswap.org": 4,
+            "venezuelalibre.cc": 2,
+            "cca.uniswap.org": 1,
+            "gmgn.ai": 3,
+            "afghantv.online": 1,
+            "auticoin.cc": 2
+          },
+          "media_count": 48,
+          "author_stats": {
+            "followers_count_sum": 964322,
+            "followers_count_median": 343.0,
+            "followers_count_mean": 9175.7,
+            "followers_count_max": 472721
+          },
+          "content_stats": {
+            "posts_original": 107,
+            "posts_retweets": 0,
+            "posts_with_media": 43,
+            "posts_with_links": 52,
+            "posts_with_hashtags": 12,
+            "posts_with_cashtags": 55,
+            "posts_with_mentions": 47
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:34:08Z",
+            "recent_posts_count": 55,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 107,
+            "posts_pos": 87,
+            "posts_neu": 10,
+            "posts_neg": 10,
+            "prob_mean": 0.8484,
+            "label_3class_mean": 0.7189,
+            "prob_min": 0.0907,
+            "prob_max": 0.9991
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 107,
+            "posts_pos": 87,
+            "posts_neu": 10,
+            "posts_neg": 10,
+            "mean_score": 0.7189,
+            "primary_conf_mean": 0.8484,
+            "referee_conf_mean": 0.7127,
+            "pos_ratio": 0.8131,
+            "neg_ratio": 0.0935,
+            "neu_ratio": 0.0935,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 97,
+              "referee_override": 0,
+              "referee_neutral_band": 10
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:26:14.550531+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "UNIUSDC",
+          "asset_unified_id": "UNIUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:30Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "UNI"
+      }
+    },
+    {
+      "symbol": "STX",
+      "snapshot_ts": "2026-01-03T14:34:27.124Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:34:27.124Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:34:27.124609Z",
+        "expires_ts": "2026-01-03T16:34:27.124609Z",
+        "session_id": "5c2960d5-4c69-4818-be64-d386737208f3",
+        "sample_count": 756,
+        "last_sample_ts": "2026-01-03T16:40:23.694906+00:00",
+        "expired_ts": "2026-01-03T16:40:24.665147+00:00",
+        "duration_sec": 7557.540538,
+        "total_samples": 756,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 0.29864999999999997,
+        "bid": 0.2986,
+        "ask": 0.2987,
+        "spread_bps": 3.3484011384578776,
+        "last": 0.3004,
+        "range_pct_24h": 18.37549933422105,
+        "ticker24_chg": 12.215,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 656.25533,
+        "depth_10bps_quote": 1463.68964,
+        "depth_25bps_quote": 14324.687530000001,
+        "depth_bid_qty_quote": 500.02326999999997,
+        "depth_ask_qty_quote": 156.23206,
+        "obi_5": 0.3015822841690389,
+        "micro_premium_pct": 0.09391445121126551,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.0036280193236710953,
+        "liq_eff_raw": 6.609426379247985,
+        "liq_qv_usd": 637601.33032
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 6.668889629875891,
+        "depth_weighted": 3632.172063,
+        "depth_imbalance": 0.5238680651934667,
+        "depth_skew": 0.0,
+        "flow": 0.0,
+        "liq_global_pct": 71.78571428571429,
+        "liq_self_pct": 71.78571428571429,
+        "spread_pct": 0.03348401138457877,
+        "spread_bps": 3.3484011384578776
+      },
+      "norm": {},
+      "scores": {
+        "final": 64.52059929893649,
+        "mom": 80.23173240617268,
+        "vol": 66.4454378392898,
+        "str": 68.11594202898551,
+        "liq": 50.67226890756303,
+        "spread": 95.238095238096,
+        "taker": 38.38557976628223,
+        "spread_eff_score": 100.0,
+        "liq_eff_score": 67.43919964006847,
+        "flow": 0.0,
+        "depth": 85.66071753464854,
+        "microstruct": 57.83035876732426,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.8071169772466192
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.11
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 53,
+          "posts_pos": 20,
+          "posts_neu": 30,
+          "posts_neg": 3,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.0405
+          },
+          "category_counts": {
+            "positive_general": 3,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 2,
+            "scam_rug": 0,
+            "emoji_pos": 10,
+            "emoji_neg": 1
+          },
+          "top_terms": {
+            "positive_general": [
+              "up",
+              "accumulate",
+              "hold"
+            ],
+            "negative_general": [
+              "bad"
+            ],
+            "pump_hype": [],
+            "fud_fear": [],
+            "meme_slang": [
+              "lfg",
+              "gm"
+            ],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 1378,
+            "total_retweets": 350,
+            "total_replies": 63,
+            "total_quotes": 32,
+            "total_bookmarks": 152,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "stx": 1,
+            "cryptoadoption": 1,
+            "defi": 1,
+            "sorare": 1,
+            "sorare26": 1,
+            "avlnfo": 1,
+            "blackseedoil": 1,
+            "yohimbine": 1,
+            "stack": 1,
+            "stacks": 1,
+            "health": 1
+          },
+          "cashtag_counts": {
+            "STX": 4,
+            "ADA": 1,
+            "POL": 1,
+            "BCH": 1,
+            "LINK": 1
+          },
+          "mention_counts": {
+            "mishi_stacks": 10,
+            "mazifx_": 9,
+            "everythingfxx": 9,
+            "cartoonfx001": 9,
+            "ekpoiruoghene8": 9,
+            "stacks": 7,
+            "ola_9ice": 5,
+            "thestrongace": 4,
+            "austinani592739": 4,
+            "muneeb": 3,
+            "i_am_emisky": 2,
+            "xstayy89": 2,
+            "xmaquina": 2,
+            "trylimitless": 2,
+            "mayflowers2x8": 1,
+            "kageroutv": 1,
+            "walletconnect": 1,
+            "hex_trust": 1,
+            "houlgrave": 1,
+            "jwyisms": 1
+          },
+          "url_domain_counts": {
+            "discord.gg": 4,
+            "youtu.be": 1,
+            "rseat.in": 1
+          },
+          "media_count": 4,
+          "author_stats": {
+            "distinct_authors_total": 42,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 24,
+            "followers_count_sum": 14503411,
+            "followers_count_median": 1083,
+            "followers_count_max": 7084170,
+            "followers_count_mean": 273649.3
+          },
+          "content_stats": {
+            "posts_original": 53,
+            "posts_retweets": 0,
+            "posts_with_media": 4,
+            "posts_with_links": 6,
+            "posts_with_hashtags": 3,
+            "posts_with_cashtags": 5,
+            "posts_with_mentions": 36
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 53,
+            "has_recent_activity": true,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:40:02Z",
+            "hours_since_latest_tweet": 0.65,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 53,
+            "posts_pos": 40,
+            "posts_neu": 2,
+            "posts_neg": 11,
+            "prob_mean": 0.7864,
+            "prob_std": 0.3241,
+            "prob_min": 0.0085,
+            "prob_max": 0.9988,
+            "label_3class_mean": 0.5472
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 53,
+            "posts_pos": 40,
+            "posts_neu": 2,
+            "posts_neg": 11,
+            "mean_score": 0.5472,
+            "pos_ratio": 0.7547,
+            "neg_ratio": 0.2075,
+            "neu_ratio": 0.0377,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 51,
+              "referee_override": 0,
+              "referee_neutral_band": 2
+            },
+            "primary_conf_mean": 0.7864,
+            "referee_conf_mean": 0.7262
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 87,
+          "posts_pos": 32,
+          "posts_neu": 50,
+          "posts_neg": 5,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.0371
+          },
+          "category_counts": {
+            "positive_general": 4,
+            "negative_general": 1,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 6,
+            "scam_rug": 0,
+            "emoji_pos": 14,
+            "emoji_neg": 2
+          },
+          "top_terms": {
+            "positive_general": [
+              "up",
+              "opportunities",
+              "bullish",
+              "accumulate",
+              "hold"
+            ],
+            "scam_rug": [],
+            "pump_hype": [],
+            "fud_fear": [],
+            "negative_general": [
+              "lost",
+              "selling",
+              "risk",
+              "bad"
+            ],
+            "meme_slang": [
+              "gm",
+              "based",
+              "lfg"
+            ]
+          },
+          "platform_engagement": {
+            "total_likes": 1534,
+            "total_retweets": 363,
+            "total_replies": 145,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "l2": 1,
+            "stx": 1,
+            "cryptoadoption": 1,
+            "defi": 1,
+            "sorare": 1,
+            "sorare26": 1,
+            "avlnfo": 1,
+            "blackseedoil": 1,
+            "yohimbine": 1,
+            "stack": 1,
+            "stacks": 1,
+            "health": 1
+          },
+          "cashtag_counts": {
+            "NASTY": 1,
+            "ETH": 1,
+            "BTC": 1,
+            "ZORA": 1,
+            "STX": 5,
+            "MINT": 1,
+            "AZERO": 1,
+            "CKB": 1,
+            "SONIC": 1,
+            "ADA": 1,
+            "POL": 1,
+            "BCH": 1,
+            "LINK": 1
+          },
+          "mention_counts": {
+            "mazifx_": 21,
+            "everythingfxx": 21,
+            "mishi_stacks": 22,
+            "stacks": 13,
+            "cartoonfx001": 14,
+            "ola_9ice": 10,
+            "ekpoiruoghene8": 14,
+            "pipsarchitect": 4,
+            "speshxchange": 4,
+            "miloepips": 4,
+            "mirexjoe": 4,
+            "_real_fx": 4,
+            "deorganizedbtc": 3,
+            "peacelovemusicg": 3,
+            "gpsc_stx": 3,
+            "3hunnatheartist": 3,
+            "sylvanfx": 3,
+            "ghost_zima": 3,
+            "thestrongace": 6,
+            "esegbona_luis": 2,
+            "austinani592739": 4,
+            "muneeb": 3,
+            "i_am_emisky": 2,
+            "xstayy89": 2,
+            "xmaquina": 2,
+            "trylimitless": 2,
+            "mayflowers2x8": 1,
+            "kageroutv": 1,
+            "walletconnect": 1,
+            "hex_trust": 1,
+            "houlgrave": 1,
+            "jwyisms": 1
+          },
+          "url_domain_counts": {
+            "zilliz.com": 1,
+            "discord.gg": 4,
+            "youtu.be": 1,
+            "rseat.in": 1
+          },
+          "media_count": 7,
+          "author_stats": {
+            "followers_count_sum": 29103363,
+            "followers_count_median": 1129.5,
+            "followers_count_mean": 351529.85,
+            "followers_count_max": 7084170
+          },
+          "content_stats": {
+            "posts_original": 87,
+            "posts_retweets": 0,
+            "posts_with_media": 7,
+            "posts_with_links": 7,
+            "posts_with_hashtags": 4,
+            "posts_with_cashtags": 8,
+            "posts_with_mentions": 66
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:40:02Z",
+            "recent_posts_count": 53,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 87,
+            "posts_pos": 69,
+            "posts_neu": 2,
+            "posts_neg": 16,
+            "prob_mean": 0.8188,
+            "label_3class_mean": 0.6265,
+            "prob_min": 0.0085,
+            "prob_max": 0.9988
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 87,
+            "posts_pos": 69,
+            "posts_neu": 2,
+            "posts_neg": 16,
+            "mean_score": 0.6265,
+            "primary_conf_mean": 0.8188,
+            "referee_conf_mean": 0.7771,
+            "pos_ratio": 0.7931,
+            "neg_ratio": 0.1839,
+            "neu_ratio": 0.023,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 85,
+              "referee_override": 0,
+              "referee_neutral_band": 2
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:34:27.079926+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "STXUSDC",
+          "asset_unified_id": "STXUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:30Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "STX"
+      }
+    },
+    {
+      "symbol": "GUN",
+      "snapshot_ts": "2026-01-03T14:42:06.902Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:42:06.902Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:42:06.903038Z",
+        "expires_ts": "2026-01-03T16:42:06.903038Z",
+        "session_id": "ee02f6b0-631b-4b1d-964a-d817d9f07d7b",
+        "sample_count": 770,
+        "last_sample_ts": "2026-01-03T16:50:23.465298+00:00",
+        "expired_ts": "2026-01-03T16:50:25.113543+00:00",
+        "duration_sec": 7698.210505,
+        "total_samples": 770,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 0.01379,
+        "bid": 0.01378,
+        "ask": 0.0138,
+        "spread_bps": 14.50326323422711,
+        "last": 0.01437,
+        "range_pct_24h": 23.312456506611,
+        "ticker24_chg": 24.848,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 0.0,
+        "depth_10bps_quote": 0.0,
+        "depth_25bps_quote": 947.30846,
+        "depth_bid_qty_quote": 0.0,
+        "depth_ask_qty_quote": 0.0,
+        "obi_5": 0.6182752198339033,
+        "micro_premium_pct": 0.08988932400766575,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.014940969135513562,
+        "liq_eff_raw": 1.322733563100861,
+        "liq_qv_usd": 506961.04521
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 34.89183531053712,
+        "depth_weighted": 189.461692,
+        "depth_imbalance": 0.0,
+        "depth_skew": 0.0,
+        "flow": 0.0,
+        "liq_global_pct": 67.14285714285714,
+        "liq_self_pct": 67.14285714285714,
+        "spread_pct": 0.1450326323422711,
+        "spread_bps": 14.50326323422711
+      },
+      "norm": {},
+      "scores": {
+        "final": 74.67437039821715,
+        "mom": 84.3238304789628,
+        "vol": 83.22152273334251,
+        "str": 89.85074626865672,
+        "liq": 47.39495798319327,
+        "spread": 66.4989088634411,
+        "taker": 66.6444125117073,
+        "spread_eff_score": 98.50590308644864,
+        "liq_eff_score": 41.55186503339408,
+        "flow": 0.0,
+        "depth": 95.9557296030663,
+        "microstruct": 66.52612139655025,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.7353419317265006
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.1
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 10,
+          "posts_pos": 6,
+          "posts_neu": 3,
+          "posts_neg": 1,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.7196
+          },
+          "category_counts": {
+            "positive_general": 0,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 0,
+            "scam_rug": 0,
+            "emoji_pos": 17,
+            "emoji_neg": 7
+          },
+          "top_terms": {
+            "positive_general": [
+              "green"
+            ],
+            "negative_general": [
+              "loss"
+            ],
+            "pump_hype": [],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 11,
+            "total_retweets": 2,
+            "total_replies": 1,
+            "total_quotes": 0,
+            "total_bookmarks": 1,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "cryptotwitter": 1,
+            "bitcoin": 1,
+            "trading": 1,
+            "investing": 1,
+            "cryptocommunity": 1,
+            "globalmarkets": 1,
+            "gun": 1,
+            "binance": 1
+          },
+          "cashtag_counts": {
+            "GUN": 6,
+            "BTC": 4,
+            "ETH": 4,
+            "DOGE": 2,
+            "MEME": 2,
+            "NXPC": 2,
+            "LA": 2,
+            "SOL": 2,
+            "XRP": 2,
+            "SUI": 2,
+            "WIF": 2,
+            "ADA": 2,
+            "UNI": 2,
+            "TRUMP": 2,
+            "NFE": 1,
+            "BYND": 1,
+            "CTM": 1,
+            "CYN": 1,
+            "MSAI": 1,
+            "FEMY": 1
+          },
+          "mention_counts": {},
+          "url_domain_counts": {
+            "t.me": 4,
+            "app.binance.com": 1,
+            "www.cexscan.com": 1
+          },
+          "media_count": 3,
+          "author_stats": {
+            "distinct_authors_total": 7,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 4,
+            "followers_count_sum": 19694,
+            "followers_count_median": 321,
+            "followers_count_max": 6808,
+            "followers_count_mean": 1969.4
+          },
+          "content_stats": {
+            "posts_original": 10,
+            "posts_retweets": 0,
+            "posts_with_media": 3,
+            "posts_with_links": 6,
+            "posts_with_hashtags": 3,
+            "posts_with_cashtags": 9,
+            "posts_with_mentions": 0
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 10,
+            "has_recent_activity": true,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:48:55Z",
+            "hours_since_latest_tweet": 0.5,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 10,
+            "posts_pos": 7,
+            "posts_neu": 3,
+            "posts_neg": 0,
+            "prob_mean": 0.8845,
+            "prob_std": 0.1343,
+            "prob_min": 0.5507,
+            "prob_max": 0.9989,
+            "label_3class_mean": 0.7
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 10,
+            "posts_pos": 7,
+            "posts_neu": 3,
+            "posts_neg": 0,
+            "mean_score": 0.7,
+            "pos_ratio": 0.7,
+            "neg_ratio": 0.0,
+            "neu_ratio": 0.3,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 7,
+              "referee_override": 0,
+              "referee_neutral_band": 3
+            },
+            "primary_conf_mean": 0.8845,
+            "referee_conf_mean": 0.7703
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 23,
+          "posts_pos": 14,
+          "posts_neu": 8,
+          "posts_neg": 1,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.6237
+          },
+          "category_counts": {
+            "positive_general": 1,
+            "negative_general": 0,
+            "pump_hype": 1,
+            "fud_fear": 0,
+            "meme_slang": 1,
+            "scam_rug": 0,
+            "emoji_pos": 27,
+            "emoji_neg": 8
+          },
+          "top_terms": {
+            "positive_general": [
+              "green"
+            ],
+            "scam_rug": [],
+            "pump_hype": [
+              "pump",
+              "pumping"
+            ],
+            "fud_fear": [],
+            "negative_general": [
+              "loss"
+            ],
+            "meme_slang": []
+          },
+          "platform_engagement": {
+            "total_likes": 28,
+            "total_retweets": 6,
+            "total_replies": 2,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "gun": 4,
+            "gunusdt": 2,
+            "binance": 3,
+            "crypto": 2,
+            "whalefuspike": 1,
+            "whalealert": 1,
+            "altcoinseason": 1,
+            "zen": 1,
+            "btc": 1,
+            "bitcoin": 2,
+            "bnb": 1,
+            "altcoins": 1,
+            "venezuela": 1,
+            "eth": 1,
+            "cryptotwitter": 1,
+            "trading": 1,
+            "investing": 1,
+            "cryptocommunity": 1,
+            "globalmarkets": 1
+          },
+          "cashtag_counts": {
+            "GUN": 17,
+            "SOPH": 4,
+            "BTC": 6,
+            "ETH": 6,
+            "SOL": 4,
+            "XRP": 4,
+            "NOM": 2,
+            "GUNUSDT": 1,
+            "WILD": 1,
+            "POLIS": 1,
+            "PRIME": 1,
+            "C": 1,
+            "HAEDAL": 1,
+            "USELESS": 1,
+            "B": 1,
+            "ZEN": 1,
+            "BNB": 1,
+            "ALTSEASON": 1,
+            "FET": 1,
+            "KRIPTO": 1,
+            "DOGE": 2,
+            "MEME": 2,
+            "NXPC": 2,
+            "LA": 2,
+            "SUI": 2,
+            "WIF": 2,
+            "ADA": 2,
+            "UNI": 2,
+            "TRUMP": 2,
+            "NFE": 1,
+            "BYND": 1,
+            "CTM": 1,
+            "CYN": 1,
+            "MSAI": 1,
+            "FEMY": 1
+          },
+          "mention_counts": {},
+          "url_domain_counts": {
+            "auth.cexpump.com": 3,
+            "cexpump.com": 1,
+            "www.cexscan.com": 2,
+            "t.me": 4,
+            "app.binance.com": 1
+          },
+          "media_count": 15,
+          "author_stats": {
+            "followers_count_sum": 136817,
+            "followers_count_median": 1543.5,
+            "followers_count_mean": 5489.45,
+            "followers_count_max": 46559
+          },
+          "content_stats": {
+            "posts_original": 23,
+            "posts_retweets": 0,
+            "posts_with_media": 13,
+            "posts_with_links": 11,
+            "posts_with_hashtags": 9,
+            "posts_with_cashtags": 22,
+            "posts_with_mentions": 0
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:48:55Z",
+            "recent_posts_count": 13,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 23,
+            "posts_pos": 17,
+            "posts_neu": 4,
+            "posts_neg": 2,
+            "prob_mean": 0.8296,
+            "label_3class_mean": 0.6577,
+            "prob_min": 0.0469,
+            "prob_max": 0.9989
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 23,
+            "posts_pos": 17,
+            "posts_neu": 4,
+            "posts_neg": 2,
+            "mean_score": 0.6577,
+            "primary_conf_mean": 0.8296,
+            "referee_conf_mean": 0.7043,
+            "pos_ratio": 0.7391,
+            "neg_ratio": 0.087,
+            "neu_ratio": 0.1739,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 19,
+              "referee_override": 0,
+              "referee_neutral_band": 4
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:42:06.850122+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "GUNUSDC",
+          "asset_unified_id": "GUNUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:29Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "GUN"
+      }
+    },
+    {
+      "symbol": "LINEA",
+      "snapshot_ts": "2026-01-03T14:42:30.304Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:42:30.304Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:42:30.304767Z",
+        "expires_ts": "2026-01-03T16:42:30.304767Z",
+        "session_id": "cd24a4e0-4547-454b-b348-4e70fda77439",
+        "sample_count": 768,
+        "last_sample_ts": "2026-01-03T16:50:23.465298+00:00",
+        "expired_ts": "2026-01-03T16:50:25.113543+00:00",
+        "duration_sec": 7674.808776,
+        "total_samples": 768,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 0.007075,
+        "bid": 0.00707,
+        "ask": 0.00708,
+        "spread_bps": 14.134275618375208,
+        "last": 0.00704,
+        "range_pct_24h": 8.380681818181822,
+        "ticker24_chg": 3.835,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 0.0,
+        "depth_10bps_quote": 4102.08486,
+        "depth_25bps_quote": 27118.05199,
+        "depth_bid_qty_quote": 0.0,
+        "depth_ask_qty_quote": 0.0,
+        "obi_5": 0.40249577292175337,
+        "micro_premium_pct": 0.00127624105458,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.016937123335457795,
+        "liq_eff_raw": 3.113694821662727,
+        "liq_qv_usd": 519325.7973
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 14.204545454544876,
+        "depth_weighted": 6654.235856000001,
+        "depth_imbalance": 0.0,
+        "depth_skew": 0.0,
+        "flow": 0.0,
+        "liq_global_pct": 67.85714285714286,
+        "liq_self_pct": 66.66666666666667,
+        "spread_pct": 0.14134275618375208,
+        "spread_bps": 14.134275618375208
+      },
+      "norm": {},
+      "scores": {
+        "final": 67.74392622300007,
+        "mom": 61.505,
+        "vol": 33.52272727272729,
+        "str": 61.01694915254237,
+        "liq": 47.310924369747895,
+        "spread": 87.55666922553324,
+        "taker": 89.93423926833316,
+        "spread_eff_score": 98.30628766645421,
+        "liq_eff_score": 55.32762653917328,
+        "flow": 0.0,
+        "depth": 73.32723085471082,
+        "microstruct": 42.3301213985686,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.9891704041944612
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.21
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 4,
+          "posts_pos": 1,
+          "posts_neu": 3,
+          "posts_neg": 0,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": null
+          },
+          "category_counts": {
+            "positive_general": 0,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 0,
+            "scam_rug": 0,
+            "emoji_pos": 1,
+            "emoji_neg": 1
+          },
+          "top_terms": {
+            "positive_general": [
+              "up"
+            ],
+            "negative_general": [],
+            "pump_hype": [
+              "pump"
+            ],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 2,
+            "total_retweets": 2,
+            "total_replies": 0,
+            "total_quotes": 0,
+            "total_bookmarks": 0,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "evaa": 1,
+            "nom": 1,
+            "ahof": 1,
+            "tresgracas": 1,
+            "\u5343\u3068\u5343\u5c0b\u306e\u795e\u96a0\u3057": 1
+          },
+          "cashtag_counts": {
+            "LINEA": 4,
+            "BTC": 2,
+            "ADA": 1,
+            "KMNO": 1,
+            "HOLO": 1,
+            "VIRTUAL": 1,
+            "SQD": 1,
+            "RIO": 1,
+            "ETH": 1,
+            "SOL": 1,
+            "BNB": 1,
+            "WLD": 1,
+            "ANYONE": 1,
+            "ENA": 1
+          },
+          "mention_counts": {
+            "velvet_capital": 2
+          },
+          "url_domain_counts": {
+            "t.me": 1
+          },
+          "media_count": 1,
+          "author_stats": {
+            "distinct_authors_total": 4,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 0,
+            "followers_count_sum": 1002,
+            "followers_count_median": 140,
+            "followers_count_max": 693,
+            "followers_count_mean": 250.5
+          },
+          "content_stats": {
+            "posts_original": 4,
+            "posts_retweets": 0,
+            "posts_with_media": 1,
+            "posts_with_links": 1,
+            "posts_with_hashtags": 1,
+            "posts_with_cashtags": 4,
+            "posts_with_mentions": 2
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 4,
+            "has_recent_activity": false,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:11:16Z",
+            "hours_since_latest_tweet": 1.13,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "insufficient_data",
+          "bucket_has_valid_sentiment": false,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 4,
+            "posts_pos": 4,
+            "posts_neu": 0,
+            "posts_neg": 0,
+            "prob_mean": 0.9704,
+            "prob_std": 0.0337,
+            "prob_min": 0.9257,
+            "prob_max": 0.9984,
+            "label_3class_mean": 1
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 4,
+            "posts_pos": 4,
+            "posts_neu": 0,
+            "posts_neg": 0,
+            "mean_score": 1.0,
+            "pos_ratio": 1.0,
+            "neg_ratio": 0.0,
+            "neu_ratio": 0.0,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 4,
+              "referee_override": 0,
+              "referee_neutral_band": 0
+            },
+            "primary_conf_mean": 0.9704,
+            "referee_conf_mean": 0.9441
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 27,
+          "posts_pos": 18,
+          "posts_neu": 9,
+          "posts_neg": 0,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.9447
+          },
+          "category_counts": {
+            "positive_general": 4,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 10,
+            "scam_rug": 0,
+            "emoji_pos": 20,
+            "emoji_neg": 4
+          },
+          "top_terms": {
+            "positive_general": [
+              "profit",
+              "up",
+              "good"
+            ],
+            "scam_rug": [],
+            "pump_hype": [
+              "pump",
+              "send"
+            ],
+            "fud_fear": [],
+            "negative_general": [
+              "loss",
+              "short",
+              "risk"
+            ],
+            "meme_slang": []
+          },
+          "platform_engagement": {
+            "total_likes": 77,
+            "total_retweets": 51,
+            "total_replies": 39,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "altcoin": 4,
+            "lavozargentina": 4,
+            "helevier": 4,
+            "olympiacosbc": 4,
+            "\u0627\u0644\u0633\u0648\u064a\u062f\u0627\u0621": 4,
+            "\u0643\u0627\u0631\u064a\u0632\u0645\u06275": 4,
+            "lingorm": 4,
+            "loveislanduk": 3,
+            "lista": 2,
+            "qi": 2,
+            "dexe": 2,
+            "c98": 2,
+            "binance": 1,
+            "binancealphaalert": 1,
+            "cpiwatch": 1,
+            "strategybtcpurchase": 1,
+            "zeta": 1,
+            "viral": 1,
+            "instagram": 1,
+            "explorepage": 1,
+            "evaa": 1,
+            "nom": 1,
+            "ahof": 1,
+            "tresgracas": 1,
+            "\u5343\u3068\u5343\u5c0b\u306e\u795e\u96a0\u3057": 1
+          },
+          "cashtag_counts": {
+            "LINEA": 25,
+            "ETH": 13,
+            "BTC": 12,
+            "DOGE": 10,
+            "HYPE": 9,
+            "SUI": 9,
+            "SOL": 9,
+            "BNB": 9,
+            "PUMP": 6,
+            "CAKE": 6,
+            "PENGU": 5,
+            "ADA": 6,
+            "PEPE": 4,
+            "ASTER": 4,
+            "STBL": 4,
+            "AVNT": 4,
+            "LISTA": 4,
+            "CUDIS": 4,
+            "KMNO": 5,
+            "GM": 4,
+            "HOLO": 1,
+            "VIRTUAL": 1,
+            "SQD": 1,
+            "RIO": 1,
+            "WLD": 1,
+            "ANYONE": 1,
+            "ENA": 1
+          },
+          "mention_counts": {
+            "plortalai": 2,
+            "lineabuild": 1,
+            "binance": 1,
+            "binanceacademy": 1,
+            "binancefutures": 1,
+            "binancewallet": 1,
+            "velvet_capital": 3,
+            "bllackfoxxx": 1,
+            "tomzschach": 1,
+            "mineus092": 1,
+            "linpusslinea": 1,
+            "tobific": 1,
+            "tdcryptovn": 1,
+            "monad": 1,
+            "hyde6000": 1
+          },
+          "url_domain_counts": {
+            "t.me": 6,
+            "x.com": 4,
+            "app.binance.com": 1,
+            "www.cexscan.com": 1
+          },
+          "media_count": 16,
+          "author_stats": {
+            "followers_count_sum": 44979,
+            "followers_count_median": 416.5,
+            "followers_count_mean": 1081.25,
+            "followers_count_max": 6807
+          },
+          "content_stats": {
+            "posts_original": 27,
+            "posts_retweets": 0,
+            "posts_with_media": 14,
+            "posts_with_links": 11,
+            "posts_with_hashtags": 13,
+            "posts_with_cashtags": 27,
+            "posts_with_mentions": 10
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:11:16Z",
+            "recent_posts_count": 5,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 27,
+            "posts_pos": 21,
+            "posts_neu": 5,
+            "posts_neg": 1,
+            "prob_mean": 0.937,
+            "label_3class_mean": 0.8478,
+            "prob_min": 0.2103,
+            "prob_max": 0.9984
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 27,
+            "posts_pos": 21,
+            "posts_neu": 5,
+            "posts_neg": 1,
+            "mean_score": 0.8478,
+            "primary_conf_mean": 0.937,
+            "referee_conf_mean": 0.8761,
+            "pos_ratio": 0.7778,
+            "neg_ratio": 0.037,
+            "neu_ratio": 0.1852,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 22,
+              "referee_override": 0,
+              "referee_neutral_band": 5
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:42:30.258640+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "LINEAUSDC",
+          "asset_unified_id": "LINEAUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:29Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "LINEA"
+      }
+    },
+    {
+      "symbol": "MORPHO",
+      "snapshot_ts": "2026-01-03T14:42:40.089Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:42:40.089Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:42:40.089639Z",
+        "expires_ts": "2026-01-03T16:42:40.089639Z",
+        "session_id": "e216cdf0-de89-4407-afa9-68a2166a2526",
+        "sample_count": 767,
+        "last_sample_ts": "2026-01-03T16:50:23.465298+00:00",
+        "expired_ts": "2026-01-03T16:50:25.113543+00:00",
+        "duration_sec": 7665.023904,
+        "total_samples": 767,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 1.1335,
+        "bid": 1.133,
+        "ask": 1.134,
+        "spread_bps": 8.822232024701279,
+        "last": 1.127,
+        "range_pct_24h": 5.501330967169462,
+        "ticker24_chg": 1.807,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 675.43399,
+        "depth_10bps_quote": 675.43399,
+        "depth_25bps_quote": 4115.4212099999995,
+        "depth_bid_qty_quote": 85.42125000000001,
+        "depth_ask_qty_quote": 590.01274,
+        "obi_5": -0.3623756540048293,
+        "micro_premium_pct": 6.073342540000002e-05,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.016150528080707913,
+        "liq_eff_raw": 4.686698246779288,
+        "liq_qv_usd": 368530.14454
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 8.88888888888791,
+        "depth_weighted": 1363.4314339999999,
+        "depth_imbalance": -0.7470626256164574,
+        "depth_skew": 0.0,
+        "flow": 100.0,
+        "liq_global_pct": 63.214285714285715,
+        "liq_self_pct": 66.66666666666667,
+        "spread_pct": 0.08822232024701279,
+        "spread_bps": 8.822232024701279
+      },
+      "norm": {},
+      "scores": {
+        "final": 66.6411138039375,
+        "mom": 55.421,
+        "vol": 22.00532386867785,
+        "str": 56.451612903225836,
+        "liq": 46.32773109243698,
+        "spread": 92.97455099321037,
+        "taker": 88.28528222492521,
+        "spread_eff_score": 98.3849471919292,
+        "liq_eff_score": 61.90757917544545,
+        "flow": 100.0,
+        "depth": 74.60387930497556,
+        "microstruct": 19.140877064935122,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 1.0325303976476663
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.13
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 6,
+          "posts_pos": 5,
+          "posts_neu": 0,
+          "posts_neg": 1,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.7959
+          },
+          "category_counts": {
+            "positive_general": 3,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 0,
+            "scam_rug": 0,
+            "emoji_pos": 7,
+            "emoji_neg": 3
+          },
+          "top_terms": {
+            "positive_general": [
+              "strong",
+              "gains",
+              "profits"
+            ],
+            "negative_general": [
+              "lower",
+              "loss"
+            ],
+            "pump_hype": [
+              "send"
+            ],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 3,
+            "total_retweets": 0,
+            "total_replies": 0,
+            "total_quotes": 2,
+            "total_bookmarks": 0,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "crypto": 1,
+            "xrp": 1,
+            "doge": 1
+          },
+          "cashtag_counts": {
+            "MORPHO": 7,
+            "ASTER": 3,
+            "AVNT": 3,
+            "SOMI": 3,
+            "FHE": 3,
+            "ALPINE": 3,
+            "GRASS": 3,
+            "THE": 3,
+            "FORM": 3,
+            "USELESS": 3,
+            "BTC": 1,
+            "DOGE": 1,
+            "MEME": 1,
+            "NXPC": 1,
+            "LA": 1,
+            "SOL": 1,
+            "XRP": 1,
+            "SUI": 1,
+            "WIF": 1,
+            "ADA": 1
+          },
+          "mention_counts": {},
+          "url_domain_counts": {
+            "t.me": 4
+          },
+          "media_count": 2,
+          "author_stats": {
+            "distinct_authors_total": 3,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 1,
+            "followers_count_sum": 10469,
+            "followers_count_median": 1936,
+            "followers_count_max": 2402,
+            "followers_count_mean": 1744.8
+          },
+          "content_stats": {
+            "posts_original": 6,
+            "posts_retweets": 0,
+            "posts_with_media": 2,
+            "posts_with_links": 4,
+            "posts_with_hashtags": 1,
+            "posts_with_cashtags": 6,
+            "posts_with_mentions": 0
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 5,
+            "has_recent_activity": true,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:34:02Z",
+            "hours_since_latest_tweet": 0.75,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 6,
+            "posts_pos": 4,
+            "posts_neu": 1,
+            "posts_neg": 1,
+            "prob_mean": 0.7747,
+            "prob_std": 0.2931,
+            "prob_min": 0.1814,
+            "prob_max": 0.9539,
+            "label_3class_mean": 0.5
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 6,
+            "posts_pos": 4,
+            "posts_neu": 1,
+            "posts_neg": 1,
+            "mean_score": 0.5,
+            "pos_ratio": 0.6667,
+            "neg_ratio": 0.1667,
+            "neu_ratio": 0.1667,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 5,
+              "referee_override": 0,
+              "referee_neutral_band": 1
+            },
+            "primary_conf_mean": 0.7747,
+            "referee_conf_mean": 0.6679
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 32,
+          "posts_pos": 21,
+          "posts_neu": 8,
+          "posts_neg": 3,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.6141
+          },
+          "category_counts": {
+            "positive_general": 4,
+            "negative_general": 0,
+            "pump_hype": 1,
+            "fud_fear": 2,
+            "meme_slang": 1,
+            "scam_rug": 0,
+            "emoji_pos": 25,
+            "emoji_neg": 7
+          },
+          "top_terms": {
+            "positive_general": [
+              "up",
+              "opportunity",
+              "optimistic",
+              "strong",
+              "gains",
+              "profits"
+            ],
+            "scam_rug": [],
+            "pump_hype": [
+              "send"
+            ],
+            "fud_fear": [],
+            "negative_general": [
+              "down",
+              "drop",
+              "collapsing",
+              "lower",
+              "loss"
+            ],
+            "meme_slang": [
+              "gm"
+            ]
+          },
+          "platform_engagement": {
+            "total_likes": 3654,
+            "total_retweets": 358,
+            "total_replies": 1858,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "crypto": 5,
+            "morphousdt": 3,
+            "btc": 3,
+            "kucoin": 2,
+            "cryptoupdates": 2,
+            "bitcoin": 2,
+            "eth": 2,
+            "blockchain": 2,
+            "forex": 2,
+            "signal": 2,
+            "cryptosignal": 2,
+            "trading": 2,
+            "morph": 1,
+            "init": 1,
+            "initia": 1,
+            "cryptonews": 1,
+            "morpho": 1,
+            "xrp": 1,
+            "doge": 1
+          },
+          "cashtag_counts": {
+            "MORPHO": 16,
+            "PHIL": 4,
+            "PNUT": 4,
+            "COMBO": 3,
+            "XRD": 3,
+            "BCH": 3,
+            "NFP": 3,
+            "WING": 3,
+            "GOHOME": 3,
+            "NCT": 3,
+            "AIOZ": 3,
+            "TUT": 3,
+            "ARTY": 3,
+            "BGSC": 2,
+            "GUN": 2,
+            "SUI": 2,
+            "ONDO": 1,
+            "AERO": 1,
+            "RUSSELL": 1,
+            "BGB": 1,
+            "ASTER": 3,
+            "AVNT": 3,
+            "SOMI": 3,
+            "FHE": 3,
+            "ALPINE": 3,
+            "GRASS": 3,
+            "THE": 3,
+            "FORM": 3,
+            "USELESS": 3,
+            "BTC": 1,
+            "DOGE": 1,
+            "MEME": 1,
+            "NXPC": 1,
+            "LA": 1,
+            "SOL": 1,
+            "XRP": 1,
+            "WIF": 1,
+            "ADA": 1
+          },
+          "mention_counts": {
+            "bantr_fun": 4,
+            "morpho": 2,
+            "lilybrodi": 1,
+            "midnightfdn": 1,
+            "algofoundation": 1,
+            "iohk_charles": 1,
+            "iogroup": 1,
+            "morpholabs": 1,
+            "arbitrum": 1,
+            "usdc": 1,
+            "cointel_io": 1
+          },
+          "url_domain_counts": {
+            "t.me": 7,
+            "beta.bantr.fun": 2,
+            "coinmarketcap.com": 1,
+            "bantr.fun?ic=157xy5h": 1,
+            "beta.bantr.fun?ic=1kxliv1": 1,
+            "discord.com": 1
+          },
+          "media_count": 21,
+          "author_stats": {
+            "followers_count_sum": 1576611,
+            "followers_count_median": 2528.5,
+            "followers_count_mean": 30990.5,
+            "followers_count_max": 1164781
+          },
+          "content_stats": {
+            "posts_original": 32,
+            "posts_retweets": 0,
+            "posts_with_media": 18,
+            "posts_with_links": 13,
+            "posts_with_hashtags": 10,
+            "posts_with_cashtags": 19,
+            "posts_with_mentions": 8
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:34:02Z",
+            "recent_posts_count": 5,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 32,
+            "posts_pos": 28,
+            "posts_neu": 2,
+            "posts_neg": 2,
+            "prob_mean": 0.8355,
+            "label_3class_mean": 0.6923,
+            "prob_min": 0.1814,
+            "prob_max": 0.9967
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 32,
+            "posts_pos": 28,
+            "posts_neu": 2,
+            "posts_neg": 2,
+            "mean_score": 0.6923,
+            "primary_conf_mean": 0.8355,
+            "referee_conf_mean": 0.7681,
+            "pos_ratio": 0.875,
+            "neg_ratio": 0.0625,
+            "neu_ratio": 0.0625,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 30,
+              "referee_override": 0,
+              "referee_neutral_band": 2
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:42:40.047716+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "MORPHOUSDC",
+          "asset_unified_id": "MORPHOUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:29Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "MORPHO"
+      }
+    },
+    {
+      "symbol": "NEIRO",
+      "snapshot_ts": "2026-01-03T14:42:45.988Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:42:45.988Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:42:45.989066Z",
+        "expires_ts": "2026-01-03T16:42:45.989066Z",
+        "session_id": "894265a4-bb48-4f63-9459-0dbe2f6518ed",
+        "sample_count": 766,
+        "last_sample_ts": "2026-01-03T16:50:23.465298+00:00",
+        "expired_ts": "2026-01-03T16:50:25.113543+00:00",
+        "duration_sec": 7659.124477,
+        "total_samples": 766,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 0.00013836,
+        "bid": 0.0001382,
+        "ask": 0.00013852,
+        "spread_bps": 23.12807169702204,
+        "last": 0.00012853,
+        "range_pct_24h": 10.518944993386754,
+        "ticker24_chg": -3.96,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 0.0,
+        "depth_10bps_quote": 0.0,
+        "depth_25bps_quote": 11297.88115296,
+        "depth_bid_qty_quote": 0.0,
+        "depth_ask_qty_quote": 0.0,
+        "obi_5": -0.7470626256164574,
+        "micro_premium_pct": 0.0001363431434,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.020864498228122003,
+        "liq_eff_raw": 2.048541828827214,
+        "liq_qv_usd": 495236.08079464
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 21.97136146677873,
+        "depth_weighted": 2259.5762305920002,
+        "depth_imbalance": 0.0,
+        "depth_skew": 0.0,
+        "flow": 0.0,
+        "liq_global_pct": 66.42857142857143,
+        "liq_self_pct": 66.66666666666667,
+        "spread_pct": 0.2312807169702204,
+        "spread_bps": 23.12807169702204
+      },
+      "norm": {},
+      "scores": {
+        "final": 53.72527617435936,
+        "mom": 38.12,
+        "vol": 42.075779973547014,
+        "str": 34.985207100591666,
+        "liq": 47.00840336134454,
+        "spread": 79.64566232895605,
+        "taker": 88.10072141337126,
+        "spread_eff_score": 97.9135501771878,
+        "liq_eff_score": 48.59056729263268,
+        "flow": 0.0,
+        "depth": 60.77797219473652,
+        "microstruct": 7.615389860186276,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.9249322035655412
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.09
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 5,
+          "posts_pos": 5,
+          "posts_neu": 0,
+          "posts_neg": 0,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 1.0
+          },
+          "category_counts": {
+            "positive_general": 0,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 4,
+            "scam_rug": 0,
+            "emoji_pos": 3,
+            "emoji_neg": 0
+          },
+          "top_terms": {
+            "positive_general": [],
+            "negative_general": [],
+            "pump_hype": [],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 4,
+            "total_retweets": 4,
+            "total_replies": 0,
+            "total_quotes": 0,
+            "total_bookmarks": 0,
+            "total_impressions": null
+          },
+          "tag_counts": {
+            "binance": 1
+          },
+          "cashtag_counts": {
+            "NEIRO": 5,
+            "BTC": 4,
+            "ETH": 4,
+            "PEPE": 4,
+            "XRP": 4,
+            "ZIG": 4,
+            "SNAI": 4,
+            "MANEKI": 4,
+            "CWIF": 4,
+            "SOL": 4,
+            "RFC": 4,
+            "ARDR": 4,
+            "HYPE": 4,
+            "GAS": 4,
+            "VINE": 4,
+            "HPPO": 4,
+            "KET": 4,
+            "PAAL": 4,
+            "TRUMP": 4,
+            "ACT": 1
+          },
+          "mention_counts": {},
+          "url_domain_counts": {
+            "t.me": 4,
+            "cheems.pet": 2,
+            "www.cexscan.com": 1
+          },
+          "media_count": 3,
+          "author_stats": {
+            "distinct_authors_total": 2,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 1,
+            "followers_count_sum": 7656,
+            "followers_count_median": 212,
+            "followers_count_max": 6808,
+            "followers_count_mean": 1531.2
+          },
+          "content_stats": {
+            "posts_original": 5,
+            "posts_retweets": 0,
+            "posts_with_media": 3,
+            "posts_with_links": 5,
+            "posts_with_hashtags": 1,
+            "posts_with_cashtags": 5,
+            "posts_with_mentions": 0
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 5,
+            "has_recent_activity": true,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:33:15Z",
+            "hours_since_latest_tweet": 0.76,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 5,
+            "posts_pos": 4,
+            "posts_neu": 1,
+            "posts_neg": 0,
+            "prob_mean": 0.9531,
+            "prob_std": 0.0165,
+            "prob_min": 0.9326,
+            "prob_max": 0.9713,
+            "label_3class_mean": 0.8
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 5,
+            "posts_pos": 4,
+            "posts_neu": 1,
+            "posts_neg": 0,
+            "mean_score": 0.8,
+            "pos_ratio": 0.8,
+            "neg_ratio": 0.0,
+            "neu_ratio": 0.2,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 4,
+              "referee_override": 0,
+              "referee_neutral_band": 1
+            },
+            "primary_conf_mean": 0.9531,
+            "referee_conf_mean": 0.7856
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 18,
+          "posts_pos": 13,
+          "posts_neu": 2,
+          "posts_neg": 3,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.8964
+          },
+          "category_counts": {
+            "positive_general": 1,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 1,
+            "meme_slang": 13,
+            "scam_rug": 2,
+            "emoji_pos": 9,
+            "emoji_neg": 1
+          },
+          "top_terms": {
+            "positive_general": [
+              "long",
+              "profit"
+            ],
+            "scam_rug": [
+              "scam"
+            ],
+            "pump_hype": [
+              "pump"
+            ],
+            "fud_fear": [
+              "scam"
+            ],
+            "negative_general": [],
+            "meme_slang": []
+          },
+          "platform_engagement": {
+            "total_likes": 14,
+            "total_retweets": 10,
+            "total_replies": 0,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "memecoins": 2,
+            "bnb": 2,
+            "bitcoin": 2,
+            "crypto": 2,
+            "eth": 2,
+            "altcoins": 2,
+            "meme": 1,
+            "zen": 1,
+            "btc": 1,
+            "venezuela": 1,
+            "binance": 2
+          },
+          "cashtag_counts": {
+            "NEIRO": 18,
+            "BTC": 14,
+            "ETH": 14,
+            "PEPE": 13,
+            "XRP": 13,
+            "SOL": 13,
+            "TRUMP": 13,
+            "ZIG": 12,
+            "SNAI": 12,
+            "MANEKI": 12,
+            "CWIF": 12,
+            "RFC": 12,
+            "ARDR": 12,
+            "HYPE": 12,
+            "GAS": 12,
+            "VINE": 12,
+            "HPPO": 12,
+            "KET": 12,
+            "PAAL": 12,
+            "ASTER": 2,
+            "ACT": 1
+          },
+          "mention_counts": {
+            "web3learning2": 1,
+            "cryptowizardd": 1,
+            "neiro": 1
+          },
+          "url_domain_counts": {
+            "t.me": 12,
+            "cheems.pet": 2,
+            "www.cexscan.com": 1
+          },
+          "media_count": 13,
+          "author_stats": {
+            "followers_count_sum": 11180,
+            "followers_count_median": 187.0,
+            "followers_count_mean": 901.15,
+            "followers_count_max": 6808
+          },
+          "content_stats": {
+            "posts_original": 18,
+            "posts_retweets": 0,
+            "posts_with_media": 13,
+            "posts_with_links": 13,
+            "posts_with_hashtags": 4,
+            "posts_with_cashtags": 18,
+            "posts_with_mentions": 1
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:33:15Z",
+            "recent_posts_count": 13,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 18,
+            "posts_pos": 11,
+            "posts_neu": 3,
+            "posts_neg": 4,
+            "prob_mean": 0.8478,
+            "label_3class_mean": 0.5154,
+            "prob_min": 0.2534,
+            "prob_max": 0.9974
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 18,
+            "posts_pos": 11,
+            "posts_neu": 3,
+            "posts_neg": 4,
+            "mean_score": 0.5154,
+            "primary_conf_mean": 0.8478,
+            "referee_conf_mean": 0.6837,
+            "pos_ratio": 0.6111,
+            "neg_ratio": 0.2222,
+            "neu_ratio": 0.1667,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 15,
+              "referee_override": 0,
+              "referee_neutral_band": 3
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:42:45.951687+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "NEIROUSDC",
+          "asset_unified_id": "NEIROUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:29Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "NEIRO"
+      }
+    },
+    {
+      "symbol": "NOM",
+      "snapshot_ts": "2026-01-03T14:42:51.005Z",
+      "meta": {
+        "schema_version": 7,
+        "source": "spot+usdsm-futures",
+        "universe_page": 0,
+        "universe_page_size": 40,
+        "normalization_version": "v1",
+        "scoring_version": "v2",
+        "pairbonus_version": "v0",
+        "futures_api_base": "fapi.binance.com",
+        "universe_snapshot_id": "BOOTSTRAP",
+        "universe_snapshot_ts": "2026-01-03T14:42:51.005Z",
+        "universe_snapshot_lag_sec": 0.0,
+        "added_ts": "2026-01-03T14:42:51.005610Z",
+        "expires_ts": "2026-01-03T16:42:51.005610Z",
+        "session_id": "399925f9-f9eb-4f40-9cc6-68241a6ba4c7",
+        "sample_count": 766,
+        "last_sample_ts": "2026-01-03T16:50:23.465298+00:00",
+        "expired_ts": "2026-01-03T16:50:25.113543+00:00",
+        "duration_sec": 7654.107933,
+        "total_samples": 766,
+        "archive_schema_version": 7
+      },
+      "spot_raw": {
+        "mid": 0.008545,
+        "bid": 0.00853,
+        "ask": 0.00856,
+        "spread_bps": 35.10825043885373,
+        "last": 0.00877,
+        "range_pct_24h": 24.74344355758267,
+        "ticker24_chg": 15.092,
+        "taker_buy_ratio_5m": 0.5,
+        "depth_5bps_quote": 0.0,
+        "depth_10bps_quote": 0.0,
+        "depth_25bps_quote": 9429.478,
+        "depth_bid_qty_quote": 0.0,
+        "depth_ask_qty_quote": 0.0,
+        "obi_5": 0.6114732827363186,
+        "micro_premium_pct": 0.09415204678362597,
+        "avg_impact_pct": 0.0,
+        "spread_eff_raw": 0.009453741881585298,
+        "liq_eff_raw": 1.695017014238032,
+        "liq_qv_usd": 293858.6803
+      },
+      "futures_raw": null,
+      "derived": {
+        "depth_spread_bps": 23.419203747071645,
+        "depth_weighted": 1885.8955999999998,
+        "depth_imbalance": 0.0,
+        "depth_skew": 0.0,
+        "flow": 85.85583659507286,
+        "liq_global_pct": 58.57142857142857,
+        "liq_self_pct": 58.57142857142857,
+        "spread_pct": 0.3510825043885373,
+        "spread_bps": 35.10825043885373
+      },
+      "norm": {},
+      "scores": {
+        "final": 67.60057659232224,
+        "mom": 80.46998821838679,
+        "vol": 88.4164105695113,
+        "str": 57.14285714285713,
+        "liq": 41.34453781512605,
+        "spread": 78.17161952500396,
+        "taker": 44.323576247776295,
+        "spread_eff_score": 100.0,
+        "liq_eff_score": 45.54233874205511,
+        "flow": 85.85583659507286,
+        "depth": 97.6608187134504,
+        "microstruct": 67.17460783881475,
+        "compression_score": 50.0
+      },
+      "flags": {
+        "spot_data_ok": true,
+        "futures_data_ok": false,
+        "futures_stale": true,
+        "compression_enabled": false,
+        "mom_fallback": false,
+        "vol_fallback": false,
+        "spread_fallback": false,
+        "pair_bonus_applied": 0.5362854588809782
+      },
+      "diag": {
+        "builder_version": "v1.0",
+        "build_duration_ms": 0.1
+      },
+      "labels": {},
+      "twitter_sentiment_windows": {
+        "last_cycle": {
+          "posts_total": 4,
+          "posts_pos": 4,
+          "posts_neu": 0,
+          "posts_neg": 0,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": null
+          },
+          "category_counts": {
+            "positive_general": 0,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 4,
+            "scam_rug": 0,
+            "emoji_pos": 0,
+            "emoji_neg": 0
+          },
+          "top_terms": {
+            "positive_general": [],
+            "negative_general": [],
+            "pump_hype": [],
+            "fud_fear": [],
+            "meme_slang": [],
+            "scam_rug": []
+          },
+          "platform_engagement": {
+            "total_likes": 0,
+            "total_retweets": 0,
+            "total_replies": 0,
+            "total_quotes": 0,
+            "total_bookmarks": 0,
+            "total_impressions": null
+          },
+          "tag_counts": {},
+          "cashtag_counts": {
+            "NOM": 4,
+            "PEPE": 4,
+            "LIT": 4,
+            "MON": 4,
+            "BTC": 4,
+            "PENGU": 4,
+            "SOL": 4,
+            "RIVER": 4,
+            "XPL": 4,
+            "CC": 4,
+            "SUI": 4,
+            "FARTCOIN": 4,
+            "TAO": 4,
+            "SHIB": 4,
+            "DOT": 4,
+            "BONK": 4
+          },
+          "mention_counts": {},
+          "url_domain_counts": {
+            "t.me": 4
+          },
+          "media_count": 4,
+          "author_stats": {
+            "distinct_authors_total": 4,
+            "distinct_authors_verified": 0,
+            "distinct_authors_blue": 1,
+            "followers_count_sum": 38603,
+            "followers_count_median": 4564,
+            "followers_count_max": 27838,
+            "followers_count_mean": 9650.8
+          },
+          "content_stats": {
+            "posts_original": 4,
+            "posts_retweets": 0,
+            "posts_with_media": 4,
+            "posts_with_links": 4,
+            "posts_with_hashtags": 0,
+            "posts_with_cashtags": 4,
+            "posts_with_mentions": 0
+          },
+          "sentiment_activity": {
+            "recent_posts_count": 4,
+            "has_recent_activity": false,
+            "is_silent": false,
+            "latest_tweet_at": "2026-01-03T13:25:10Z",
+            "hours_since_latest_tweet": 0.9,
+            "config": {
+              "recent_horizon_hours": 24,
+              "min_recent_posts_for_activity": 5,
+              "silence_threshold_hours": 24
+            }
+          },
+          "bucket_status": "insufficient_data",
+          "bucket_has_valid_sentiment": false,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 4,
+            "posts_pos": 4,
+            "posts_neu": 0,
+            "posts_neg": 0,
+            "prob_mean": 0.8857,
+            "prob_std": 0.0176,
+            "prob_min": 0.8639,
+            "prob_max": 0.9032,
+            "label_3class_mean": 1
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 4,
+            "posts_pos": 4,
+            "posts_neu": 0,
+            "posts_neg": 0,
+            "mean_score": 1.0,
+            "pos_ratio": 1.0,
+            "neg_ratio": 0.0,
+            "neu_ratio": 0.0,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 4,
+              "referee_override": 0,
+              "referee_neutral_band": 0
+            },
+            "primary_conf_mean": 0.8857,
+            "referee_conf_mean": 0.8639
+          }
+        },
+        "last_2_cycles": {
+          "window_cycles": 2,
+          "from_cycle_id": 773,
+          "to_cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T12:40:41Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "posts_total": 16,
+          "posts_pos": 9,
+          "posts_neu": 6,
+          "posts_neg": 1,
+          "lexicon_sentiment": {
+            "scale": "-1 to 1",
+            "score": 0.5556
+          },
+          "category_counts": {
+            "positive_general": 0,
+            "negative_general": 0,
+            "pump_hype": 0,
+            "fud_fear": 0,
+            "meme_slang": 5,
+            "scam_rug": 0,
+            "emoji_pos": 8,
+            "emoji_neg": 2
+          },
+          "top_terms": {
+            "positive_general": [],
+            "scam_rug": [],
+            "pump_hype": [
+              "pump"
+            ],
+            "fud_fear": [],
+            "negative_general": [],
+            "meme_slang": []
+          },
+          "platform_engagement": {
+            "total_likes": 29,
+            "total_retweets": 3,
+            "total_replies": 2,
+            "total_views": 0,
+            "avg_likes": null,
+            "avg_retweets": null,
+            "avg_replies": null,
+            "avg_views": null
+          },
+          "tag_counts": {
+            "australia": 1,
+            "turkey": 1,
+            "unitedstates": 1,
+            "unitedkingdom": 1,
+            "singapore": 1,
+            "binance": 1,
+            "crypto": 1,
+            "altcoinseason": 1,
+            "nomusdt": 1,
+            "nom": 1
+          },
+          "cashtag_counts": {
+            "NOM": 16,
+            "AUDIO": 2,
+            "HAEDAL": 2,
+            "BTC": 5,
+            "ETH": 1,
+            "PEPE": 5,
+            "XRP": 1,
+            "SUSHI": 1,
+            "GALA": 1,
+            "SOL": 5,
+            "SOLALA": 1,
+            "TRUMP": 1,
+            "BABY": 1,
+            "CRYPTO": 1,
+            "BNB": 1,
+            "USDT": 1,
+            "USD": 1,
+            "BULL": 1,
+            "PARTI": 1,
+            "TRX": 1,
+            "LIT": 4,
+            "MON": 4,
+            "PENGU": 4,
+            "RIVER": 4,
+            "XPL": 4,
+            "CC": 4,
+            "SUI": 4,
+            "FARTCOIN": 4,
+            "TAO": 4,
+            "SHIB": 4,
+            "DOT": 4,
+            "BONK": 4
+          },
+          "mention_counts": {},
+          "url_domain_counts": {
+            "t.me": 7,
+            "www.cexscan.com": 1
+          },
+          "media_count": 15,
+          "author_stats": {
+            "followers_count_sum": 114543,
+            "followers_count_median": 3356.5,
+            "followers_count_mean": 7989.55,
+            "followers_count_max": 27838
+          },
+          "content_stats": {
+            "posts_original": 16,
+            "posts_retweets": 0,
+            "posts_with_media": 15,
+            "posts_with_links": 8,
+            "posts_with_hashtags": 4,
+            "posts_with_cashtags": 16,
+            "posts_with_mentions": 0
+          },
+          "sentiment_activity": {
+            "latest_tweet_at": "2026-01-03T13:25:10Z",
+            "recent_posts_count": 12,
+            "has_recent_activity": true
+          },
+          "bucket_status": "ok",
+          "bucket_has_valid_sentiment": true,
+          "bucket_min_posts_for_score": 5,
+          "ai_sentiment": {
+            "scoring_system": "hybrid",
+            "primary_model": "run8_final",
+            "referee_model": "run7_final",
+            "posts_scored": 16,
+            "posts_pos": 14,
+            "posts_neu": 1,
+            "posts_neg": 1,
+            "prob_mean": 0.8622,
+            "label_3class_mean": 0.875,
+            "prob_min": 0.176,
+            "prob_max": 0.9981
+          },
+          "hybrid_decision_stats": {
+            "posts_scored": 16,
+            "posts_pos": 14,
+            "posts_neu": 1,
+            "posts_neg": 1,
+            "mean_score": 0.875,
+            "primary_conf_mean": 0.8622,
+            "referee_conf_mean": 0.8167,
+            "pos_ratio": 0.875,
+            "neg_ratio": 0.0625,
+            "neu_ratio": 0.0625,
+            "decision_sources": {
+              "single_model": 0,
+              "primary_default": 15,
+              "referee_override": 0,
+              "referee_neutral_band": 1
+            }
+          }
+        }
+      },
+      "twitter_sentiment_meta": {
+        "source": "twscrape_snapshot",
+        "captured_at_utc": "2026-01-03T14:42:50.962111+00:00",
+        "bucket_meta": {
+          "platform": "twitter",
+          "coin": "NOMUSDC",
+          "asset_unified_id": "NOMUSDC",
+          "date": "2026-01-03",
+          "bucket_span": "cycle",
+          "cycle_id": 774,
+          "cycle_start_utc": "2026-01-03T13:29:46Z",
+          "cycle_end_utc": "2026-01-03T14:18:52Z",
+          "created_at_utc": "2026-01-03T14:20:29Z",
+          "scraper_version": "0.3.0",
+          "sentiment_model_version": "v1.0",
+          "lexicon_version": "2025-11-23_v3",
+          "platform_cycle_id": 774,
+          "is_silent": false
+        },
+        "key_used": "NOM"
       }
     }
   ]

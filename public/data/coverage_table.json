@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-01-02T14:57:25.592664Z",
+  "generated_at_utc": "2026-01-12T10:58:50.814752Z",
   "entries_scanned": 147,
   "rows": [
     {
@@ -11,7 +11,7 @@
           "label": "Spread (bps)",
           "path": "derived.spread_bps",
           "present_pct": 100.0,
-          "example": "14.2",
+          "example": "11.3",
           "notes": "Median bid-ask spread in basis points"
         },
         {
@@ -32,14 +32,14 @@
           "label": "Global liquidity %",
           "path": "derived.liq_global_pct",
           "present_pct": 100.0,
-          "example": "38.2",
+          "example": "63.8",
           "notes": "Median liquidity vs global market"
         },
         {
           "label": "Self liquidity %",
           "path": "derived.liq_self_pct",
           "present_pct": 100.0,
-          "example": "38.6",
+          "example": "66.7",
           "notes": "Median liquidity vs own history"
         }
       ]
@@ -53,7 +53,7 @@
           "label": "Weighted depth",
           "path": "derived.depth_weighted",
           "present_pct": 100.0,
-          "example": "676.26",
+          "example": "1867.09",
           "notes": "Median volume-weighted depth"
         },
         {
@@ -74,7 +74,7 @@
           "label": "Spot price samples",
           "path": "spot_prices",
           "present_pct": 100.0,
-          "example": "742",
+          "example": "747",
           "notes": "Median OHLCV snapshots per session"
         }
       ]
@@ -88,21 +88,21 @@
           "label": "Posts per cycle",
           "path": "twitter_sentiment_windows.last_cycle.posts_total",
           "present_pct": 100.0,
-          "example": "6",
+          "example": "9",
           "notes": "Median tweet volume per window"
         },
         {
           "label": "Lexicon score range",
           "path": "twitter_sentiment_windows.last_cycle.lexicon_sentiment.score",
           "present_pct": 100.0,
-          "example": "-0.04 to 0.88",
+          "example": "-0.00 to 0.78",
           "notes": "p10-p90 sentiment score range"
         },
         {
           "label": "Posts scored",
           "path": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.posts_scored",
           "present_pct": 73.5,
-          "example": "17",
+          "example": "13",
           "notes": "Median posts with sentiment scores"
         }
       ]
@@ -116,21 +116,21 @@
           "label": "Posts (2-cycle)",
           "path": "twitter_sentiment_windows.last_2_cycles.posts_total",
           "present_pct": 100.0,
-          "example": "12",
+          "example": "15",
           "notes": "Median tweets over 2 cycles"
         },
         {
           "label": "Lexicon score (2-cycle)",
           "path": "twitter_sentiment_windows.last_2_cycles.lexicon_sentiment.score",
           "present_pct": 100.0,
-          "example": "0.340",
+          "example": "0.274",
           "notes": "Median sentiment over 2 cycles"
         },
         {
           "label": "Posts scored (2-cycle)",
           "path": "twitter_sentiment_windows.last_2_cycles.hybrid_decision_stats.posts_scored",
           "present_pct": 79.6,
-          "example": "33",
+          "example": "20",
           "notes": "Median scored posts over 2 cycles"
         }
       ]
@@ -144,7 +144,7 @@
           "label": "Silence rate",
           "path": "twitter_sentiment_windows.last_cycle.posts_total",
           "present_pct": 100.0,
-          "example": "26.5%",
+          "example": "12.5%",
           "notes": "Percent of periods with zero posts"
         }
       ]
@@ -158,14 +158,14 @@
           "label": "Distinct authors",
           "path": "twitter_sentiment_windows.last_cycle.author_stats.distinct_authors_total",
           "present_pct": 73.5,
-          "example": "11",
+          "example": "8",
           "notes": "Median unique posters per cycle"
         },
         {
           "label": "Follower reach",
           "path": "twitter_sentiment_windows.last_cycle.author_stats.followers_count_mean",
           "present_pct": 73.5,
-          "example": "5K",
+          "example": "1K",
           "notes": "Median follower count (thousands)"
         }
       ]

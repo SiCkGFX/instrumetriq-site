@@ -91,7 +91,7 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Activity vs Silence</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          Entries binned by tweet volume (using last 2 cycles). Total entries: {formatNumber(activityRegimes.total_binned)}.
+          Entries binned by tweet volume (last 2 cycles). Counts reflect the current research sample window ({formatNumber(activityRegimes.entries_scanned)} entries scanned).
         </p>
         
         <div class="table-container">
@@ -143,88 +143,8 @@ const sessionLifecycle = loadSessionLifecycle();
       <section>
         <h3>Sampling Density</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          How many samples were collected per entry. Entries analyzed: {formatNumber(samplingDensity.entries_scanned)}.
+          Price sampling behavior across {formatNumber(samplingDensity.entries_scanned)} entries. Median spot price samples: {samplingDensity.spot_prices_len_stats?.median ? formatNumber(samplingDensity.spot_prices_len_stats.median) : 'N/A'}.
         </p>
-        
-        {samplingDensity.sample_count_stats && (
-          <div style="margin-bottom: 1.5rem;">
-            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Sample Count Statistics</h4>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span class="stat-label">Median</span>
-                <span class="stat-value">{samplingDensity.sample_count_stats.median !== null ? formatNumber(samplingDensity.sample_count_stats.median) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">p10</span>
-                <span class="stat-value">{samplingDensity.sample_count_stats.p10 !== null ? formatNumber(samplingDensity.sample_count_stats.p10) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">p90</span>
-                <span class="stat-value">{samplingDensity.sample_count_stats.p90 !== null ? formatNumber(samplingDensity.sample_count_stats.p90) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">Min</span>
-                <span class="stat-value">{samplingDensity.sample_count_stats.min !== null ? formatNumber(samplingDensity.sample_count_stats.min) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">Max</span>
-                <span class="stat-value">{samplingDensity.sample_count_stats.max !== null ? formatNumber(samplingDensity.sample_count_stats.max) : '—'}</span>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {samplingDensity.sample_count_histogram && samplingDensity.sample_count_histogram.length > 0 && (
-          <div style="margin-bottom: 1.5rem;">
-            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Sample Count Distribution</h4>
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Bucket</th>
-                    <th>Sessions</th>
-                    <th>Share</th>
-                    <th>Distribution</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {samplingDensity.sample_count_histogram.map(bucket => (
-                    <tr>
-                      <td>{bucket.bucket}</td>
-                      <td class="numeric">{formatNumber(bucket.count)}</td>
-                      <td class="numeric">{bucket.share_pct.toFixed(1)}%</td>
-                      <td>
-                        <div class="bar-container">
-                          <div class="bar" style={`width: ${bucket.share_pct}%`}></div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-        
-        {samplingDensity.spot_prices_len_stats && (
-          <div>
-            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Spot Prices Length Statistics</h4>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span class="stat-label">Median</span>
-                <span class="stat-value">{samplingDensity.spot_prices_len_stats.median !== null ? formatNumber(samplingDensity.spot_prices_len_stats.median) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">p10</span>
-                <span class="stat-value">{samplingDensity.spot_prices_len_stats.p10 !== null ? formatNumber(samplingDensity.spot_prices_len_stats.p10) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">p90</span>
-                <span class="stat-value">{samplingDensity.spot_prices_len_stats.p90 !== null ? formatNumber(samplingDensity.spot_prices_len_stats.p90) : '—'}</span>
-              </div>
-            </div>
-          </div>
-        )}
         
         <SamplingDensityChart data={samplingDensity} />
       </section>
@@ -235,12 +155,12 @@ const sessionLifecycle = loadSessionLifecycle();
       </section>
     )}
 
-    <!-- Section 3: Session Lifecycle -->
+    <!-- Section 3: Monitoring Window Lifecycle -->
     {sessionLifecycle ? (
       <section>
         <h3>Monitoring Window Lifecycle</h3>
         <p class="text-muted" style="margin-bottom: 1rem;">
-          {sessionLifecycle.definition.session}. Entries analyzed: {formatNumber(sessionLifecycle.entries_scanned)}.
+          {sessionLifecycle.definition.session}. Sample reflects {formatNumber(sessionLifecycle.entries_scanned)} entries.
         </p>
         
         {sessionLifecycle.note_sample_bias && (
@@ -249,66 +169,15 @@ const sessionLifecycle = loadSessionLifecycle();
           </div>
         )}
         
-        {sessionLifecycle.duration_stats && sessionLifecycle.duration_stats.duration_sec.median !== null && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max && (
-          <div style="margin-bottom: 1.5rem;">
-            <p class="text-muted">
-              <strong>Window Duration:</strong> Fixed at {formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds ({(sessionLifecycle.duration_stats.duration_sec.median / 3600).toFixed(1)} hours) by design.
-            </p>
-          </div>
+        {sessionLifecycle.duration_stats && sessionLifecycle.duration_stats.duration_sec.median !== null && (
+          <p class="text-muted" style="margin-bottom: 1.5rem;">
+            <strong>Window Duration:</strong> {sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max ? `Fixed at ${formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds (${(sessionLifecycle.duration_stats.duration_sec.median / 3600).toFixed(1)} hours) by design.` : `Median ${formatNumber(sessionLifecycle.duration_stats.duration_sec.median)} seconds across ${formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)} entries.`}
+          </p>
         )}
         
-        {sessionLifecycle.duration_stats && !(sessionLifecycle.duration_stats.duration_sec.median !== null && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.min && sessionLifecycle.duration_stats.duration_sec.median === sessionLifecycle.duration_stats.duration_sec.max) && (
-          <div style="margin-bottom: 1.5rem;">
-            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Duration Statistics</h4>
-            <p class="text-muted" style="margin-bottom: 0.75rem;">
-              Windows with duration data: {formatNumber(sessionLifecycle.duration_stats.n_entries_with_duration)}
-            </p>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span class="stat-label">Median (sec)</span>
-                <span class="stat-value">{sessionLifecycle.duration_stats.duration_sec.median !== null ? formatNumber(sessionLifecycle.duration_stats.duration_sec.median) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">p10 (sec)</span>
-                <span class="stat-value">{sessionLifecycle.duration_stats.duration_sec.p10 !== null ? formatNumber(sessionLifecycle.duration_stats.duration_sec.p10) : '—'}</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">p90 (sec)</span>
-                <span class="stat-value">{sessionLifecycle.duration_stats.duration_sec.p90 !== null ? formatNumber(sessionLifecycle.duration_stats.duration_sec.p90) : '—'}</span>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {sessionLifecycle.admission_hour_distribution && (
+        {sessionLifecycle.admission_hour_distribution && sessionLifecycle.admission_hour_distribution.some(h => h.count > 0) && (
           <div>
-            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Admission Hour Distribution (UTC)</h4>
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Hour (UTC)</th>
-                    <th>Windows</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sessionLifecycle.admission_hour_distribution
-                    .filter(h => h.count > 0)
-                    .map(h => (
-                      <tr>
-                        <td>{h.hour.toString().padStart(2, '0')}:00</td>
-                        <td class="numeric">{formatNumber(h.count)}</td>
-                      </tr>
-                    ))}
-                  {sessionLifecycle.admission_hour_distribution.every(h => h.count === 0) && (
-                    <tr>
-                      <td colspan="2" class="text-muted">No admission data available</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            
+            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Admission Pattern (UTC)</h4>
             <SessionLifecycleChart data={sessionLifecycle} />
           </div>
         )}
