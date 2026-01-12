@@ -454,6 +454,9 @@ import PageHero from '../components/PageHero.astro';
     font-size: 0.875rem;
     color: var(--text-muted);
     font-weight: 500;
+    padding-right: var(--space-3);
+    flex-shrink: 0;
+    max-width: 65%;
   }
 
   .context-value {
@@ -511,6 +514,7 @@ import PageHero from '../components/PageHero.astro';
   .chart-wrapper {
     margin-bottom: var(--space-6);
     width: 100%;
+    max-width: 100%;
   }
 
   .chart-title {
@@ -522,6 +526,7 @@ import PageHero from '../components/PageHero.astro';
 
   .chart-panel {
     width: 100%;
+    max-width: 100%;
     padding: 18px;
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -530,8 +535,6 @@ import PageHero from '../components/PageHero.astro';
   }
 
   .chart-panel canvas {
-    width: 100% !important;
-    height: 360px !important;
     display: block;
   }
 
@@ -560,10 +563,6 @@ import PageHero from '../components/PageHero.astro';
   }
 
   @media (max-width: 768px) {
-    .chart-panel canvas {
-      height: 300px !important;
-    }
-    
     .chart-canvas {
       height: 320px;
       min-height: 280px;
@@ -680,6 +679,22 @@ import PageHero from '../components/PageHero.astro';
 
       // Render the first entry
       renderCurrentEntry(container);
+      
+      // Add resize handler to re-render charts
+      let resizeTimeout: number;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(() => {
+          // Re-render current entry's charts
+          if (allEntries.length > 0 && currentIndex < allEntries.length) {
+            const entry = allEntries[currentIndex];
+            const spotPrices = spotPricesMap.get(entry.symbol) || [];
+            const pricePath = extractPricePath(entry, spotPrices);
+            renderPriceChart(pricePath, entry.symbol);
+            renderSentimentChart(entry.symbol);
+          }
+        }, 250);
+      });
     } catch (error) {
       console.error('Deep dive error:', error);
       container.innerHTML = '<div class="error-state">Failed to load sample entry</div>';
@@ -866,9 +881,16 @@ import PageHero from '../components/PageHero.astro';
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    // Measure the parent container width (chart-panel)
+    const panel = canvas.parentElement;
+    if (!panel) return;
+    
+    const containerWidth = panel.clientWidth;
+    const containerHeight = window.innerWidth <= 768 ? 300 : 360;
+
+    // Set canvas size to match container (accounting for padding)
+    canvas.width = Math.max(containerWidth - 36, 300); // 36px = 18px padding * 2
+    canvas.height = containerHeight;
 
     if (pricePath.length === 0) {
       ctx.fillStyle = '#888888';
@@ -1005,8 +1027,16 @@ import PageHero from '../components/PageHero.astro';
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    // Measure the parent container width (chart-panel)
+    const panel = canvas.parentElement;
+    if (!panel) return;
+    
+    const containerWidth = panel.clientWidth;
+    const containerHeight = window.innerWidth <= 768 ? 300 : 360;
+
+    // Set canvas size to match container (accounting for padding)
+    canvas.width = Math.max(containerWidth - 36, 300); // 36px = 18px padding * 2
+    canvas.height = containerHeight;
 
     // Get timeseries for this symbol
     const timeseries = sentimentTimeseriesMap.get(symbol);
