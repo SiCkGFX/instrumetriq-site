@@ -104,7 +104,9 @@ import PageHero from '../components/PageHero.astro';
         A rotating example from the public sample archive, illustrating how one monitored entry is represented end-to-end.
       </p>
 
-      <div id="deepDiveContainer" data-json="/data/sample_entries_v7.json">
+      <div id="deepDiveContainer" 
+           data-json="/data/sample_entries_v7.json"
+           data-spots="/data/sample_entries_spots_v7.json">
         <div class="loading-state">Loading sample entry...</div>
       </div>
     </section>
@@ -348,40 +350,59 @@ import PageHero from '../components/PageHero.astro';
     if (!container) return;
 
     const jsonUrl = container.getAttribute('data-json');
-    if (!jsonUrl) {
+    const spotsUrl = container.getAttribute('data-spots');
+    
+    if (!jsonUrl || !spotsUrl) {
       container.innerHTML = '<div class="error-state">Configuration error: missing data URL</div>';
       return;
     }
 
     try {
-      const response = await fetch(jsonUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to load data: ${response.status}`);
+      // Fetch both entries and spot prices
+      const [entriesResponse, spotsResponse] = await Promise.all([
+        fetch(jsonUrl),
+        fetch(spotsUrl)
+      ]);
+
+      if (!entriesResponse.ok || !spotsResponse.ok) {
+        throw new Error('Failed to load data');
       }
 
-      const data = await response.json();
-      const entries = data.entries || [];
+      const entriesData = await entriesResponse.json();
+      const spotsData = await spotsResponse.json();
+      
+      const entries = entriesData.entries || [];
+      const spots = spotsData.spots || [];
 
       if (entries.length === 0) {
         container.innerHTML = '<div class="error-state">No entries available</div>';
         return;
       }
 
+      // Build spot prices lookup by symbol
+      const spotPricesMap = new Map<string, any[]>();
+      spots.forEach((spot: any) => {
+        if (spot.symbol && spot.spot_prices) {
+          spotPricesMap.set(spot.symbol, spot.spot_prices);
+        }
+      });
+
       // Select one random entry
       const randomIndex = Math.floor(Math.random() * entries.length);
       const entry = entries[randomIndex];
+      const spotPrices = spotPricesMap.get(entry.symbol) || [];
 
       // Render the deep dive
-      renderDeepDive(container, entry);
+      renderDeepDive(container, entry, spotPrices);
     } catch (error) {
       console.error('Deep dive error:', error);
       container.innerHTML = '<div class="error-state">Failed to load sample entry</div>';
     }
   });
 
-  function renderDeepDive(container: HTMLElement, entry: any) {
-    const metrics = calculateMetrics(entry);
-    const pricePath = extractPricePath(entry);
+  function renderDeepDive(container: HTMLElement, entry: any, spotPrices: any[]) {
+    const metrics = calculateMetrics(entry, spotPrices);
+    const pricePath = extractPricePath(entry, spotPrices);
     const sentimentPath = extractSentimentPath(entry);
 
     // Context badges
@@ -393,9 +414,10 @@ import PageHero from '../components/PageHero.astro';
       badges.push(`<div class="context-badge"><strong>Duration:</strong> ${minutes} min</div>`);
     }
     
-    // is_silent
-    if (entry.twitter_sentiment_meta?.is_silent !== undefined) {
-      badges.push(`<div class="context-badge"><strong>is_silent:</strong> ${entry.twitter_sentiment_meta.is_silent}</div>`);
+    // is_silent - from twitter_sentiment_windows.last_cycle.sentiment_activity.is_silent
+    const sentimentActivity = entry.twitter_sentiment_windows?.last_cycle?.sentiment_activity;
+    if (sentimentActivity?.is_silent !== undefined) {
+      badges.push(`<div class="context-badge"><strong>is_silent:</strong> ${sentimentActivity.is_silent}</div>`);
     }
     
     // Median spread
@@ -408,9 +430,9 @@ import PageHero from '../components/PageHero.astro';
       badges.push(`<div class="context-badge"><strong>Liq Global:</strong> ${entry.derived.liq_global_pct.toFixed(1)}%</div>`);
     }
     
-    // futures_ok
-    if (entry.flags?.futures_ok !== undefined) {
-      badges.push(`<div class="context-badge"><strong>futures_ok:</strong> ${entry.flags.futures_ok}</div>`);
+    // futures_data_ok flag
+    if (entry.flags?.futures_data_ok !== undefined) {
+      badges.push(`<div class="context-badge"><strong>futures_ok:</strong> ${entry.flags.futures_data_ok}</div>`);
     }
 
     const badgesHTML = badges.length > 0 ? `
@@ -479,27 +501,22 @@ import PageHero from '../components/PageHero.astro';
 
   function renderPriceChart(pricePath: PricePoint[], symbol: string) {
     const canvas = document.getElementById('priceChart') as HTMLCanvasElement;
-    if (!canvas || pricePath.length === 0) {
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          canvas.width = canvas.offsetWidth;
-          canvas.height = canvas.offsetHeight;
-          ctx.fillStyle = '#888888';
-          ctx.font = '14px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('No price data available', canvas.width / 2, canvas.height / 2);
-        }
-      }
-      return;
-    }
-
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     // Set canvas size
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+
+    if (pricePath.length === 0) {
+      ctx.fillStyle = '#888888';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Price series not present in this sample entry.', canvas.width / 2, canvas.height / 2);
+      return;
+    }
 
     const padding = 40;
     const width = canvas.width - 2 * padding;
@@ -511,8 +528,8 @@ import PageHero from '../components/PageHero.astro';
     const minPrice = Math.min(...pricePath.map(p => p.price));
     const maxPrice = Math.max(...pricePath.map(p => p.price));
 
-    const priceRange = maxPrice - minPrice;
-    const timeRange = maxTime - minTime;
+    const priceRange = maxPrice - minPrice || 1; // Avoid division by zero
+    const timeRange = maxTime - minTime || 1;
 
     // Draw axes
     ctx.strokeStyle = '#3a3a3a';
@@ -561,26 +578,21 @@ import PageHero from '../components/PageHero.astro';
 
   function renderSentimentChart(sentimentPath: SentimentPoint[]) {
     const canvas = document.getElementById('sentimentChart') as HTMLCanvasElement;
-    if (!canvas || sentimentPath.length === 0) {
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          canvas.width = canvas.offsetWidth;
-          canvas.height = canvas.offsetHeight;
-          ctx.fillStyle = '#888888';
-          ctx.font = '14px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('No sentiment data available', canvas.width / 2, canvas.height / 2);
-        }
-      }
-      return;
-    }
-
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+
+    if (sentimentPath.length === 0) {
+      ctx.fillStyle = '#888888';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Sentiment windows not present in this sample entry.', canvas.width / 2, canvas.height / 2);
+      return;
+    }
 
     const padding = 40;
     const width = canvas.width - 2 * padding;
@@ -588,7 +600,7 @@ import PageHero from '../components/PageHero.astro';
 
     const minTime = 0;
     const maxTime = Math.max(...sentimentPath.map(p => p.elapsed_min));
-    const timeRange = maxTime - minTime;
+    const timeRange = maxTime - minTime || 1; // Avoid division by zero
 
     // Fixed sentiment range: -1 to +1
     const minSentiment = -1;

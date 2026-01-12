@@ -3,6 +3,13 @@
  * 
  * Pure functions to compute derived metrics from a single entry.
  * All calculations are retrospective and descriptive only.
+ * 
+ * SCHEMA NOTES (v7):
+ * - Spot prices are in separate file: sample_entries_spots_v7.json
+ * - Each spot_price element has: {ts, mid, bid, ask, spread_bps}
+ * - Sentiment windows: twitter_sentiment_windows.{last_cycle|last_2_cycles}.hybrid_decision_stats.mean_score
+ * - Metadata: meta.{added_ts, expires_ts, duration_sec}
+ * - Spread: derived.spread_bps
  */
 
 export interface EntryMetrics {
@@ -30,35 +37,39 @@ export interface SentimentPoint {
 }
 
 /**
- * Extract price path from spot_raw with elapsed time in minutes
+ * Extract price path from spot_prices array (passed separately)
+ * Spot prices come from sample_entries_spots_v7.json: spots[].spot_prices[]
+ * Each element: {ts: ISO8601, mid: number, bid: number, ask: number, spread_bps: number}
  */
-export function extractPricePath(entry: any): PricePoint[] {
-  const spotRaw = entry?.spot_raw;
-  if (!spotRaw || !Array.isArray(spotRaw) || spotRaw.length === 0) {
+export function extractPricePath(entry: any, spotPrices: any[]): PricePoint[] {
+  if (!spotPrices || !Array.isArray(spotPrices) || spotPrices.length === 0) {
     return [];
   }
 
-  const startTs = entry?.meta?.start_ts;
+  const startTs = entry?.meta?.added_ts;
   if (!startTs) return [];
 
   const startTime = new Date(startTs).getTime();
 
-  return spotRaw.map((spot: any) => {
-    const ts = spot.ts || spot.timestamp;
+  const points = spotPrices.map((spot: any) => {
+    const ts = spot.ts;
     if (!ts) return null;
     
     const spotTime = new Date(ts).getTime();
     const elapsed_min = (spotTime - startTime) / (1000 * 60);
     
-    // Use mid price if available, otherwise use price field
-    const price = spot.mid ?? spot.price ?? null;
+    // Priority: mid price > (bid+ask)/2 > last
+    const price = spot.mid ?? (spot.bid != null && spot.ask != null ? (spot.bid + spot.ask) / 2 : null);
     
     return price !== null ? { elapsed_min, price } : null;
-  }).filter((p: any) => p !== null);
+  }).filter((p: PricePoint | null): p is PricePoint => p !== null);
+  
+  return points;
 }
 
 /**
  * Extract sentiment scores over time from twitter_sentiment_windows
+ * Schema path: entry.twitter_sentiment_windows.{last_cycle|last_2_cycles}.hybrid_decision_stats.mean_score
  */
 export function extractSentimentPath(entry: any): SentimentPoint[] {
   const windows = entry?.twitter_sentiment_windows;
@@ -67,27 +78,29 @@ export function extractSentimentPath(entry: any): SentimentPoint[] {
   const points: SentimentPoint[] = [];
   const meta = entry?.meta;
   
-  if (!meta?.start_ts) return [];
+  if (!meta?.added_ts) return [];
   
-  // For simplicity, we'll use the window end times if available
-  // last_cycle typically represents the most recent cycle
-  // last_2_cycles represents aggregation over last 2 cycles
+  // Sentiment windows represent aggregation over different time periods
+  // last_cycle = most recent cycle
+  // last_2_cycles = aggregation over last 2 cycles
   
-  const startTime = new Date(meta.start_ts).getTime();
-  const endTime = meta.end_ts ? new Date(meta.end_ts).getTime() : startTime;
+  const startTime = new Date(meta.added_ts).getTime();
+  const endTime = meta.expires_ts ? new Date(meta.expires_ts).getTime() : startTime;
   const duration_min = (endTime - startTime) / (1000 * 60);
   
+  // Add last_cycle at 75% mark if present
   if (windows.last_cycle?.hybrid_decision_stats?.mean_score !== undefined) {
     points.push({
-      elapsed_min: duration_min * 0.75, // Place at 75% mark
+      elapsed_min: duration_min * 0.75,
       mean_score: windows.last_cycle.hybrid_decision_stats.mean_score,
       window_label: 'last_cycle'
     });
   }
   
+  // Add last_2_cycles at end if present
   if (windows.last_2_cycles?.hybrid_decision_stats?.mean_score !== undefined) {
     points.push({
-      elapsed_min: duration_min, // Place at end
+      elapsed_min: duration_min,
       mean_score: windows.last_2_cycles.hybrid_decision_stats.mean_score,
       window_label: 'last_2_cycles'
     });
@@ -98,9 +111,10 @@ export function extractSentimentPath(entry: any): SentimentPoint[] {
 
 /**
  * Calculate derived metrics from a single entry
+ * Requires spot_prices array to be passed separately
  */
-export function calculateMetrics(entry: any): EntryMetrics {
-  const pricePath = extractPricePath(entry);
+export function calculateMetrics(entry: any, spotPrices: any[]): EntryMetrics {
+  const pricePath = extractPricePath(entry, spotPrices);
   const derived = entry?.derived || {};
   const sentiment = entry?.twitter_sentiment_windows?.last_2_cycles?.hybrid_decision_stats;
   
@@ -173,6 +187,27 @@ export function calculateMetrics(entry: any): EntryMetrics {
     }
   }
   
+  // Median spread calculation from spot_prices array
+  let medianSpread: number | null = null;
+  if (spotPrices && spotPrices.length > 0) {
+    const spreads = spotPrices
+      .map((s: any) => s.spread_bps)
+      .filter((s: any) => s != null && !isNaN(s))
+      .sort((a: number, b: number) => a - b);
+    
+    if (spreads.length > 0) {
+      const mid = Math.floor(spreads.length / 2);
+      medianSpread = spreads.length % 2 === 0 
+        ? (spreads[mid - 1] + spreads[mid]) / 2 
+        : spreads[mid];
+    }
+  }
+  
+  // Fallback to derived.spread_bps if median not available
+  if (medianSpread === null) {
+    medianSpread = derived.spread_bps ?? null;
+  }
+  
   return {
     startPrice,
     endPrice,
@@ -182,7 +217,7 @@ export function calculateMetrics(entry: any): EntryMetrics {
     mae,
     drawdown,
     volatility,
-    medianSpread: derived.spread_bps ?? null,
+    medianSpread,
     meanSentiment: sentiment?.mean_score ?? null
   };
 }
