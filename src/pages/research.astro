@@ -230,6 +230,79 @@ import PageHero from '../components/PageHero.astro';
     margin-bottom: var(--space-5);
   }
 
+  /* Deep dive navigation */
+  .deep-dive-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: var(--space-4);
+  }
+
+  .deep-dive-nav .nav-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    text-align: center;
+  }
+
+  .deep-dive-nav .nav-info strong {
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+  }
+
+  .deep-dive-nav .nav-counter {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .nav-btn {
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-btn:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    transform: translateY(-1px);
+  }
+
+  .nav-btn:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .deep-dive-nav {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .deep-dive-nav .nav-info {
+      order: -1;
+      width: 100%;
+    }
+
+    .nav-btn {
+      width: 100%;
+      padding: var(--space-3);
+    }
+  }
+
   .loading-state {
     padding: var(--space-6);
     text-align: center;
@@ -342,8 +415,12 @@ import PageHero from '../components/PageHero.astro';
 </style>
 
 <script>
-  // Entry Deep Dive - Client-side rendering
+  // Entry Deep Dive - Client-side rendering with navigation
   import { extractPricePath, extractSentimentPath, calculateMetrics, formatMetric, type PricePoint, type SentimentPoint } from '../lib/deriveEntryMetrics';
+
+  let allEntries: any[] = [];
+  let spotPricesMap: Map<string, any[]> = new Map();
+  let currentIndex = 0;
 
   document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('deepDiveContainer');
@@ -371,34 +448,64 @@ import PageHero from '../components/PageHero.astro';
       const entriesData = await entriesResponse.json();
       const spotsData = await spotsResponse.json();
       
-      const entries = entriesData.entries || [];
+      allEntries = entriesData.entries || [];
       const spots = spotsData.spots || [];
 
-      if (entries.length === 0) {
+      if (allEntries.length === 0) {
         container.innerHTML = '<div class="error-state">No entries available</div>';
         return;
       }
 
       // Build spot prices lookup by symbol
-      const spotPricesMap = new Map<string, any[]>();
       spots.forEach((spot: any) => {
         if (spot.symbol && spot.spot_prices) {
           spotPricesMap.set(spot.symbol, spot.spot_prices);
         }
       });
 
-      // Select one random entry
-      const randomIndex = Math.floor(Math.random() * entries.length);
-      const entry = entries[randomIndex];
-      const spotPrices = spotPricesMap.get(entry.symbol) || [];
+      // Restore last viewed index from sessionStorage or start at 0
+      const savedIndex = sessionStorage.getItem('deepDiveIndex');
+      currentIndex = savedIndex ? parseInt(savedIndex, 10) : 0;
+      if (currentIndex >= allEntries.length) currentIndex = 0;
 
-      // Render the deep dive
-      renderDeepDive(container, entry, spotPrices);
+      // Render the first entry
+      renderCurrentEntry(container);
     } catch (error) {
       console.error('Deep dive error:', error);
       container.innerHTML = '<div class="error-state">Failed to load sample entry</div>';
     }
   });
+
+  function renderCurrentEntry(container: HTMLElement) {
+    const entry = allEntries[currentIndex];
+    const spotPrices = spotPricesMap.get(entry.symbol) || [];
+    
+    // Save current index to sessionStorage
+    sessionStorage.setItem('deepDiveIndex', currentIndex.toString());
+    
+    // Render the deep dive with navigation
+    renderDeepDive(container, entry, spotPrices);
+  }
+
+  function navigateNext() {
+    const container = document.getElementById('deepDiveContainer');
+    if (!container || allEntries.length === 0) return;
+    
+    currentIndex = (currentIndex + 1) % allEntries.length;
+    renderCurrentEntry(container);
+  }
+
+  function navigatePrevious() {
+    const container = document.getElementById('deepDiveContainer');
+    if (!container || allEntries.length === 0) return;
+    
+    currentIndex = (currentIndex - 1 + allEntries.length) % allEntries.length;
+    renderCurrentEntry(container);
+  }
+
+  // Expose functions to window for button onclick handlers
+  (window as any).navigateNext = navigateNext;
+  (window as any).navigatePrevious = navigatePrevious;
 
   function renderDeepDive(container: HTMLElement, entry: any, spotPrices: any[]) {
     const metrics = calculateMetrics(entry, spotPrices);
@@ -455,8 +562,21 @@ import PageHero from '../components/PageHero.astro';
       ['Mean sentiment (hybrid, session)', formatMetric(metrics.meanSentiment, 4)]
     ];
 
+    // Navigation header
+    const navHeader = `
+      <div class="deep-dive-nav">
+        <button class="nav-btn" onclick="window.navigatePrevious()">← Previous</button>
+        <div class="nav-info">
+          <strong>${entry.symbol}</strong>
+          <span class="nav-counter">Entry ${currentIndex + 1} of ${allEntries.length}</span>
+        </div>
+        <button class="nav-btn" onclick="window.navigateNext()">Next →</button>
+      </div>
+    `;
+
     container.innerHTML = `
       <div class="deep-dive-content">
+        ${navHeader}
         ${badgesHTML}
         
         <div class="chart-container">
