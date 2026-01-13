@@ -1,12 +1,11 @@
 {
-  "extracted_at_utc": "2026-01-03T17:26:55.351099Z",
-  "source_archive_folder": "D:\\Sentiment-Data\\CryptoBot\\data\\archive\\20260103",
+  "extracted_at_utc": "2026-01-13T03:54:57.738685Z",
+  "source_archive_folder": "../cryptobot/data/archive/20260113",
   "source_files": [
-    "D:\\Sentiment-Data\\CryptoBot\\data\\archive\\20260103\\17.jsonl.gz",
-    "D:\\Sentiment-Data\\CryptoBot\\data\\archive\\20260103\\16.jsonl.gz",
-    "D:\\Sentiment-Data\\CryptoBot\\data\\archive\\20260103\\15.jsonl.gz"
+    "../cryptobot/data/archive/20260113/03.jsonl.gz",
+    "../cryptobot/data/archive/20260113/02.jsonl.gz"
   ],
   "requested_count": 200,
   "actual_count": 200,
-  "sample_file": "data\\samples\\cryptobot_latest_tail200.jsonl"
+  "sample_file": "data/samples/cryptobot_latest_tail200.jsonl"
 }

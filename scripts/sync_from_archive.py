@@ -20,7 +20,7 @@ from typing import List, Dict, Tuple, Optional
 
 
 # Default paths
-DEFAULT_ARCHIVE_BASE = Path("D:/Sentiment-Data/CryptoBot/data/archive")
+DEFAULT_ARCHIVE_BASE = Path("../cryptobot/data/archive")
 OUTPUT_SAMPLE = Path("data/samples/cryptobot_latest_tail200.jsonl")
 OUTPUT_META = Path("data/samples/cryptobot_latest_tail200.meta.json")
 
@@ -62,7 +62,7 @@ def get_archive_files(folder: Path) -> List[Tuple[Path, float]]:
         dt = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
         print(f"  - {f.name} (modified: {dt})")
     
-    return [f for f, _ in files]
+    return files  # Return list of (Path, mtime) tuples
 
 
 def read_entries_from_file(filepath: Path, limit: Optional[int] = None) -> List[Dict]:
