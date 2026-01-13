@@ -838,13 +838,12 @@ import PageHero from '../components/PageHero.astro';
     `;
 
     container.innerHTML = `
-      <div class="deep-dive-v2">
-        ${navHeader}
-        
-        <div class="deep-dive-grid">
-          ${contextHTML}
-          ${metricsHTML}
-        </div>
+      ${navHeader}
+      
+      <div class="deep-dive-grid">
+        ${contextHTML}
+        ${metricsHTML}
+      </div>
         
         <div class="chart-wrapper">
           <h3 class="chart-title">Spot price samples (latest active window)</h3>
@@ -863,7 +862,6 @@ import PageHero from '../components/PageHero.astro';
           </div>
           <p class="chart-caption">Aggregated entry-level sentiment over the observed archive period for this symbol.</p>
         </div>
-      </div>
     `;
 
     // Render charts
