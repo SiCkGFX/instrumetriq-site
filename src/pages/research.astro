@@ -747,6 +747,30 @@ import PageHero from '../components/PageHero.astro';
     const spotSamplesCount = spotPrices.length;
     const postsLastCycle = entry.twitter_sentiment_windows?.last_cycle?.posts_total !== undefined ? 
       entry.twitter_sentiment_windows.last_cycle.posts_total : null;
+    
+    // Additional context fields
+    const addedUtc = entry.meta?.added_ts ? new Date(entry.meta.added_ts * 1000).toISOString().replace('.000Z', 'Z') : null;
+    const expiresUtc = entry.meta?.expires_ts ? new Date(entry.meta.expires_ts * 1000).toISOString().replace('.000Z', 'Z') : null;
+    const durationSec = entry.meta?.duration_sec !== undefined ? entry.meta.duration_sec : null;
+    
+    // Calculate spot sampling interval (median delta between consecutive timestamps)
+    let spotInterval = null;
+    if (spotPrices.length >= 2) {
+      const deltas = [];
+      for (let i = 1; i < spotPrices.length; i++) {
+        deltas.push(spotPrices[i].ts - spotPrices[i-1].ts);
+      }
+      deltas.sort((a, b) => a - b);
+      const medianIdx = Math.floor(deltas.length / 2);
+      spotInterval = deltas.length % 2 === 0 
+        ? ((deltas[medianIdx - 1] + deltas[medianIdx]) / 2).toFixed(1)
+        : deltas[medianIdx].toFixed(1);
+    }
+    
+    // Get sentiment history count for this symbol
+    const sentimentHistoryCount = sentimentTimeseriesMap.has(entry.symbol) 
+      ? sentimentTimeseriesMap.get(entry.symbol)?.length 
+      : null;
 
     // Context HTML
     const contextHTML = `
@@ -758,8 +782,16 @@ import PageHero from '../components/PageHero.astro';
             <span class="context-value">${entry.symbol}</span>
           </div>
           <div class="context-item">
-            <span class="context-label">Duration (min)</span>
-            <span class="context-value">${duration !== null ? duration : 'N/A'}</span>
+            <span class="context-label">Added (UTC)</span>
+            <span class="context-value">${addedUtc !== null ? addedUtc : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Expires (UTC)</span>
+            <span class="context-value">${expiresUtc !== null ? expiresUtc : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Window duration (sec)</span>
+            <span class="context-value">${durationSec !== null ? durationSec : 'N/A'}</span>
           </div>
           <div class="context-item">
             <span class="context-label">Silent</span>
@@ -782,8 +814,16 @@ import PageHero from '../components/PageHero.astro';
             <span class="context-value">${spotSamplesCount}</span>
           </div>
           <div class="context-item">
+            <span class="context-label">Spot sampling interval (sec)</span>
+            <span class="context-value">${spotInterval !== null ? spotInterval : 'N/A'}</span>
+          </div>
+          <div class="context-item">
             <span class="context-label">Posts (last_cycle)</span>
             <span class="context-value">${postsLastCycle !== null ? postsLastCycle : 'N/A'}</span>
+          </div>
+          <div class="context-item">
+            <span class="context-label">Sentiment points (history)</span>
+            <span class="context-value">${sentimentHistoryCount !== null ? sentimentHistoryCount : 'N/A'}</span>
           </div>
         </div>
       </div>
