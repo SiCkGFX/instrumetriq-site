@@ -111,6 +111,88 @@ import PageHero from '../components/PageHero.astro';
         <div class="loading-state">Loading sample entry...</div>
       </div>
     </section>
+
+    <!-- Section 5: Research use cases -->
+    <section class="use-cases-section">
+      <h2>Research use cases</h2>
+      <p class="use-cases-subtitle">
+        Examples of how the dataset can be used in research contexts.
+      </p>
+
+      <div class="use-cases-grid">
+        <div class="use-case-card">
+          <h3>Sentiment time series modeling</h3>
+          <ul>
+            <li>Use archived aggregates for analysis</li>
+            <li>Study temporal behavior across entries</li>
+            <li>Examine sentiment patterns over time</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Microstructure + narrative coupling</h3>
+          <ul>
+            <li>Analyze relationships between sentiment and market data</li>
+            <li>Study co-evolution of signals</li>
+            <li>Explore synchronization patterns</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Silence & activity research</h3>
+          <ul>
+            <li>Distinguish absence of signal from neutral sentiment</li>
+            <li>Study activity patterns and gaps</li>
+            <li>Analyze silence as a distinct state</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Model evaluation & drift monitoring</h3>
+          <ul>
+            <li>Use historical data for validation</li>
+            <li>Track model performance over time</li>
+            <li>Study distributional shifts</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Event-centric labeling (observational)</h3>
+          <ul>
+            <li>Identify notable patterns in recorded data</li>
+            <li>Study outcomes relative to entry conditions</li>
+            <li>Analyze event characteristics retrospectively</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Cross-sectional comparisons</h3>
+          <ul>
+            <li>Compare metrics across different assets</li>
+            <li>Study relative patterns and distributions</li>
+            <li>Analyze cross-sectional relationships</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Data quality & integrity studies</h3>
+          <ul>
+            <li>Assess data completeness and consistency</li>
+            <li>Study measurement reliability</li>
+            <li>Analyze collection process characteristics</li>
+          </ul>
+        </div>
+
+        <div class="use-case-card">
+          <h3>Aggregated author & engagement analysis</h3>
+          <ul>
+            <li>Study engagement patterns in aggregated form</li>
+            <li>Analyze author distribution statistics</li>
+            <li>Examine aggregate behavioral signals</li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
@@ -219,6 +301,63 @@ import PageHero from '../components/PageHero.astro';
 
   @media (max-width: 768px) {
     .storage-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Research use cases grid */
+  .use-cases-subtitle {
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-5);
+  }
+
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .use-case-card {
+    padding: var(--space-4);
+    background-color: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color var(--transition-base);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .use-case-card:hover {
+    border-color: var(--border2);
+  }
+
+  .use-case-card h3 {
+    font-size: 1.125rem;
+    margin: 0 0 var(--space-3) 0;
+    color: var(--text);
+  }
+
+  .use-case-card ul {
+    margin: 0;
+    padding-left: var(--space-5);
+    flex-grow: 1;
+  }
+
+  .use-case-card li {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .use-case-card li:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    .use-cases-grid {
       grid-template-columns: 1fr;
     }
   }
