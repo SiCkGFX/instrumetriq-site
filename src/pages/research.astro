@@ -435,15 +435,16 @@ import PageHero from '../components/PageHero.astro';
   .context-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-3);
+    gap: 0;
   }
 
   .context-item {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: var(--space-2) 0;
+    padding: 12px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    line-height: 1.4;
   }
 
   .context-item:last-child {
@@ -453,7 +454,7 @@ import PageHero from '../components/PageHero.astro';
   .context-label {
     font-size: 0.875rem;
     color: var(--text-muted);
-    font-weight: 500;
+    font-weight: 400;
     padding-right: var(--space-3);
     flex-shrink: 0;
     max-width: 65%;
@@ -583,8 +584,7 @@ import PageHero from '../components/PageHero.astro';
     border-collapse: collapse;
   }
 
-  .metrics-table td {
-    padding: var(--space-3) var(--space-2);
+  .metrics-ta12px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
@@ -595,6 +595,8 @@ import PageHero from '../components/PageHero.astro';
   .metrics-table .metrics-label {
     color: var(--text-muted);
     font-size: 0.875rem;
+    line-height: 1.4;
+    font-weight: 400rem;
     line-height: 1.4;
     padding-right: var(--space-4);
   }
@@ -812,14 +814,6 @@ import PageHero from '../components/PageHero.astro';
           <div class="context-item">
             <span class="context-label">Median spread (bps)</span>
             <span class="context-value">${medianSpread !== null ? medianSpread : 'N/A'}</span>
-          </div>
-          <div class="context-item">
-            <span class="context-label">Spot samples (count)</span>
-            <span class="context-value">${spotSamplesCount}</span>
-          </div>
-          <div class="context-item">
-            <span class="context-label">Spot sampling interval (sec)</span>
-            <span class="context-value">${spotInterval !== null ? spotInterval : 'N/A'}</span>
           </div>
           <div class="context-item">
             <span class="context-label">Posts (last_cycle)</span>
