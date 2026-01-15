@@ -193,6 +193,62 @@ import PageHero from '../components/PageHero.astro';
         </div>
       </div>
     </section>
+
+    <!-- Section 6: Constraints & data integrity -->
+    <section class="constraints-section">
+      <h2>Constraints & data integrity</h2>
+
+      <div class="constraint-block">
+        <h3>Observational scope</h3>
+        <p>
+          This dataset is structured for observational research, not for trading decisions or predictive modeling advice. 
+          The measurements record what occurred during specific monitoring windows, not what will occur.
+        </p>
+        <p>
+          Outcomes are presented descriptively. Researchers using this data are expected to form their own interpretations 
+          and validate findings independently. No statistical relationship observed here should be assumed to persist or generalize beyond the recorded conditions.
+        </p>
+      </div>
+
+      <div class="constraint-block">
+        <h3>Temporal & sampling limits</h3>
+        <p>
+          Each monitored entry spans approximately 120–130 minutes. Spot price samples are collected every 10 seconds during this window. 
+          This is not continuous market coverage, and not all assets are monitored simultaneously.
+        </p>
+        <p>
+          The dataset captures short-term, high-resolution snapshots rather than long-term trends. 
+          Gaps between entries are expected and normal. Sampling frequency and window length are fixed by design, 
+          which may limit certain analyses that require different temporal resolutions.
+        </p>
+      </div>
+
+      <div class="constraint-block">
+        <h3>Sentiment aggregation & uncertainty</h3>
+        <p>
+          Sentiment values are aggregated at the cycle level and do not represent individual posts. 
+          A neutral sentiment score does not mean no social activity occurred—it may reflect balanced opinions, low confidence, or explicitly neutral content.
+        </p>
+        <p>
+          Silence and inactivity are tracked separately using explicit flags and timestamps. 
+          All sentiment scores carry inherent uncertainty and variance, which are reported alongside the aggregates. 
+          Researchers should account for these distributions rather than treating aggregates as point estimates.
+        </p>
+      </div>
+
+      <div class="constraint-block">
+        <h3>Privacy & data handling</h3>
+        <p>
+          Raw posts are not stored in this dataset and are not published or exposed. 
+          Author identities are not recorded, stored, or made available at any stage of the pipeline.
+        </p>
+        <p>
+          Only aggregated author-level statistics (such as follower count distributions, verification ratios, and engagement metrics) 
+          are included, preserving privacy by design. The source data is public, but processing follows data minimization principles 
+          to ensure no individual-level tracking or re-identification is possible from the published archive.
+        </p>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
@@ -360,6 +416,33 @@ import PageHero from '../components/PageHero.astro';
     .use-cases-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  /* Constraints & data integrity section */
+  .constraint-block {
+    margin-bottom: var(--space-6);
+  }
+
+  .constraint-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .constraint-block h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 var(--space-3) 0;
+  }
+
+  .constraint-block p {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .constraint-block p:last-child {
+    margin-bottom: 0;
   }
 
   /* Deep Dive Section */
