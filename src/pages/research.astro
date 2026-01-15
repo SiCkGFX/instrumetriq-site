@@ -123,72 +123,72 @@ import PageHero from '../components/PageHero.astro';
         <div class="use-case-card">
           <h3>Sentiment time series modeling</h3>
           <ul>
-            <li>Use archived aggregates for analysis</li>
-            <li>Study temporal behavior across entries</li>
-            <li>Examine sentiment patterns over time</li>
+            <li>Use archived, window-level sentiment aggregates to study how social sentiment evolves over short, fixed monitoring periods.</li>
+            <li>Analyze temporal properties such as persistence, volatility, mean reversion, and structural breaks in sentiment signals.</li>
+            <li>Apply standard time-series techniques to social data that is already normalized and aggregated at the entry level.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Microstructure + narrative coupling</h3>
           <ul>
-            <li>Analyze relationships between sentiment and market data</li>
-            <li>Study co-evolution of signals</li>
-            <li>Explore synchronization patterns</li>
+            <li>Examine how aggregated social sentiment aligns with short-term price movement, spreads, and liquidity conditions.</li>
+            <li>Study whether narrative intensity and market microstructure signals co-evolve, diverge, or lag one another.</li>
+            <li>Compare coupling strength across assets, time windows, and market regimes.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Silence & activity research</h3>
           <ul>
-            <li>Distinguish absence of signal from neutral sentiment</li>
-            <li>Study activity patterns and gaps</li>
-            <li>Analyze silence as a distinct state</li>
+            <li>Explicitly separate periods of posting inactivity from neutral or low-confidence sentiment states.</li>
+            <li>Analyze how changes in posting frequency relate to market behavior and volatility.</li>
+            <li>Treat silence as a first-class signal rather than an absence of data.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Model evaluation & drift monitoring</h3>
           <ul>
-            <li>Use historical data for validation</li>
-            <li>Track model performance over time</li>
-            <li>Study distributional shifts</li>
+            <li>Use the historical archive to observe how sentiment model outputs behave over time.</li>
+            <li>Track shifts in score distributions, confidence bands, and decision pathways.</li>
+            <li>Support analysis of model stability, drift, and long-term consistency without retraining.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Event-centric labeling (observational)</h3>
           <ul>
-            <li>Identify notable patterns in recorded data</li>
-            <li>Study outcomes relative to entry conditions</li>
-            <li>Analyze event characteristics retrospectively</li>
+            <li>Identify recurring patterns in sentiment and market behavior around notable events.</li>
+            <li>Analyze outcomes relative to observed entry conditions, rather than assigning forward-looking labels.</li>
+            <li>Support retrospective research into how narratives and markets responded to specific situations.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Cross-sectional comparisons</h3>
           <ul>
-            <li>Compare metrics across different assets</li>
-            <li>Study relative patterns and distributions</li>
-            <li>Analyze cross-sectional relationships</li>
+            <li>Compare sentiment, liquidity, and volatility metrics across multiple assets within similar time windows.</li>
+            <li>Study relative behavior rather than absolute values to identify outliers and common structures.</li>
+            <li>Analyze how different assets respond to comparable narrative conditions.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Data quality & integrity studies</h3>
           <ul>
-            <li>Assess data completeness and consistency</li>
-            <li>Study measurement reliability</li>
-            <li>Analyze collection process characteristics</li>
+            <li>Evaluate completeness, internal consistency, and stability of collected signals.</li>
+            <li>Study the effects of deduplication, aggregation, and sampling on downstream metrics.</li>
+            <li>Use the dataset to validate methodological assumptions in social data collection.</li>
           </ul>
         </div>
 
         <div class="use-case-card">
           <h3>Aggregated author & engagement analysis</h3>
           <ul>
-            <li>Study engagement patterns in aggregated form</li>
-            <li>Analyze author distribution statistics</li>
-            <li>Examine aggregate behavioral signals</li>
+            <li>Analyze engagement dynamics using aggregated author-level statistics.</li>
+            <li>Study how engagement concentration and distribution relate to sentiment outcomes.</li>
+            <li>Preserve privacy by design: identities are neither stored nor exposed, only aggregated signals.</li>
           </ul>
         </div>
       </div>
