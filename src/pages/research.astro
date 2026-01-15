@@ -749,8 +749,12 @@ import PageHero from '../components/PageHero.astro';
       entry.twitter_sentiment_windows.last_cycle.posts_total : null;
     
     // Additional context fields
-    const addedUtc = entry.meta?.added_ts ? new Date(entry.meta.added_ts * 1000).toISOString().replace('.000Z', 'Z') : null;
-    const expiresUtc = entry.meta?.expires_ts ? new Date(entry.meta.expires_ts * 1000).toISOString().replace('.000Z', 'Z') : null;
+    const addedUtc = entry.meta?.added_ts 
+      ? (typeof entry.meta.added_ts === 'string' ? entry.meta.added_ts : new Date(entry.meta.added_ts * 1000).toISOString().replace('.000Z', 'Z'))
+      : null;
+    const expiresUtc = entry.meta?.expires_ts 
+      ? (typeof entry.meta.expires_ts === 'string' ? entry.meta.expires_ts : new Date(entry.meta.expires_ts * 1000).toISOString().replace('.000Z', 'Z'))
+      : null;
     const durationSec = entry.meta?.duration_sec !== undefined ? entry.meta.duration_sec : null;
     
     // Calculate spot sampling interval (median delta between consecutive timestamps)
