@@ -433,21 +433,25 @@ import PageHero from '../components/PageHero.astro';
   }
 
   .context-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
   }
 
   .context-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    display: table-row;
+  }
+
+  .context-label,
+  .context-value {
+    display: table-cell;
     padding: 12px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     line-height: 1.4;
   }
 
-  .context-item:last-child {
+  .context-item:last-child .context-label,
+  .context-item:last-child .context-value {
     border-bottom: none;
   }
 
@@ -455,15 +459,15 @@ import PageHero from '../components/PageHero.astro';
     font-size: 0.875rem;
     color: var(--text-muted);
     font-weight: 400;
-    padding-right: var(--space-3);
-    flex-shrink: 0;
-    max-width: 65%;
+    padding-right: var(--space-4);
+    width: 60%;
   }
 
   .context-value {
     font-size: 0.9375rem;
     color: var(--text);
     font-weight: 600;
+    text-align: right;
   }
 
   .loading-state {
