@@ -10,7 +10,21 @@ Each daily export represents all entries written to the archive folder for that 
 
 This means:
 - An entry with `meta.added_ts = 2026-01-12T23:55:00Z` may appear in the `2026-01-13` daily export if it was written to the `20260113/` archive folder
-- A complete daily export requires all 24 hour files (00.jsonl.gz through 23.jsonl.gz)
+- A partial daily export is allowed if at least 20 of 24 hour files are present (configurable via `--min-hours`)
+
+### Partial-Day Exports
+
+Partial-day exports are allowed when:
+- At least **20 of 24** hours are available (the `MIN_HOURS` threshold, configurable via `--min-hours`)
+- The pipeline was offline for brief periods but recovered
+
+Partial days are **explicitly marked** in the manifest:
+- `is_partial: true` indicates fewer than 24 hours were found
+- `missing_hours` lists which hour files were absent
+- `coverage_ratio` shows the fraction of hours found (e.g., 0.875 for 21/24)
+- `rows_by_hour` shows how many entries came from each hour file
+
+**Gaps reflect pipeline uptime**, not missing market data. If the pipeline was offline for 2 hours, those hours will be missing. This is expected for operational incidents and is recorded honestly rather than hidden.
 
 ## R2 Layout
 
@@ -42,8 +56,14 @@ instrumetriq-datasets/
   - `archive_day`: The archive folder name (YYYYMMDD)
   - `hours_expected`: 24 (expected hour files)
   - `hours_found`: Actual hour files found
+  - `missing_hours`: List of hour strings that were absent (e.g., `["03", "04"]`)
+  - `coverage_ratio`: Fraction of hours found (e.g., 0.875 for 21/24)
+  - `is_partial`: Boolean, true if hours_found < 24
+  - `rows_by_hour`: Object mapping each hour ("00"–"23") to row count
+  - `min_hours_threshold`: Minimum hours required for export (default 20)
   - `dropped_columns`: Columns intentionally omitted
   - `null_semantics`: Documentation of NULL meanings
+  - `export_version`: Schema version of manifest format (currently "1.3")
 
 ## Column Schema
 

@@ -294,15 +294,31 @@ def check_manifest_correctness(
     hours_expected = manifest.get("hours_expected")
     hours_found = manifest.get("hours_found")
     partition_basis = manifest.get("partition_basis")
+    is_partial = manifest.get("is_partial", False)
+    missing_hours = manifest.get("missing_hours", [])
+    coverage_ratio = manifest.get("coverage_ratio")
+    rows_by_hour = manifest.get("rows_by_hour", {})
+    min_hours_threshold = manifest.get("min_hours_threshold", 20)
     
     if hours_expected is not None and hours_found is not None:
         result.info["hours_expected"] = hours_expected
         result.info["hours_found"] = hours_found
         result.info["hours_complete"] = hours_found == hours_expected
+        result.info["is_partial"] = is_partial
+        result.info["missing_hours"] = missing_hours
+        result.info["coverage_ratio"] = coverage_ratio
+        result.info["min_hours_threshold"] = min_hours_threshold
+        result.info["rows_by_hour"] = rows_by_hour
         
-        if hours_found != hours_expected:
+        # Check if coverage meets minimum threshold
+        if hours_found < min_hours_threshold:
+            result.errors.append(
+                f"Insufficient coverage: {hours_found}/{min_hours_threshold} minimum hours"
+            )
+        elif is_partial:
+            # Partial but meets threshold - WARN, not error
             result.warnings.append(
-                f"Incomplete day: {hours_found}/{hours_expected} hours found"
+                f"Partial day: {hours_found}/{hours_expected} hours (missing: {missing_hours})"
             )
     
     if partition_basis:
@@ -591,23 +607,27 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         "",
         "## Summary",
         "",
-        "| Date | Status | Rows | Size (MB) | SHA Match | Min Timestamp | Max Timestamp | Futures % |",
-        "|------|--------|------|-----------|-----------|---------------|---------------|-----------|",
+        "| Date | Status | Rows | Size (MB) | SHA Match | Hours | Coverage | Futures % |",
+        "|------|--------|------|-----------|-----------|-------|----------|-----------|",
     ]
     
     for r in results:
         info = r.info
         sha_match = "✅" if info.get("sha256_match") else "❌"
         
-        # Format timestamps
-        manifest = info.get("manifest", {})
-        min_ts = manifest.get("min_added_ts") or manifest.get("min_timestamp", "N/A")
-        max_ts = manifest.get("max_added_ts") or manifest.get("max_timestamp", "N/A")
+        # Format hours coverage
+        hours_found = info.get("hours_found", "N/A")
+        hours_expected = info.get("hours_expected", 24)
+        is_partial = info.get("is_partial", False)
+        hours_str = f"{hours_found}/{hours_expected}"
+        if is_partial:
+            hours_str += " ⚠️"
         
-        if isinstance(min_ts, (int, float)):
-            min_ts = datetime.fromtimestamp(min_ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-        if isinstance(max_ts, (int, float)):
-            max_ts = datetime.fromtimestamp(max_ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+        coverage_ratio = info.get("coverage_ratio")
+        if coverage_ratio is not None:
+            coverage_str = f"{coverage_ratio*100:.0f}%"
+        else:
+            coverage_str = "N/A"
         
         futures_pct = info.get("futures_present_pct", "N/A")
         if isinstance(futures_pct, (int, float)):
@@ -615,7 +635,7 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         
         lines.append(
             f"| {r.date} | {r.status} | {info.get('row_count', 'N/A')} | "
-            f"{info.get('parquet_size_mb', 'N/A')} | {sha_match} | {min_ts} | {max_ts} | {futures_pct} |"
+            f"{info.get('parquet_size_mb', 'N/A')} | {sha_match} | {hours_str} | {coverage_str} | {futures_pct} |"
         )
     
     lines.append("")
@@ -670,6 +690,37 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         lines.append(f"- **Row count:** {info.get('row_count', 'N/A')}")
         lines.append(f"- **Column count:** {info.get('column_count', 'N/A')}")
         lines.append("")
+        
+        # Coverage info
+        if info.get("hours_found") is not None:
+            coverage_pct = (info.get('coverage_ratio', 0) or 0) * 100
+            partial_marker = " (PARTIAL)" if info.get("is_partial") else ""
+            lines.append(f"**Coverage:{partial_marker}**")
+            lines.append(f"- Hours: {info.get('hours_found')}/{info.get('hours_expected', 24)}")
+            lines.append(f"- Coverage ratio: {coverage_pct:.1f}%")
+            lines.append(f"- Min hours threshold: {info.get('min_hours_threshold', 20)}")
+            
+            missing_hours = info.get("missing_hours", [])
+            if missing_hours:
+                lines.append(f"- Missing hours: {missing_hours}")
+            
+            rows_by_hour = info.get("rows_by_hour", {})
+            if rows_by_hour:
+                # Show a compact summary of rows by hour
+                lines.append("")
+                lines.append("**Rows by hour:**")
+                lines.append("```")
+                # Group into 4 rows of 6 hours each
+                hours_sorted = sorted(rows_by_hour.keys())
+                for start_idx in range(0, 24, 6):
+                    row_parts = []
+                    for h in hours_sorted[start_idx:start_idx+6]:
+                        count = rows_by_hour.get(h, 0)
+                        marker = " " if count > 0 else "X"
+                        row_parts.append(f"{h}:{count:>4}{marker}")
+                    lines.append("  " + " | ".join(row_parts))
+                lines.append("```")
+            lines.append("")
         
         # Columns
         if "columns" in info:

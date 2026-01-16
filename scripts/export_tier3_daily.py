@@ -71,6 +71,9 @@ PARQUET_COMPRESSION = "zstd"
 # Expected hours for a complete day (00-23)
 EXPECTED_HOURS = [f"{h:02d}" for h in range(24)]  # ["00", "01", ..., "23"]
 
+# Minimum hours required for a valid export (allows partial days)
+MIN_HOURS_DEFAULT = 20
+
 # Required top-level keys for schema validation
 REQUIRED_TOP_LEVEL_KEYS = [
     "symbol",
@@ -194,29 +197,44 @@ def load_day_entries(archive_path: Path, date_str: str) -> tuple[list[dict], dic
         date_str: Date in YYYY-MM-DD format
         
     Returns:
-        Tuple of (entries list, hour_info dict with found/expected hours)
+        Tuple of (entries list, hour_info dict with found/expected hours and rows_by_hour)
     """
     date_folder = get_date_folder(archive_path, date_str)
     
     if not date_folder:
         print(f"[ERROR] No archive folder found for date: {date_str}", file=sys.stderr)
-        return [], {"hours_found": 0, "hours_expected": 24, "found_hours": [], "missing_hours": EXPECTED_HOURS}
+        # Initialize rows_by_hour with 0 for all hours
+        rows_by_hour = {h: 0 for h in EXPECTED_HOURS}
+        return [], {
+            "hours_found": 0,
+            "hours_expected": 24,
+            "found_hours": [],
+            "missing_hours": EXPECTED_HOURS,
+            "rows_by_hour": rows_by_hour,
+            "coverage_ratio": 0.0,
+            "is_partial": True,
+        }
     
     # Check hour completeness
     found_hours, missing_hours = check_hour_completeness(date_folder)
-    hour_info = {
-        "hours_found": len(found_hours),
-        "hours_expected": 24,
-        "found_hours": found_hours,
-        "missing_hours": missing_hours,
-        "archive_day": date_folder.name,
-    }
+    
+    # Initialize rows_by_hour with 0 for all hours
+    rows_by_hour = {h: 0 for h in EXPECTED_HOURS}
     
     hour_files = get_hour_files(date_folder)
     
     if not hour_files:
         print(f"[ERROR] No hour files found in {date_folder}", file=sys.stderr)
-        return [], hour_info
+        return [], {
+            "hours_found": 0,
+            "hours_expected": 24,
+            "found_hours": [],
+            "missing_hours": EXPECTED_HOURS,
+            "archive_day": date_folder.name,
+            "rows_by_hour": rows_by_hour,
+            "coverage_ratio": 0.0,
+            "is_partial": True,
+        }
     
     print(f"[INFO] Loading from {len(hour_files)} hour files in {date_folder.name}/")
     
@@ -224,7 +242,30 @@ def load_day_entries(archive_path: Path, date_str: str) -> tuple[list[dict], dic
     for filepath in hour_files:
         file_entries = list(iter_entries_from_file(filepath))
         entries.extend(file_entries)
+        
+        # Extract hour from filename and record row count
+        stem = filepath.stem
+        if stem.endswith(".jsonl"):
+            stem = stem[:-6]
+        if len(stem) == 2 and stem.isdigit():
+            rows_by_hour[stem] = len(file_entries)
+        
         print(f"  {filepath.name}: {len(file_entries)} entries")
+    
+    # Compute coverage ratio
+    coverage_ratio = round(len(found_hours) / 24, 4)
+    is_partial = len(found_hours) < 24
+    
+    hour_info = {
+        "hours_found": len(found_hours),
+        "hours_expected": 24,
+        "found_hours": found_hours,
+        "missing_hours": missing_hours,
+        "archive_day": date_folder.name,
+        "rows_by_hour": rows_by_hour,
+        "coverage_ratio": coverage_ratio,
+        "is_partial": is_partial,
+    }
     
     return entries, hour_info
 
@@ -448,6 +489,7 @@ def create_manifest(
     date_str: str,
     parquet_path: Path,
     metadata: dict,
+    min_hours: int = MIN_HOURS_DEFAULT,
 ) -> dict:
     """
     Create manifest dict for the export.
@@ -456,6 +498,7 @@ def create_manifest(
         date_str: UTC date string (YYYY-MM-DD)
         parquet_path: Path to parquet file
         metadata: Metadata from parquet export
+        min_hours: Minimum hours threshold used for this export
         
     Returns:
         Manifest dict
@@ -473,12 +516,18 @@ def create_manifest(
         "parquet_sha256": compute_file_sha256(parquet_path),
         "compression": PARQUET_COMPRESSION,
         "tier": "tier3",
-        "export_version": "1.2",
+        "export_version": "1.3",
         # Partition semantics
-        "partition_basis": "archive_folder_utc_day",
+        "partition_basis": "archive_folder_day",
         "archive_day": metadata.get("archive_day", archive_day),
-        "hours_expected": metadata.get("hours_expected", 24),
+        # Coverage metadata
+        "hours_expected": 24,
         "hours_found": metadata.get("hours_found", 24),
+        "missing_hours": metadata.get("missing_hours", []),
+        "coverage_ratio": metadata.get("coverage_ratio", 1.0),
+        "is_partial": metadata.get("is_partial", False),
+        "rows_by_hour": metadata.get("rows_by_hour", {}),
+        "min_hours_threshold": min_hours,
         # Schema notes
         "dropped_columns": metadata.get("dropped_columns", []),
         "null_semantics": {
@@ -561,6 +610,7 @@ def export_tier3_daily(
     upload: bool = False,
     force: bool = False,
     allow_incomplete: bool = False,
+    min_hours: int = MIN_HOURS_DEFAULT,
 ) -> int:
     """
     Main export function.
@@ -571,7 +621,8 @@ def export_tier3_daily(
         output_dir: Local output directory
         upload: Whether to upload to R2
         force: Whether to overwrite existing R2 objects
-        allow_incomplete: Allow export even if hours are missing
+        allow_incomplete: Allow export of today's date (inherently incomplete)
+        min_hours: Minimum hours required for export (default 20)
         
     Returns:
         Exit code (0 = success)
@@ -595,17 +646,19 @@ def export_tier3_daily(
     
     print(f"[OK] Loaded {len(entries)} entries")
     print(f"    Hours found: {hour_info['hours_found']}/{hour_info['hours_expected']}")
+    print(f"    Coverage ratio: {hour_info['coverage_ratio']*100:.1f}%")
     
-    # Check hour completeness
-    if hour_info['missing_hours']:
-        print(f"\n[ERROR] Incomplete day: missing hours {hour_info['missing_hours']}", file=sys.stderr)
-        if not allow_incomplete:
-            print("[HINT] Use --allow-incomplete to bypass this check (manual recovery only)", file=sys.stderr)
-            return 1
-        else:
-            print("[WARN] Proceeding with incomplete day (--allow-incomplete set)", file=sys.stderr)
+    # Check minimum hours threshold
+    if hour_info['hours_found'] < min_hours:
+        print(f"\n[ERROR] Insufficient coverage: {hour_info['hours_found']}/{min_hours} hours minimum", file=sys.stderr)
+        print(f"    Missing hours: {hour_info['missing_hours']}", file=sys.stderr)
+        print(f"[HINT] Use --min-hours to lower the threshold (current: {min_hours})", file=sys.stderr)
+        return 1
     
-    print(f"[OK] Loaded {len(entries)} entries")
+    # Report partial day status (info only, not blocking)
+    if hour_info['is_partial']:
+        print(f"[INFO] Partial day: missing hours {hour_info['missing_hours']}")
+        print(f"[INFO] Proceeding with {hour_info['hours_found']}/{hour_info['hours_expected']} hours (>= {min_hours} threshold)")
     
     # Validate sample
     print(f"\n[STEP 2] Validating schema...")
@@ -644,7 +697,7 @@ def export_tier3_daily(
     
     # Create manifest
     print(f"\n[STEP 4] Creating manifest...")
-    manifest = create_manifest(date_str, parquet_path, metadata)
+    manifest = create_manifest(date_str, parquet_path, metadata, min_hours)
     
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)
@@ -767,7 +820,14 @@ Examples:
     parser.add_argument(
         "--allow-incomplete",
         action="store_true",
-        help="Allow export even if not all 24 hours are present (manual recovery only)",
+        help="Allow export of today's date (day is inherently incomplete)",
+    )
+    
+    parser.add_argument(
+        "--min-hours",
+        type=int,
+        default=MIN_HOURS_DEFAULT,
+        help=f"Minimum hours required for export (default: {MIN_HOURS_DEFAULT}). Use 24 to require complete days.",
     )
     
     args = parser.parse_args()
@@ -816,6 +876,7 @@ Examples:
         upload=do_upload,
         force=args.force,
         allow_incomplete=args.allow_incomplete,
+        min_hours=args.min_hours,
     )
     
     sys.exit(exit_code)

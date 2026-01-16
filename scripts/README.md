@@ -230,14 +230,24 @@ python3 scripts/export_tier3_daily.py --date 2026-01-14 --upload
 
 # Export yesterday's data
 python3 scripts/export_tier3_daily.py --yesterday --upload
+
+# Export partial day with custom minimum hours
+python3 scripts/export_tier3_daily.py --date 2026-01-14 --min-hours 18 --upload
 ```
 
 **Features:**
-- Loads all hour files for a UTC day from archive
+- Loads all available hour files for a UTC day from archive
 - Validates schema version (currently v7)
 - Converts nested JSON to Parquet with zstd compression
-- Generates manifest with SHA256 checksums
+- Generates manifest with SHA256 checksums and coverage metadata
+- Supports partial-day exports (default: requires 20/24 hours minimum)
 - Uploads to R2 `tier3/daily/{date}/` prefix
+
+**Partial-Day Support:**
+- By default, requires at least 20 of 24 hour files (`--min-hours 20`)
+- Missing hours are recorded in manifest (`missing_hours`, `coverage_ratio`, `is_partial`)
+- `rows_by_hour` shows entry distribution across hours
+- Use `--min-hours 24` to require complete days (strict mode)
 
 **Requirements:**
 - pyarrow (for Parquet export)
@@ -318,6 +328,14 @@ python3 scripts/verify_tier3_parquet.py --date 2026-01-14 --date 2026-01-15
 # Verify local files
 python3 scripts/verify_tier3_parquet.py --local output/tier3_daily/2026-01-14
 ```
+
+**Partial-Day Handling:**
+- Reads `min_hours_threshold` from manifest (default: 20 if absent)
+- **PASS**: ≥ threshold hours with full coverage (24/24)
+- **WARN**: ≥ threshold hours but partial coverage (e.g., 21/24) - proceeds with warning
+- **FAIL**: < threshold hours - insufficient data for reliable export
+
+The report shows hours found, coverage ratio, and missing hours for each date.
 
 **When to run:** After Tier 3 exports to validate data integrity
 
