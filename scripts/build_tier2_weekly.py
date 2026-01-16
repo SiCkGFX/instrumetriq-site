@@ -84,28 +84,26 @@ MIN_DAYS_DEFAULT = 5
 # - Tier 2 adds ON TOP:
 #   1) Full spot_raw.* (depth levels, OBI, micro premium, impact, liq efficiency raw, etc.)
 #   2) Full derived.* and full scores.*
-#   3) Sentiment expanded from twitter_sentiment_windows.last_cycle and last_2_cycles:
-#      - ai_sentiment.*, author_stats.*, hybrid_decision_stats.* (incl decision_sources, conf means)
-#      - lexicon_sentiment.*, category_counts, top_terms
-#      - content_stats.*, platform_engagement.*
-#      - tag_counts, cashtag_counts, mention_counts, url_domain_counts (as MAP columns)
-#   4) twitter_sentiment_meta.* (snapshot provenance)
+#   3) twitter_sentiment_meta.* (snapshot provenance)
 #
-# CRITICAL: twitter_sentiment_windows has dynamic-key structs (tag_counts, cashtag_counts,
-# mention_counts, url_domain_counts) where keys are hashtags/handles/domains that differ
-# between days. These MUST be converted to MAP<string, int64> for stable schema.
+# LIMITATION: twitter_sentiment_windows contains dynamic-key structs (tag_counts,
+# cashtag_counts, mention_counts, url_domain_counts) with 10K-17K unique keys per day.
+# These cannot be concatenated across days (different schemas) and MAP conversion
+# takes 15-30 minutes per weekly build. For now, we EXCLUDE twitter_sentiment_windows
+# from Tier 2. The essential sentiment metadata is in twitter_sentiment_meta.
+# Full sentiment data is available in Tier 3 (daily files, no concatenation needed).
 
 # Columns to EXCLUDE from Tier 2 (present in Tier 3)
 TIER2_EXCLUDED_COLUMNS = [
-    "futures_raw",   # Entire futures block (preserve Tier 3 value)
-    "spot_prices",   # Spot price time-series arrays (preserve Tier 3 value)
-    "flags",         # Boolean flags block (Tier 3 only)
-    "diag",          # Diagnostics block (Tier 3 only)
-    # NOTE: twitter_sentiment_windows is now INCLUDED (with dynamic-key transform)
+    "futures_raw",                 # Entire futures block (preserve Tier 3 value)
+    "spot_prices",                 # Spot price time-series arrays (preserve Tier 3 value)
+    "flags",                       # Boolean flags block (Tier 3 only)
+    "diag",                        # Diagnostics block (Tier 3 only)
+    "twitter_sentiment_windows",   # Dynamic-key structs, see note above
     # NOTE: norm, labels are typically empty/null in v7
 ]
 
-# Dynamic-key struct fields that need MAP conversion (within twitter_sentiment_windows)
+# Dynamic-key struct fields reference (within twitter_sentiment_windows)
 # These are the problematic fields where keys are actual hashtags/handles/domains
 DYNAMIC_KEY_FIELDS = [
     "tag_counts",
@@ -123,7 +121,7 @@ TIER2_REQUIRED_COLUMNS = [
     "derived",
     "scores",
     "twitter_sentiment_meta",
-    "twitter_sentiment_windows",  # Now included with MAP conversion
+    # NOTE: twitter_sentiment_windows excluded due to dynamic-key performance issue
 ]
 
 # R2 path patterns
@@ -279,26 +277,31 @@ def struct_to_map(struct_array: pa.StructArray) -> pa.MapArray:
     
     This normalizes dynamic-key structs (where field names are hashtags/handles/domains)
     into a stable schema that can be concatenated across days.
+    
+    Optimized v3: Uses single to_pylist() call on the struct array (one PyArrow call total),
+    then filters in pure Python.
     """
     if struct_array is None or len(struct_array) == 0:
-        # Return empty map array
         return pa.array([], type=pa.map_(pa.string(), pa.int64()))
     
-    # Build list of (key, value) tuples for each row
-    result_maps = []
+    n_rows = len(struct_array)
     struct_type = struct_array.type
     
-    for row_idx in range(len(struct_array)):
-        if struct_array[row_idx].is_valid:
-            row_struct = struct_array[row_idx].as_py()
-            if row_struct is not None:
-                # Convert dict to list of tuples
-                items = [(k, v) for k, v in row_struct.items() if v is not None and v > 0]
-                result_maps.append(items)
-            else:
-                result_maps.append(None)
-        else:
+    if struct_type.num_fields == 0:
+        return pa.array([[] for _ in range(n_rows)], type=pa.map_(pa.string(), pa.int64()))
+    
+    # Single PyArrow call - convert entire struct array to list of dicts
+    # This is much faster than iterating fields
+    all_rows = struct_array.to_pylist()
+    
+    # Convert each dict to list of (key, value) tuples, filtering val > 0
+    result_maps = []
+    for row_dict in all_rows:
+        if row_dict is None:
             result_maps.append(None)
+        else:
+            items = [(k, v) for k, v in row_dict.items() if v is not None and v > 0]
+            result_maps.append(items if items else None)
     
     return pa.array(result_maps, type=pa.map_(pa.string(), pa.int64()))
 
@@ -324,9 +327,14 @@ def transform_sentiment_windows(table: pa.Table) -> pa.Table:
     
     # Process each chunk in the column
     new_chunks = []
-    for chunk in tsw_col.chunks:
+    total_chunks = len(tsw_col.chunks)
+    for chunk_idx, chunk in enumerate(tsw_col.chunks):
+        if total_chunks > 1:
+            print(f"        Chunk {chunk_idx + 1}/{total_chunks}...", end="", flush=True)
         new_chunk = transform_sentiment_chunk(chunk)
         new_chunks.append(new_chunk)
+        if total_chunks > 1:
+            print(" done")
     
     # Create new column with transformed chunks
     new_tsw_col = pa.chunked_array(new_chunks)
@@ -357,7 +365,7 @@ def transform_sentiment_chunk(chunk: pa.StructArray) -> pa.StructArray:
         
         if field.name in ("last_cycle", "last_2_cycles"):
             # Recursively transform the cycle struct
-            transformed = transform_cycle_struct(field_array)
+            transformed = transform_cycle_struct(field_array, cycle_name=field.name)
             new_fields.append(pa.field(field.name, transformed.type))
             new_arrays.append(transformed)
         else:
@@ -369,11 +377,16 @@ def transform_sentiment_chunk(chunk: pa.StructArray) -> pa.StructArray:
     return pa.StructArray.from_arrays(new_arrays, fields=new_fields)
 
 
-def transform_cycle_struct(cycle_array: pa.StructArray) -> pa.StructArray:
+# Track progress across transform calls
+_transform_progress = {"fields_done": 0, "last_print": 0}
+
+def transform_cycle_struct(cycle_array: pa.StructArray, cycle_name: str = "") -> pa.StructArray:
     """
     Transform a cycle struct (last_cycle or last_2_cycles) to use MAP columns
     for dynamic-key fields.
     """
+    global _transform_progress
+    
     if cycle_array is None or len(cycle_array) == 0:
         return cycle_array
     
@@ -391,7 +404,10 @@ def transform_cycle_struct(cycle_array: pa.StructArray) -> pa.StructArray:
         if field.name in DYNAMIC_KEY_FIELDS:
             # Convert dynamic-key struct to MAP
             if pa.types.is_struct(field.type):
+                n_keys = field.type.num_fields
+                print(f"        → {cycle_name}.{field.name} ({n_keys} keys, {len(cycle_array)} rows)...", end="", flush=True)
                 map_array = struct_to_map(field_array)
+                print(" ✓")
                 new_fields.append(pa.field(field.name, pa.map_(pa.string(), pa.int64())))
                 new_arrays.append(map_array)
             else:
@@ -485,11 +501,6 @@ def build_tier2_from_tier3(
     
     Processes day-by-day to manage memory.
     
-    Transformation notes:
-        - twitter_sentiment_windows: Dynamic-key struct fields (tag_counts, cashtag_counts,
-          mention_counts, url_domain_counts) are converted from struct<key1: int, ...> to
-          map<string, int64> for stable schema concatenation across days.
-    
     Returns:
         Tuple of (combined table, total rows)
     """
@@ -510,11 +521,6 @@ def build_tier2_from_tier3(
                 table = pq.read_table(tmp.name, columns=tier2_columns)
         else:
             table = download_and_project_parquet(s3_client, bucket, key, tier2_columns)
-        
-        # Transform twitter_sentiment_windows dynamic-key structs to MAP columns
-        # This ensures stable schema across days where keys (hashtags, handles, etc.) differ
-        print(f"      Transforming sentiment windows...")
-        table = transform_sentiment_windows(table)
         
         tables.append(table)
         print(f"      {table.num_rows} rows")
@@ -610,23 +616,11 @@ def create_manifest(
                 "spot_prices", 
                 "flags",
                 "diag",
+                "twitter_sentiment_windows",
             ],
-        },
-        "sentiment_shape": {
-            "note": "Dynamic-key fields converted to MAP<string, int64> for stable schema",
-            "transformed_fields": [
-                "twitter_sentiment_windows.last_cycle.tag_counts",
-                "twitter_sentiment_windows.last_cycle.cashtag_counts",
-                "twitter_sentiment_windows.last_cycle.mention_counts",
-                "twitter_sentiment_windows.last_cycle.url_domain_counts",
-                "twitter_sentiment_windows.last_2_cycles.tag_counts",
-                "twitter_sentiment_windows.last_2_cycles.cashtag_counts",
-                "twitter_sentiment_windows.last_2_cycles.mention_counts",
-                "twitter_sentiment_windows.last_2_cycles.url_domain_counts",
-            ],
-            "original_type": "struct<key1: int64, key2: int64, ...> (keys vary per day)",
-            "tier2_type": "map<string, int64>",
-            "reason": "Struct field names differ between days causing schema incompatibility",
+            "exclusion_notes": {
+                "twitter_sentiment_windows": "Excluded due to dynamic-key structs (10K-17K keys) that cannot be efficiently concatenated across days. Full sentiment data available in Tier 3.",
+            },
         },
         "parquet_sha256": parquet_sha256,
         "parquet_size_bytes": parquet_size,

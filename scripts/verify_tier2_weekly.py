@@ -60,10 +60,10 @@ from r2_config import get_r2_config, R2Config
 VERIFY_CACHE_DIR = Path("./output/verify_tier2")
 
 # Tier 2 column policy (hardcoded from build_tier2_weekly.py)
-# TIER 2 PLAN ALIGNMENT (2025-01):
-# - Tier 2 = Tier 1 + full spot_raw, derived, scores, twitter_sentiment_windows, twitter_sentiment_meta
-# - Dynamic-key fields in twitter_sentiment_windows are converted to MAP<string, int64>
-# - Excludes: futures_raw, spot_prices, flags, diag
+# LIMITATION: twitter_sentiment_windows is EXCLUDED because it has dynamic-key structs
+# (10K-17K unique keys per day) that cannot be efficiently concatenated across days.
+# Full sentiment data is available in Tier 3 (daily files, no concatenation needed).
+# twitter_sentiment_meta is included and provides snapshot provenance.
 TIER2_REQUIRED_COLUMNS = [
     "symbol",
     "snapshot_ts",
@@ -71,7 +71,6 @@ TIER2_REQUIRED_COLUMNS = [
     "spot_raw",
     "derived",
     "scores",
-    "twitter_sentiment_windows",
     "twitter_sentiment_meta",
 ]
 
@@ -80,12 +79,13 @@ TIER2_EXCLUDED_COLUMNS = [
     "spot_prices",
     "flags",
     "diag",
+    "twitter_sentiment_windows",  # Excluded due to dynamic-key struct performance
     "norm",
     "labels",
 ]
 
-# Dynamic-key fields that should be MAP<string, int64> in Tier 2
-# These are inside twitter_sentiment_windows.{last_cycle,last_2_cycles}
+# Dynamic-key fields reference (within twitter_sentiment_windows)
+# These fields have 10K-17K unique keys per day, making MAP conversion impractical
 DYNAMIC_KEY_FIELDS = [
     "tag_counts",
     "cashtag_counts",
@@ -565,74 +565,8 @@ def check_nested_sanity(result: VerificationResult, table: pa.Table):
             if not pa.types.is_struct(col_field.type):
                 result.warnings.append(f"{col_name} is not a struct type: {col_field.type}")
     
-    # Check twitter_sentiment_windows structure
-    check_sentiment_windows_schema(result, table)
-
-
-def check_sentiment_windows_schema(result: VerificationResult, table: pa.Table):
-    """
-    Verify twitter_sentiment_windows uses MAP columns for dynamic-key fields.
-    
-    In Tier 2, the following fields should be MAP<string, int64> (not STRUCT):
-      - twitter_sentiment_windows.last_cycle.{tag_counts,cashtag_counts,mention_counts,url_domain_counts}
-      - twitter_sentiment_windows.last_2_cycles.{tag_counts,cashtag_counts,mention_counts,url_domain_counts}
-    """
-    if "twitter_sentiment_windows" not in table.column_names:
-        # Already checked in required columns
-        return
-    
-    schema = table.schema
-    tsw_field = schema.field("twitter_sentiment_windows")
-    
-    if not pa.types.is_struct(tsw_field.type):
-        result.errors.append(f"twitter_sentiment_windows should be struct, got: {tsw_field.type}")
-        return
-    
-    tsw_type = tsw_field.type
-    result.info["twitter_sentiment_windows_fields"] = [f.name for f in tsw_type]
-    
-    # Check each cycle struct
-    for cycle_name in ["last_cycle", "last_2_cycles"]:
-        cycle_idx = tsw_type.get_field_index(cycle_name)
-        if cycle_idx < 0:
-            result.warnings.append(f"twitter_sentiment_windows missing {cycle_name}")
-            continue
-        
-        cycle_field = tsw_type.field(cycle_idx)
-        if not pa.types.is_struct(cycle_field.type):
-            result.warnings.append(f"twitter_sentiment_windows.{cycle_name} should be struct")
-            continue
-        
-        cycle_type = cycle_field.type
-        
-        # Check each dynamic-key field
-        for dk_field_name in DYNAMIC_KEY_FIELDS:
-            dk_idx = cycle_type.get_field_index(dk_field_name)
-            if dk_idx < 0:
-                # Not present - may be OK depending on data
-                continue
-            
-            dk_field = cycle_type.field(dk_idx)
-            field_path = f"twitter_sentiment_windows.{cycle_name}.{dk_field_name}"
-            
-            if pa.types.is_map(dk_field.type):
-                # Good - it's a MAP type
-                result.info.setdefault("map_type_fields", []).append(field_path)
-            elif pa.types.is_struct(dk_field.type):
-                # Bad - still a struct with dynamic keys (not transformed)
-                num_children = dk_field.type.num_fields
-                if num_children > 100:
-                    result.errors.append(
-                        f"{field_path} is struct with {num_children} fields (should be MAP<string,int64>)"
-                    )
-                else:
-                    result.warnings.append(
-                        f"{field_path} is struct with {num_children} fields (should be MAP<string,int64>)"
-                    )
-            else:
-                result.warnings.append(
-                    f"{field_path} has unexpected type: {dk_field.type}"
-                )
+    # NOTE: twitter_sentiment_windows is excluded from Tier 2 due to dynamic-key performance
+    # Full sentiment data is available in Tier 3
 
 
 def check_data_quality(result: VerificationResult, table: pa.Table):
@@ -693,7 +627,7 @@ def check_data_quality(result: VerificationResult, table: pa.Table):
                 )
     
     # Null ratios for struct columns
-    struct_cols = ["meta", "spot_raw", "derived", "scores", "twitter_sentiment_windows", "twitter_sentiment_meta"]
+    struct_cols = ["meta", "spot_raw", "derived", "scores", "twitter_sentiment_meta"]
     null_ratios = {}
     
     for col_name in struct_cols:
@@ -935,15 +869,7 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         if spot_fields:
             lines.append(f"**spot_raw sub-fields ({len(spot_fields)}):** {', '.join(spot_fields[:10])}" + ("..." if len(spot_fields) > 10 else ""))
         
-        # twitter_sentiment_windows info
-        tsw_fields = r.info.get("twitter_sentiment_windows_fields", [])
-        if tsw_fields:
-            lines.append(f"**twitter_sentiment_windows sub-fields:** {', '.join(tsw_fields)}")
-        
-        # MAP type fields (transformed from dynamic-key structs)
-        map_fields = r.info.get("map_type_fields", [])
-        if map_fields:
-            lines.append(f"**MAP<string,int64> fields ({len(map_fields)}):** ✅ Dynamic-key fields correctly transformed")
+        # NOTE: twitter_sentiment_windows excluded from Tier 2 (full data in Tier 3)
         
         lines.append("")
     
