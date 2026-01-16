@@ -259,23 +259,37 @@ python3 scripts/export_tier3_daily.py --date 2026-01-14 --min-hours 18 --upload
 ---
 
 ### `build_tier1_weekly.py`
-**Purpose:** Derives Tier 1 weekly parquets from Tier 3 daily inputs in R2 (most minimal dataset)  
+**Purpose:** Derives Tier 1 weekly parquets from Tier 3 daily inputs in R2 ("Starter — light entry table")  
 **Outputs:**
 - Local: `output/tier1_weekly/{end-date}/dataset_entries_7d.parquet` - Zstd-compressed
 - Local: `output/tier1_weekly/{end-date}/manifest.json` - Build metadata
 - R2: `tier1/weekly/{end-date}/dataset_entries_7d.parquet` - Weekly dataset
 - R2: `tier1/weekly/{end-date}/manifest.json` - Manifest with SHA256
 
-**Tier 1 Column Policy (5 columns - most minimal):**
-- **Included columns:** `symbol`, `snapshot_ts`, `meta`, `spot_raw`, `scores`
-- **Excluded columns:** `derived`, `twitter_sentiment_meta`, `futures_raw`, `spot_prices`, `flags`, `diag`, `twitter_sentiment_windows`
+**Tier 1 Field Policy (22 flattened fields):**
+
+Tier 1 uses an **explicit allowlist with flattened fields** (no nested structs):
+
+| Category | Fields |
+|----------|--------|
+| Identity + Timing | `symbol`, `snapshot_ts`, `meta_added_ts`, `meta_expires_ts`, `meta_duration_sec`, `meta_archive_schema_version` |
+| Core Spot | `spot_mid`, `spot_spread_bps`, `spot_range_pct_24h`, `spot_ticker24_chg` |
+| Minimal Derived | `derived_liq_global_pct`, `derived_spread_bps` |
+| Minimal Scoring | `score_final` |
+| Aggregated Sentiment | `sentiment_posts_total`, `sentiment_posts_pos`, `sentiment_posts_neu`, `sentiment_posts_neg`, `sentiment_mean_score`, `sentiment_is_silent`, `sentiment_recent_posts_count`, `sentiment_has_recent_activity`, `sentiment_hours_since_latest_tweet` |
+
+**Key exclusions:**
+- All futures data (`futures_raw`, `flags.futures_data_ok`)
+- All sentiment internals (decision_sources, conf_mean, top_terms, etc.)
+- Time-series arrays (`spot_prices`)
+- Full nested structs (fields are flattened instead)
 
 **Tier Hierarchy:**
-| Tier | Columns | Description |
-|------|---------|-------------|
-| Tier 1 | 5 | Core price/liquidity metrics only |
-| Tier 2 | 7 | Tier 1 + `derived`, `twitter_sentiment_meta` |
-| Tier 3 | 12 | Full archive data |
+| Tier | Approach | Fields | Sentiment | Futures |
+|------|----------|--------|-----------|---------|
+| Tier 1 | Flattened allowlist | 22 | Aggregated only | ❌ |
+| Tier 2 | Struct exclusion | 7 structs | Meta only | ❌ |
+| Tier 3 | Full archive | 12 structs | Full windows | ✅ |
 
 **Usage:**
 ```bash
@@ -299,7 +313,7 @@ python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --local-out ./my_outp
 - `--previous-week`: Computes end_day as the most recent Sunday (UTC) strictly before today
   - On Monday 00:05 UTC, this yields yesterday (Sunday), covering Mon-Sun
   - Manifest records `window_basis: "previous_week_utc"`
-- `--end-day YYYY-MM-DD`: Builds the 7-day window ending on that date
+- `--end-day YYYY-MM-DD`: Builds the 7-day window ending on that date (warns if not Sunday)
   - Manifest records `window_basis: "end_day"`
 - By default, requires **at least 5 of 7** Tier 3 days (`--min-days 5`)
 - Missing days and partial days are recorded in manifest `source_coverage` block
@@ -323,6 +337,8 @@ Run Mondays at 00:05 UTC to build the previous complete Mon-Sun week:
 - boto3 (for R2 operations)
 - R2 credentials in environment (see `r2_config.py`)
 - At least 5 of 7 Tier 3 daily inputs must exist in R2 (configurable)
+
+**Schema Documentation:** See [docs/DATASET_SCHEMA_TIER1.md](../docs/DATASET_SCHEMA_TIER1.md)
 
 **When to run:** Weekly on Mondays, after Tier 3 daily exports are complete
 
@@ -542,8 +558,8 @@ scripts/
 ├── init_r2_structure.py           # R2 bucket initialization
 ├── export_tier3_daily.py          # Tier 3 daily Parquet export
 ├── verify_tier3_parquet.py        # Tier 3 verification + report
-├── build_tier1_weekly.py          # Tier 1 weekly derived from Tier 3 (5 columns)
-├── build_tier2_weekly.py          # Tier 2 weekly derived from Tier 3 (7 columns)
+├── build_tier1_weekly.py          # Tier 1 weekly derived from Tier 3 (22 flattened fields, incl. sentiment)
+├── build_tier2_weekly.py          # Tier 2 weekly derived from Tier 3 (7 structs)
 ├── verify_tier2_weekly.py         # Tier 2 verification + report
 └── tools/                         # Helper utilities
     └── sync_cryptobot_sample.py   # CryptoBot-specific sync

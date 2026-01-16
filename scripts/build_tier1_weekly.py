@@ -3,10 +3,14 @@
 Tier 1 Weekly Parquet Build
 
 Derives Tier 1 weekly dataset from already-uploaded Tier 3 daily parquets in R2.
-Tier 1 is the most minimal dataset, containing only core price/liquidity metrics:
-  - symbol, snapshot_ts, meta, spot_raw, scores
+Tier 1 is the "Starter — light entry table" with:
+  - Identity/timing fields (flattened from meta)
+  - Core spot snapshot (flattened from spot_raw)
+  - Minimal derived (flattened from derived)
+  - Minimal scoring (flattened from scores)
+  - Aggregated sentiment (extracted from twitter_sentiment_windows.last_cycle)
 
-This is a stricter projection than Tier 2 (which also includes derived, twitter_sentiment_meta).
+NO: futures data, sentiment internals, time-series arrays, full nested structs.
 
 Weekly cadence:
 - Cron runs Monday 00:05 UTC with --previous-week
@@ -41,7 +45,7 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # Add scripts directory to path for local imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -51,6 +55,7 @@ from r2_config import get_r2_config, R2Config
 try:
     import pyarrow as pa
     import pyarrow.parquet as pq
+    import pyarrow.compute as pc
 except ImportError:
     print("[ERROR] pyarrow is required. Install with: pip install pyarrow", file=sys.stderr)
     sys.exit(1)
@@ -77,48 +82,88 @@ PARQUET_COMPRESSION = "zstd"
 # Set to 5 to allow 2 missing days in a 7-day window (same as Tier 2)
 MIN_DAYS_DEFAULT = 5
 
-# Tier 1 column policy
-# Tier 1 is the MOST MINIMAL dataset - only core price/liquidity metrics
-# 
-# INCLUDED columns (5):
-#   - symbol: Trading pair identifier
-#   - snapshot_ts: Observation timestamp  
-#   - meta: Entry metadata (added_ts, duration_sec, schema_version)
-#   - spot_raw: Spot market data (bid, ask, mid, spread_bps, depth)
-#   - scores: Scoring results (final, spread, depth, liq)
+# ==============================================================================
+# Tier 1 Field Specification (SSOT)
+# ==============================================================================
+# Tier 1 is the "Starter — light entry table"
+# Fields are FLATTENED, not carried as whole structs.
 #
-# EXCLUDED columns:
-#   - derived: Calculated metrics (can be recomputed from spot_raw)
-#   - twitter_sentiment_meta: Social sentiment metadata (not core price data)
-#   - twitter_sentiment_windows: Dynamic-key structs (schema incompatible)
-#   - futures_raw: Futures data (available in Tier 3)
-#   - spot_prices: Time-series arrays (high volume)
-#   - flags: Boolean flags (debugging only)
-#   - diag: Diagnostics (internal use)
-#   - norm: Intentionally dropped in v7
-#   - labels: Intentionally dropped in v7
+# INCLUDED fields (exact per plan):
+#
+# 1) Identity + timing:
+#    - symbol (top-level)
+#    - snapshot_ts (top-level)
+#    - From meta: added_ts, expires_ts, duration_sec, archive_schema_version
+#
+# 2) Core spot snapshot (low surface area):
+#    - From spot_raw: mid, spread_bps, range_pct_24h, ticker24_chg
+#
+# 3) Minimal derived (one-liners):
+#    - From derived: liq_global_pct, spread_bps
+#
+# 4) Minimal scoring:
+#    - From scores: final
+#
+# 5) Sentiment (aggregated only; no internals):
+#    From twitter_sentiment_windows.last_cycle:
+#    - posts_total, posts_pos, posts_neu, posts_neg
+#    - hybrid_decision_stats.mean_score
+#    From twitter_sentiment_windows.last_cycle.sentiment_activity:
+#    - is_silent, recent_posts_count, has_recent_activity, hours_since_latest_tweet
+#
+# EXCLUDED:
+# - Any futures data or futures_data_ok flag
+# - All sentiment internals (decision_sources, conf_mean, top_terms, etc.)
+# - spot_prices time-series arrays
+# - All other columns not listed above
 
-TIER1_INCLUDED_COLUMNS = [
+TIER1_FIELD_SPEC = {
+    # Top-level identity fields
+    "symbol": {"source": "top_level", "required": True},
+    "snapshot_ts": {"source": "top_level", "required": True},
+    
+    # From meta
+    "meta_added_ts": {"source": "meta.added_ts", "required": True},
+    "meta_expires_ts": {"source": "meta.expires_ts", "required": True},
+    "meta_duration_sec": {"source": "meta.duration_sec", "required": True},
+    "meta_archive_schema_version": {"source": "meta.archive_schema_version", "required": True},
+    
+    # From spot_raw
+    "spot_mid": {"source": "spot_raw.mid", "required": True},
+    "spot_spread_bps": {"source": "spot_raw.spread_bps", "required": True},
+    "spot_range_pct_24h": {"source": "spot_raw.range_pct_24h", "required": False},  # May be null
+    "spot_ticker24_chg": {"source": "spot_raw.ticker24_chg", "required": False},  # May be null
+    
+    # From derived
+    "derived_liq_global_pct": {"source": "derived.liq_global_pct", "required": False},
+    "derived_spread_bps": {"source": "derived.spread_bps", "required": False},
+    
+    # From scores
+    "score_final": {"source": "scores.final", "required": True},
+    
+    # From twitter_sentiment_windows.last_cycle (aggregated sentiment)
+    "sentiment_posts_total": {"source": "twitter_sentiment_windows.last_cycle.posts_total", "required": False},
+    "sentiment_posts_pos": {"source": "twitter_sentiment_windows.last_cycle.posts_pos", "required": False},
+    "sentiment_posts_neu": {"source": "twitter_sentiment_windows.last_cycle.posts_neu", "required": False},
+    "sentiment_posts_neg": {"source": "twitter_sentiment_windows.last_cycle.posts_neg", "required": False},
+    "sentiment_mean_score": {"source": "twitter_sentiment_windows.last_cycle.hybrid_decision_stats.mean_score", "required": False},
+    
+    # From twitter_sentiment_windows.last_cycle.sentiment_activity
+    "sentiment_is_silent": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.is_silent", "required": False},
+    "sentiment_recent_posts_count": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.recent_posts_count", "required": False},
+    "sentiment_has_recent_activity": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.has_recent_activity", "required": False},
+    "sentiment_hours_since_latest_tweet": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.hours_since_latest_tweet", "required": False},
+}
+
+# Required source columns in Tier 3 parquet
+REQUIRED_SOURCE_COLUMNS = [
     "symbol",
     "snapshot_ts",
     "meta",
     "spot_raw",
-    "scores",
-]
-
-TIER1_EXCLUDED_COLUMNS = [
-    # Tier 2 extras (not in Tier 1)
     "derived",
-    "twitter_sentiment_meta",
-    # Also excluded in Tier 2
-    "futures_raw",
-    "spot_prices",
-    "flags",
-    "diag",
-    "twitter_sentiment_windows",
-    # Intentionally dropped in v7
-    "norm",
-    "labels",
+    "scores",
+    "twitter_sentiment_windows",  # For sentiment extraction
 ]
 
 # R2 path patterns
@@ -162,6 +207,20 @@ def compute_previous_sunday() -> str:
         days_since_sunday = 7
     previous_sunday = today - timedelta(days=days_since_sunday)
     return previous_sunday.strftime("%Y-%m-%d")
+
+
+def validate_end_day_is_sunday(end_day: str) -> Tuple[bool, str]:
+    """
+    Validate that end_day is a Sunday.
+    
+    Returns:
+        Tuple of (is_sunday, warning_message)
+    """
+    end_date = datetime.strptime(end_day, "%Y-%m-%d").date()
+    if end_date.weekday() != 6:  # Sunday = 6
+        day_name = end_date.strftime("%A")
+        return False, f"WARNING: end_day {end_day} is a {day_name}, not a Sunday. Weekly windows should end on Sunday."
+    return True, ""
 
 
 def calculate_week_range(end_day: str, days: int = 7) -> Tuple[str, str, List[str]]:
@@ -263,51 +322,121 @@ def fetch_tier3_coverage(
 
 
 # ==============================================================================
-# Column Projection
+# Field Extraction Functions
 # ==============================================================================
 
-def get_tier1_columns(schema: pa.Schema) -> List[str]:
+def safe_get_nested_column(table: pa.Table, path: str) -> Optional[pa.Array]:
     """
-    Get list of columns to include in Tier 1 output.
-    
-    Uses an explicit allowlist approach - only columns in TIER1_INCLUDED_COLUMNS
-    are kept. This is stricter than Tier 2's exclusion-based approach.
+    Safely extract a nested field from a PyArrow table.
     
     Args:
-        schema: PyArrow schema from Tier 3 parquet
+        table: PyArrow table
+        path: Dot-separated path like "meta.added_ts" or 
+              "twitter_sentiment_windows.last_cycle.posts_total"
     
     Returns:
-        List of column names to include (in order they appear in schema)
+        PyArrow array or None if path doesn't exist
     """
-    all_columns = [field.name for field in schema]
-    tier1_columns = [col for col in all_columns if col in TIER1_INCLUDED_COLUMNS]
-    return tier1_columns
+    parts = path.split(".")
+    
+    # Get top-level column
+    if parts[0] not in table.schema.names:
+        return None
+    
+    current = table.column(parts[0])
+    
+    # Navigate nested struct fields
+    for i, part in enumerate(parts[1:], 1):
+        if not pa.types.is_struct(current.type):
+            return None
+        
+        # Find field in struct
+        struct_type = current.type
+        field_idx = None
+        for j in range(struct_type.num_fields):
+            if struct_type.field(j).name == part:
+                field_idx = j
+                break
+        
+        if field_idx is None:
+            return None
+        
+        # Extract nested field
+        try:
+            current = pc.struct_field(current, field_idx)
+        except Exception:
+            return None
+    
+    return current
+
+
+def extract_tier1_fields(table: pa.Table) -> Tuple[pa.Table, List[str], List[str]]:
+    """
+    Extract Tier 1 fields from a Tier 3 table, flattening nested fields.
+    
+    Returns:
+        Tuple of (tier1_table, present_fields, missing_required_fields)
+    """
+    columns = {}
+    present_fields = []
+    missing_required = []
+    
+    for field_name, spec in TIER1_FIELD_SPEC.items():
+        source_path = spec["source"]
+        required = spec["required"]
+        
+        # Handle top-level fields
+        if source_path == "top_level":
+            if field_name in table.schema.names:
+                columns[field_name] = table.column(field_name)
+                present_fields.append(field_name)
+            elif required:
+                missing_required.append(field_name)
+            continue
+        
+        # Handle nested fields
+        array = safe_get_nested_column(table, source_path)
+        
+        if array is not None:
+            columns[field_name] = array
+            present_fields.append(field_name)
+        elif required:
+            missing_required.append(f"{field_name} (from {source_path})")
+    
+    # Create tier1 table from extracted columns
+    if missing_required:
+        return None, present_fields, missing_required
+    
+    # Build table maintaining field order from spec
+    ordered_columns = []
+    ordered_names = []
+    for field_name in TIER1_FIELD_SPEC.keys():
+        if field_name in columns:
+            ordered_names.append(field_name)
+            ordered_columns.append(columns[field_name])
+    
+    tier1_table = pa.table(dict(zip(ordered_names, ordered_columns)))
+    return tier1_table, present_fields, missing_required
 
 
 def verify_tier1_output(table: pa.Table) -> Tuple[bool, List[str]]:
     """
-    Verify Tier 1 output has exactly the correct columns.
+    Verify Tier 1 output has the expected fields.
     
     Returns:
         Tuple of (is_valid, list of issues)
     """
     issues = []
-    column_names = [field.name for field in table.schema]
+    column_names = set(table.schema.names)
     
-    # Check excluded columns are NOT present
-    for col in TIER1_EXCLUDED_COLUMNS:
-        if col in column_names:
-            issues.append(f"Excluded column '{col}' found in output")
+    # Check all spec fields are either present or optional-and-missing
+    for field_name, spec in TIER1_FIELD_SPEC.items():
+        if field_name not in column_names and spec["required"]:
+            issues.append(f"Required field '{field_name}' missing from output")
     
-    # Check required columns ARE present
-    for col in TIER1_INCLUDED_COLUMNS:
-        if col not in column_names:
-            issues.append(f"Required column '{col}' missing from output")
-    
-    # Verify no unexpected columns
-    expected_set = set(TIER1_INCLUDED_COLUMNS)
-    actual_set = set(column_names)
-    unexpected = actual_set - expected_set
+    # Check no unexpected columns
+    expected = set(TIER1_FIELD_SPEC.keys())
+    unexpected = column_names - expected
     if unexpected:
         issues.append(f"Unexpected columns in output: {sorted(unexpected)}")
     
@@ -318,25 +447,19 @@ def verify_tier1_output(table: pa.Table) -> Tuple[bool, List[str]]:
 # Parquet Processing
 # ==============================================================================
 
-def download_and_project_parquet(
+def download_parquet_to_table(
     s3_client,
     bucket: str,
     key: str,
-    columns: Optional[List[str]] = None
 ) -> pa.Table:
     """
-    Download a parquet from R2 and optionally project columns.
+    Download a parquet from R2 to a PyArrow table.
     
     Uses a temp file to avoid loading entire file into memory twice.
     """
     with tempfile.NamedTemporaryFile(suffix=".parquet", delete=True) as tmp:
         s3_client.download_file(bucket, key, tmp.name)
-        
-        if columns:
-            table = pq.read_table(tmp.name, columns=columns)
-        else:
-            table = pq.read_table(tmp.name)
-        
+        table = pq.read_table(tmp.name)
         return table
 
 
@@ -344,42 +467,46 @@ def build_tier1_from_tier3(
     s3_client,
     bucket: str,
     input_keys: List[str],
-    output_path: Path
-) -> Tuple[pa.Table, int]:
+) -> Tuple[pa.Table, int, List[str]]:
     """
     Build Tier 1 parquet from multiple Tier 3 daily parquets.
     
     Processes day-by-day to manage memory.
+    Extracts and flattens fields per TIER1_FIELD_SPEC.
     
     Returns:
-        Tuple of (combined table, total rows)
+        Tuple of (combined table, total rows, list of present fields)
     """
     tables = []
-    tier1_columns = None
+    all_present_fields = None
     
     for i, key in enumerate(input_keys):
         day = key.split("/")[2]  # tier3/daily/YYYY-MM-DD/data.parquet
         print(f"  [{i+1}/{len(input_keys)}] Processing {day}...")
         
-        # First file: determine columns to include
-        if tier1_columns is None:
-            # Read schema only first
-            with tempfile.NamedTemporaryFile(suffix=".parquet", delete=True) as tmp:
-                s3_client.download_file(bucket, key, tmp.name)
-                schema = pq.read_schema(tmp.name)
-                tier1_columns = get_tier1_columns(schema)
-                
-                # Fail fast if required columns are missing
-                missing = set(TIER1_INCLUDED_COLUMNS) - set([f.name for f in schema])
-                if missing:
-                    raise ValueError(f"Required Tier 1 columns missing from Tier 3 input: {missing}")
-                
-                table = pq.read_table(tmp.name, columns=tier1_columns)
-        else:
-            table = download_and_project_parquet(s3_client, bucket, key, tier1_columns)
+        # Download and read Tier 3 parquet
+        tier3_table = download_parquet_to_table(s3_client, bucket, key)
         
-        tables.append(table)
-        print(f"      {table.num_rows} rows")
+        # Verify required source columns exist
+        missing_source = set(REQUIRED_SOURCE_COLUMNS) - set(tier3_table.schema.names)
+        if missing_source:
+            raise ValueError(f"Tier 3 input {day} missing required columns: {missing_source}")
+        
+        # Extract Tier 1 fields
+        tier1_table, present_fields, missing_required = extract_tier1_fields(tier3_table)
+        
+        if missing_required:
+            raise ValueError(f"Tier 3 input {day} missing required Tier 1 fields: {missing_required}")
+        
+        # Track present fields (should be consistent across days)
+        if all_present_fields is None:
+            all_present_fields = set(present_fields)
+        
+        tables.append(tier1_table)
+        print(f"      {tier1_table.num_rows} rows, {len(present_fields)} fields")
+        
+        # Free Tier 3 table memory
+        del tier3_table
     
     # Concatenate all tables
     print("  Concatenating tables...")
@@ -388,7 +515,7 @@ def build_tier1_from_tier3(
     # Free intermediate tables
     del tables
     
-    return combined, combined.num_rows
+    return combined, combined.num_rows, sorted(all_present_fields) if all_present_fields else []
 
 
 # ==============================================================================
@@ -415,7 +542,7 @@ def create_manifest(
     source_inputs: List[str],
     row_count: int,
     parquet_path: Path,
-    tier1_columns: List[str],
+    present_fields: List[str],
     window_basis: str = "end_day"
 ) -> dict:
     """Create manifest for Tier 1 weekly output with source_coverage.
@@ -440,9 +567,17 @@ def create_manifest(
         coverage_parts.append("See per_day for coverage details.")
     coverage_note = " ".join(coverage_parts)
     
+    # Categorize fields by source
+    identity_fields = [f for f in present_fields if f in ["symbol", "snapshot_ts"] or f.startswith("meta_")]
+    spot_fields = [f for f in present_fields if f.startswith("spot_")]
+    derived_fields = [f for f in present_fields if f.startswith("derived_")]
+    score_fields = [f for f in present_fields if f.startswith("score_")]
+    sentiment_fields = [f for f in present_fields if f.startswith("sentiment_")]
+    
     return {
         "schema_version": "v7",
         "tier": "tier1",
+        "tier_description": "Starter — light entry table with aggregated sentiment (no futures, no sentiment internals)",
         "window": {
             "window_basis": window_basis,
             "week_start_day": start_day,
@@ -464,10 +599,26 @@ def create_manifest(
             "min_days_threshold_used": min_days_threshold,
             "coverage_note": coverage_note,
         },
-        "column_policy": {
-            "included_columns": tier1_columns,
-            "excluded_columns": TIER1_EXCLUDED_COLUMNS,
-            "policy_note": "Tier 1 is the most minimal dataset, containing only core price/liquidity metrics.",
+        "field_policy": {
+            "approach": "explicit_allowlist_flattened",
+            "total_fields": len(present_fields),
+            "fields": present_fields,
+            "field_categories": {
+                "identity_timing": identity_fields,
+                "spot_snapshot": spot_fields,
+                "derived_metrics": derived_fields,
+                "scores": score_fields,
+                "sentiment_aggregated": sentiment_fields,
+            },
+            "sentiment_source": "twitter_sentiment_windows.last_cycle",
+            "sentiment_note": "Sentiment fields are aggregated-only from last_cycle. No internals (decision_sources, conf_mean, top_terms, etc.) are included.",
+            "exclusions": [
+                "futures_raw (all futures data)",
+                "flags.futures_data_ok (futures existence flag)",
+                "spot_prices (time-series arrays)",
+                "twitter_sentiment_windows (full struct)",
+                "All sentiment internals: decision_sources, primary_conf_mean, referee_conf_mean, top_terms, category_counts, tag_counts, cashtag_counts, mention_counts, url_domain_counts, media_count, author_stats, content_stats, engagement stats",
+            ],
         },
         "parquet_sha256": parquet_sha256,
         "parquet_size_bytes": parquet_size,
@@ -565,6 +716,11 @@ def build_tier1_weekly(
     print(f"TIER 1 WEEKLY BUILD: ending {end_day}")
     print("=" * 60)
     
+    # Validate end_day is a Sunday (warn if not)
+    is_sunday, warning = validate_end_day_is_sunday(end_day)
+    if not is_sunday:
+        print(f"\n[WARNING] {warning}")
+    
     # Calculate date range
     start_day, end_day, all_days = calculate_week_range(end_day, days)
     print(f"\n[WINDOW] {start_day} to {end_day} ({len(all_days)} days)")
@@ -621,24 +777,22 @@ def build_tier1_weekly(
         print(f"[OK] All {len(present_days)} Tier 3 inputs found")
     
     # Build Tier 1 from Tier 3
-    print("\n[STEP 4] Building Tier 1 parquet...")
-    combined_table, row_count = build_tier1_from_tier3(
-        s3_client, config.bucket, found_keys, output_dir
+    print("\n[STEP 4] Building Tier 1 parquet (extracting flattened fields)...")
+    print(f"    Extracting {len(TIER1_FIELD_SPEC)} fields per Tier 1 spec")
+    combined_table, row_count, present_fields = build_tier1_from_tier3(
+        s3_client, config.bucket, found_keys
     )
     
-    # Verify output columns
-    print("\n[STEP 5] Verifying output columns...")
+    # Verify output fields
+    print("\n[STEP 5] Verifying output fields...")
     is_valid, issues = verify_tier1_output(combined_table)
     if not is_valid:
         print("[ERROR] Output verification failed:")
         for issue in issues:
             print(f"  - {issue}")
         return False
-    print("[OK] Output columns verified")
-    print(f"    Columns: {TIER1_INCLUDED_COLUMNS}")
-    
-    # Get tier1 columns for manifest
-    tier1_columns = [field.name for field in combined_table.schema]
+    print("[OK] Output fields verified")
+    print(f"    Fields ({len(present_fields)}): {present_fields}")
     
     # Write local outputs (always, even for dry-run)
     print("\n[STEP 6] Writing local outputs...")
@@ -660,7 +814,7 @@ def build_tier1_weekly(
         source_inputs=found_keys,
         row_count=row_count,
         parquet_path=parquet_path,
-        tier1_columns=tier1_columns,
+        present_fields=present_fields,
         window_basis=window_basis,
     )
     
@@ -707,7 +861,12 @@ def build_tier1_weekly(
         print(f"Partial days:   {partial_count}")
     print(f"Rows:           {row_count:,}")
     print(f"Parquet size:   {parquet_size_mb:.2f} MB")
-    print(f"Columns:        {len(tier1_columns)} ({', '.join(tier1_columns)})")
+    print(f"Fields:         {len(present_fields)}")
+    print(f"  Identity:     {len([f for f in present_fields if f in ['symbol', 'snapshot_ts'] or f.startswith('meta_')])}")
+    print(f"  Spot:         {len([f for f in present_fields if f.startswith('spot_')])}")
+    print(f"  Derived:      {len([f for f in present_fields if f.startswith('derived_')])}")
+    print(f"  Scores:       {len([f for f in present_fields if f.startswith('score_')])}")
+    print(f"  Sentiment:    {len([f for f in present_fields if f.startswith('sentiment_')])}")
     print(f"Local path:     {output_dir}/")
     if upload and not dry_run:
         print(f"R2 prefix:      {TIER1_WEEKLY_PREFIX}/{end_day}/")
@@ -734,7 +893,7 @@ def main():
         "--end-day",
         type=str,
         default=None,
-        help="End date for the week (YYYY-MM-DD). For manual/backfill runs."
+        help="End date for the week (YYYY-MM-DD). Should be a Sunday. For manual/backfill runs."
     )
     
     date_group.add_argument(

@@ -6,11 +6,11 @@ This guide covers the tiered dataset export system for Instrumetriq archives.
 
 The archive data is exported in multiple tiers, each serving different use cases:
 
-| Tier | Granularity | Update Frequency | Columns | Primary Use Case |
-|------|-------------|------------------|---------|------------------|
-| **Tier 1** | Weekly | Once per week | 5 | Lightweight analysis, minimal footprint |
-| **Tier 2** | Weekly | Once per week | 7 | Research, reduced column footprint |
-| **Tier 3** | Daily | Once per day | 12 | Historical research, ML training |
+| Tier | Granularity | Update Frequency | Schema | Primary Use Case |
+|------|-------------|------------------|--------|------------------|
+| **Tier 1** | Weekly | Once per week | 22 flattened fields | Starter table with aggregated sentiment (no futures) |
+| **Tier 2** | Weekly | Once per week | 7 nested structs | Research, reduced column footprint |
+| **Tier 3** | Daily | Once per day | 12 nested structs | Full historical data, ML training |
 
 ---
 
@@ -256,23 +256,29 @@ instrumetriq-datasets/
 
 ---
 
-## Tier 1: Weekly Parquet Export (Minimal)
+## Tier 1: Weekly Parquet Export (Starter)
 
-Tier 1 provides the **most minimal dataset**, containing only core price/liquidity metrics. Derived from Tier 3 daily inputs like Tier 2, but with a stricter column projection.
+Tier 1 is the **"Starter — light entry table"** with aggregated sentiment. It extracts and flattens specific fields from Tier 3 structs into a stable, predictable schema.
 
-### Column Policy (5 columns)
+### Field Policy (22 flattened fields)
 
-**Included columns:**
-- `symbol` - Ticker symbol
-- `snapshot_ts` - Observation timestamp
-- `meta` - Entry metadata
-- `spot_raw` - Spot market data
-- `scores` - Scoring results
+**Approach:** Explicit allowlist with flattened fields (no nested structs)
 
-**Excluded columns:**
-- `derived` - Calculated metrics (can be recomputed)
-- `twitter_sentiment_meta` - Social sentiment metadata
-- All other Tier 2/3 columns
+| Category | Fields |
+|----------|--------|
+| Identity + Timing (6) | `symbol`, `snapshot_ts`, `meta_added_ts`, `meta_expires_ts`, `meta_duration_sec`, `meta_archive_schema_version` |
+| Core Spot (4) | `spot_mid`, `spot_spread_bps`, `spot_range_pct_24h`, `spot_ticker24_chg` |
+| Minimal Derived (2) | `derived_liq_global_pct`, `derived_spread_bps` |
+| Minimal Scoring (1) | `score_final` |
+| Aggregated Sentiment (9) | `sentiment_posts_total`, `sentiment_posts_pos`, `sentiment_posts_neu`, `sentiment_posts_neg`, `sentiment_mean_score`, `sentiment_is_silent`, `sentiment_recent_posts_count`, `sentiment_has_recent_activity`, `sentiment_hours_since_latest_tweet` |
+
+**Key exclusions:**
+- All futures data (`futures_raw`, `flags.futures_data_ok`)
+- All sentiment internals (decision_sources, conf_mean, top_terms, category_counts, etc.)
+- Time-series arrays (`spot_prices`)
+- Full nested structs (fields are flattened instead)
+
+**Sentiment source:** `twitter_sentiment_windows.last_cycle` — aggregated sentiment only, no internals.
 
 ### Usage
 
@@ -280,8 +286,11 @@ Tier 1 provides the **most minimal dataset**, containing only core price/liquidi
 # Cron mode (Mondays 00:05 UTC)
 python3 scripts/build_tier1_weekly.py --previous-week --upload
 
-# Manual/backfill
+# Manual/backfill (end_day should be a Sunday)
 python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --upload
+
+# Dry-run to preview
+python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --dry-run
 ```
 
 ### R2 Structure
@@ -295,15 +304,15 @@ instrumetriq-datasets/
             └── manifest.json
 ```
 
+### Tier Comparison
+
+| Tier | Approach | Fields | Sentiment | Futures |
+|------|----------|--------|-----------|---------|
+| **Tier 1** | Flattened allowlist | 22 | Aggregated only | ❌ Excluded |
+| **Tier 2** | Struct exclusion | 7 structs | Meta only | ❌ Excluded |
+| **Tier 3** | Full archive | 12 structs | Full windows | ✅ Included |
+
 See [DATASET_SCHEMA_TIER1.md](DATASET_SCHEMA_TIER1.md) for full schema documentation.
-
----
-
-## Tier 1: Real-time Feed (Future)
-
-*Coming soon.*
-
-A real-time/streaming version of Tier 1 will provide live access for dashboards and alerting.
 
 ---
 

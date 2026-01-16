@@ -4,7 +4,7 @@ This document describes the schema for Tier 1 weekly parquet exports.
 
 ## Overview
 
-Tier 1 weekly exports are the **most minimal dataset**, derived from Tier 3 daily parquets with only core price/liquidity metrics retained. This tier is optimized for lightweight analysis and real-time monitoring use cases.
+Tier 1 weekly exports are the **"Starter — light entry table"**, derived from Tier 3 daily parquets with only essential fields retained. This tier includes **aggregated sentiment** from Twitter but excludes all futures data and sentiment internals.
 
 | Property | Value |
 |----------|-------|
@@ -30,94 +30,123 @@ Tier 1 can be built from **5 or more** of the 7 expected days (configurable via 
 
 ---
 
-## Column Policy
+## Field Policy
 
-### Tier Hierarchy
+### Design Principles
 
-The tier system provides progressively more data:
+Tier 1 uses an **explicit allowlist** approach with **flattened fields**:
+- Fields are extracted from nested Tier 3 structs and flattened to top-level columns
+- No nested structs are carried (unlike Tier 2/3)
+- This ensures a stable, predictable schema that won't break on dynamic content
 
-| Tier | Columns | Use Case |
-|------|---------|----------|
-| **Tier 1** | 5 columns | Lightweight analysis, real-time monitoring |
-| **Tier 2** | 7 columns | Research, reduced column footprint |
-| **Tier 3** | 12 columns | Full historical data, ML training |
+### Tier Comparison
 
-### Included Columns (5)
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `symbol` | string | Trading pair (e.g., "BTCUSDT") |
-| `snapshot_ts` | string | Observation timestamp |
-| `meta` | struct | Entry metadata |
-| `spot_raw` | struct | Spot market data |
-| `scores` | struct | Scoring results |
-
-### Excluded Columns (9)
-
-| Column | Reason for Exclusion |
-|--------|---------------------|
-| `derived` | Calculated metrics (can be recomputed from spot_raw) |
-| `twitter_sentiment_meta` | Social sentiment metadata (not core price data) |
-| `futures_raw` | Futures data (available in Tier 3) |
-| `spot_prices` | Time-series arrays, high volume |
-| `flags` | Boolean flags, debugging only |
-| `diag` | Diagnostics, internal use |
-| `twitter_sentiment_windows` | Dynamic-key structs cause schema mismatch |
-| `norm` | Intentionally dropped in v7 |
-| `labels` | Intentionally dropped in v7 |
-
-**Note:** Tier 1 uses an **explicit allowlist** approach—only the 5 listed columns are included. Tier 2 adds `derived` and `twitter_sentiment_meta` on top of Tier 1.
+| Tier | Approach | Fields | Sentiment | Futures |
+|------|----------|--------|-----------|---------|
+| **Tier 1** | Flattened allowlist | 22 | Aggregated only | ❌ Excluded |
+| **Tier 2** | Struct exclusion | 7 structs | Meta only | ❌ Excluded |
+| **Tier 3** | Full archive | 12 structs | Full windows | ✅ Included |
 
 ---
 
-## Nested Struct Fields
+## Field Reference (22 Fields)
 
-### meta
+### Identity + Timing (6 fields)
 
-Key fields within the `meta` struct:
+| Field | Type | Source | Description |
+|-------|------|--------|-------------|
+| `symbol` | string | top-level | Trading pair (e.g., "BTCUSDT") |
+| `snapshot_ts` | string | top-level | Observation timestamp (ISO 8601) |
+| `meta_added_ts` | string | meta.added_ts | When entry was added to archive |
+| `meta_expires_ts` | string | meta.expires_ts | When entry expires |
+| `meta_duration_sec` | double | meta.duration_sec | Cycle duration in seconds |
+| `meta_archive_schema_version` | int64 | meta.archive_schema_version | Schema version (7) |
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `added_ts` | string | ISO timestamp when entry was added |
-| `expires_ts` | string | ISO timestamp when entry expires |
-| `duration_sec` | double | Cycle duration in seconds |
-| `archive_schema_version` | int64 | Schema version (currently 7) |
-| `source` | string | Data source identifier |
-| `session_id` | string | Unique session identifier |
+### Core Spot Snapshot (4 fields)
 
-### spot_raw
+| Field | Type | Source | Description |
+|-------|------|--------|-------------|
+| `spot_mid` | double | spot_raw.mid | Mid price |
+| `spot_spread_bps` | double | spot_raw.spread_bps | Spread in basis points |
+| `spot_range_pct_24h` | double | spot_raw.range_pct_24h | 24-hour price range % |
+| `spot_ticker24_chg` | double | spot_raw.ticker24_chg | 24-hour price change |
 
-Key fields within the `spot_raw` struct:
+### Minimal Derived (2 fields)
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `mid` | double | Mid price |
-| `bid` | double | Best bid price |
-| `ask` | double | Best ask price |
-| `spread_bps` | double | Spread in basis points |
-| `last` | double | Last traded price |
+| Field | Type | Source | Description |
+|-------|------|--------|-------------|
+| `derived_liq_global_pct` | double | derived.liq_global_pct | Global liquidity percentile |
+| `derived_spread_bps` | double | derived.spread_bps | Derived spread in basis points |
 
-### scores
+### Minimal Scoring (1 field)
 
-Key fields within the `scores` struct:
+| Field | Type | Source | Description |
+|-------|------|--------|-------------|
+| `score_final` | double | scores.final | Final composite score |
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `final` | double | Final composite score |
-| `spread` | double | Spread component score |
-| `depth` | double | Depth component score |
-| `liq` | double | Liquidity component score |
+### Aggregated Sentiment (9 fields)
+
+These fields are extracted from `twitter_sentiment_windows.last_cycle`, providing aggregated sentiment without exposing any internals.
+
+| Field | Type | Source | Description |
+|-------|------|--------|-------------|
+| `sentiment_posts_total` | int64 | last_cycle.posts_total | Total posts in window |
+| `sentiment_posts_pos` | int64 | last_cycle.posts_pos | Positive posts count |
+| `sentiment_posts_neu` | int64 | last_cycle.posts_neu | Neutral posts count |
+| `sentiment_posts_neg` | int64 | last_cycle.posts_neg | Negative posts count |
+| `sentiment_mean_score` | double | last_cycle.hybrid_decision_stats.mean_score | Mean sentiment score |
+| `sentiment_is_silent` | bool | last_cycle.sentiment_activity.is_silent | Is symbol silent (no recent posts) |
+| `sentiment_recent_posts_count` | int64 | last_cycle.sentiment_activity.recent_posts_count | Recent posts count |
+| `sentiment_has_recent_activity` | bool | last_cycle.sentiment_activity.has_recent_activity | Has recent activity |
+| `sentiment_hours_since_latest_tweet` | double | last_cycle.sentiment_activity.hours_since_latest_tweet | Hours since latest tweet |
+
+**Note:** All sentiment fields may be null if Twitter sentiment was not available for an entry.
+
+---
+
+## Excluded Fields
+
+Tier 1 explicitly **excludes** the following to maintain a minimal, clean schema:
+
+### Futures Data
+- `futures_raw` — All futures market data
+- `flags.futures_data_ok` — Futures availability flag
+
+### Sentiment Internals
+All internal sentiment diagnostics are excluded:
+- `decision_sources` — Model decision sources
+- `primary_conf_mean`, `referee_conf_mean` — Confidence means
+- `top_terms` — Top terms from posts
+- `category_counts` — Sentiment category counts
+- `tag_counts`, `cashtag_counts`, `mention_counts` — Social counts
+- `url_domain_counts` — URL domain counts
+- `media_count` — Media attachment counts
+- `author_stats`, `content_stats` — Post statistics
+- `platform_engagement` — Engagement metrics
+- `lexicon_sentiment`, `ai_sentiment` — Raw model outputs
+
+### Time-Series Arrays
+- `spot_prices` — Intra-cycle price samples (high volume)
+
+### Other Excluded
+- `flags` — Boolean debug flags (entire struct)
+- `diag` — Diagnostics (entire struct)
+- `twitter_sentiment_windows` — Full dynamic-key struct (causes schema issues)
+- `norm`, `labels` — Intentionally dropped in v7
 
 ---
 
 ## Manifest Schema
 
-Each weekly export includes a `manifest.json` with:
+Each weekly export includes a `manifest.json` with full metadata.
+
+### Example Manifest
 
 ```json
 {
   "schema_version": "v7",
   "tier": "tier1",
+  "tier_description": "Starter — light entry table with aggregated sentiment (no futures, no sentiment internals)",
   "window": {
     "window_basis": "previous_week_utc",
     "week_start_day": "2025-12-22",
@@ -125,7 +154,7 @@ Each weekly export includes a `manifest.json` with:
     "days_expected": ["2025-12-22", "2025-12-23", ...],
     "days_included": ["2025-12-22", "2025-12-23", ...]
   },
-  "build_ts_utc": "2026-01-16T08:14:05.789519+00:00",
+  "build_ts_utc": "2026-01-16T12:01:02.113608+00:00",
   "source_inputs": [
     "tier3/daily/2025-12-22/data.parquet",
     ...
@@ -149,111 +178,126 @@ Each weekly export includes a `manifest.json` with:
     "min_days_threshold_used": 5,
     "coverage_note": "This weekly export is derived from 7/7 daily partitions."
   },
-  "column_policy": {
-    "included_columns": ["symbol", "snapshot_ts", "meta", "spot_raw", "scores"],
-    "excluded_columns": ["derived", "twitter_sentiment_meta", ...],
-    "policy_note": "Tier 1 is the most minimal dataset, containing only core price/liquidity metrics."
+  "field_policy": {
+    "approach": "explicit_allowlist_flattened",
+    "total_fields": 22,
+    "fields": ["symbol", "snapshot_ts", "meta_added_ts", ...],
+    "field_categories": {
+      "identity_timing": ["symbol", "snapshot_ts", ...],
+      "spot_snapshot": ["spot_mid", "spot_spread_bps", ...],
+      "derived_metrics": ["derived_liq_global_pct", "derived_spread_bps"],
+      "scores": ["score_final"],
+      "sentiment_aggregated": ["sentiment_posts_total", ...]
+    },
+    "sentiment_source": "twitter_sentiment_windows.last_cycle",
+    "sentiment_note": "Sentiment fields are aggregated-only from last_cycle. No internals (decision_sources, conf_mean, top_terms, etc.) are included.",
+    "exclusions": [
+      "futures_raw (all futures data)",
+      "flags.futures_data_ok (futures existence flag)",
+      "spot_prices (time-series arrays)",
+      "twitter_sentiment_windows (full struct)",
+      "All sentiment internals: decision_sources, primary_conf_mean, ..."
+    ]
   },
   "parquet_sha256": "...",
-  "parquet_size_bytes": 4460657
+  "parquet_size_bytes": 1463922
 }
 ```
 
 ### window Block
 
-The `window` block describes the weekly range:
-
 | Field | Description |
 |-------|-------------|
-| `window_basis` | How end_day was determined: `"previous_week_utc"` (cron mode) or `"end_day"` (manual) |
+| `window_basis` | How end_day was determined: `"previous_week_utc"` (cron) or `"end_day"` (manual) |
 | `week_start_day` | First day of the 7-day window (Monday) |
 | `week_end_day` | Last day of the 7-day window (Sunday) |
 | `days_expected` | List of 7 days in the window |
 | `days_included` | Days that were actually included in the build |
 
-**Window basis modes:**
-- `previous_week_utc`: Used with `--previous-week` flag; computes end_day as most recent Sunday UTC
-- `end_day`: Used with `--end-day YYYY-MM-DD` flag; uses explicit date provided
-
 ### source_coverage Block
-
-The `source_coverage` block documents data completeness:
 
 | Field | Description |
 |-------|-------------|
 | `days_expected` | List of 7 days in the window |
 | `days_present` | Tier 3 days that exist and were included |
 | `days_missing` | Tier 3 days that were not found in R2 |
-| `per_day` | Coverage metadata for each present day |
-| `present_days_count` | Count of included days (e.g., 6) |
-| `missing_days_count` | Count of missing days (e.g., 1) |
+| `per_day` | Coverage metadata for each present day (hours_found, is_partial, missing_hours) |
+| `present_days_count` | Count of included days |
+| `missing_days_count` | Count of missing days |
 | `partial_days_count` | Count of partial days (< 24 hours coverage) |
 | `min_days_threshold_used` | Minimum days required for build |
 | `coverage_note` | Human-readable summary |
 
-#### per_day Coverage Details
-
-For each included day, the `per_day` object contains:
+### field_policy Block
 
 | Field | Description |
 |-------|-------------|
-| `hours_found` | Number of hour files found (0-24) |
-| `hours_expected` | Expected hours (always 24) |
-| `is_partial` | Boolean, true if hours_found < 24 |
-| `missing_hours` | List of missing hour strings (e.g., `["03", "04"]`) |
-| `row_count` | Number of entries from this day |
-
-**Gaps reflect pipeline uptime**, not missing market data. If the archival pipeline was offline, those hours/days will be missing from Tier 3 and therefore from Tier 1.
+| `approach` | `"explicit_allowlist_flattened"` — fields are flattened, not nested |
+| `total_fields` | Count of fields in output (22) |
+| `fields` | Ordered list of all field names |
+| `field_categories` | Fields grouped by category |
+| `sentiment_source` | Source path for sentiment fields |
+| `sentiment_note` | Clarification that sentiment is aggregated-only |
+| `exclusions` | List of excluded fields/structs with reasons |
 
 ---
 
-## Usage
+## Usage Examples
 
-### Building Tier 1 Weekly Exports
+### Build Previous Week (Cron Mode)
 
 ```bash
-# Cron mode: build previous Mon-Sun week (for Monday 00:05 UTC cron)
+# Monday 00:05 UTC cron
 python3 scripts/build_tier1_weekly.py --previous-week --upload
+```
 
-# Dry-run to see computed window
-python3 scripts/build_tier1_weekly.py --previous-week --dry-run
+### Manual Build
 
-# Manual/backfill: build specific week ending on a date (Sunday)
-python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --upload
+```bash
+# Dry-run for specific week
+python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --dry-run
 
-# Build partial week (requires at least 5 days)
-python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --min-days 5 --upload
+# Build and upload
+python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload
 
-# Custom output directory
-python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --local-out ./my_output --upload
+# Force overwrite existing
+python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload --force
+```
+
+### Reading Tier 1 Parquet
+
+```python
+import pyarrow.parquet as pq
+
+# Read full table
+table = pq.read_table("tier1_weekly/2025-12-28/dataset_entries_7d.parquet")
+
+# Read specific columns
+table = pq.read_table(
+    "tier1_weekly/2025-12-28/dataset_entries_7d.parquet",
+    columns=["symbol", "snapshot_ts", "score_final", "sentiment_mean_score"]
+)
+
+# Convert to pandas
+df = table.to_pandas()
 ```
 
 ### Cron Schedule
 
-Run Mondays at 00:05 UTC to build the previous complete Mon-Sun week:
-
 ```bash
-# /etc/cron.d/tier1_weekly
-5 0 * * 1 instrum cd /srv/instrumetriq && python3 scripts/build_tier1_weekly.py --previous-week --upload 2>&1 | logger -t tier1_weekly
+# Monday 00:05 UTC — build previous Mon-Sun week
+5 0 * * 1 cd /srv/instrumetriq && python3 scripts/build_tier1_weekly.py --previous-week --upload >> /var/log/tier1_weekly.log 2>&1
 ```
 
 ---
 
-## R2 Layout
+## Field Type Reference
 
-```
-instrumetriq-datasets/
-└── tier1/
-    └── weekly/
-        └── YYYY-MM-DD/           # end_day (Sunday)
-            ├── dataset_entries_7d.parquet
-            └── manifest.json
-```
+| Type | Description |
+|------|-------------|
+| `string` | UTF-8 string |
+| `int64` | 64-bit signed integer |
+| `double` | 64-bit floating point |
+| `bool` | Boolean (true/false) |
 
----
-
-## Related Documentation
-
-- [DATASET_SCHEMA_TIER2.md](DATASET_SCHEMA_TIER2.md) - Tier 2 weekly schema (7 columns)
-- [DATASET_SCHEMA_TIER3.md](DATASET_SCHEMA_TIER3.md) - Tier 3 daily schema (12 columns)
-- [DATASET_EXPORT_GUIDE.md](DATASET_EXPORT_GUIDE.md) - General export guide
+All fields except identity/timing may contain nulls where data was unavailable.
