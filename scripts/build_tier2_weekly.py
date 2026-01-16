@@ -6,15 +6,18 @@ Derives Tier 2 weekly dataset from already-uploaded Tier 3 daily parquets in R2.
 Tier 2 = Tier 3 minus: futures_raw, spot_prices, flags, diag
 
 Weekly cadence:
-- Cron runs Monday 00:05 UTC
-- Builds previous 7 full UTC days (Tue-Mon inclusive if run on Tuesday)
-- end_day = yesterday UTC, start_day = end_day - 6 days
+- Cron runs Monday 00:05 UTC with --previous-week
+- Builds the most recent complete Mon-Sun week (end_day = previous Sunday UTC)
+- Window: end_day - 6 days to end_day (7 days)
 
 Usage:
-    # Dry-run for last 7 days (no upload)
-    python3 scripts/build_tier2_weekly.py --dry-run
+    # Cron mode: build previous Mon-Sun week (for Monday 00:05 UTC cron)
+    python3 scripts/build_tier2_weekly.py --previous-week --upload
 
-    # Build specific week ending on a date
+    # Dry-run to see computed window
+    python3 scripts/build_tier2_weekly.py --previous-week --dry-run
+
+    # Manual/backfill: build specific week ending on a date
     python3 scripts/build_tier2_weekly.py --end-day 2026-01-15 --upload
 
     # Force overwrite existing R2 objects
@@ -118,6 +121,26 @@ def get_s3_client(config: R2Config):
 # ==============================================================================
 # Date Range Calculation
 # ==============================================================================
+
+def compute_previous_sunday() -> str:
+    """
+    Compute the most recent Sunday (UTC) strictly before today.
+    
+    For cron running Monday 00:05 UTC, this returns yesterday (Sunday).
+    For any other day, it returns the most recent completed Sunday.
+    
+    Returns:
+        Sunday date in YYYY-MM-DD format
+    """
+    today = datetime.now(timezone.utc).date()
+    # weekday(): Monday=0, Sunday=6
+    days_since_sunday = (today.weekday() + 1) % 7
+    if days_since_sunday == 0:
+        # Today is Sunday, so "previous Sunday" is 7 days ago
+        days_since_sunday = 7
+    previous_sunday = today - timedelta(days=days_since_sunday)
+    return previous_sunday.strftime("%Y-%m-%d")
+
 
 def calculate_week_range(end_day: str, days: int = 7) -> Tuple[str, str, List[str]]:
     """
@@ -354,9 +377,14 @@ def create_manifest(
     source_inputs: List[str],
     row_count: int,
     parquet_path: Path,
-    tier2_columns: List[str]
+    tier2_columns: List[str],
+    window_basis: str = "end_day"
 ) -> dict:
-    """Create manifest for Tier 2 weekly output with source_coverage."""
+    """Create manifest for Tier 2 weekly output with source_coverage.
+    
+    Args:
+        window_basis: "previous_week_utc" if built with --previous-week, else "end_day"
+    """
     parquet_sha256 = compute_sha256(parquet_path)
     parquet_size = parquet_path.stat().st_size
     
@@ -378,8 +406,9 @@ def create_manifest(
         "schema_version": "v7",
         "tier": "tier2",
         "window": {
-            "start_day": start_day,
-            "end_day": end_day,
+            "window_basis": window_basis,
+            "week_start_day": start_day,
+            "week_end_day": end_day,
             "days_expected": days_expected,
             "days_included": days_present,
         },
@@ -479,7 +508,8 @@ def build_tier2_weekly(
     output_dir: Optional[Path] = None,
     dry_run: bool = False,
     upload: bool = False,
-    force: bool = False
+    force: bool = False,
+    window_basis: str = "end_day"
 ) -> bool:
     """
     Main entry point for Tier 2 weekly build.
@@ -492,6 +522,7 @@ def build_tier2_weekly(
         dry_run: If True, skip R2 upload
         upload: If True, upload to R2
         force: If True, overwrite existing R2 objects
+        window_basis: "previous_week_utc" if --previous-week, else "end_day"
     
     Returns:
         True if successful, False otherwise
@@ -504,6 +535,7 @@ def build_tier2_weekly(
     # Calculate date range
     start_day, end_day, all_days = calculate_week_range(end_day, days)
     print(f"\n[WINDOW] {start_day} to {end_day} ({len(all_days)} days)")
+    print(f"[BASIS] {window_basis}")
     print(f"[THRESHOLD] Minimum {min_days}/{len(all_days)} days required")
     
     # Set output directory
@@ -597,6 +629,7 @@ def build_tier2_weekly(
         row_count=row_count,
         parquet_path=parquet_path,
         tier2_columns=tier2_columns,
+        window_basis=window_basis,
     )
     
     # Rewrite manifest with correct data
@@ -661,11 +694,20 @@ def main():
         epilog=__doc__
     )
     
-    parser.add_argument(
+    # Date selection (mutually exclusive)
+    date_group = parser.add_mutually_exclusive_group()
+    
+    date_group.add_argument(
         "--end-day",
         type=str,
         default=None,
-        help="End date for the week (YYYY-MM-DD). Default: yesterday UTC"
+        help="End date for the week (YYYY-MM-DD). For manual/backfill runs."
+    )
+    
+    date_group.add_argument(
+        "--previous-week",
+        action="store_true",
+        help="Build the most recent complete Mon-Sun week (end_day = previous Sunday UTC). For cron."
     )
     
     parser.add_argument(
@@ -709,11 +751,21 @@ def main():
     
     args = parser.parse_args()
     
-    # Default end-day to yesterday UTC
-    if args.end_day is None:
+    # Determine end_day and window_basis
+    if args.previous_week:
+        # Cron mode: compute most recent Sunday
+        args.end_day = compute_previous_sunday()
+        window_basis = "previous_week_utc"
+        print(f"[INFO] --previous-week: computed end_day = {args.end_day} (most recent Sunday UTC)")
+    elif args.end_day is not None:
+        # Manual mode: use specified end_day
+        window_basis = "end_day"
+    else:
+        # No args: default to yesterday UTC (legacy behavior)
         yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
         args.end_day = yesterday.strftime("%Y-%m-%d")
-        print(f"[INFO] No --end-day specified, defaulting to yesterday UTC: {args.end_day}")
+        window_basis = "end_day"
+        print(f"[INFO] No --end-day or --previous-week specified, defaulting to yesterday UTC: {args.end_day}")
     
     # Parse local output directory
     output_dir = Path(args.local_out) if args.local_out else None
@@ -727,6 +779,7 @@ def main():
         dry_run=args.dry_run,
         upload=args.upload,
         force=args.force,
+        window_basis=window_basis,
     )
     
     sys.exit(0 if success else 1)

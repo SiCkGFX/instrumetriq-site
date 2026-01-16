@@ -276,13 +276,13 @@ incompatibility. The essential metadata is preserved in `twitter_sentiment_meta`
 
 **Usage:**
 ```bash
-# Dry run (exports locally, no R2 upload)
-python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --dry-run
+# Cron mode: build previous Mon-Sun week (for Monday 00:05 UTC cron)
+python3 scripts/build_tier2_weekly.py --previous-week --upload
 
-# Build with local output only (default behavior)
-python3 scripts/build_tier2_weekly.py --end-day 2025-12-28
+# Dry-run to see computed window
+python3 scripts/build_tier2_weekly.py --previous-week --dry-run
 
-# Build and upload to R2
+# Manual/backfill: build specific week ending on a date
 python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --upload
 
 # Build partial week (requires at least 5 days)
@@ -293,23 +293,26 @@ python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --output-dir ./my_out
 ```
 
 **Weekly Window Logic:**
-- `--end-day 2025-12-28` builds the 7-day window `2025-12-22` to `2025-12-28`
+- `--previous-week`: Computes end_day as the most recent Sunday (UTC) strictly before today
+  - On Monday 00:05 UTC, this yields yesterday (Sunday), covering Mon-Sun
+  - Manifest records `window_basis: "previous_week_utc"`
+- `--end-day YYYY-MM-DD`: Builds the 7-day window ending on that date
+  - Manifest records `window_basis: "end_day"`
 - By default, requires **at least 5 of 7** Tier 3 days (`--min-days 5`)
 - Missing days and partial days are recorded in manifest `source_coverage` block
-- Use `--min-days 7` to require all 7 days (strict mode)
 
 **Partial Week Support:**
 - If some Tier 3 days are missing from R2, Tier 2 can still be built if >= min-days are present
 - The manifest `source_coverage` block explicitly documents:
   - `days_missing`: which days were not found
   - `partial_days_count`: how many included days had < 24 hours
-  - `per_day`: coverage metadata for each included day
+  - `per_day`: coverage metadata for each included day (including `missing_hours`)
 
 **Cron Schedule:**
-Run Mondays at 00:05 UTC to build the previous complete week:
+Run Mondays at 00:05 UTC to build the previous complete Mon-Sun week:
 ```bash
 # /etc/cron.d/tier2_weekly
-5 0 * * 1 instrum cd /srv/instrumetriq && python3 scripts/build_tier2_weekly.py --upload 2>&1 | logger -t tier2_weekly
+5 0 * * 1 instrum cd /srv/instrumetriq && python3 scripts/build_tier2_weekly.py --previous-week --upload 2>&1 | logger -t tier2_weekly
 ```
 
 **Requirements:**

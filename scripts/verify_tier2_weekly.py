@@ -334,8 +334,11 @@ def check_window_semantics(
     # Check window structure
     window = manifest.get("window", {})
     
-    # Support both old (days_included) and new (days_expected + days_included) formats
-    manifest_end_day = window.get("end_day")
+    # Support both old (end_day) and new (week_end_day) field names
+    manifest_end_day = window.get("week_end_day") or window.get("end_day")
+    manifest_start_day = window.get("week_start_day") or window.get("start_day")
+    window_basis = window.get("window_basis", "end_day")
+    
     if manifest_end_day != end_day:
         result.errors.append(f"Manifest end_day ({manifest_end_day}) != folder name ({end_day})")
     
@@ -345,8 +348,9 @@ def check_window_semantics(
     
     result.info["days_expected"] = days_expected
     result.info["days_included"] = days_included
-    result.info["window_start"] = window.get("start_day")
-    result.info["window_end"] = window.get("end_day")
+    result.info["window_start"] = manifest_start_day
+    result.info["window_end"] = manifest_end_day
+    result.info["window_basis"] = window_basis
     
     # Verify days_expected has 7 items
     if len(days_expected) != 7:
@@ -808,9 +812,13 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         lines.append(f"- **build_ts_utc:** {manifest.get('build_ts_utc', 'N/A')}")
         
         window = manifest.get("window", {})
-        lines.append(f"- **window.start_day:** {window.get('start_day', 'N/A')}")
-        lines.append(f"- **window.end_day:** {window.get('end_day', 'N/A')}")
-        lines.append(f"- **window.days_included:** {len(r.info.get('days_included', []))} days")
+        window_basis = r.info.get("window_basis", window.get("window_basis", "N/A"))
+        window_start = r.info.get("window_start", "N/A")
+        window_end = r.info.get("window_end", "N/A")
+        lines.append(f"- **window_basis:** {window_basis}")
+        lines.append(f"- **week_start_day:** {window_start}")
+        lines.append(f"- **week_end_day:** {window_end}")
+        lines.append(f"- **days_included:** {len(r.info.get('days_included', []))} days")
         lines.append(f"- **source_inputs:** {r.info.get('source_inputs_count', 'N/A')} Tier 3 parquets")
         lines.append(f"- **row_count (manifest):** {manifest.get('row_count', 'N/A')}")
         lines.append("")

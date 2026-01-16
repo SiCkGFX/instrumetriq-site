@@ -129,8 +129,9 @@ Each weekly export includes a `manifest.json` with:
   "schema_version": "v7",
   "tier": "tier2",
   "window": {
-    "start_day": "2025-12-22",
-    "end_day": "2025-12-28",
+    "window_basis": "previous_week_utc",
+    "week_start_day": "2025-12-22",
+    "week_end_day": "2025-12-28",
     "days_expected": ["2025-12-22", "2025-12-23", ...],
     "days_included": ["2025-12-22", "2025-12-23", ...]
   },
@@ -167,6 +168,22 @@ Each weekly export includes a `manifest.json` with:
   "parquet_size_bytes": 5339067
 }
 ```
+
+### window Block
+
+The `window` block describes the weekly range:
+
+| Field | Description |
+|-------|-------------|
+| `window_basis` | How end_day was determined: `"previous_week_utc"` (cron mode) or `"end_day"` (manual) |
+| `week_start_day` | First day of the 7-day window (Monday) |
+| `week_end_day` | Last day of the 7-day window (Sunday) |
+| `days_expected` | List of 7 days in the window |
+| `days_included` | Days that were actually included in the build |
+
+**Window basis modes:**
+- `previous_week_utc`: Used with `--previous-week` flag; computes end_day as most recent Sunday UTC
+- `end_day`: Used with `--end-day YYYY-MM-DD` flag; uses explicit date provided
 
 ### source_coverage Block
 
