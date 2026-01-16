@@ -9,7 +9,7 @@ The archive data is exported in multiple tiers, each serving different use cases
 | Tier | Granularity | Update Frequency | Primary Use Case |
 |------|-------------|------------------|------------------|
 | Tier 1 | Real-time | Continuous | Live dashboards, alerts |
-| Tier 2 | Hourly | Every hour | Intraday analysis |
+| **Tier 2** | Weekly | Once per week | Research, reduced column footprint |
 | **Tier 3** | Daily | Once per day | Historical research, ML training |
 
 ---
@@ -121,11 +121,138 @@ See [DATASET_SCHEMA_TIER3.md](DATASET_SCHEMA_TIER3.md) for:
 
 ---
 
-## Tier 2: Hourly Export
+## Tier 2: Weekly Parquet Export
 
-*Coming soon.*
+Tier 2 provides weekly aggregations derived from Tier 3 daily inputs, optimized for research and analysis with reduced column footprint.
 
-Tier 2 will provide hourly granularity for intraday analysis.
+### Design Principles
+
+1. **Derived from Tier 3**: No direct archive access; reads from R2 `tier3/daily/` inputs
+2. **Column Reduction**: Excludes high-volume/low-utility columns to reduce size
+3. **Weekly Cadence**: Builds complete 7-day windows (Mon–Sun)
+
+### Column Policy
+
+**Included columns:**
+- `symbol` - Ticker symbol
+- `snapshot_ts` - Observation timestamp
+- `meta` - Entry metadata
+- `spot_raw` - Spot market data
+- `derived` - Calculated metrics
+- `scores` - Scoring results
+- `twitter_sentiment_meta` - Twitter metadata
+
+**Excluded columns:**
+- `futures_raw` - Full futures data block
+- `spot_prices` - Spot price time-series arrays
+- `flags` - Boolean flags block
+- `diag` - Diagnostics block
+- `twitter_sentiment_windows` - Dynamic-key structs (hashtags, handles, domains vary by day)
+
+### Usage
+
+#### Automatic (Cron)
+
+Run weekly on Mondays at 00:05 UTC:
+
+```bash
+# Cron entry
+5 0 * * 1 cd /srv/instrumetriq && python3 scripts/build_tier2_weekly.py --upload >> /var/log/tier2_weekly.log 2>&1
+```
+
+With no `--end-day` argument, the script automatically calculates yesterday as the end of the 7-day window.
+
+#### Manual Export
+
+```bash
+# Dry-run (local output only, no R2 operations)
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --dry-run
+
+# Build locally (no upload)
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28
+
+# Build and upload to R2
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --upload
+
+# Custom output directory
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --output-dir ./custom_output --upload
+```
+
+#### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--end-day YYYY-MM-DD` | End date of 7-day window (default: yesterday UTC) |
+| `--days N` | Override window size (default: 7) |
+| `--output-dir PATH` | Local output directory |
+| `--dry-run` | Skip R2 upload, local output only |
+| `--upload` | Upload results to R2 |
+
+### Window Logic
+
+Given `--end-day 2025-12-28`:
+- Window: 2025-12-22 to 2025-12-28 (7 days)
+- Requires: All 7 Tier 3 daily parquets in R2
+- Output: `tier2/weekly/2025-12-28/dataset_entries_7d.parquet`
+
+### Output Structure
+
+```
+output/tier2_weekly/
+└── YYYY-MM-DD/
+    ├── dataset_entries_7d.parquet  # Zstd-compressed parquet
+    └── manifest.json               # Build metadata
+```
+
+### R2 Structure
+
+```
+instrumetriq-datasets/
+└── tier2/
+    └── weekly/
+        └── YYYY-MM-DD/
+            ├── dataset_entries_7d.parquet
+            └── manifest.json
+```
+
+### Manifest Schema
+
+```json
+{
+  "schema_version": "v7",
+  "tier": "tier2",
+  "window": {
+    "start_day": "2025-12-22",
+    "end_day": "2025-12-28",
+    "days_included": ["2025-12-22", "2025-12-23", ...]
+  },
+  "build_ts_utc": "2026-01-16T08:14:05.789519+00:00",
+  "source_inputs": ["tier3/daily/2025-12-22/data.parquet", ...],
+  "row_count": 17635,
+  "column_policy": {
+    "included_top_level_columns": [...],
+    "excluded_top_level_columns": [...],
+    "explicit_exclusions": [...]
+  },
+  "parquet_sha256": "...",
+  "parquet_size_bytes": 5339067
+}
+```
+
+### Prerequisites
+
+1. All Tier 3 daily inputs for the window must exist in R2
+2. R2 credentials configured (see Environment Setup)
+3. Required packages: `pyarrow`, `boto3`
+
+### Troubleshooting
+
+**"Missing Tier 3 daily parquets for: [dates]"**
+→ Run `export_tier3_daily.py` for the missing dates first
+
+**Schema mismatch errors**
+→ Ensure you're using the latest version of `build_tier2_weekly.py`
+→ The `twitter_sentiment_windows` column must be excluded (it has dynamic schemas)
 
 ---
 

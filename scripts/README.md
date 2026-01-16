@@ -248,6 +248,111 @@ python3 scripts/export_tier3_daily.py --yesterday --upload
 
 ---
 
+### `build_tier2_weekly.py`
+**Purpose:** Derives Tier 2 weekly parquets from Tier 3 daily inputs in R2  
+**Outputs:**
+- Local: `output/tier2_weekly/{end-date}/dataset_entries_7d.parquet` - Zstd-compressed
+- Local: `output/tier2_weekly/{end-date}/manifest.json` - Build metadata
+- R2: `tier2/weekly/{end-date}/dataset_entries_7d.parquet` - Weekly dataset
+- R2: `tier2/weekly/{end-date}/manifest.json` - Manifest with SHA256
+
+**Tier 2 Column Policy:**
+- **Excluded columns:** `futures_raw`, `spot_prices`, `flags`, `diag`, `twitter_sentiment_windows`
+- **Included columns:** `symbol`, `snapshot_ts`, `meta`, `spot_raw`, `derived`, `scores`, `twitter_sentiment_meta`
+
+**Note:** `twitter_sentiment_windows` is excluded because it contains dynamic-key structs
+(hashtag/handle/domain names as field names) that differ between days, causing schema
+incompatibility. The essential metadata is preserved in `twitter_sentiment_meta`.
+
+**Usage:**
+```bash
+# Dry run (exports locally, no R2 upload)
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --dry-run
+
+# Build with local output only (default behavior)
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28
+
+# Build and upload to R2
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --upload
+
+# Custom output directory
+python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --output-dir ./my_output --upload
+```
+
+**Weekly Window Logic:**
+- `--end-day 2025-12-28` builds the 7-day window `2025-12-22` to `2025-12-28`
+- All 7 Tier 3 daily parquets must exist in R2 before building
+- Use `--days N` to override window size (default: 7)
+
+**Cron Schedule:**
+Run Mondays at 00:05 UTC to build the previous complete week:
+```bash
+# /etc/cron.d/tier2_weekly
+5 0 * * 1 instrum cd /srv/instrumetriq && python3 scripts/build_tier2_weekly.py --upload 2>&1 | logger -t tier2_weekly
+```
+
+**Requirements:**
+- pyarrow (for Parquet I/O)
+- boto3 (for R2 operations)
+- R2 credentials in environment (see `r2_config.py`)
+- All 7 Tier 3 daily inputs must exist in R2
+
+**When to run:** Weekly on Mondays, after Tier 3 daily exports are complete
+
+---
+
+### `verify_tier3_parquet.py`
+**Purpose:** Validates Tier 3 daily parquet exports for correctness and completeness  
+**Outputs:**
+- Report: `output/verify_tier3_report.md` - Human-readable verification report
+- Artifacts: `output/verify_tier3/{date}/` - Schema, manifest copy, stats
+
+**Usage:**
+```bash
+# Verify most recent export from R2
+python3 scripts/verify_tier3_parquet.py
+
+# Verify specific dates
+python3 scripts/verify_tier3_parquet.py --date 2026-01-14 --date 2026-01-15
+
+# Verify local files
+python3 scripts/verify_tier3_parquet.py --local output/tier3_daily/2026-01-14
+```
+
+**When to run:** After Tier 3 exports to validate data integrity
+
+---
+
+### `verify_tier2_weekly.py`
+**Purpose:** Validates Tier 2 weekly parquet exports for correctness and completeness  
+**Outputs:**
+- Report: `output/verify_tier2_report.md` - Human-readable verification report
+- Artifacts: `output/verify_tier2/{end-day}/manifest.json` - Downloaded manifest copy
+- Artifacts: `output/verify_tier2/{end-day}/schema.txt` - PyArrow schema pretty print
+- Artifacts: `output/verify_tier2/{end-day}/stats.json` - Machine-readable summary
+
+**Usage:**
+```bash
+# Verify most recent week from R2
+python3 scripts/verify_tier2_weekly.py
+
+# Verify specific week by end date
+python3 scripts/verify_tier2_weekly.py --end-day 2025-12-28
+
+# Verify local files
+python3 scripts/verify_tier2_weekly.py --local output/tier2_weekly/2025-12-28
+```
+
+**Checks performed:**
+- Object presence and SHA256 integrity
+- Window semantics (7 consecutive days, source inputs match)
+- Column policy (required present, excluded absent)
+- Data quality stats (row counts, null ratios, duration stats)
+
+**When to run:** After Tier 2 builds to validate data integrity
+
+---
+
 ## Typical Workflow
 
 ### Daily Updates
@@ -267,6 +372,13 @@ python3 scripts/export_tier3_daily.py --yesterday --upload
 # 4. Build and deploy
 npm run build
 npm run publish
+```
+
+### Weekly Updates (Tier 2)
+```bash
+# Run on Mondays after Tier 3 daily exports complete
+# Builds previous 7 days (Mon-Sun ending yesterday)
+python3 scripts/build_tier2_weekly.py --upload
 ```
 
 ### Schema Changes
@@ -322,6 +434,9 @@ scripts/
 ├── r2_config.py                   # R2 credentials loader
 ├── init_r2_structure.py           # R2 bucket initialization
 ├── export_tier3_daily.py          # Tier 3 daily Parquet export
+├── verify_tier3_parquet.py        # Tier 3 verification + report
+├── build_tier2_weekly.py          # Tier 2 weekly derived from Tier 3
+├── verify_tier2_weekly.py         # Tier 2 verification + report
 └── tools/                         # Helper utilities
     └── sync_cryptobot_sample.py   # CryptoBot-specific sync
 ```
