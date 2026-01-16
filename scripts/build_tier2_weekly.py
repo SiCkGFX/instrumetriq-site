@@ -74,18 +74,44 @@ PARQUET_COMPRESSION = "zstd"
 # Set to 5 to allow 2 missing days in a 7-day window
 MIN_DAYS_DEFAULT = 5
 
-# Tier 2 column policy
+# ==============================================================================
+# Tier 2 Column Policy (per agreed tier plan)
+# ==============================================================================
+#
+# AUDIT vs TIER PLAN:
+# - Tier 2 = Tier 1 + richer features, NO futures, NO spot time-series
+# - Tier 1 fields: identity/timing, core spot snapshot, minimal derived, scores.final, aggregated sentiment
+# - Tier 2 adds ON TOP:
+#   1) Full spot_raw.* (depth levels, OBI, micro premium, impact, liq efficiency raw, etc.)
+#   2) Full derived.* and full scores.*
+#   3) Sentiment expanded from twitter_sentiment_windows.last_cycle and last_2_cycles:
+#      - ai_sentiment.*, author_stats.*, hybrid_decision_stats.* (incl decision_sources, conf means)
+#      - lexicon_sentiment.*, category_counts, top_terms
+#      - content_stats.*, platform_engagement.*
+#      - tag_counts, cashtag_counts, mention_counts, url_domain_counts (as MAP columns)
+#   4) twitter_sentiment_meta.* (snapshot provenance)
+#
+# CRITICAL: twitter_sentiment_windows has dynamic-key structs (tag_counts, cashtag_counts,
+# mention_counts, url_domain_counts) where keys are hashtags/handles/domains that differ
+# between days. These MUST be converted to MAP<string, int64> for stable schema.
+
 # Columns to EXCLUDE from Tier 2 (present in Tier 3)
 TIER2_EXCLUDED_COLUMNS = [
     "futures_raw",   # Entire futures block (preserve Tier 3 value)
-    "spot_prices",   # Spot price time-series arrays
-    "flags",         # Boolean flags block (preserve Tier 3 value)
-    "diag",          # Diagnostics block (preserve Tier 3 value)
-    # twitter_sentiment_windows contains dynamic-key structs (tag_counts, mention_counts,
-    # url_domain_counts, cashtag_counts) where keys are actual hashtags/handles/domains.
-    # These differ between days causing schema mismatch during concatenation.
-    # twitter_sentiment_meta preserves the essential metadata.
-    "twitter_sentiment_windows",
+    "spot_prices",   # Spot price time-series arrays (preserve Tier 3 value)
+    "flags",         # Boolean flags block (Tier 3 only)
+    "diag",          # Diagnostics block (Tier 3 only)
+    # NOTE: twitter_sentiment_windows is now INCLUDED (with dynamic-key transform)
+    # NOTE: norm, labels are typically empty/null in v7
+]
+
+# Dynamic-key struct fields that need MAP conversion (within twitter_sentiment_windows)
+# These are the problematic fields where keys are actual hashtags/handles/domains
+DYNAMIC_KEY_FIELDS = [
+    "tag_counts",
+    "cashtag_counts", 
+    "mention_counts",
+    "url_domain_counts",
 ]
 
 # Columns that MUST be present in Tier 2 output
@@ -97,6 +123,7 @@ TIER2_REQUIRED_COLUMNS = [
     "derived",
     "scores",
     "twitter_sentiment_meta",
+    "twitter_sentiment_windows",  # Now included with MAP conversion
 ]
 
 # R2 path patterns
@@ -241,6 +268,145 @@ def fetch_tier3_coverage(
 
 
 # ==============================================================================
+# Dynamic-Key Struct to MAP Conversion
+# ==============================================================================
+
+def struct_to_map(struct_array: pa.StructArray) -> pa.MapArray:
+    """
+    Convert a struct array with dynamic keys to a MAP<string, int64> array.
+    
+    Example: struct<BTC: 5, ETH: 3, DOGE: 1> -> map[('BTC', 5), ('ETH', 3), ('DOGE', 1)]
+    
+    This normalizes dynamic-key structs (where field names are hashtags/handles/domains)
+    into a stable schema that can be concatenated across days.
+    """
+    if struct_array is None or len(struct_array) == 0:
+        # Return empty map array
+        return pa.array([], type=pa.map_(pa.string(), pa.int64()))
+    
+    # Build list of (key, value) tuples for each row
+    result_maps = []
+    struct_type = struct_array.type
+    
+    for row_idx in range(len(struct_array)):
+        if struct_array[row_idx].is_valid:
+            row_struct = struct_array[row_idx].as_py()
+            if row_struct is not None:
+                # Convert dict to list of tuples
+                items = [(k, v) for k, v in row_struct.items() if v is not None and v > 0]
+                result_maps.append(items)
+            else:
+                result_maps.append(None)
+        else:
+            result_maps.append(None)
+    
+    return pa.array(result_maps, type=pa.map_(pa.string(), pa.int64()))
+
+
+def transform_sentiment_windows(table: pa.Table) -> pa.Table:
+    """
+    Transform twitter_sentiment_windows to use MAP columns for dynamic-key fields.
+    
+    This converts problematic struct columns (tag_counts, cashtag_counts, mention_counts,
+    url_domain_counts) from struct<key1: int, key2: int, ...> to map<string, int64>.
+    
+    This enables stable schema concatenation across days where the keys differ.
+    """
+    if "twitter_sentiment_windows" not in table.column_names:
+        return table
+    
+    tsw_col = table.column("twitter_sentiment_windows")
+    tsw_idx = table.schema.get_field_index("twitter_sentiment_windows")
+    
+    # Check if it's a struct type
+    if not pa.types.is_struct(tsw_col.type):
+        return table
+    
+    # Process each chunk in the column
+    new_chunks = []
+    for chunk in tsw_col.chunks:
+        new_chunk = transform_sentiment_chunk(chunk)
+        new_chunks.append(new_chunk)
+    
+    # Create new column with transformed chunks
+    new_tsw_col = pa.chunked_array(new_chunks)
+    
+    # Replace column in table
+    new_table = table.set_column(tsw_idx, "twitter_sentiment_windows", new_tsw_col)
+    
+    return new_table
+
+
+def transform_sentiment_chunk(chunk: pa.StructArray) -> pa.StructArray:
+    """
+    Transform a single chunk of twitter_sentiment_windows.
+    
+    Recursively processes last_cycle and last_2_cycles to convert dynamic-key
+    struct fields to MAP columns.
+    """
+    if chunk is None or len(chunk) == 0:
+        return chunk
+    
+    chunk_type = chunk.type
+    new_fields = []
+    new_arrays = []
+    
+    for field_idx in range(chunk_type.num_fields):
+        field = chunk_type.field(field_idx)
+        field_array = chunk.field(field_idx)
+        
+        if field.name in ("last_cycle", "last_2_cycles"):
+            # Recursively transform the cycle struct
+            transformed = transform_cycle_struct(field_array)
+            new_fields.append(pa.field(field.name, transformed.type))
+            new_arrays.append(transformed)
+        else:
+            new_fields.append(field)
+            new_arrays.append(field_array)
+    
+    # Build new struct array
+    new_struct_type = pa.struct(new_fields)
+    return pa.StructArray.from_arrays(new_arrays, fields=new_fields)
+
+
+def transform_cycle_struct(cycle_array: pa.StructArray) -> pa.StructArray:
+    """
+    Transform a cycle struct (last_cycle or last_2_cycles) to use MAP columns
+    for dynamic-key fields.
+    """
+    if cycle_array is None or len(cycle_array) == 0:
+        return cycle_array
+    
+    if not pa.types.is_struct(cycle_array.type):
+        return cycle_array
+    
+    cycle_type = cycle_array.type
+    new_fields = []
+    new_arrays = []
+    
+    for field_idx in range(cycle_type.num_fields):
+        field = cycle_type.field(field_idx)
+        field_array = cycle_array.field(field_idx)
+        
+        if field.name in DYNAMIC_KEY_FIELDS:
+            # Convert dynamic-key struct to MAP
+            if pa.types.is_struct(field.type):
+                map_array = struct_to_map(field_array)
+                new_fields.append(pa.field(field.name, pa.map_(pa.string(), pa.int64())))
+                new_arrays.append(map_array)
+            else:
+                # Already a map or other type, keep as-is
+                new_fields.append(field)
+                new_arrays.append(field_array)
+        else:
+            # Keep other fields as-is
+            new_fields.append(field)
+            new_arrays.append(field_array)
+    
+    return pa.StructArray.from_arrays(new_arrays, fields=new_fields)
+
+
+# ==============================================================================
 # Column Projection
 # ==============================================================================
 
@@ -319,6 +485,11 @@ def build_tier2_from_tier3(
     
     Processes day-by-day to manage memory.
     
+    Transformation notes:
+        - twitter_sentiment_windows: Dynamic-key struct fields (tag_counts, cashtag_counts,
+          mention_counts, url_domain_counts) are converted from struct<key1: int, ...> to
+          map<string, int64> for stable schema concatenation across days.
+    
     Returns:
         Tuple of (combined table, total rows)
     """
@@ -339,6 +510,11 @@ def build_tier2_from_tier3(
                 table = pq.read_table(tmp.name, columns=tier2_columns)
         else:
             table = download_and_project_parquet(s3_client, bucket, key, tier2_columns)
+        
+        # Transform twitter_sentiment_windows dynamic-key structs to MAP columns
+        # This ensures stable schema across days where keys (hashtags, handles, etc.) differ
+        print(f"      Transforming sentiment windows...")
+        table = transform_sentiment_windows(table)
         
         tables.append(table)
         print(f"      {table.num_rows} rows")
@@ -435,6 +611,22 @@ def create_manifest(
                 "flags",
                 "diag",
             ],
+        },
+        "sentiment_shape": {
+            "note": "Dynamic-key fields converted to MAP<string, int64> for stable schema",
+            "transformed_fields": [
+                "twitter_sentiment_windows.last_cycle.tag_counts",
+                "twitter_sentiment_windows.last_cycle.cashtag_counts",
+                "twitter_sentiment_windows.last_cycle.mention_counts",
+                "twitter_sentiment_windows.last_cycle.url_domain_counts",
+                "twitter_sentiment_windows.last_2_cycles.tag_counts",
+                "twitter_sentiment_windows.last_2_cycles.cashtag_counts",
+                "twitter_sentiment_windows.last_2_cycles.mention_counts",
+                "twitter_sentiment_windows.last_2_cycles.url_domain_counts",
+            ],
+            "original_type": "struct<key1: int64, key2: int64, ...> (keys vary per day)",
+            "tier2_type": "map<string, int64>",
+            "reason": "Struct field names differ between days causing schema incompatibility",
         },
         "parquet_sha256": parquet_sha256,
         "parquet_size_bytes": parquet_size,
