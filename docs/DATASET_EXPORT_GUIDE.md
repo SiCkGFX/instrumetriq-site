@@ -6,11 +6,11 @@ This guide covers the tiered dataset export system for Instrumetriq archives.
 
 The archive data is exported in multiple tiers, each serving different use cases:
 
-| Tier | Granularity | Update Frequency | Primary Use Case |
-|------|-------------|------------------|------------------|
-| Tier 1 | Real-time | Continuous | Live dashboards, alerts |
-| **Tier 2** | Weekly | Once per week | Research, reduced column footprint |
-| **Tier 3** | Daily | Once per day | Historical research, ML training |
+| Tier | Granularity | Update Frequency | Columns | Primary Use Case |
+|------|-------------|------------------|---------|------------------|
+| **Tier 1** | Weekly | Once per week | 5 | Lightweight analysis, minimal footprint |
+| **Tier 2** | Weekly | Once per week | 7 | Research, reduced column footprint |
+| **Tier 3** | Daily | Once per day | 12 | Historical research, ML training |
 
 ---
 
@@ -256,11 +256,54 @@ instrumetriq-datasets/
 
 ---
 
-## Tier 1: Real-time Feed
+## Tier 1: Weekly Parquet Export (Minimal)
+
+Tier 1 provides the **most minimal dataset**, containing only core price/liquidity metrics. Derived from Tier 3 daily inputs like Tier 2, but with a stricter column projection.
+
+### Column Policy (5 columns)
+
+**Included columns:**
+- `symbol` - Ticker symbol
+- `snapshot_ts` - Observation timestamp
+- `meta` - Entry metadata
+- `spot_raw` - Spot market data
+- `scores` - Scoring results
+
+**Excluded columns:**
+- `derived` - Calculated metrics (can be recomputed)
+- `twitter_sentiment_meta` - Social sentiment metadata
+- All other Tier 2/3 columns
+
+### Usage
+
+```bash
+# Cron mode (Mondays 00:05 UTC)
+python3 scripts/build_tier1_weekly.py --previous-week --upload
+
+# Manual/backfill
+python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --upload
+```
+
+### R2 Structure
+
+```
+instrumetriq-datasets/
+└── tier1/
+    └── weekly/
+        └── YYYY-MM-DD/
+            ├── dataset_entries_7d.parquet
+            └── manifest.json
+```
+
+See [DATASET_SCHEMA_TIER1.md](DATASET_SCHEMA_TIER1.md) for full schema documentation.
+
+---
+
+## Tier 1: Real-time Feed (Future)
 
 *Coming soon.*
 
-Tier 1 will provide real-time/streaming access for live dashboards and alerting.
+A real-time/streaming version of Tier 1 will provide live access for dashboards and alerting.
 
 ---
 

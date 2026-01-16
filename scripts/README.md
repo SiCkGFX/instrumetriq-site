@@ -258,6 +258,76 @@ python3 scripts/export_tier3_daily.py --date 2026-01-14 --min-hours 18 --upload
 
 ---
 
+### `build_tier1_weekly.py`
+**Purpose:** Derives Tier 1 weekly parquets from Tier 3 daily inputs in R2 (most minimal dataset)  
+**Outputs:**
+- Local: `output/tier1_weekly/{end-date}/dataset_entries_7d.parquet` - Zstd-compressed
+- Local: `output/tier1_weekly/{end-date}/manifest.json` - Build metadata
+- R2: `tier1/weekly/{end-date}/dataset_entries_7d.parquet` - Weekly dataset
+- R2: `tier1/weekly/{end-date}/manifest.json` - Manifest with SHA256
+
+**Tier 1 Column Policy (5 columns - most minimal):**
+- **Included columns:** `symbol`, `snapshot_ts`, `meta`, `spot_raw`, `scores`
+- **Excluded columns:** `derived`, `twitter_sentiment_meta`, `futures_raw`, `spot_prices`, `flags`, `diag`, `twitter_sentiment_windows`
+
+**Tier Hierarchy:**
+| Tier | Columns | Description |
+|------|---------|-------------|
+| Tier 1 | 5 | Core price/liquidity metrics only |
+| Tier 2 | 7 | Tier 1 + `derived`, `twitter_sentiment_meta` |
+| Tier 3 | 12 | Full archive data |
+
+**Usage:**
+```bash
+# Cron mode: build previous Mon-Sun week (for Monday 00:05 UTC cron)
+python3 scripts/build_tier1_weekly.py --previous-week --upload
+
+# Dry-run to see computed window
+python3 scripts/build_tier1_weekly.py --previous-week --dry-run
+
+# Manual/backfill: build specific week ending on a date (Sunday)
+python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --upload
+
+# Build partial week (requires at least 5 days)
+python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --min-days 5 --upload
+
+# Custom output directory
+python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --local-out ./my_output --upload
+```
+
+**Weekly Window Logic:**
+- `--previous-week`: Computes end_day as the most recent Sunday (UTC) strictly before today
+  - On Monday 00:05 UTC, this yields yesterday (Sunday), covering Mon-Sun
+  - Manifest records `window_basis: "previous_week_utc"`
+- `--end-day YYYY-MM-DD`: Builds the 7-day window ending on that date
+  - Manifest records `window_basis: "end_day"`
+- By default, requires **at least 5 of 7** Tier 3 days (`--min-days 5`)
+- Missing days and partial days are recorded in manifest `source_coverage` block
+
+**Partial Week Support:**
+- If some Tier 3 days are missing from R2, Tier 1 can still be built if >= min-days are present
+- The manifest `source_coverage` block explicitly documents:
+  - `days_missing`: which days were not found
+  - `partial_days_count`: how many included days had < 24 hours
+  - `per_day`: coverage metadata for each included day (including `missing_hours`)
+
+**Cron Schedule:**
+Run Mondays at 00:05 UTC to build the previous complete Mon-Sun week:
+```bash
+# /etc/cron.d/tier1_weekly
+5 0 * * 1 instrum cd /srv/instrumetriq && python3 scripts/build_tier1_weekly.py --previous-week --upload 2>&1 | logger -t tier1_weekly
+```
+
+**Requirements:**
+- pyarrow (for Parquet I/O)
+- boto3 (for R2 operations)
+- R2 credentials in environment (see `r2_config.py`)
+- At least 5 of 7 Tier 3 daily inputs must exist in R2 (configurable)
+
+**When to run:** Weekly on Mondays, after Tier 3 daily exports are complete
+
+---
+
 ### `build_tier2_weekly.py`
 **Purpose:** Derives Tier 2 weekly parquets from Tier 3 daily inputs in R2  
 **Outputs:**
@@ -410,11 +480,12 @@ npm run build
 npm run publish
 ```
 
-### Weekly Updates (Tier 2)
+### Weekly Updates (Tier 1 + Tier 2)
 ```bash
 # Run on Mondays after Tier 3 daily exports complete
-# Builds previous 7 days (Mon-Sun ending yesterday)
-python3 scripts/build_tier2_weekly.py --upload
+# Builds previous Mon-Sun week
+python3 scripts/build_tier1_weekly.py --previous-week --upload
+python3 scripts/build_tier2_weekly.py --previous-week --upload
 ```
 
 ### Schema Changes
@@ -471,7 +542,8 @@ scripts/
 ├── init_r2_structure.py           # R2 bucket initialization
 ├── export_tier3_daily.py          # Tier 3 daily Parquet export
 ├── verify_tier3_parquet.py        # Tier 3 verification + report
-├── build_tier2_weekly.py          # Tier 2 weekly derived from Tier 3
+├── build_tier1_weekly.py          # Tier 1 weekly derived from Tier 3 (5 columns)
+├── build_tier2_weekly.py          # Tier 2 weekly derived from Tier 3 (7 columns)
 ├── verify_tier2_weekly.py         # Tier 2 verification + report
 └── tools/                         # Helper utilities
     └── sync_cryptobot_sample.py   # CryptoBot-specific sync
