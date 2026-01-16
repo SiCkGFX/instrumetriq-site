@@ -32,7 +32,7 @@ Tier 2 can be built from **5 or more** of the 7 expected days (configurable via 
 
 ## Column Policy
 
-### Included Columns (7)
+### Included Columns (8)
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -42,9 +42,10 @@ Tier 2 can be built from **5 or more** of the 7 expected days (configurable via 
 | `spot_raw` | struct | Spot market data |
 | `derived` | struct | Calculated metrics |
 | `scores` | struct | Scoring results |
+| `twitter_sentiment_windows` | struct | Twitter sentiment aggregates (with MAP conversion) |
 | `twitter_sentiment_meta` | struct | Twitter sentiment metadata |
 
-### Excluded Columns (7)
+### Excluded Columns (6)
 
 | Column | Reason for Exclusion |
 |--------|---------------------|
@@ -52,11 +53,26 @@ Tier 2 can be built from **5 or more** of the 7 expected days (configurable via 
 | `spot_prices` | Time-series arrays, high volume |
 | `flags` | Boolean flags, debugging only |
 | `diag` | Diagnostics, internal use |
-| `twitter_sentiment_windows` | Dynamic-key structs cause schema mismatch |
 | `norm` | Intentionally dropped in v7 |
 | `labels` | Intentionally dropped in v7 |
 
-**Note:** `twitter_sentiment_windows` contains structs like `tag_counts`, `mention_counts`, and `url_domain_counts` where keys are actual hashtag/handle/domain names. These vary between days, causing schema incompatibility during weekly concatenation. The essential sentiment metadata is preserved in `twitter_sentiment_meta`.
+### Sentiment Schema Transformation
+
+`twitter_sentiment_windows` contains dynamic-key struct fields where keys are actual hashtag/handle/domain names. These vary between days, causing schema incompatibility during weekly concatenation.
+
+**Tier 2 transforms these fields to MAP<string, int64>:**
+
+| Original Path | Original Type | Tier 2 Type |
+|--------------|---------------|-------------|
+| `last_cycle.tag_counts` | struct<#BTC: int, #ETH: int, ...> | map<string, int64> |
+| `last_cycle.cashtag_counts` | struct<$BTC: int, $ETH: int, ...> | map<string, int64> |
+| `last_cycle.mention_counts` | struct<@user1: int, @user2: int, ...> | map<string, int64> |
+| `last_cycle.url_domain_counts` | struct<twitter.com: int, x.com: int, ...> | map<string, int64> |
+| `last_2_cycles.*` | (same pattern) | map<string, int64> |
+
+**Why MAP?** MAP columns have a fixed schema (`map<string, int64>`) regardless of which keys appear, enabling `pa.concat_tables()` across days with different hashtag/handle sets.
+
+**Tier 3 retains the original struct format** for maximum fidelity. Use Tier 3 if you need the original nested structure.
 
 ---
 
@@ -118,6 +134,44 @@ Key fields within the `twitter_sentiment_meta` struct:
 | `captured_at_utc` | string | ISO timestamp of capture |
 | `bucket_meta` | struct | Nested metadata about the sentiment bucket |
 
+### twitter_sentiment_windows
+
+Contains sentiment aggregates for time windows. In Tier 2, dynamic-key fields are converted to MAP<string, int64>.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `last_cycle` | struct | Sentiment data from the most recent cycle |
+| `last_2_cycles` | struct | Sentiment data from the last 2 cycles combined |
+
+**last_cycle / last_2_cycles sub-fields:**
+
+| Field | Tier 2 Type | Description |
+|-------|-------------|-------------|
+| `tweet_count` | int64 | Number of tweets analyzed |
+| `unique_users` | int64 | Number of unique users |
+| `retweet_count` | int64 | Total retweets |
+| `like_count` | int64 | Total likes |
+| `reply_count` | int64 | Total replies |
+| `sentiment_mean` | double | Mean sentiment score |
+| `sentiment_std` | double | Sentiment standard deviation |
+| `tag_counts` | map<string, int64> | Hashtag frequency counts |
+| `cashtag_counts` | map<string, int64> | Cashtag frequency counts |
+| `mention_counts` | map<string, int64> | @mention frequency counts |
+| `url_domain_counts` | map<string, int64> | URL domain frequency counts |
+
+**Querying MAP columns:**
+
+```python
+import pyarrow.parquet as pq
+
+table = pq.read_table("dataset_entries_7d.parquet")
+
+# Access MAP data for a row
+row = table.slice(0, 1).to_pydict()
+tag_counts = row['twitter_sentiment_windows'][0]['last_cycle']['tag_counts']
+# Returns: [('BTC', 42), ('ETH', 17), ...]  (list of key-value tuples)
+```
+
 ---
 
 ## Manifest Schema
@@ -163,6 +217,22 @@ Each weekly export includes a `manifest.json` with:
     "included_top_level_columns": [...],
     "excluded_top_level_columns": [...],
     "explicit_exclusions": [...]
+  },
+  "sentiment_shape": {
+    "note": "Dynamic-key fields converted to MAP<string, int64> for stable schema",
+    "transformed_fields": [
+      "twitter_sentiment_windows.last_cycle.tag_counts",
+      "twitter_sentiment_windows.last_cycle.cashtag_counts",
+      "twitter_sentiment_windows.last_cycle.mention_counts",
+      "twitter_sentiment_windows.last_cycle.url_domain_counts",
+      "twitter_sentiment_windows.last_2_cycles.tag_counts",
+      "twitter_sentiment_windows.last_2_cycles.cashtag_counts",
+      "twitter_sentiment_windows.last_2_cycles.mention_counts",
+      "twitter_sentiment_windows.last_2_cycles.url_domain_counts"
+    ],
+    "original_type": "struct<key1: int64, key2: int64, ...> (keys vary per day)",
+    "tier2_type": "map<string, int64>",
+    "reason": "Struct field names differ between days causing schema incompatibility"
   },
   "parquet_sha256": "...",
   "parquet_size_bytes": 5339067
