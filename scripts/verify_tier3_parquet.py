@@ -892,7 +892,7 @@ def main():
     
     # Generate timestamped report path inside cache_dir
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    report_path = cache_dir / f"report_{timestamp}.md"
+    report_path = cache_dir / f"tier3_report_{timestamp}.md"
     
     print("=" * 60)
     print("TIER 3 PARQUET VERIFICATION")
