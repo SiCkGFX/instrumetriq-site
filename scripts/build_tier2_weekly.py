@@ -67,6 +67,10 @@ DEFAULT_OUTPUT_DIR = Path("./output/tier2_weekly")
 # Parquet compression
 PARQUET_COMPRESSION = "zstd"
 
+# Minimum days required to build a Tier 2 weekly export
+# Set to 5 to allow 2 missing days in a 7-day window
+MIN_DAYS_DEFAULT = 5
+
 # Tier 2 column policy
 # Columns to EXCLUDE from Tier 2 (present in Tier 3)
 TIER2_EXCLUDED_COLUMNS = [
@@ -146,28 +150,71 @@ def verify_tier3_inputs_exist(
     s3_client,
     bucket: str,
     days: List[str]
-) -> Tuple[List[str], List[str]]:
+) -> Tuple[List[str], List[str], List[str]]:
     """
-    Verify that all required Tier 3 daily parquets exist in R2.
+    Verify which Tier 3 daily parquets and manifests exist in R2.
     
     Returns:
-        Tuple of (found_keys, missing_days)
+        Tuple of (present_days, missing_days, found_parquet_keys)
     """
-    found_keys = []
+    present_days = []
     missing_days = []
+    found_keys = []
     
     for day in days:
-        key = f"{TIER3_DAILY_PREFIX}/{day}/data.parquet"
+        parquet_key = f"{TIER3_DAILY_PREFIX}/{day}/data.parquet"
+        manifest_key = f"{TIER3_DAILY_PREFIX}/{day}/manifest.json"
+        
         try:
-            s3_client.head_object(Bucket=bucket, Key=key)
-            found_keys.append(key)
+            # Both parquet and manifest must exist
+            s3_client.head_object(Bucket=bucket, Key=parquet_key)
+            s3_client.head_object(Bucket=bucket, Key=manifest_key)
+            present_days.append(day)
+            found_keys.append(parquet_key)
         except ClientError as e:
             if e.response["Error"]["Code"] == "404":
                 missing_days.append(day)
             else:
                 raise
     
-    return found_keys, missing_days
+    return present_days, missing_days, found_keys
+
+
+def fetch_tier3_coverage(
+    s3_client,
+    bucket: str,
+    day: str
+) -> dict:
+    """
+    Fetch Tier 3 manifest and extract coverage metadata.
+    
+    Returns:
+        Dict with coverage fields from Tier 3 manifest.
+    """
+    manifest_key = f"{TIER3_DAILY_PREFIX}/{day}/manifest.json"
+    
+    try:
+        response = s3_client.get_object(Bucket=bucket, Key=manifest_key)
+        manifest = json.loads(response["Body"].read())
+        
+        return {
+            "hours_found": manifest.get("hours_found", 24),
+            "hours_expected": manifest.get("hours_expected", 24),
+            "is_partial": manifest.get("is_partial", False),
+            "missing_hours": manifest.get("missing_hours", []),
+            "rows_by_hour": manifest.get("rows_by_hour"),
+            "row_count": manifest.get("row_count", 0),
+        }
+    except Exception as e:
+        # If we can't read manifest, assume full coverage
+        return {
+            "hours_found": 24,
+            "hours_expected": 24,
+            "is_partial": False,
+            "missing_hours": [],
+            "rows_by_hour": None,
+            "row_count": 0,
+        }
 
 
 # ==============================================================================
@@ -299,15 +346,33 @@ def compute_sha256(filepath: Path) -> str:
 def create_manifest(
     end_day: str,
     start_day: str,
-    days_included: List[str],
+    days_expected: List[str],
+    days_present: List[str],
+    days_missing: List[str],
+    per_day_coverage: dict,
+    min_days_threshold: int,
     source_inputs: List[str],
     row_count: int,
     parquet_path: Path,
     tier2_columns: List[str]
 ) -> dict:
-    """Create manifest for Tier 2 weekly output."""
+    """Create manifest for Tier 2 weekly output with source_coverage."""
     parquet_sha256 = compute_sha256(parquet_path)
     parquet_size = parquet_path.stat().st_size
+    
+    # Calculate coverage stats
+    partial_days_count = sum(1 for d in days_present if per_day_coverage.get(d, {}).get("is_partial", False))
+    
+    # Build coverage note
+    coverage_parts = []
+    coverage_parts.append(f"This weekly export is derived from {len(days_present)}/7 daily partitions.")
+    if partial_days_count > 0:
+        coverage_parts.append(f"{partial_days_count} of the included days are partial.")
+    if days_missing:
+        coverage_parts.append(f"Missing days: {', '.join(days_missing)}.")
+    if partial_days_count > 0 or days_missing:
+        coverage_parts.append("See per_day for coverage details.")
+    coverage_note = " ".join(coverage_parts)
     
     return {
         "schema_version": "v7",
@@ -315,11 +380,23 @@ def create_manifest(
         "window": {
             "start_day": start_day,
             "end_day": end_day,
-            "days_included": days_included,
+            "days_expected": days_expected,
+            "days_included": days_present,
         },
         "build_ts_utc": datetime.now(timezone.utc).isoformat(),
         "source_inputs": source_inputs,
         "row_count": row_count,
+        "source_coverage": {
+            "days_expected": days_expected,
+            "days_present": days_present,
+            "days_missing": days_missing,
+            "per_day": per_day_coverage,
+            "present_days_count": len(days_present),
+            "missing_days_count": len(days_missing),
+            "partial_days_count": partial_days_count,
+            "min_days_threshold_used": min_days_threshold,
+            "coverage_note": coverage_note,
+        },
         "column_policy": {
             "included_top_level_columns": tier2_columns,
             "excluded_top_level_columns": TIER2_EXCLUDED_COLUMNS,
@@ -398,6 +475,7 @@ def upload_to_r2(
 def build_tier2_weekly(
     end_day: str,
     days: int = 7,
+    min_days: int = MIN_DAYS_DEFAULT,
     output_dir: Optional[Path] = None,
     dry_run: bool = False,
     upload: bool = False,
@@ -405,6 +483,15 @@ def build_tier2_weekly(
 ) -> bool:
     """
     Main entry point for Tier 2 weekly build.
+    
+    Args:
+        end_day: End date for the week (YYYY-MM-DD)
+        days: Number of days in the window (default 7)
+        min_days: Minimum Tier 3 days required to proceed (default 5)
+        output_dir: Local output directory
+        dry_run: If True, skip R2 upload
+        upload: If True, upload to R2
+        force: If True, overwrite existing R2 objects
     
     Returns:
         True if successful, False otherwise
@@ -417,6 +504,7 @@ def build_tier2_weekly(
     # Calculate date range
     start_day, end_day, all_days = calculate_week_range(end_day, days)
     print(f"\n[WINDOW] {start_day} to {end_day} ({len(all_days)} days)")
+    print(f"[THRESHOLD] Minimum {min_days}/{len(all_days)} days required")
     
     # Set output directory
     if output_dir is None:
@@ -428,25 +516,55 @@ def build_tier2_weekly(
     s3_client = get_s3_client(config)
     print(f"[OK] Connected to bucket: {config.bucket}")
     
-    # Verify all Tier 3 inputs exist
-    print("\n[STEP 2] Verifying Tier 3 inputs...")
-    found_keys, missing_days = verify_tier3_inputs_exist(s3_client, config.bucket, all_days)
+    # Verify Tier 3 inputs and get coverage
+    print("\n[STEP 2] Checking Tier 3 inputs...")
+    present_days, missing_days, found_keys = verify_tier3_inputs_exist(
+        s3_client, config.bucket, all_days
+    )
     
+    print(f"    Present: {len(present_days)}/{len(all_days)} days")
+    if present_days:
+        print(f"    Days present: {present_days}")
     if missing_days:
-        print(f"[ERROR] Missing Tier 3 daily parquets for: {missing_days}")
-        print("[HINT] Run export_tier3_daily.py for missing dates first")
+        print(f"    Days missing: {missing_days}")
+    
+    # Check threshold
+    if len(present_days) < min_days:
+        print(f"\n[ERROR] Insufficient Tier 3 inputs: {len(present_days)}/{min_days} required")
+        print(f"    Missing days: {missing_days}")
+        print(f"[HINT] Use --min-days to lower the threshold (current: {min_days})")
         return False
     
-    print(f"[OK] All {len(found_keys)} Tier 3 inputs found")
+    # Fetch coverage metadata for each present day
+    print("\n[STEP 3] Fetching Tier 3 coverage metadata...")
+    per_day_coverage = {}
+    partial_count = 0
+    for day in present_days:
+        coverage = fetch_tier3_coverage(s3_client, config.bucket, day)
+        per_day_coverage[day] = coverage
+        if coverage.get("is_partial"):
+            partial_count += 1
+            print(f"    {day}: {coverage['hours_found']}/24 hours (PARTIAL)")
+        else:
+            print(f"    {day}: {coverage['hours_found']}/24 hours")
+    
+    if partial_count > 0:
+        print(f"[INFO] {partial_count} partial day(s) included")
+    if missing_days:
+        print(f"[INFO] Proceeding with {len(present_days)}/{len(all_days)} days (>= {min_days} threshold)")
+    else:
+        print(f"[OK] All {len(present_days)} Tier 3 inputs found")
     
     # Build Tier 2 from Tier 3
-    print("\n[STEP 3] Building Tier 2 parquet...")
+    print("\n[STEP 4] Building Tier 2 parquet...")
     combined_table, row_count = build_tier2_from_tier3(
         s3_client, config.bucket, found_keys, output_dir
     )
     
     # Verify output columns
-    print("\n[STEP 4] Verifying output columns...")
+    print("\n[STEP 5] Verifying output columns...")
+    is_valid, issues = verify_tier2_output(combined_table)
+    print("\n[STEP 5] Verifying output columns...")
     is_valid, issues = verify_tier2_output(combined_table)
     if not is_valid:
         print("[ERROR] Output verification failed:")
@@ -459,18 +577,22 @@ def build_tier2_weekly(
     tier2_columns = [field.name for field in combined_table.schema]
     
     # Write local outputs (always, even for dry-run)
-    print("\n[STEP 5] Writing local outputs...")
+    print("\n[STEP 6] Writing local outputs...")
     parquet_path, manifest_path = write_outputs(
         combined_table,
         {},  # Placeholder, will compute after write
         output_dir
     )
     
-    # Now create actual manifest with hash
+    # Now create actual manifest with hash and coverage
     manifest = create_manifest(
         end_day=end_day,
         start_day=start_day,
-        days_included=all_days,
+        days_expected=all_days,
+        days_present=present_days,
+        days_missing=missing_days,
+        per_day_coverage=per_day_coverage,
+        min_days_threshold=min_days,
         source_inputs=found_keys,
         row_count=row_count,
         parquet_path=parquet_path,
@@ -487,7 +609,7 @@ def build_tier2_weekly(
     
     # Upload to R2
     if upload and not dry_run:
-        print("\n[STEP 6] Uploading to R2...")
+        print("\n[STEP 7] Uploading to R2...")
         r2_prefix = f"{TIER2_WEEKLY_PREFIX}/{end_day}"
         
         parquet_key = f"{r2_prefix}/dataset_entries_7d.parquet"
@@ -513,7 +635,11 @@ def build_tier2_weekly(
     print("BUILD SUMMARY")
     print("=" * 60)
     print(f"Window:         {start_day} to {end_day}")
-    print(f"Days included:  {len(all_days)}")
+    print(f"Days present:   {len(present_days)}/{len(all_days)}")
+    if missing_days:
+        print(f"Days missing:   {missing_days}")
+    if partial_count > 0:
+        print(f"Partial days:   {partial_count}")
     print(f"Rows:           {row_count:,}")
     print(f"Parquet size:   {parquet_size_mb:.2f} MB")
     print(f"Local path:     {output_dir}/")
@@ -547,6 +673,13 @@ def main():
         type=int,
         default=7,
         help="Number of days to include (default: 7)"
+    )
+    
+    parser.add_argument(
+        "--min-days",
+        type=int,
+        default=MIN_DAYS_DEFAULT,
+        help=f"Minimum Tier 3 days required to build (default: {MIN_DAYS_DEFAULT})"
     )
     
     parser.add_argument(
@@ -589,6 +722,7 @@ def main():
     success = build_tier2_weekly(
         end_day=args.end_day,
         days=args.days,
+        min_days=args.min_days,
         output_dir=output_dir,
         dry_run=args.dry_run,
         upload=args.upload,

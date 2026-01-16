@@ -15,6 +15,19 @@ Tier 2 weekly exports are derived from Tier 3 daily parquets with a reduced colu
 | **format** | Apache Parquet with zstd compression |
 | **R2 path** | `tier2/weekly/{end-day}/dataset_entries_7d.parquet` |
 
+### Weekly Window Definition
+
+A Tier 2 weekly export covers 7 consecutive UTC days ending on `end_day`:
+- **Window:** `end_day - 6` to `end_day` (inclusive)
+- **Example:** `--end-day 2026-01-15` covers 2026-01-09 through 2026-01-15
+
+### Partial Week Support
+
+Tier 2 can be built from **5 or more** of the 7 expected days (configurable via `--min-days`).
+- Missing days are explicitly recorded in the manifest
+- Partial Tier 3 days (those with < 24 hours coverage) are also tracked
+- Use the `source_coverage` block in manifest to understand data gaps
+
 ---
 
 ## Column Policy
@@ -118,6 +131,7 @@ Each weekly export includes a `manifest.json` with:
   "window": {
     "start_day": "2025-12-22",
     "end_day": "2025-12-28",
+    "days_expected": ["2025-12-22", "2025-12-23", ...],
     "days_included": ["2025-12-22", "2025-12-23", ...]
   },
   "build_ts_utc": "2026-01-16T08:14:05.789519+00:00",
@@ -126,6 +140,24 @@ Each weekly export includes a `manifest.json` with:
     ...
   ],
   "row_count": 17635,
+  "source_coverage": {
+    "days_expected": ["2025-12-22", ...],
+    "days_present": ["2025-12-22", ...],
+    "days_missing": [],
+    "per_day": {
+      "2025-12-22": {
+        "hours_found": 24,
+        "hours_expected": 24,
+        "is_partial": false,
+        "missing_hours": []
+      }
+    },
+    "present_days_count": 7,
+    "missing_days_count": 0,
+    "partial_days_count": 0,
+    "min_days_threshold_used": 5,
+    "coverage_note": "This weekly export is derived from 7/7 daily partitions."
+  },
   "column_policy": {
     "included_top_level_columns": [...],
     "excluded_top_level_columns": [...],
@@ -135,6 +167,24 @@ Each weekly export includes a `manifest.json` with:
   "parquet_size_bytes": 5339067
 }
 ```
+
+### source_coverage Block
+
+The `source_coverage` block documents data completeness:
+
+| Field | Description |
+|-------|-------------|
+| `days_expected` | List of 7 days in the window |
+| `days_present` | Tier 3 days that exist and were included |
+| `days_missing` | Tier 3 days that were not found in R2 |
+| `per_day` | Coverage metadata for each present day |
+| `present_days_count` | Count of included days (e.g., 6) |
+| `missing_days_count` | Count of missing days (e.g., 1) |
+| `partial_days_count` | Count of partial days (< 24 hours coverage) |
+| `min_days_threshold_used` | Minimum days required for build |
+| `coverage_note` | Human-readable summary |
+
+**Gaps reflect pipeline uptime**, not missing market data. If the archival pipeline was offline, those days will be missing from Tier 3 and therefore from Tier 2.
 
 ---
 

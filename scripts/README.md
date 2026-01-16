@@ -285,14 +285,25 @@ python3 scripts/build_tier2_weekly.py --end-day 2025-12-28
 # Build and upload to R2
 python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --upload
 
+# Build partial week (requires at least 5 days)
+python3 scripts/build_tier2_weekly.py --end-day 2026-01-15 --min-days 5 --upload
+
 # Custom output directory
 python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --output-dir ./my_output --upload
 ```
 
 **Weekly Window Logic:**
 - `--end-day 2025-12-28` builds the 7-day window `2025-12-22` to `2025-12-28`
-- All 7 Tier 3 daily parquets must exist in R2 before building
-- Use `--days N` to override window size (default: 7)
+- By default, requires **at least 5 of 7** Tier 3 days (`--min-days 5`)
+- Missing days and partial days are recorded in manifest `source_coverage` block
+- Use `--min-days 7` to require all 7 days (strict mode)
+
+**Partial Week Support:**
+- If some Tier 3 days are missing from R2, Tier 2 can still be built if >= min-days are present
+- The manifest `source_coverage` block explicitly documents:
+  - `days_missing`: which days were not found
+  - `partial_days_count`: how many included days had < 24 hours
+  - `per_day`: coverage metadata for each included day
 
 **Cron Schedule:**
 Run Mondays at 00:05 UTC to build the previous complete week:
@@ -305,7 +316,7 @@ Run Mondays at 00:05 UTC to build the previous complete week:
 - pyarrow (for Parquet I/O)
 - boto3 (for R2 operations)
 - R2 credentials in environment (see `r2_config.py`)
-- All 7 Tier 3 daily inputs must exist in R2
+- At least 5 of 7 Tier 3 daily inputs must exist in R2 (configurable)
 
 **When to run:** Weekly on Mondays, after Tier 3 daily exports are complete
 
@@ -363,9 +374,13 @@ python3 scripts/verify_tier2_weekly.py --local output/tier2_weekly/2025-12-28
 
 **Checks performed:**
 - Object presence and SHA256 integrity
-- Window semantics (7 consecutive days, source inputs match)
+- Window semantics (7-day window with days_expected/days_included)
 - Column policy (required present, excluded absent)
 - Data quality stats (row counts, null ratios, duration stats)
+- Source coverage validation (new):
+  - FAIL if `present_days_count` < `min_days_threshold_used`
+  - WARN if `missing_days_count` > 0 or `partial_days_count` > 0
+  - Reports per-day coverage details
 
 **When to run:** After Tier 2 builds to validate data integrity
 

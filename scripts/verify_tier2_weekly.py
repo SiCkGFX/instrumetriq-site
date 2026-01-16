@@ -312,7 +312,7 @@ def check_window_semantics(
     result: VerificationResult,
     end_day: str,
 ):
-    """Check B: Window semantics (must be strict)."""
+    """Check B: Window semantics (allows partial weeks)."""
     manifest = result.info.get("manifest", {})
     
     # Required top-level fields
@@ -333,25 +333,29 @@ def check_window_semantics(
     
     # Check window structure
     window = manifest.get("window", {})
-    required_window = ["start_day", "end_day", "days_included"]
-    for field_name in required_window:
-        if field_name not in window:
-            result.errors.append(f"Manifest window missing field: {field_name}")
     
+    # Support both old (days_included) and new (days_expected + days_included) formats
     manifest_end_day = window.get("end_day")
     if manifest_end_day != end_day:
         result.errors.append(f"Manifest end_day ({manifest_end_day}) != folder name ({end_day})")
     
+    # Get days_expected if available, else fall back to days_included
+    days_expected = window.get("days_expected") or window.get("days_included", [])
     days_included = window.get("days_included", [])
-    result.info["days_included"] = days_included
     
-    if len(days_included) != 7:
-        result.errors.append(f"Manifest days_included should have 7 items, got {len(days_included)}")
+    result.info["days_expected"] = days_expected
+    result.info["days_included"] = days_included
+    result.info["window_start"] = window.get("start_day")
+    result.info["window_end"] = window.get("end_day")
+    
+    # Verify days_expected has 7 items
+    if len(days_expected) != 7:
+        result.errors.append(f"Manifest days_expected should have 7 items, got {len(days_expected)}")
     
     # Verify days are consecutive
-    if len(days_included) == 7:
+    if len(days_expected) == 7:
         try:
-            dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in days_included]
+            dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in days_expected]
             dates_sorted = sorted(dates)
             
             # Check consecutive
@@ -359,39 +363,96 @@ def check_window_semantics(
                 expected = dates_sorted[i-1] + timedelta(days=1)
                 if dates_sorted[i] != expected:
                     result.errors.append(
-                        f"Manifest days_included not consecutive: gap between {dates_sorted[i-1]} and {dates_sorted[i]}"
+                        f"Manifest days_expected not consecutive: gap between {dates_sorted[i-1]} and {dates_sorted[i]}"
                     )
                     break
             
             # Check end_day matches last day
             if dates_sorted[-1].strftime("%Y-%m-%d") != end_day:
                 result.errors.append(
-                    f"Last day in days_included ({dates_sorted[-1]}) != end_day ({end_day})"
+                    f"Last day in days_expected ({dates_sorted[-1]}) != end_day ({end_day})"
                 )
-            
-            result.info["window_start"] = dates_sorted[0].strftime("%Y-%m-%d")
-            result.info["window_end"] = dates_sorted[-1].strftime("%Y-%m-%d")
         except ValueError as e:
-            result.errors.append(f"Invalid date format in days_included: {e}")
+            result.errors.append(f"Invalid date format in days_expected: {e}")
     
-    # Check source_inputs
+    # Check source_inputs matches days_included
     source_inputs = manifest.get("source_inputs", [])
     result.info["source_inputs_count"] = len(source_inputs)
     
-    if len(source_inputs) != 7:
-        result.errors.append(f"Manifest source_inputs should have 7 items, got {len(source_inputs)}")
+    # source_inputs should match days_included (not days_expected)
+    if len(source_inputs) != len(days_included):
+        result.errors.append(
+            f"source_inputs count ({len(source_inputs)}) != days_included count ({len(days_included)})"
+        )
+
+
+def check_source_coverage(
+    result: VerificationResult,
+):
+    """Check E: Source coverage metadata (new for partial week support)."""
+    manifest = result.info.get("manifest", {})
+    source_coverage = manifest.get("source_coverage")
     
-    # Verify source_inputs match expected Tier3 paths
-    if len(days_included) == 7 and len(source_inputs) == 7:
-        expected_inputs = [f"tier3/daily/{d}/data.parquet" for d in sorted(days_included)]
-        actual_sorted = sorted(source_inputs)
+    if source_coverage is None:
+        # Old manifest format - warn but don't fail
+        result.warnings.append("Manifest missing source_coverage block (old format)")
+        return
+    
+    # Required fields in source_coverage
+    required_fields = [
+        "days_expected", "days_present", "days_missing", "per_day",
+        "present_days_count", "missing_days_count", "partial_days_count",
+        "min_days_threshold_used", "coverage_note"
+    ]
+    
+    for field_name in required_fields:
+        if field_name not in source_coverage:
+            result.errors.append(f"source_coverage missing field: {field_name}")
+    
+    # Extract coverage info for reporting
+    result.info["source_coverage"] = source_coverage
+    
+    days_present = source_coverage.get("days_present", [])
+    days_missing = source_coverage.get("days_missing", [])
+    per_day = source_coverage.get("per_day", {})
+    present_count = source_coverage.get("present_days_count", len(days_present))
+    missing_count = source_coverage.get("missing_days_count", len(days_missing))
+    partial_count = source_coverage.get("partial_days_count", 0)
+    min_days_threshold = source_coverage.get("min_days_threshold_used", 5)
+    
+    result.info["present_days_count"] = present_count
+    result.info["missing_days_count"] = missing_count
+    result.info["partial_days_count"] = partial_count
+    result.info["min_days_threshold"] = min_days_threshold
+    result.info["days_missing_list"] = days_missing
+    
+    # FAIL if present_days_count < min_days_threshold
+    if present_count < min_days_threshold:
+        result.errors.append(
+            f"Insufficient days: {present_count}/{min_days_threshold} required"
+        )
+    
+    # WARN if any missing days
+    if missing_count > 0:
+        result.warnings.append(
+            f"Missing days: {missing_count}/7 ({', '.join(days_missing)})"
+        )
+    
+    # WARN if any partial days
+    if partial_count > 0:
+        partial_days = [d for d in days_present if per_day.get(d, {}).get("is_partial", False)]
+        partial_info = []
+        for d in partial_days:
+            hours = per_day.get(d, {}).get("hours_found", "?")
+            missing_hours = per_day.get(d, {}).get("missing_hours", [])
+            partial_info.append(f"{d}: {hours}/24 hours (missing {missing_hours})")
         
-        if expected_inputs != actual_sorted:
-            result.warnings.append(
-                f"source_inputs don't match expected Tier3 paths for days_included"
-            )
-        else:
-            result.info["source_inputs_valid"] = True
+        result.warnings.append(
+            f"Partial days: {partial_count} ({'; '.join(partial_info[:3])})"
+            + ("..." if len(partial_info) > 3 else "")
+        )
+    
+    result.info["per_day_coverage"] = per_day
 
 
 def check_schema_columns(
@@ -638,19 +699,29 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         "",
         "## Verified Weeks",
         "",
-        "| Week End | Status | Rows | Size (MB) | SHA Match | Required Cols | Excluded Cols |",
-        "|----------|--------|------|-----------|-----------|---------------|---------------|",
+        "| Week End | Status | Days | Partial | Rows | Size (MB) | SHA Match |",
+        "|----------|--------|------|---------|------|-----------|-----------|",
     ]
     
     for r in results:
         info = r.info
         sha_match = "OK" if info.get("sha256_match") else "FAIL"
-        req_ok = "OK" if info.get("required_columns_ok") else "FAIL"
-        excl_ok = "OK" if info.get("excluded_columns_ok") else "FAIL"
+        
+        # Days present/expected
+        present = info.get("present_days_count", len(info.get("days_included", [])))
+        days_str = f"{present}/7"
+        if info.get("missing_days_count", 0) > 0:
+            days_str += " ⚠️"
+        
+        # Partial days
+        partial = info.get("partial_days_count", 0)
+        partial_str = str(partial) if partial > 0 else "-"
+        if partial > 0:
+            partial_str += " ⚠️"
         
         lines.append(
-            f"| {r.end_day} | {r.status_symbol} | {info.get('row_count', 'N/A'):,} | "
-            f"{info.get('parquet_size_mb', 'N/A')} | {sha_match} | {req_ok} | {excl_ok} |"
+            f"| {r.end_day} | {r.status_symbol} | {days_str} | {partial_str} | "
+            f"{info.get('row_count', 'N/A'):,} | {info.get('parquet_size_mb', 'N/A')} | {sha_match} |"
         )
     
     lines.append("")
@@ -668,6 +739,59 @@ def generate_report(results: list[VerificationResult], report_path: Path):
     else:
         lines.append("[FAIL] Verification failed. Do NOT proceed until errors are resolved.")
     lines.append("")
+    
+    # Source Coverage section (new)
+    lines.append("---")
+    lines.append("")
+    lines.append("## Source Coverage")
+    lines.append("")
+    
+    for r in results:
+        info = r.info
+        source_coverage = info.get("source_coverage")
+        
+        lines.append(f"### Week {r.end_day}")
+        lines.append("")
+        
+        if source_coverage:
+            present = source_coverage.get("present_days_count", 0)
+            missing = source_coverage.get("missing_days_count", 0)
+            partial = source_coverage.get("partial_days_count", 0)
+            threshold = source_coverage.get("min_days_threshold_used", 5)
+            
+            lines.append(f"- **Days present:** {present}/7")
+            lines.append(f"- **Days missing:** {missing}")
+            lines.append(f"- **Partial days:** {partial}")
+            lines.append(f"- **Min days threshold:** {threshold}")
+            
+            days_missing_list = source_coverage.get("days_missing", [])
+            if days_missing_list:
+                lines.append(f"- **Missing days:** {', '.join(days_missing_list)}")
+            
+            # Per-day coverage details
+            per_day = source_coverage.get("per_day", {})
+            if per_day:
+                lines.append("")
+                lines.append("**Per-day coverage:**")
+                lines.append("| Day | Hours | Status |")
+                lines.append("|-----|-------|--------|")
+                
+                days_present = source_coverage.get("days_present", [])
+                for day in sorted(days_present):
+                    day_info = per_day.get(day, {})
+                    hours = day_info.get("hours_found", 24)
+                    is_partial = day_info.get("is_partial", False)
+                    status = "PARTIAL" if is_partial else "OK"
+                    lines.append(f"| {day} | {hours}/24 | {status} |")
+            
+            coverage_note = source_coverage.get("coverage_note")
+            if coverage_note:
+                lines.append("")
+                lines.append(f"*{coverage_note}*")
+        else:
+            lines.append("*No source_coverage metadata (old manifest format)*")
+        
+        lines.append("")
     
     # Manifest checks section
     lines.append("---")
@@ -823,6 +947,10 @@ def verify_week(
     # Check D: Data quality
     print("  D. Checking data quality...")
     check_data_quality(result, table)
+    
+    # Check E: Source coverage (new)
+    print("  E. Checking source coverage...")
+    check_source_coverage(result)
     
     print(f"  -> Status: {result.status_symbol}")
     if result.errors:
