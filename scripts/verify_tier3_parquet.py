@@ -289,6 +289,24 @@ def check_manifest_correctness(
             result.errors.append(f"SHA256 mismatch! Expected: {expected_sha[:16]}... Got: {actual_sha[:16]}...")
     else:
         result.warnings.append("Manifest does not contain sha256 field")
+    
+    # Check hours completeness (partition semantics)
+    hours_expected = manifest.get("hours_expected")
+    hours_found = manifest.get("hours_found")
+    partition_basis = manifest.get("partition_basis")
+    
+    if hours_expected is not None and hours_found is not None:
+        result.info["hours_expected"] = hours_expected
+        result.info["hours_found"] = hours_found
+        result.info["hours_complete"] = hours_found == hours_expected
+        
+        if hours_found != hours_expected:
+            result.warnings.append(
+                f"Incomplete day: {hours_found}/{hours_expected} hours found"
+            )
+    
+    if partition_basis:
+        result.info["partition_basis"] = partition_basis
 
 
 def check_parquet_readability(
@@ -384,13 +402,6 @@ def check_row_content_sanity(
     result.info["sampled_row_count"] = sample_size
     result.info["sampled_indices"] = sorted(sample_indices)
     
-    # Parse date for timestamp validation
-    date_parts = date_str.split("-")
-    date_start = datetime(int(date_parts[0]), int(date_parts[1]), int(date_parts[2]), 0, 0, 0, tzinfo=timezone.utc)
-    date_end = datetime(int(date_parts[0]), int(date_parts[1]), int(date_parts[2]), 23, 59, 59, tzinfo=timezone.utc)
-    date_start_ts = date_start.timestamp()
-    date_end_ts = date_end.timestamp()
-    
     # Work with PyArrow directly (no pandas dependency)
     issues = []
     duration_values = []
@@ -413,7 +424,7 @@ def check_row_content_sanity(
             if symbol_val is None or (isinstance(symbol_val, str) and len(symbol_val) == 0):
                 row_issues.append(f"Row {idx}: symbol is empty or null")
         
-        # Check meta.added_ts
+        # Check meta.added_ts (just verify it exists and is parseable, not date range)
         if meta_idx is not None:
             meta = table.column(meta_idx)[idx].as_py()
             if meta is None:
@@ -423,33 +434,16 @@ def check_row_content_sanity(
                 if added_ts is None:
                     row_issues.append(f"Row {idx}: meta.added_ts is null")
                 else:
-                    # added_ts could be float (epoch) or string (ISO format)
-                    # Convert to float if string
-                    added_ts_float = None
-                    if isinstance(added_ts, (int, float)):
-                        added_ts_float = float(added_ts)
-                    elif isinstance(added_ts, str):
-                        # Try to parse as ISO timestamp
+                    # Just verify it's parseable (not checking date range since partition
+                    # is by archive folder day, not meta.added_ts)
+                    if isinstance(added_ts, str):
                         try:
-                            # Parse ISO format like "2026-01-13T12:34:56+00:00"
-                            dt = datetime.fromisoformat(added_ts.replace("Z", "+00:00"))
-                            added_ts_float = dt.timestamp()
+                            datetime.fromisoformat(added_ts.replace("Z", "+00:00"))
                         except ValueError:
-                            # Try as epoch string
                             try:
-                                added_ts_float = float(added_ts)
+                                float(added_ts)
                             except ValueError:
                                 row_issues.append(f"Row {idx}: meta.added_ts unparseable: {added_ts}")
-                    
-                    # Check if timestamp is within date range (with some tolerance)
-                    # Allow 1 hour tolerance for timezone edge cases
-                    if added_ts_float is not None:
-                        tolerance = 3600  # 1 hour
-                        if added_ts_float < (date_start_ts - tolerance) or added_ts_float > (date_end_ts + tolerance):
-                            row_issues.append(
-                                f"Row {idx}: meta.added_ts ({added_ts}) outside date range "
-                                f"({date_start_ts:.0f} - {date_end_ts:.0f})"
-                            )
                 
                 # Check duration_sec
                 duration = meta.get("duration_sec")

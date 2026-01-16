@@ -68,6 +68,9 @@ DEFAULT_OUTPUT_DIR = Path("./output/tier3_daily")
 # Parquet compression
 PARQUET_COMPRESSION = "zstd"
 
+# Expected hours for a complete day (00-23)
+EXPECTED_HOURS = [f"{h:02d}" for h in range(24)]  # ["00", "01", ..., "23"]
+
 # Required top-level keys for schema validation
 REQUIRED_TOP_LEVEL_KEYS = [
     "symbol",
@@ -131,6 +134,33 @@ def get_hour_files(date_folder: Path) -> list[Path]:
     return files
 
 
+def check_hour_completeness(date_folder: Path) -> tuple[list[str], list[str]]:
+    """
+    Check if a date folder has all 24 hour files.
+    
+    Args:
+        date_folder: Path to YYYYMMDD folder
+        
+    Returns:
+        Tuple of (found_hours, missing_hours)
+    """
+    hour_files = get_hour_files(date_folder)
+    
+    # Extract hour from filename (e.g., "05.jsonl.gz" -> "05")
+    found_hours = []
+    for f in hour_files:
+        # Handle both "05.jsonl.gz" and "05.jsonl" naming
+        stem = f.stem
+        if stem.endswith(".jsonl"):
+            stem = stem[:-6]  # Remove .jsonl suffix
+        if len(stem) == 2 and stem.isdigit():
+            found_hours.append(stem)
+    
+    missing_hours = [h for h in EXPECTED_HOURS if h not in found_hours]
+    
+    return sorted(found_hours), sorted(missing_hours)
+
+
 def iter_entries_from_file(filepath: Path) -> Iterator[dict]:
     """
     Iterate over entries in a gzipped JSONL file.
@@ -155,7 +185,7 @@ def iter_entries_from_file(filepath: Path) -> Iterator[dict]:
         print(f"[WARN] Error reading {filepath}: {e}", file=sys.stderr)
 
 
-def load_day_entries(archive_path: Path, date_str: str) -> list[dict]:
+def load_day_entries(archive_path: Path, date_str: str) -> tuple[list[dict], dict]:
     """
     Load all entries for a specific UTC day.
     
@@ -164,19 +194,29 @@ def load_day_entries(archive_path: Path, date_str: str) -> list[dict]:
         date_str: Date in YYYY-MM-DD format
         
     Returns:
-        List of all entry dicts for the day
+        Tuple of (entries list, hour_info dict with found/expected hours)
     """
     date_folder = get_date_folder(archive_path, date_str)
     
     if not date_folder:
         print(f"[ERROR] No archive folder found for date: {date_str}", file=sys.stderr)
-        return []
+        return [], {"hours_found": 0, "hours_expected": 24, "found_hours": [], "missing_hours": EXPECTED_HOURS}
+    
+    # Check hour completeness
+    found_hours, missing_hours = check_hour_completeness(date_folder)
+    hour_info = {
+        "hours_found": len(found_hours),
+        "hours_expected": 24,
+        "found_hours": found_hours,
+        "missing_hours": missing_hours,
+        "archive_day": date_folder.name,
+    }
     
     hour_files = get_hour_files(date_folder)
     
     if not hour_files:
         print(f"[ERROR] No hour files found in {date_folder}", file=sys.stderr)
-        return []
+        return [], hour_info
     
     print(f"[INFO] Loading from {len(hour_files)} hour files in {date_folder.name}/")
     
@@ -186,7 +226,7 @@ def load_day_entries(archive_path: Path, date_str: str) -> list[dict]:
         entries.extend(file_entries)
         print(f"  {filepath.name}: {len(file_entries)} entries")
     
-    return entries
+    return entries, hour_info
 
 
 # ==============================================================================
@@ -420,6 +460,9 @@ def create_manifest(
     Returns:
         Manifest dict
     """
+    # Get archive day folder name (YYYYMMDD format)
+    archive_day = date_str.replace("-", "")
+    
     manifest = {
         "date_utc": date_str,
         "created_ts_utc": datetime.now(timezone.utc).isoformat(),
@@ -430,7 +473,12 @@ def create_manifest(
         "parquet_sha256": compute_file_sha256(parquet_path),
         "compression": PARQUET_COMPRESSION,
         "tier": "tier3",
-        "export_version": "1.1",
+        "export_version": "1.2",
+        # Partition semantics
+        "partition_basis": "archive_folder_utc_day",
+        "archive_day": metadata.get("archive_day", archive_day),
+        "hours_expected": metadata.get("hours_expected", 24),
+        "hours_found": metadata.get("hours_found", 24),
         # Schema notes
         "dropped_columns": metadata.get("dropped_columns", []),
         "null_semantics": {
@@ -512,6 +560,7 @@ def export_tier3_daily(
     output_dir: Path,
     upload: bool = False,
     force: bool = False,
+    allow_incomplete: bool = False,
 ) -> int:
     """
     Main export function.
@@ -522,6 +571,7 @@ def export_tier3_daily(
         output_dir: Local output directory
         upload: Whether to upload to R2
         force: Whether to overwrite existing R2 objects
+        allow_incomplete: Allow export even if hours are missing
         
     Returns:
         Exit code (0 = success)
@@ -537,11 +587,23 @@ def export_tier3_daily(
     
     # Load entries
     print(f"\n[STEP 1] Loading entries from archive...")
-    entries = load_day_entries(archive_path, date_str)
+    entries, hour_info = load_day_entries(archive_path, date_str)
     
     if not entries:
         print(f"[ERROR] No entries found for {date_str}", file=sys.stderr)
         return 1
+    
+    print(f"[OK] Loaded {len(entries)} entries")
+    print(f"    Hours found: {hour_info['hours_found']}/{hour_info['hours_expected']}")
+    
+    # Check hour completeness
+    if hour_info['missing_hours']:
+        print(f"\n[ERROR] Incomplete day: missing hours {hour_info['missing_hours']}", file=sys.stderr)
+        if not allow_incomplete:
+            print("[HINT] Use --allow-incomplete to bypass this check (manual recovery only)", file=sys.stderr)
+            return 1
+        else:
+            print("[WARN] Proceeding with incomplete day (--allow-incomplete set)", file=sys.stderr)
     
     print(f"[OK] Loaded {len(entries)} entries")
     
@@ -576,6 +638,9 @@ def export_tier3_daily(
     print(f"[OK] Wrote {parquet_path} ({parquet_size_mb:.2f} MB)")
     print(f"    Row count: {metadata['row_count']}")
     print(f"    Schema versions: {metadata['schema_versions']}")
+    
+    # Merge hour info into metadata for manifest
+    metadata.update(hour_info)
     
     # Create manifest
     print(f"\n[STEP 4] Creating manifest...")
@@ -699,12 +764,23 @@ Examples:
         help="Run schema validation self-test and exit",
     )
     
+    parser.add_argument(
+        "--allow-incomplete",
+        action="store_true",
+        help="Allow export even if not all 24 hours are present (manual recovery only)",
+    )
+    
     args = parser.parse_args()
     
     # Self-test mode
     if args.self_test:
         success = self_test(args.archive_path)
         sys.exit(0 if success else 1)
+    
+    # Get current UTC date for comparison
+    now_utc = datetime.now(timezone.utc)
+    today_utc = now_utc.strftime("%Y-%m-%d")
+    yesterday_utc = (now_utc - timedelta(days=1)).strftime("%Y-%m-%d")
     
     # Determine date
     if args.date:
@@ -715,10 +791,16 @@ Examples:
         except ValueError:
             print(f"[ERROR] Invalid date format: {date_str}. Use YYYY-MM-DD", file=sys.stderr)
             sys.exit(1)
+        
+        # Disallow "today UTC" without --allow-incomplete
+        if date_str == today_utc and not args.allow_incomplete:
+            print(f"[ERROR] Cannot export today's date ({today_utc}) - day is not complete.", file=sys.stderr)
+            print("[HINT] Use --allow-incomplete to bypass this check (may result in partial export)", file=sys.stderr)
+            sys.exit(1)
     else:
         # Default to yesterday UTC
-        yesterday = datetime.now(timezone.utc) - timedelta(days=1)
-        date_str = yesterday.strftime("%Y-%m-%d")
+        date_str = yesterday_utc
+        print(f"[INFO] No --date specified, defaulting to yesterday UTC: {date_str}")
     
     # Determine upload mode
     do_upload = args.upload and not args.dry_run
@@ -733,6 +815,7 @@ Examples:
         output_dir=args.out_dir,
         upload=do_upload,
         force=args.force,
+        allow_incomplete=args.allow_incomplete,
     )
     
     sys.exit(exit_code)

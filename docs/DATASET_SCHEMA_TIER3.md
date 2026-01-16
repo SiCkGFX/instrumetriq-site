@@ -2,6 +2,16 @@
 
 This document describes the Tier 3 daily parquet dataset layout and schema conventions.
 
+## Partition Semantics
+
+**Daily partitions are built from the archive day folder (UTC) containing hourly files 00–23.**
+
+Each daily export represents all entries written to the archive folder for that UTC day. The partition is determined by the archive folder name (e.g., `20260113/`), not by `meta.added_ts` timestamps within the entries.
+
+This means:
+- An entry with `meta.added_ts = 2026-01-12T23:55:00Z` may appear in the `2026-01-13` daily export if it was written to the `20260113/` archive folder
+- A complete daily export requires all 24 hour files (00.jsonl.gz through 23.jsonl.gz)
+
 ## R2 Layout
 
 Tier 3 daily exports are stored in Cloudflare R2 with the following structure:
@@ -27,7 +37,11 @@ instrumetriq-datasets/
   - `date_utc`: The UTC date covered
   - `row_count`: Number of entries
   - `parquet_sha256`: SHA256 hash for integrity verification
-  - `min_added_ts` / `max_added_ts`: Timestamp range
+  - `min_added_ts` / `max_added_ts`: Timestamp range of entries
+  - `partition_basis`: "archive_folder_utc_day" (how the day is determined)
+  - `archive_day`: The archive folder name (YYYYMMDD)
+  - `hours_expected`: 24 (expected hour files)
+  - `hours_found`: Actual hour files found
   - `dropped_columns`: Columns intentionally omitted
   - `null_semantics`: Documentation of NULL meanings
 
