@@ -138,6 +138,58 @@ npm run lint:wording
 
 ---
 
+## Configuration Modules
+
+#### `r2_config.py`
+**Purpose:** Centralized loader for Cloudflare R2 credentials from environment variables  
+**Provides:**
+- `get_r2_config()` - Returns R2Config with endpoint, access_key_id, secret_access_key, bucket
+- `get_cloudflare_api_token()` - Returns optional Cloudflare API token
+
+**Environment Variables Required:** (set via `~/.r2_credentials` on VPS)
+- `R2_ENDPOINT` - S3-compatible endpoint URL
+- `R2_ACCESS_KEY_ID` - Access key for R2
+- `R2_SECRET_ACCESS_KEY` - Secret key for R2
+- `R2_BUCKET` - Target bucket name
+- `CLOUDFLARE_API_TOKEN` (optional) - For Cloudflare API calls
+
+**Usage:**
+```python
+from r2_config import get_r2_config
+
+config = get_r2_config()
+# Use config.endpoint, config.access_key_id, etc.
+```
+
+**Validation:**
+```bash
+python3 scripts/r2_config.py  # Validates all required vars are set
+```
+
+---
+
+#### `init_r2_structure.py`
+**Purpose:** Initializes the R2 bucket folder/prefix structure for dataset tiers  
+**Creates:**
+```
+tier1/daily/.keep
+tier2/daily/.keep
+tier3/daily/.keep
+tier3/full/.keep
+```
+
+**Usage:**
+```bash
+python3 scripts/init_r2_structure.py
+```
+
+**Notes:**
+- Idempotent (safe to re-run)
+- Creates zero-byte `.keep` files to materialize prefixes
+- Requires R2 credentials in environment
+
+---
+
 ## Utility Scripts (As Needed)
 
 #### `inspect_field_coverage.py`
@@ -155,6 +207,47 @@ python scripts/inspect_field_coverage.py
 
 ---
 
+## R2 Dataset Export Scripts
+
+### `export_tier3_daily.py`
+**Purpose:** Exports daily archive data to Parquet and uploads to Cloudflare R2  
+**Outputs:**
+- Local: `output/tier3_daily/{date}/data.parquet` - Zstd-compressed Parquet
+- Local: `output/tier3_daily/{date}/manifest.json` - Export metadata
+- R2: `tier3/daily/{date}/data.parquet` - Authoritative daily dataset
+- R2: `tier3/daily/{date}/manifest.json` - Manifest with SHA256
+
+**Usage:**
+```bash
+# Self-test (validates entry parsing and schema)
+python3 scripts/export_tier3_daily.py --self-test
+
+# Dry run (exports locally, no R2 upload)
+python3 scripts/export_tier3_daily.py --date 2026-01-14
+
+# Full export with R2 upload
+python3 scripts/export_tier3_daily.py --date 2026-01-14 --upload
+
+# Export yesterday's data
+python3 scripts/export_tier3_daily.py --yesterday --upload
+```
+
+**Features:**
+- Loads all hour files for a UTC day from archive
+- Validates schema version (currently v7)
+- Converts nested JSON to Parquet with zstd compression
+- Generates manifest with SHA256 checksums
+- Uploads to R2 `tier3/daily/{date}/` prefix
+
+**Requirements:**
+- pyarrow (for Parquet export)
+- boto3 (for R2 upload)
+- R2 credentials in environment (see `r2_config.py`)
+
+**When to run:** Daily after archive rotation (e.g., 02:00 UTC for previous day)
+
+---
+
 ## Typical Workflow
 
 ### Daily Updates
@@ -168,7 +261,10 @@ python scripts/generate_archive_stats.py --archive-path /srv/cryptobot/data/arch
 python scripts/generate_dataset_overview.py
 python scripts/generate_public_samples.py
 
-# 3. Build and deploy
+# 3. Export previous day to R2 (Tier 3 daily Parquet)
+python3 scripts/export_tier3_daily.py --yesterday --upload
+
+# 4. Build and deploy
 npm run build
 npm run publish
 ```
@@ -192,8 +288,16 @@ npm run build
 ## Script Dependencies
 
 ### Python Scripts
-- Standard library only (no external packages required)
-- Python 3.8+ recommended
+- Python 3.10+ recommended
+- Most scripts use standard library only
+- R2/export scripts require:
+  - `boto3` - AWS S3-compatible client for R2
+  - `pyarrow` - Parquet file creation
+
+Install with:
+```bash
+pip install boto3 pyarrow
+```
 
 ### JavaScript Scripts
 - Node.js 18+ required for `lint_wording.mjs`
@@ -210,10 +314,14 @@ scripts/
 ├── generate_coverage_table.py     # Field coverage table
 ├── generate_dataset_overview.py   # Dataset page overview
 ├── generate_public_samples.py     # Public preview entries
+├── generate_sentiment_timeseries.py # Twitter sentiment timeseries
 ├── sync_from_archive.py           # Archive data sync
 ├── deploy_to_cloudflare.py        # Cloudflare deployment
 ├── lint_wording.mjs               # Wording compliance
 ├── inspect_field_coverage.py      # Field inspection tool
+├── r2_config.py                   # R2 credentials loader
+├── init_r2_structure.py           # R2 bucket initialization
+├── export_tier3_daily.py          # Tier 3 daily Parquet export
 └── tools/                         # Helper utilities
     └── sync_cryptobot_sample.py   # CryptoBot-specific sync
 ```

@@ -12,6 +12,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# local data export output (uploaded to R2)
+output/
 
 # environment variables
 .env
@@ -22,3 +24,4 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+__pycache__/

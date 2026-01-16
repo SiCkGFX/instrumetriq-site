@@ -1,8 +1,16 @@
 # Python dependencies for scripts/ directory
 #
-# All scripts currently use Python standard library only.
-# Minimum Python version: 3.8 (for typing features)
+# Minimum Python version: 3.10 (for typing features)
 #
-# No external packages required.
-# 
-# To verify: python --version (should be 3.8+)
+# Core scripts use Python standard library only.
+# R2/export scripts require additional packages:
+
+# R2 dataset export dependencies
+boto3>=1.35.0       # AWS S3-compatible client for Cloudflare R2
+pyarrow>=18.0.0     # Parquet file creation with zstd compression
+
+# To install all dependencies:
+#   pip install -r requirements.txt
+#
+# To verify Python version:
+#   python3 --version (should be 3.10+)

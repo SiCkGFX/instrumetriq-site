@@ -1203,63 +1203,63 @@ import PageHero from '../components/PageHero.astro';
     const timeRange = maxTime - minTime || 1;
 
     // Function to draw the chart
-    function drawChart(highlightIndex?: number) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function drawChart(context: CanvasRenderingContext2D, highlightIndex?: number) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw axes
-      ctx.strokeStyle = '#3a3a3a';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(padding, padding);
-      ctx.lineTo(padding, padding + height);
-      ctx.lineTo(padding + width, padding + height);
-      ctx.stroke();
+      context.strokeStyle = '#3a3a3a';
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(padding, padding);
+      context.lineTo(padding, padding + height);
+      context.lineTo(padding + width, padding + height);
+      context.stroke();
 
       // Draw price line
-      ctx.strokeStyle = '#00bcd4';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
+      context.strokeStyle = '#00bcd4';
+      context.lineWidth = 2;
+      context.beginPath();
 
       pricePath.forEach((point, i) => {
         const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
         const y = padding + height - ((point.price - minPrice) / priceRange) * height;
 
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
       });
 
-      ctx.stroke();
+      context.stroke();
 
       // Draw dots at data points
       pricePath.forEach((point, i) => {
         const x = padding + ((point.elapsed_min - minTime) / timeRange) * width;
         const y = padding + height - ((point.price - minPrice) / priceRange) * height;
         
-        ctx.fillStyle = i === highlightIndex ? '#00e5ff' : '#00bcd4';
-        ctx.beginPath();
-        ctx.arc(x, y, i === highlightIndex ? 4 : 2, 0, 2 * Math.PI);
-        ctx.fill();
+        context.fillStyle = i === highlightIndex ? '#00e5ff' : '#00bcd4';
+        context.beginPath();
+        context.arc(x, y, i === highlightIndex ? 4 : 2, 0, 2 * Math.PI);
+        context.fill();
       });
 
       // Labels
-      ctx.fillStyle = '#b0b0b0';
-      ctx.font = '12px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Elapsed Time (minutes)', padding + width / 2, canvas.height - 5);
+      context.fillStyle = '#b0b0b0';
+      context.font = '12px sans-serif';
+      context.textAlign = 'center';
+      context.fillText('Elapsed Time (minutes)', padding + width / 2, canvas.height - 5);
       
-      ctx.save();
-      ctx.translate(15, padding + height / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Spot Price (USD)', 0, 0);
-      ctx.restore();
+      context.save();
+      context.translate(15, padding + height / 2);
+      context.rotate(-Math.PI / 2);
+      context.fillText('Spot Price (USD)', 0, 0);
+      context.restore();
 
       // Y-axis ticks
-      ctx.textAlign = 'right';
-      ctx.fillText('$' + minPrice.toFixed(4), padding - 5, padding + height);
-      ctx.fillText('$' + maxPrice.toFixed(4), padding - 5, padding + 10);
+      context.textAlign = 'right';
+      context.fillText('$' + minPrice.toFixed(4), padding - 5, padding + height);
+      context.fillText('$' + maxPrice.toFixed(4), padding - 5, padding + 10);
     }
 
-    drawChart();
+    drawChart(ctx);
 
     // Add DOM tooltip on mousemove
     canvas.addEventListener('mousemove', (e) => {
@@ -1284,7 +1284,7 @@ import PageHero from '../components/PageHero.astro';
 
       if (closestIndex >= 0) {
         const point = pricePath[closestIndex];
-        drawChart(closestIndex);
+        drawChart(ctx, closestIndex);
         
         tooltip.innerHTML = `Time: ${point.elapsed_min.toFixed(1)} min<br>Price: $${point.price.toFixed(6)}`;
         tooltip.hidden = false;
@@ -1292,14 +1292,14 @@ import PageHero from '../components/PageHero.astro';
         tooltip.style.top = (e.clientY - rect.top - 40) + 'px';
         canvas.style.cursor = 'pointer';
       } else {
-        drawChart();
+        drawChart(ctx);
         tooltip.hidden = true;
         canvas.style.cursor = 'default';
       }
     });
 
     canvas.addEventListener('mouseleave', () => {
-      drawChart();
+      drawChart(ctx);
       tooltip.hidden = true;
       canvas.style.cursor = 'default';
     });
@@ -1337,6 +1337,7 @@ import PageHero from '../components/PageHero.astro';
 
     // Filter out silent entries and convert timestamps to elapsed time
     const firstTs = new Date(timeseries[0].ts).getTime();
+    const firstDate = new Date(timeseries[0].ts).toISOString().split('T')[0];
     const dataPoints = timeseries
       .filter(entry => !entry.is_silent && entry.mean_sent !== null)
       .map(entry => ({
@@ -1369,74 +1370,74 @@ import PageHero from '../components/PageHero.astro';
     const zeroY = padding + height - ((0 - minSentiment) / sentimentRange) * height;
 
     // Function to draw the chart
-    function drawChart(highlightIndex?: number) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function drawChart(context: CanvasRenderingContext2D, highlightIndex?: number) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw axes
-      ctx.strokeStyle = '#3a3a3a';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(padding, padding);
-      ctx.lineTo(padding, padding + height);
-      ctx.lineTo(padding + width, padding + height);
-      ctx.stroke();
+      context.strokeStyle = '#3a3a3a';
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(padding, padding);
+      context.lineTo(padding, padding + height);
+      context.lineTo(padding + width, padding + height);
+      context.stroke();
 
       // Draw zero line
-      ctx.strokeStyle = '#555555';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
-      ctx.moveTo(padding, zeroY);
-      ctx.lineTo(padding + width, zeroY);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      context.strokeStyle = '#555555';
+      context.lineWidth = 1;
+      context.setLineDash([5, 5]);
+      context.beginPath();
+      context.moveTo(padding, zeroY);
+      context.lineTo(padding + width, zeroY);
+      context.stroke();
+      context.setLineDash([]);
 
       // Draw sentiment line
-      ctx.strokeStyle = '#00bcd4';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
+      context.strokeStyle = '#00bcd4';
+      context.lineWidth = 1.5;
+      context.beginPath();
 
       dataPoints.forEach((point, i) => {
         const x = padding + (point.elapsed_hours / timeRange) * width;
         const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
 
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
       });
 
-      ctx.stroke();
+      context.stroke();
 
       // Draw dots at data points
       dataPoints.forEach((point, i) => {
         const x = padding + (point.elapsed_hours / timeRange) * width;
         const y = padding + height - ((point.mean_sent - minSentiment) / sentimentRange) * height;
         
-        ctx.fillStyle = i === highlightIndex ? '#00e5ff' : '#00bcd4';
-        ctx.beginPath();
-        ctx.arc(x, y, i === highlightIndex ? 4 : 2, 0, 2 * Math.PI);
-        ctx.fill();
+        context.fillStyle = i === highlightIndex ? '#00e5ff' : '#00bcd4';
+        context.beginPath();
+        context.arc(x, y, i === highlightIndex ? 4 : 2, 0, 2 * Math.PI);
+        context.fill();
       });
 
       // Labels
-      ctx.fillStyle = '#b0b0b0';
-      ctx.font = '12px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`Time (hours from ${new Date(timeseries[0].ts).toISOString().split('T')[0]})`, padding + width / 2, canvas.height - 5);
+      context.fillStyle = '#b0b0b0';
+      context.font = '12px sans-serif';
+      context.textAlign = 'center';
+      context.fillText(`Time (hours from ${firstDate})`, padding + width / 2, canvas.height - 5);
       
-      ctx.save();
-      ctx.translate(15, padding + height / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText('Mean Score (-1 to +1)', 0, 0);
-      ctx.restore();
+      context.save();
+      context.translate(15, padding + height / 2);
+      context.rotate(-Math.PI / 2);
+      context.fillText('Mean Score (-1 to +1)', 0, 0);
+      context.restore();
 
       // Y-axis ticks
-      ctx.textAlign = 'right';
-      ctx.fillText('-1.0', padding - 5, padding + height);
-      ctx.fillText('0.0', padding - 5, zeroY + 5);
-      ctx.fillText('+1.0', padding - 5, padding + 10);
+      context.textAlign = 'right';
+      context.fillText('-1.0', padding - 5, padding + height);
+      context.fillText('0.0', padding - 5, zeroY + 5);
+      context.fillText('+1.0', padding - 5, padding + 10);
     }
 
-    drawChart();
+    drawChart(ctx);
 
     // Add DOM tooltip on mousemove
     canvas.addEventListener('mousemove', (e) => {
@@ -1461,7 +1462,7 @@ import PageHero from '../components/PageHero.astro';
 
       if (closestIndex >= 0) {
         const point = dataPoints[closestIndex];
-        drawChart(closestIndex);
+        drawChart(ctx, closestIndex);
         
         const date = new Date(point.ts);
         const dateStr = date.toISOString().split('T')[0];
@@ -1473,14 +1474,14 @@ import PageHero from '../components/PageHero.astro';
         tooltip.style.top = (e.clientY - rect.top - 50) + 'px';
         canvas.style.cursor = 'pointer';
       } else {
-        drawChart();
+        drawChart(ctx);
         tooltip.hidden = true;
         canvas.style.cursor = 'default';
       }
     });
 
     canvas.addEventListener('mouseleave', () => {
-      drawChart();
+      drawChart(ctx);
       tooltip.hidden = true;
       canvas.style.cursor = 'default';
     });
