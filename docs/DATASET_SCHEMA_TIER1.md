@@ -301,3 +301,72 @@ df = table.to_pandas()
 | `bool` | Boolean (true/false) |
 
 All fields except identity/timing may contain nulls where data was unavailable.
+
+---
+
+## Verification
+
+Use `verify_tier1_weekly.py` to validate Tier 1 exports for correctness and completeness.
+
+### Running Verification
+
+```bash
+# Verify most recent week from R2
+python3 scripts/verify_tier1_weekly.py
+
+# Verify specific week
+python3 scripts/verify_tier1_weekly.py --end-day 2025-12-28
+
+# Verify local files
+python3 scripts/verify_tier1_weekly.py --local output/tier1_weekly/2025-12-28
+```
+
+### Verification Checks
+
+The verifier performs 5 categories of checks:
+
+| Check | Description |
+|-------|-------------|
+| **1. Presence + Integrity** | Parquet/manifest exist, SHA256 matches |
+| **2. Window Semantics** | 7-day Mon–Sun window, consecutive days |
+| **3. Source Coverage** | Days present/missing, partial day detection |
+| **4. Schema Validation** | 22 required columns with correct types |
+| **5. Data Quality** | Row counts, distinct symbols, null ratios |
+
+### Validation Rules
+
+**FAIL conditions:**
+- SHA256 mismatch between parquet and manifest
+- Missing required columns (any of 22)
+- Row count mismatch between parquet and manifest
+- Coverage < min_days_threshold (default 5)
+- Critical columns >99.5% null (symbol, snapshot_ts, spot_mid, score_final)
+- Negative sentiment_posts_total values
+
+**WARN conditions:**
+- Missing days (< 7)
+- Partial days (< 24 hours coverage)
+- Column type mismatches (loose type check)
+- Expected columns >95% null (meta_duration_sec, spot_spread_bps)
+- Unexpected extra columns
+
+### Output Artifacts
+
+After verification, the following artifacts are created:
+
+| Artifact | Description |
+|----------|-------------|
+| `output/verify_tier1_report.md` | Human-readable verification report |
+| `output/verify_tier1/{end-day}/manifest.json` | Downloaded manifest copy |
+| `output/verify_tier1/{end-day}/schema.txt` | PyArrow schema pretty print |
+| `output/verify_tier1/{end-day}/stats.json` | Machine-readable summary |
+
+### Example Report
+
+The verification report includes:
+- Summary table with status, days coverage, row count, file size
+- Source coverage details (per-day hours)
+- Schema listing with types
+- Data quality stats (numeric ranges, null ratios)
+- Warnings and errors list
+

@@ -475,6 +475,57 @@ python3 scripts/verify_tier2_weekly.py --local output/tier2_weekly/2025-12-28
 
 ---
 
+### `verify_tier1_weekly.py`
+**Purpose:** Validates Tier 1 weekly parquet exports for correctness and completeness  
+**Outputs:**
+- Report: `output/verify_tier1_report.md` - Human-readable verification report
+- Artifacts: `output/verify_tier1/{end-day}/manifest.json` - Downloaded manifest copy
+- Artifacts: `output/verify_tier1/{end-day}/schema.txt` - PyArrow schema pretty print
+- Artifacts: `output/verify_tier1/{end-day}/stats.json` - Machine-readable summary
+
+**Usage:**
+```bash
+# Verify most recent week from R2
+python3 scripts/verify_tier1_weekly.py
+
+# Verify specific week by end date
+python3 scripts/verify_tier1_weekly.py --end-day 2025-12-28
+
+# Verify local files
+python3 scripts/verify_tier1_weekly.py --local output/tier1_weekly/2025-12-28
+
+# Custom output directory
+python3 scripts/verify_tier1_weekly.py --end-day 2025-12-28 --output-dir ./my_output
+```
+
+**Tier 1 Schema (22 flattened fields):**
+
+| Category | Fields |
+|----------|--------|
+| Identity + Timing | `symbol`, `snapshot_ts`, `meta_added_ts`, `meta_expires_ts`, `meta_duration_sec`, `meta_archive_schema_version` |
+| Spot | `spot_mid`, `spot_spread_bps`, `spot_range_pct_24h`, `spot_ticker24_chg` |
+| Derived | `derived_liq_global_pct`, `derived_spread_bps` |
+| Score | `score_final` |
+| Sentiment | `sentiment_posts_total`, `sentiment_posts_pos`, `sentiment_posts_neu`, `sentiment_posts_neg`, `sentiment_mean_score`, `sentiment_is_silent`, `sentiment_recent_posts_count`, `sentiment_has_recent_activity`, `sentiment_hours_since_latest_tweet` |
+
+**Checks performed:**
+1. **Presence + Integrity** - SHA256 validation against manifest
+2. **Window semantics** - 7-day Mon-Sun window, consecutive days
+3. **Source coverage** - Days present/missing, partial day detection
+4. **Schema validation** - 22 required columns present with correct types
+5. **Data quality** - Row counts, distinct symbols, null ratios, numeric ranges
+
+**Validation Rules:**
+- **FAIL:** SHA256 mismatch, missing required columns, <5 days coverage
+- **FAIL:** Critical columns (symbol, snapshot_ts, spot_mid, score_final) >99.5% null
+- **FAIL:** Negative sentiment_posts_total values
+- **WARN:** Missing days (<7), partial days (<24 hours)
+- **WARN:** Column type mismatches, >95% nulls in expected columns
+
+**When to run:** After Tier 1 builds to validate data integrity
+
+---
+
 ## Typical Workflow
 
 ### Daily Updates
@@ -559,6 +610,7 @@ scripts/
 ├── export_tier3_daily.py          # Tier 3 daily Parquet export
 ├── verify_tier3_parquet.py        # Tier 3 verification + report
 ├── build_tier1_weekly.py          # Tier 1 weekly derived from Tier 3 (22 flattened fields, incl. sentiment)
+├── verify_tier1_weekly.py         # Tier 1 verification + report
 ├── build_tier2_weekly.py          # Tier 2 weekly derived from Tier 3 (7 structs)
 ├── verify_tier2_weekly.py         # Tier 2 verification + report
 └── tools/                         # Helper utilities
