@@ -8,7 +8,7 @@ Downloads from R2 (or uses local files) and runs comprehensive checks.
 Tier 1 uses a flattened schema (22 fields) with aggregated sentiment.
 
 Usage:
-    # Default: verify most recent week in R2
+    # Default: verify ALL weeks in R2
     python3 scripts/verify_tier1_weekly.py
 
     # Verify specific week by end date
@@ -19,6 +19,10 @@ Usage:
 
     # Verify from R2 explicitly
     python3 scripts/verify_tier1_weekly.py --r2 --end-day 2025-12-28
+
+Outputs:
+    Reports are written to output/verify_tier1/report_YYYYMMDD_HHMMSS.md
+    Per-week artifacts are written to output/verify_tier1/{end-day}/
 """
 
 import argparse
@@ -55,7 +59,6 @@ from r2_config import get_r2_config, R2Config
 # Constants
 # ==============================================================================
 
-DEFAULT_REPORT_PATH = Path("./output/verify_tier1_report.md")
 VERIFY_CACHE_DIR = Path("./output/verify_tier1")
 
 # Tier 1 flattened schema (22 required fields)
@@ -1057,7 +1060,7 @@ def main():
     parser.add_argument(
         "--end-day",
         type=str,
-        help="Week end date to verify (YYYY-MM-DD). Default: most recent week in R2.",
+        help="Week end date to verify (YYYY-MM-DD). If not specified, verifies ALL weeks in R2.",
     )
     parser.add_argument(
         "--local",
@@ -1073,19 +1076,17 @@ def main():
         "--output-dir",
         type=str,
         default=None,
-        help=f"Output directory for artifacts (default: {VERIFY_CACHE_DIR})",
-    )
-    parser.add_argument(
-        "--out-report",
-        type=str,
-        default=str(DEFAULT_REPORT_PATH),
-        help=f"Output report path (default: {DEFAULT_REPORT_PATH})",
+        help=f"Output directory for artifacts and reports (default: {VERIFY_CACHE_DIR})",
     )
     
     args = parser.parse_args()
     
-    report_path = Path(args.out_report)
     cache_dir = Path(args.output_dir) if args.output_dir else VERIFY_CACHE_DIR
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate timestamped report path inside cache_dir
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    report_path = cache_dir / f"report_{timestamp}.md"
     
     results = []
     
@@ -1113,16 +1114,20 @@ def main():
         print("[Mode] Verifying from R2")
         config = get_r2_config()
         
+        # List all available weeks
+        available_weeks = list_tier1_weeks(config)
+        if not available_weeks:
+            print("[ERROR] No Tier 1 weeks found in R2", file=sys.stderr)
+            sys.exit(1)
+        
         if args.end_day:
+            # Verify specific week
             weeks_to_verify = [args.end_day]
+            print(f"[INFO] Verifying specific week: {args.end_day}")
         else:
-            # Find most recent week
-            available_weeks = list_tier1_weeks(config)
-            if not available_weeks:
-                print("[ERROR] No Tier 1 weeks found in R2", file=sys.stderr)
-                sys.exit(1)
-            weeks_to_verify = [available_weeks[-1]]  # Most recent
-            print(f"[INFO] Found {len(available_weeks)} weeks in R2, verifying most recent: {weeks_to_verify[0]}")
+            # Verify ALL weeks
+            weeks_to_verify = available_weeks
+            print(f"[INFO] Found {len(available_weeks)} weeks in R2, verifying ALL")
         
         for end_day in weeks_to_verify:
             r2_size = get_r2_object_size(config, end_day)

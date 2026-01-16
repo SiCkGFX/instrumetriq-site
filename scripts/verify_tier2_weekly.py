@@ -6,7 +6,7 @@ Validates Tier 2 weekly parquet exports for correctness and completeness.
 Downloads from R2 (or uses local files) and runs comprehensive checks.
 
 Usage:
-    # Default: verify most recent week in R2
+    # Default: verify ALL weeks in R2
     python3 scripts/verify_tier2_weekly.py
 
     # Verify specific week by end date
@@ -17,6 +17,10 @@ Usage:
 
     # Verify from R2 explicitly
     python3 scripts/verify_tier2_weekly.py --r2 --end-day 2025-12-28
+
+Outputs:
+    Reports are written to output/verify_tier2/report_YYYYMMDD_HHMMSS.md
+    Per-week artifacts are written to output/verify_tier2/{end-day}/
 """
 
 import argparse
@@ -53,7 +57,6 @@ from r2_config import get_r2_config, R2Config
 # Constants
 # ==============================================================================
 
-DEFAULT_REPORT_PATH = Path("./output/verify_tier2_report.md")
 VERIFY_CACHE_DIR = Path("./output/verify_tier2")
 
 # Tier 2 column policy (hardcoded from build_tier2_weekly.py)
@@ -976,7 +979,7 @@ def main():
     parser.add_argument(
         "--end-day",
         type=str,
-        help="Week end date to verify (YYYY-MM-DD). Default: most recent week in R2.",
+        help="Week end date to verify (YYYY-MM-DD). If not specified, verifies ALL weeks in R2.",
     )
     parser.add_argument(
         "--local",
@@ -989,16 +992,20 @@ def main():
         help="Download from R2 and verify (default if no --local specified)",
     )
     parser.add_argument(
-        "--out-report",
+        "--output-dir",
         type=str,
-        default=str(DEFAULT_REPORT_PATH),
-        help=f"Output report path (default: {DEFAULT_REPORT_PATH})",
+        default=None,
+        help=f"Output directory for artifacts and reports (default: {VERIFY_CACHE_DIR})",
     )
     
     args = parser.parse_args()
     
-    report_path = Path(args.out_report)
-    use_r2 = not args.local or args.r2
+    cache_dir = Path(args.output_dir) if args.output_dir else VERIFY_CACHE_DIR
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate timestamped report path inside cache_dir
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    report_path = cache_dir / f"report_{timestamp}.md"
     
     print("=" * 60)
     print("TIER 2 WEEKLY PARQUET VERIFICATION")
@@ -1033,7 +1040,7 @@ def main():
         results.append(result)
         
         # Write artifacts
-        write_artifacts(result, VERIFY_CACHE_DIR)
+        write_artifacts(result, cache_dir)
         
     else:
         # Download from R2
@@ -1041,20 +1048,21 @@ def main():
         config = get_r2_config()
         print(f"  Bucket: {config.bucket}")
         
-        # Find weeks to verify
+        # List all available weeks
+        print("  Listing available weeks...")
+        available_weeks = list_tier2_weeks(config)
+        if not available_weeks:
+            print("[ERROR] No Tier 2 weekly exports found in R2", file=sys.stderr)
+            return 1
+        
         if args.end_day:
+            # Verify specific week
             weeks_to_verify = [args.end_day]
+            print(f"  Verifying specific week: {args.end_day}")
         else:
-            # Get most recent week
-            print("  Listing available weeks...")
-            available_weeks = list_tier2_weeks(config)
-            if not available_weeks:
-                print("[ERROR] No Tier 2 weekly exports found in R2", file=sys.stderr)
-                return 1
-            
-            # Verify the most recent
-            weeks_to_verify = [available_weeks[-1]]
-            print(f"  Found {len(available_weeks)} weeks, verifying most recent: {weeks_to_verify[0]}")
+            # Verify ALL weeks
+            weeks_to_verify = available_weeks
+            print(f"  Found {len(available_weeks)} weeks, verifying ALL")
         
         print(f"Mode: R2 verification")
         print(f"Weeks to verify: {weeks_to_verify}")
@@ -1067,7 +1075,7 @@ def main():
             
             # Download files
             parquet_path, manifest_path = download_from_r2(
-                config, end_day, VERIFY_CACHE_DIR
+                config, end_day, cache_dir
             )
             
             if parquet_path is None:
@@ -1080,7 +1088,7 @@ def main():
             results.append(result)
             
             # Write artifacts
-            write_artifacts(result, VERIFY_CACHE_DIR)
+            write_artifacts(result, cache_dir)
     
     # Generate report
     print("\n" + "=" * 60)
@@ -1092,7 +1100,7 @@ def main():
     print(f"\n[OK] Report written to: {report_path}")
     
     # Artifact locations
-    print(f"[OK] Artifacts written to: {VERIFY_CACHE_DIR}/")
+    print(f"[OK] Artifacts written to: {cache_dir}/")
     for r in results:
         print(f"     - {r.end_day}/manifest.json")
         print(f"     - {r.end_day}/schema.txt")

@@ -6,7 +6,7 @@ Validates Tier 3 daily parquet exports for correctness and completeness.
 Downloads from R2 (or uses local files) and runs comprehensive checks.
 
 Usage:
-    # Default: verify both 2026-01-13 and 2026-01-14 from R2
+    # Default: verify ALL days in R2
     python3 scripts/verify_tier3_parquet.py
 
     # Verify specific dates
@@ -15,8 +15,9 @@ Usage:
     # Verify from local files
     python3 scripts/verify_tier3_parquet.py --local output/tier3_daily/2026-01-13
 
-    # Specify output report path
-    python3 scripts/verify_tier3_parquet.py --out-report ./my_report.md
+Outputs:
+    Reports are written to output/verify_tier3/report_YYYYMMDD_HHMMSS.md
+    Per-day artifacts are written to output/verify_tier3/{date}/
 """
 
 import argparse
@@ -53,8 +54,6 @@ from r2_config import get_r2_config, R2Config
 # Constants
 # ==============================================================================
 
-DEFAULT_DATES = ["2026-01-13", "2026-01-14"]
-DEFAULT_REPORT_PATH = Path("./output/verify_tier3_report.md")
 VERIFY_CACHE_DIR = Path("./output/verify_tier3")
 
 # Expected top-level columns based on v7 schema
@@ -178,6 +177,33 @@ def get_r2_object_sizes(config: R2Config, date_str: str) -> dict[str, int]:
             sizes[key_suffix] = 0
     
     return sizes
+
+
+def list_tier3_days(config: R2Config) -> list[str]:
+    """List all Tier 3 daily dates available in R2."""
+    s3 = get_s3_client(config)
+    
+    response = s3.list_objects_v2(
+        Bucket=config.bucket,
+        Prefix="tier3/daily/",
+        Delimiter="/",
+    )
+    
+    days = []
+    for prefix_obj in response.get("CommonPrefixes", []):
+        # tier3/daily/2026-01-13/
+        prefix = prefix_obj.get("Prefix", "")
+        parts = prefix.rstrip("/").split("/")
+        if len(parts) >= 3:
+            date_str = parts[2]
+            # Validate date format
+            try:
+                datetime.strptime(date_str, "%Y-%m-%d")
+                days.append(date_str)
+            except ValueError:
+                pass
+    
+    return sorted(days)
 
 
 # ==============================================================================
@@ -840,7 +866,7 @@ def main():
         "--date",
         action="append",
         dest="dates",
-        help="Date to verify (YYYY-MM-DD). Can be specified multiple times.",
+        help="Date to verify (YYYY-MM-DD). Can be specified multiple times. If not specified, verifies ALL days in R2.",
     )
     parser.add_argument(
         "--local",
@@ -853,36 +879,47 @@ def main():
         help="Download from R2 and verify (default if no --local specified)",
     )
     parser.add_argument(
-        "--out-report",
+        "--output-dir",
         type=str,
-        default=str(DEFAULT_REPORT_PATH),
-        help=f"Output report path (default: {DEFAULT_REPORT_PATH})",
+        default=None,
+        help=f"Output directory for artifacts and reports (default: {VERIFY_CACHE_DIR})",
     )
     
     args = parser.parse_args()
     
-    # Default dates if none specified
-    dates = args.dates or DEFAULT_DATES
-    report_path = Path(args.out_report)
+    cache_dir = Path(args.output_dir) if args.output_dir else VERIFY_CACHE_DIR
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate timestamped report path inside cache_dir
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    report_path = cache_dir / f"report_{timestamp}.md"
     
     print("=" * 60)
     print("TIER 3 PARQUET VERIFICATION")
     print("=" * 60)
-    print(f"Dates to verify: {dates}")
-    print(f"Report output: {report_path}")
     
     results = []
     
     if args.local:
         # Verify local files
         local_path = Path(args.local)
-        if len(dates) > 1:
-            print("[WARN] --local specified with multiple dates; only first date will use local path")
+        
+        # Derive date from folder name if not specified
+        if args.dates:
+            date_str = args.dates[0]
+            if len(args.dates) > 1:
+                print("[WARN] --local specified with multiple dates; only first date will use local path")
+        else:
+            date_str = local_path.name  # Assume folder is named YYYY-MM-DD
+        
+        print(f"Mode: Local verification")
+        print(f"Path: {local_path}")
+        print(f"Date: {date_str}")
         
         parquet_path = local_path / "data.parquet"
         manifest_path = local_path / "manifest.json"
         
-        result = verify_date(dates[0], parquet_path, manifest_path)
+        result = verify_date(date_str, parquet_path, manifest_path)
         results.append(result)
     else:
         # Download from R2
@@ -890,7 +927,25 @@ def main():
         config = get_r2_config()
         print(f"  Bucket: {config.bucket}")
         
-        for date_str in dates:
+        # List all available days
+        print("  Listing available days...")
+        available_days = list_tier3_days(config)
+        if not available_days:
+            print("[ERROR] No Tier 3 daily exports found in R2", file=sys.stderr)
+            return 1
+        
+        if args.dates:
+            # Verify specific dates
+            dates_to_verify = args.dates
+            print(f"  Verifying specific dates: {dates_to_verify}")
+        else:
+            # Verify ALL days
+            dates_to_verify = available_days
+            print(f"  Found {len(available_days)} days, verifying ALL")
+        
+        print(f"Dates to verify: {len(dates_to_verify)} day(s)")
+        
+        for date_str in dates_to_verify:
             print(f"\n[Downloading {date_str} from R2...]")
             
             # Get sizes first
@@ -898,7 +953,7 @@ def main():
             
             # Download files
             parquet_path, manifest_path = download_from_r2(
-                config, date_str, VERIFY_CACHE_DIR
+                config, date_str, cache_dir
             )
             
             if parquet_path is None:
@@ -918,6 +973,7 @@ def main():
     all_pass = generate_report(results, report_path)
     
     print(f"\n[OK] Report written to: {report_path}")
+    print(f"[OK] Artifacts written to: {cache_dir}/")
     
     # Summary
     print("\n" + "=" * 60)
