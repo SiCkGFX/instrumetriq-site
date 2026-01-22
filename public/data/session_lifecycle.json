@@ -1,0 +1,125 @@
+{
+  "generated_at_utc": "2026-01-22T11:58:46.658190Z",
+  "entries_scanned": 1286,
+  "source": {
+    "sample_file": "Full archive: 20260122",
+    "ssot_file": "data/field_coverage_report.json"
+  },
+  "definition": {
+    "session": "One archived watchlist window",
+    "duration_description": "Entries archived after exceeding 120 minutes in the active watchlist; verification occurs every 10 minutes, so durations typically fall in ~120\u2013130 minutes"
+  },
+  "fields_used": {
+    "added_ts": "meta.added_ts",
+    "duration_sec": "meta.duration_sec"
+  },
+  "duration_stats": {
+    "n_entries_with_duration": 1286,
+    "duration_sec": {
+      "median": 7480,
+      "p10": 7257,
+      "p90": 7748,
+      "min": 7200,
+      "max": 7800
+    }
+  },
+  "admission_hour_distribution": [
+    {
+      "hour": 0,
+      "count": 124
+    },
+    {
+      "hour": 1,
+      "count": 88
+    },
+    {
+      "hour": 2,
+      "count": 130
+    },
+    {
+      "hour": 3,
+      "count": 85
+    },
+    {
+      "hour": 4,
+      "count": 138
+    },
+    {
+      "hour": 5,
+      "count": 106
+    },
+    {
+      "hour": 6,
+      "count": 75
+    },
+    {
+      "hour": 7,
+      "count": 141
+    },
+    {
+      "hour": 8,
+      "count": 79
+    },
+    {
+      "hour": 9,
+      "count": 103
+    },
+    {
+      "hour": 10,
+      "count": 0
+    },
+    {
+      "hour": 11,
+      "count": 0
+    },
+    {
+      "hour": 12,
+      "count": 0
+    },
+    {
+      "hour": 13,
+      "count": 0
+    },
+    {
+      "hour": 14,
+      "count": 0
+    },
+    {
+      "hour": 15,
+      "count": 0
+    },
+    {
+      "hour": 16,
+      "count": 0
+    },
+    {
+      "hour": 17,
+      "count": 0
+    },
+    {
+      "hour": 18,
+      "count": 0
+    },
+    {
+      "hour": 19,
+      "count": 0
+    },
+    {
+      "hour": 20,
+      "count": 0
+    },
+    {
+      "hour": 21,
+      "count": 16
+    },
+    {
+      "hour": 22,
+      "count": 76
+    },
+    {
+      "hour": 23,
+      "count": 125
+    }
+  ],
+  "unavailable_fields": []
+}

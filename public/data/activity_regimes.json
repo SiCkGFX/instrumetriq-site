@@ -1,0 +1,72 @@
+{
+  "generated_at_utc": "2026-01-22T11:58:46.534516Z",
+  "entries_scanned": 1286,
+  "total_binned": 1286,
+  "source": {
+    "sample_file": "Full archive: 20260122",
+    "ssot_file": "data/field_coverage_report.json"
+  },
+  "fields_used": {
+    "posts_total": "twitter_sentiment_windows.last_2_cycles.posts_total",
+    "spread_bps": "derived.spread_bps",
+    "liq_global_pct": "derived.liq_global_pct",
+    "liq_self_pct": "derived.liq_self_pct"
+  },
+  "unavailable_fields": [],
+  "regimes": [
+    {
+      "bin": "0_posts",
+      "posts_range": "0-0",
+      "n_entries": 218,
+      "share_pct": 17.0,
+      "median_spread_bps": 21.1,
+      "median_liq_global_pct": 25.6,
+      "median_liq_self_pct": 26.0
+    },
+    {
+      "bin": "1-2_posts",
+      "posts_range": "1-2",
+      "n_entries": 169,
+      "share_pct": 13.1,
+      "median_spread_bps": 20.5,
+      "median_liq_global_pct": 29.8,
+      "median_liq_self_pct": 31.9
+    },
+    {
+      "bin": "3-9_posts",
+      "posts_range": "3-9",
+      "n_entries": 289,
+      "share_pct": 22.5,
+      "median_spread_bps": 18.1,
+      "median_liq_global_pct": 43.9,
+      "median_liq_self_pct": 47.4
+    },
+    {
+      "bin": "10-24_posts",
+      "posts_range": "10-24",
+      "n_entries": 172,
+      "share_pct": 13.4,
+      "median_spread_bps": 15.7,
+      "median_liq_global_pct": 55.3,
+      "median_liq_self_pct": 55.3
+    },
+    {
+      "bin": "25-49_posts",
+      "posts_range": "25-49",
+      "n_entries": 129,
+      "share_pct": 10.0,
+      "median_spread_bps": 10.6,
+      "median_liq_global_pct": 70.5,
+      "median_liq_self_pct": 66.7
+    },
+    {
+      "bin": "50+_posts",
+      "posts_range": "50+",
+      "n_entries": 309,
+      "share_pct": 24.0,
+      "median_spread_bps": 8.7,
+      "median_liq_global_pct": 75.8,
+      "median_liq_self_pct": 66.7
+    }
+  ]
+}
