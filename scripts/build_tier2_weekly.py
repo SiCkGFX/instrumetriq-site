@@ -1,119 +1,45 @@
 #!/usr/bin/env python3
 """
-Tier 2 Weekly Parquet Build
+Tier 2 Weekly Parquet Build - DuckDB VERSION (memory efficient)
 
-Derives Tier 2 weekly dataset from already-uploaded Tier 3 daily parquets in R2.
-Tier 2 = Tier 3 minus: futures_raw, spot_prices, flags, diag
+Uses DuckDB for schema-safe parquet merging with low memory footprint.
 
-Weekly cadence:
-- Cron runs Monday 00:05 UTC with --previous-week
-- Builds the most recent complete Mon-Sun week (end_day = previous Sunday UTC)
-- Window: end_day - 6 days to end_day (7 days)
+Tier 2 columns (8):
+- symbol, snapshot_ts
+- meta, spot_raw, derived, scores (full structs)
+- twitter_sentiment_meta (full struct)
+- twitter_sentiment_windows.last_cycle only (drop last_2_cycles)
 
-Usage:
-    # Cron mode: build previous Mon-Sun week (for Monday 00:05 UTC cron)
-    python3 scripts/build_tier2_weekly.py --previous-week --upload
-
-    # Dry-run to see computed window
-    python3 scripts/build_tier2_weekly.py --previous-week --dry-run
-
-    # Manual/backfill: build specific week ending on a date
-    python3 scripts/build_tier2_weekly.py --end-day 2026-01-15 --upload
-
-    # Force overwrite existing R2 objects
-    python3 scripts/build_tier2_weekly.py --end-day 2026-01-15 --upload --force
-
-Output:
-    Local:  output/tier2_weekly/YYYY-MM-DD/dataset_entries_7d.parquet
-            output/tier2_weekly/YYYY-MM-DD/manifest.json
-    R2:     tier2/weekly/YYYY-MM-DD/dataset_entries_7d.parquet
-            tier2/weekly/YYYY-MM-DD/manifest.json
+EXCLUDES: futures_raw, spot_prices, flags, diag, last_2_cycles
 """
 
 import argparse
+import gc
 import hashlib
 import json
-import os
 import sys
 import tempfile
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import List, Optional, Tuple
 
-# Add scripts directory to path for local imports
 sys.path.insert(0, str(Path(__file__).parent))
+from r2_config import get_r2_config
 
-from r2_config import get_r2_config, R2Config
-
-try:
-    import pyarrow as pa
-    import pyarrow.parquet as pq
-except ImportError:
-    print("[ERROR] pyarrow is required. Install with: pip install pyarrow", file=sys.stderr)
-    sys.exit(1)
-
-try:
-    import boto3
-    from botocore.exceptions import ClientError
-except ImportError:
-    print("[ERROR] boto3 is required. Install with: pip install boto3", file=sys.stderr)
-    sys.exit(1)
-
+import boto3
+import duckdb
 
 # ==============================================================================
-# Configuration
+# Config
 # ==============================================================================
 
-# Default output directory
-DEFAULT_OUTPUT_DIR = Path("./output/tier2_weekly")
+TIER3_PREFIX = "tier3/daily"
+TIER2_PREFIX = "tier2/weekly"
+OUTPUT_DIR = Path("./output/tier2_weekly")
+MIN_DAYS = 5
 
-# Parquet compression
-PARQUET_COMPRESSION = "zstd"
-
-# Minimum days required to build a Tier 2 weekly export
-# Set to 5 to allow 2 missing days in a 7-day window
-MIN_DAYS_DEFAULT = 5
-
-# ==============================================================================
-# Tier 2 Column Policy (per agreed tier plan)
-# ==============================================================================
-#
-# AUDIT vs TIER PLAN:
-# - Tier 2 = Tier 1 + richer features, NO futures, NO spot time-series
-# - Tier 1 fields: identity/timing, core spot snapshot, minimal derived, scores.final, aggregated sentiment
-# - Tier 2 adds ON TOP:
-#   1) Full spot_raw.* (depth levels, OBI, micro premium, impact, liq efficiency raw, etc.)
-#   2) Full derived.* and full scores.*
-#   3) twitter_sentiment_meta.* (snapshot provenance)
-#
-# LIMITATION: twitter_sentiment_windows contains dynamic-key structs (tag_counts,
-# cashtag_counts, mention_counts, url_domain_counts) with 10K-17K unique keys per day.
-# These cannot be concatenated across days (different schemas) and MAP conversion
-# takes 15-30 minutes per weekly build. For now, we EXCLUDE twitter_sentiment_windows
-# from Tier 2. The essential sentiment metadata is in twitter_sentiment_meta.
-# Full sentiment data is available in Tier 3 (daily files, no concatenation needed).
-
-# Columns to EXCLUDE from Tier 2 (present in Tier 3)
-TIER2_EXCLUDED_COLUMNS = [
-    "futures_raw",                 # Entire futures block (preserve Tier 3 value)
-    "spot_prices",                 # Spot price time-series arrays (preserve Tier 3 value)
-    "flags",                       # Boolean flags block (Tier 3 only)
-    "diag",                        # Diagnostics block (Tier 3 only)
-    "twitter_sentiment_windows",   # Dynamic-key structs, see note above
-    # NOTE: norm, labels are typically empty/null in v7
-]
-
-# Dynamic-key struct fields reference (within twitter_sentiment_windows)
-# These are the problematic fields where keys are actual hashtags/handles/domains
-DYNAMIC_KEY_FIELDS = [
-    "tag_counts",
-    "cashtag_counts", 
-    "mention_counts",
-    "url_domain_counts",
-]
-
-# Columns that MUST be present in Tier 2 output
-TIER2_REQUIRED_COLUMNS = [
+# Columns to SELECT from Tier 3
+TIER2_COLUMNS = [
     "symbol",
     "snapshot_ts",
     "meta",
@@ -121,750 +47,242 @@ TIER2_REQUIRED_COLUMNS = [
     "derived",
     "scores",
     "twitter_sentiment_meta",
-    # NOTE: twitter_sentiment_windows excluded due to dynamic-key performance issue
+    "twitter_sentiment_windows",
 ]
 
-# R2 path patterns
-TIER3_DAILY_PREFIX = "tier3/daily"
-TIER2_WEEKLY_PREFIX = "tier2/weekly"
-
-
 # ==============================================================================
-# S3/R2 Client
+# Helpers
 # ==============================================================================
 
-def get_s3_client(config: R2Config):
-    """Create boto3 S3 client configured for R2."""
-    return boto3.client(
-        "s3",
-        endpoint_url=config.endpoint,
-        aws_access_key_id=config.access_key_id,
-        aws_secret_access_key=config.secret_access_key,
-    )
+def get_s3():
+    cfg = get_r2_config()
+    return boto3.client("s3", endpoint_url=cfg.endpoint,
+                        aws_access_key_id=cfg.access_key_id,
+                        aws_secret_access_key=cfg.secret_access_key), cfg.bucket
 
-
-# ==============================================================================
-# Date Range Calculation
-# ==============================================================================
-
-def compute_previous_sunday() -> str:
-    """
-    Compute the most recent Sunday (UTC) strictly before today.
-    
-    For cron running Monday 00:05 UTC, this returns yesterday (Sunday).
-    For any other day, it returns the most recent completed Sunday.
-    
-    Returns:
-        Sunday date in YYYY-MM-DD format
-    """
+def previous_sunday():
     today = datetime.now(timezone.utc).date()
-    # weekday(): Monday=0, Sunday=6
-    days_since_sunday = (today.weekday() + 1) % 7
-    if days_since_sunday == 0:
-        # Today is Sunday, so "previous Sunday" is 7 days ago
-        days_since_sunday = 7
-    previous_sunday = today - timedelta(days=days_since_sunday)
-    return previous_sunday.strftime("%Y-%m-%d")
+    days_back = (today.weekday() + 1) % 7
+    if days_back == 0:
+        days_back = 7
+    return (today - timedelta(days=days_back)).strftime("%Y-%m-%d")
 
+def week_days(end_day):
+    end = datetime.strptime(end_day, "%Y-%m-%d").date()
+    return [(end - timedelta(days=6-i)).strftime("%Y-%m-%d") for i in range(7)]
 
-def calculate_week_range(end_day: str, days: int = 7) -> Tuple[str, str, List[str]]:
-    """
-    Calculate the date range for a weekly build.
+def discover_weeks(s3, bucket, min_days=5):
+    """Find all calendaristic weeks with enough Tier 3 data."""
+    paginator = s3.get_paginator('list_objects_v2')
+    days = set()
+    for page in paginator.paginate(Bucket=bucket, Prefix=f"{TIER3_PREFIX}/", Delimiter='/'):
+        for p in page.get('CommonPrefixes', []):
+            d = p['Prefix'].rstrip('/').split('/')[-1]
+            if len(d) == 10:
+                days.add(d)
     
-    Args:
-        end_day: End date in YYYY-MM-DD format
-        days: Number of days to include (default 7)
+    if not days:
+        return []
     
-    Returns:
-        Tuple of (start_day, end_day, list of all days)
-    """
-    end_date = datetime.strptime(end_day, "%Y-%m-%d").date()
-    start_date = end_date - timedelta(days=days - 1)
+    min_dt = datetime.strptime(min(days), "%Y-%m-%d").date()
+    first_sun = min_dt + timedelta(days=(6 - min_dt.weekday()) % 7)
     
-    all_days = []
-    current = start_date
-    while current <= end_date:
-        all_days.append(current.strftime("%Y-%m-%d"))
-        current += timedelta(days=1)
+    today = datetime.now(timezone.utc).date()
+    last_sun = today - timedelta(days=(today.weekday() + 1) % 7 or 7)
     
-    return start_date.strftime("%Y-%m-%d"), end_day, all_days
+    weeks = []
+    sun = first_sun
+    while sun <= last_sun:
+        wk_days = week_days(sun.strftime("%Y-%m-%d"))
+        present = [d for d in wk_days if d in days]
+        if len(present) >= min_days:
+            weeks.append(sun.strftime("%Y-%m-%d"))
+        sun += timedelta(days=7)
+    
+    return weeks
 
-
-# ==============================================================================
-# R2 Input Verification
-# ==============================================================================
-
-def verify_tier3_inputs_exist(
-    s3_client,
-    bucket: str,
-    days: List[str]
-) -> Tuple[List[str], List[str], List[str]]:
-    """
-    Verify which Tier 3 daily parquets and manifests exist in R2.
-    
-    Returns:
-        Tuple of (present_days, missing_days, found_parquet_keys)
-    """
-    present_days = []
-    missing_days = []
-    found_keys = []
-    
-    for day in days:
-        parquet_key = f"{TIER3_DAILY_PREFIX}/{day}/data.parquet"
-        manifest_key = f"{TIER3_DAILY_PREFIX}/{day}/manifest.json"
-        
-        try:
-            # Both parquet and manifest must exist
-            s3_client.head_object(Bucket=bucket, Key=parquet_key)
-            s3_client.head_object(Bucket=bucket, Key=manifest_key)
-            present_days.append(day)
-            found_keys.append(parquet_key)
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "404":
-                missing_days.append(day)
-            else:
-                raise
-    
-    return present_days, missing_days, found_keys
-
-
-def fetch_tier3_coverage(
-    s3_client,
-    bucket: str,
-    day: str
-) -> dict:
-    """
-    Fetch Tier 3 manifest and extract coverage metadata.
-    
-    Returns:
-        Dict with coverage fields from Tier 3 manifest.
-    """
-    manifest_key = f"{TIER3_DAILY_PREFIX}/{day}/manifest.json"
-    
-    try:
-        response = s3_client.get_object(Bucket=bucket, Key=manifest_key)
-        manifest = json.loads(response["Body"].read())
-        
-        return {
-            "hours_found": manifest.get("hours_found", 24),
-            "hours_expected": manifest.get("hours_expected", 24),
-            "is_partial": manifest.get("is_partial", False),
-            "missing_hours": manifest.get("missing_hours", []),
-            "rows_by_hour": manifest.get("rows_by_hour"),
-            "row_count": manifest.get("row_count", 0),
-        }
-    except Exception as e:
-        # If we can't read manifest, assume full coverage
-        return {
-            "hours_found": 24,
-            "hours_expected": 24,
-            "is_partial": False,
-            "missing_hours": [],
-            "rows_by_hour": None,
-            "row_count": 0,
-        }
-
-
-# ==============================================================================
-# Dynamic-Key Struct to MAP Conversion
-# ==============================================================================
-
-def struct_to_map(struct_array: pa.StructArray) -> pa.MapArray:
-    """
-    Convert a struct array with dynamic keys to a MAP<string, int64> array.
-    
-    Example: struct<BTC: 5, ETH: 3, DOGE: 1> -> map[('BTC', 5), ('ETH', 3), ('DOGE', 1)]
-    
-    This normalizes dynamic-key structs (where field names are hashtags/handles/domains)
-    into a stable schema that can be concatenated across days.
-    
-    Optimized v3: Uses single to_pylist() call on the struct array (one PyArrow call total),
-    then filters in pure Python.
-    """
-    if struct_array is None or len(struct_array) == 0:
-        return pa.array([], type=pa.map_(pa.string(), pa.int64()))
-    
-    n_rows = len(struct_array)
-    struct_type = struct_array.type
-    
-    if struct_type.num_fields == 0:
-        return pa.array([[] for _ in range(n_rows)], type=pa.map_(pa.string(), pa.int64()))
-    
-    # Single PyArrow call - convert entire struct array to list of dicts
-    # This is much faster than iterating fields
-    all_rows = struct_array.to_pylist()
-    
-    # Convert each dict to list of (key, value) tuples, filtering val > 0
-    result_maps = []
-    for row_dict in all_rows:
-        if row_dict is None:
-            result_maps.append(None)
-        else:
-            items = [(k, v) for k, v in row_dict.items() if v is not None and v > 0]
-            result_maps.append(items if items else None)
-    
-    return pa.array(result_maps, type=pa.map_(pa.string(), pa.int64()))
-
-
-def transform_sentiment_windows(table: pa.Table) -> pa.Table:
-    """
-    Transform twitter_sentiment_windows to use MAP columns for dynamic-key fields.
-    
-    This converts problematic struct columns (tag_counts, cashtag_counts, mention_counts,
-    url_domain_counts) from struct<key1: int, key2: int, ...> to map<string, int64>.
-    
-    This enables stable schema concatenation across days where the keys differ.
-    """
-    if "twitter_sentiment_windows" not in table.column_names:
-        return table
-    
-    tsw_col = table.column("twitter_sentiment_windows")
-    tsw_idx = table.schema.get_field_index("twitter_sentiment_windows")
-    
-    # Check if it's a struct type
-    if not pa.types.is_struct(tsw_col.type):
-        return table
-    
-    # Process each chunk in the column
-    new_chunks = []
-    total_chunks = len(tsw_col.chunks)
-    for chunk_idx, chunk in enumerate(tsw_col.chunks):
-        if total_chunks > 1:
-            print(f"        Chunk {chunk_idx + 1}/{total_chunks}...", end="", flush=True)
-        new_chunk = transform_sentiment_chunk(chunk)
-        new_chunks.append(new_chunk)
-        if total_chunks > 1:
-            print(" done")
-    
-    # Create new column with transformed chunks
-    new_tsw_col = pa.chunked_array(new_chunks)
-    
-    # Replace column in table
-    new_table = table.set_column(tsw_idx, "twitter_sentiment_windows", new_tsw_col)
-    
-    return new_table
-
-
-def transform_sentiment_chunk(chunk: pa.StructArray) -> pa.StructArray:
-    """
-    Transform a single chunk of twitter_sentiment_windows.
-    
-    Recursively processes last_cycle and last_2_cycles to convert dynamic-key
-    struct fields to MAP columns.
-    """
-    if chunk is None or len(chunk) == 0:
-        return chunk
-    
-    chunk_type = chunk.type
-    new_fields = []
-    new_arrays = []
-    
-    for field_idx in range(chunk_type.num_fields):
-        field = chunk_type.field(field_idx)
-        field_array = chunk.field(field_idx)
-        
-        if field.name in ("last_cycle", "last_2_cycles"):
-            # Recursively transform the cycle struct
-            transformed = transform_cycle_struct(field_array, cycle_name=field.name)
-            new_fields.append(pa.field(field.name, transformed.type))
-            new_arrays.append(transformed)
-        else:
-            new_fields.append(field)
-            new_arrays.append(field_array)
-    
-    # Build new struct array
-    new_struct_type = pa.struct(new_fields)
-    return pa.StructArray.from_arrays(new_arrays, fields=new_fields)
-
-
-# Track progress across transform calls
-_transform_progress = {"fields_done": 0, "last_print": 0}
-
-def transform_cycle_struct(cycle_array: pa.StructArray, cycle_name: str = "") -> pa.StructArray:
-    """
-    Transform a cycle struct (last_cycle or last_2_cycles) to use MAP columns
-    for dynamic-key fields.
-    """
-    global _transform_progress
-    
-    if cycle_array is None or len(cycle_array) == 0:
-        return cycle_array
-    
-    if not pa.types.is_struct(cycle_array.type):
-        return cycle_array
-    
-    cycle_type = cycle_array.type
-    new_fields = []
-    new_arrays = []
-    
-    for field_idx in range(cycle_type.num_fields):
-        field = cycle_type.field(field_idx)
-        field_array = cycle_array.field(field_idx)
-        
-        if field.name in DYNAMIC_KEY_FIELDS:
-            # Convert dynamic-key struct to MAP
-            if pa.types.is_struct(field.type):
-                n_keys = field.type.num_fields
-                print(f"        → {cycle_name}.{field.name} ({n_keys} keys, {len(cycle_array)} rows)...", end="", flush=True)
-                map_array = struct_to_map(field_array)
-                print(" ✓")
-                new_fields.append(pa.field(field.name, pa.map_(pa.string(), pa.int64())))
-                new_arrays.append(map_array)
-            else:
-                # Already a map or other type, keep as-is
-                new_fields.append(field)
-                new_arrays.append(field_array)
-        else:
-            # Keep other fields as-is
-            new_fields.append(field)
-            new_arrays.append(field_array)
-    
-    return pa.StructArray.from_arrays(new_arrays, fields=new_fields)
-
-
-# ==============================================================================
-# Column Projection
-# ==============================================================================
-
-def get_tier2_columns(schema: pa.Schema) -> List[str]:
-    """
-    Get list of columns to include in Tier 2 output.
-    
-    Args:
-        schema: PyArrow schema from Tier 3 parquet
-    
-    Returns:
-        List of column names to include
-    """
-    all_columns = [field.name for field in schema]
-    tier2_columns = [col for col in all_columns if col not in TIER2_EXCLUDED_COLUMNS]
-    return tier2_columns
-
-
-def verify_tier2_output(table: pa.Table) -> Tuple[bool, List[str]]:
-    """
-    Verify Tier 2 output has correct columns.
-    
-    Returns:
-        Tuple of (is_valid, list of issues)
-    """
-    issues = []
-    column_names = [field.name for field in table.schema]
-    
-    # Check excluded columns are NOT present
-    for col in TIER2_EXCLUDED_COLUMNS:
-        if col in column_names:
-            issues.append(f"Excluded column '{col}' found in output")
-    
-    # Check required columns ARE present
-    for col in TIER2_REQUIRED_COLUMNS:
-        if col not in column_names:
-            issues.append(f"Required column '{col}' missing from output")
-    
-    return len(issues) == 0, issues
-
-
-# ==============================================================================
-# Parquet Processing
-# ==============================================================================
-
-def download_and_project_parquet(
-    s3_client,
-    bucket: str,
-    key: str,
-    columns: Optional[List[str]] = None
-) -> pa.Table:
-    """
-    Download a parquet from R2 and optionally project columns.
-    
-    Uses a temp file to avoid loading entire file into memory twice.
-    """
-    with tempfile.NamedTemporaryFile(suffix=".parquet", delete=True) as tmp:
-        s3_client.download_file(bucket, key, tmp.name)
-        
-        if columns:
-            table = pq.read_table(tmp.name, columns=columns)
-        else:
-            table = pq.read_table(tmp.name)
-        
-        return table
-
-
-def build_tier2_from_tier3(
-    s3_client,
-    bucket: str,
-    input_keys: List[str],
-    output_path: Path
-) -> Tuple[pa.Table, int]:
-    """
-    Build Tier 2 parquet from multiple Tier 3 daily parquets.
-    
-    Processes day-by-day to manage memory.
-    
-    Returns:
-        Tuple of (combined table, total rows)
-    """
-    tables = []
-    tier2_columns = None
-    
-    for i, key in enumerate(input_keys):
-        day = key.split("/")[2]  # tier3/daily/YYYY-MM-DD/data.parquet
-        print(f"  [{i+1}/{len(input_keys)}] Processing {day}...")
-        
-        # First file: determine columns to include
-        if tier2_columns is None:
-            # Read schema only first
-            with tempfile.NamedTemporaryFile(suffix=".parquet", delete=True) as tmp:
-                s3_client.download_file(bucket, key, tmp.name)
-                schema = pq.read_schema(tmp.name)
-                tier2_columns = get_tier2_columns(schema)
-                table = pq.read_table(tmp.name, columns=tier2_columns)
-        else:
-            table = download_and_project_parquet(s3_client, bucket, key, tier2_columns)
-        
-        tables.append(table)
-        print(f"      {table.num_rows} rows")
-    
-    # Concatenate all tables
-    print("  Concatenating tables...")
-    combined = pa.concat_tables(tables)
-    
-    # Free intermediate tables
-    del tables
-    
-    return combined, combined.num_rows
-
-
-# ==============================================================================
-# Output Writing
-# ==============================================================================
-
-def compute_sha256(filepath: Path) -> str:
-    """Compute SHA256 hash of a file."""
-    sha256 = hashlib.sha256()
-    with open(filepath, "rb") as f:
+def sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(8192), b""):
-            sha256.update(chunk)
-    return sha256.hexdigest()
+            h.update(chunk)
+    return h.hexdigest()
+
+# ==============================================================================
+# Core Processing with DuckDB
+# ==============================================================================
+
+def download_day(s3, bucket, day, temp_dir):
+    """Download one day's parquet."""
+    key = f"{TIER3_PREFIX}/{day}/data.parquet"
+    local_path = Path(temp_dir) / f"{day}.parquet"
+    s3.download_file(bucket, key, str(local_path))
+    return local_path
 
 
-def create_manifest(
-    end_day: str,
-    start_day: str,
-    days_expected: List[str],
-    days_present: List[str],
-    days_missing: List[str],
-    per_day_coverage: dict,
-    min_days_threshold: int,
-    source_inputs: List[str],
-    row_count: int,
-    parquet_path: Path,
-    tier2_columns: List[str],
-    window_basis: str = "end_day"
-) -> dict:
-    """Create manifest for Tier 2 weekly output with source_coverage.
+def build_week(s3, bucket, end_day, upload=False, force=False):
+    """Build one week's Tier 2 parquet using DuckDB - one file at a time."""
+    print(f"\n{'='*60}")
+    print(f"Building week ending {end_day}")
+    print(f"{'='*60}")
     
-    Args:
-        window_basis: "previous_week_utc" if built with --previous-week, else "end_day"
-    """
-    parquet_sha256 = compute_sha256(parquet_path)
-    parquet_size = parquet_path.stat().st_size
+    days = week_days(end_day)
+    start_day = days[0]
     
-    # Calculate coverage stats
-    partial_days_count = sum(1 for d in days_present if per_day_coverage.get(d, {}).get("is_partial", False))
+    # Check which days exist
+    present = []
+    for d in days:
+        try:
+            s3.head_object(Bucket=bucket, Key=f"{TIER3_PREFIX}/{d}/data.parquet")
+            present.append(d)
+        except:
+            pass
     
-    # Build coverage note
-    coverage_parts = []
-    coverage_parts.append(f"This weekly export is derived from {len(days_present)}/7 daily partitions.")
-    if partial_days_count > 0:
-        coverage_parts.append(f"{partial_days_count} of the included days are partial.")
-    if days_missing:
-        coverage_parts.append(f"Missing days: {', '.join(days_missing)}.")
-    if partial_days_count > 0 or days_missing:
-        coverage_parts.append("See per_day for coverage details.")
-    coverage_note = " ".join(coverage_parts)
+    print(f"Window: {start_day} to {end_day}")
+    print(f"Days present: {len(present)}/7 - {present}")
     
-    return {
-        "schema_version": "v7",
-        "tier": "tier2",
-        "window": {
-            "window_basis": window_basis,
-            "week_start_day": start_day,
-            "week_end_day": end_day,
-            "days_expected": days_expected,
-            "days_included": days_present,
-        },
-        "build_ts_utc": datetime.now(timezone.utc).isoformat(),
-        "source_inputs": source_inputs,
-        "row_count": row_count,
-        "source_coverage": {
-            "days_expected": days_expected,
-            "days_present": days_present,
-            "days_missing": days_missing,
-            "per_day": per_day_coverage,
-            "present_days_count": len(days_present),
-            "missing_days_count": len(days_missing),
-            "partial_days_count": partial_days_count,
-            "min_days_threshold_used": min_days_threshold,
-            "coverage_note": coverage_note,
-        },
-        "column_policy": {
-            "included_top_level_columns": tier2_columns,
-            "excluded_top_level_columns": TIER2_EXCLUDED_COLUMNS,
-            "explicit_exclusions": [
-                "futures_raw",
-                "spot_prices", 
-                "flags",
-                "diag",
-                "twitter_sentiment_windows",
-            ],
-            "exclusion_notes": {
-                "twitter_sentiment_windows": "Excluded due to dynamic-key structs (10K-17K keys) that cannot be efficiently concatenated across days. Full sentiment data available in Tier 3.",
-            },
-        },
-        "parquet_sha256": parquet_sha256,
-        "parquet_size_bytes": parquet_size,
-    }
-
-
-def write_outputs(
-    table: pa.Table,
-    manifest: dict,
-    output_dir: Path
-) -> Tuple[Path, Path]:
-    """Write parquet and manifest to local output directory."""
-    output_dir.mkdir(parents=True, exist_ok=True)
+    if len(present) < MIN_DAYS:
+        print(f"[SKIP] Not enough days ({len(present)} < {MIN_DAYS})")
+        return False
     
-    parquet_path = output_dir / "dataset_entries_7d.parquet"
-    manifest_path = output_dir / "manifest.json"
+    # Setup output
+    out_dir = OUTPUT_DIR / end_day
+    out_dir.mkdir(parents=True, exist_ok=True)
+    parquet_path = out_dir / "dataset_entries_7d.parquet"
+    manifest_path = out_dir / "manifest.json"
     
-    # Write parquet with zstd compression
-    pq.write_table(
-        table,
-        parquet_path,
-        compression=PARQUET_COMPRESSION,
-    )
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        
+        # Process each day one at a time
+        print(f"\nProcessing {len(present)} days...")
+        total_rows = 0
+        
+        # Column list - select only tier2 columns
+        # For twitter_sentiment_last_cycle, select only allowed fields
+        # EXCLUDE: top_terms, tag_counts, mention_counts, lexicon_sentiment, 
+        #          content_stats, media_count, url_domain_counts, cashtag_counts
+        col_select = """
+            symbol,
+            snapshot_ts, 
+            meta,
+            spot_raw,
+            derived,
+            scores,
+            twitter_sentiment_meta,
+            {
+                'ai_sentiment': twitter_sentiment_windows.last_cycle.ai_sentiment,
+                'author_stats': twitter_sentiment_windows.last_cycle.author_stats,
+                'bucket_has_valid_sentiment': twitter_sentiment_windows.last_cycle.bucket_has_valid_sentiment,
+                'bucket_min_posts_for_score': twitter_sentiment_windows.last_cycle.bucket_min_posts_for_score,
+                'bucket_status': twitter_sentiment_windows.last_cycle.bucket_status,
+                'category_counts': twitter_sentiment_windows.last_cycle.category_counts,
+                'hybrid_decision_stats': twitter_sentiment_windows.last_cycle.hybrid_decision_stats,
+                'platform_engagement': twitter_sentiment_windows.last_cycle.platform_engagement,
+                'posts_neg': twitter_sentiment_windows.last_cycle.posts_neg,
+                'posts_neu': twitter_sentiment_windows.last_cycle.posts_neu,
+                'posts_pos': twitter_sentiment_windows.last_cycle.posts_pos,
+                'posts_total': twitter_sentiment_windows.last_cycle.posts_total,
+                'sentiment_activity': twitter_sentiment_windows.last_cycle.sentiment_activity
+            } AS twitter_sentiment_last_cycle
+        """
+        
+        for i, day in enumerate(present):
+            t0 = time.time()
+            print(f"  [{i+1}/{len(present)}] {day}...", end=" ", flush=True)
+            
+            # Download
+            src_path = download_day(s3, bucket, day, temp_dir)
+            out_path = temp_dir_path / f"tier2_{day}.parquet"
+            
+            # Process with DuckDB - one file only
+            con = duckdb.connect(":memory:")
+            con.execute("SET memory_limit='6GB'")
+            con.execute("SET threads=1")
+            con.execute("SET preserve_insertion_order=false")
+            
+            query = f"""
+                COPY (SELECT {col_select} FROM read_parquet('{src_path}'))
+                TO '{out_path}' (FORMAT PARQUET, COMPRESSION ZSTD)
+            """
+            con.execute(query)
+            
+            # Get row count
+            rows = con.execute(f"SELECT COUNT(*) FROM read_parquet('{out_path}')").fetchone()[0]
+            total_rows += rows
+            
+            con.close()
+            
+            # Delete source to free disk space
+            src_path.unlink()
+            gc.collect()
+            
+            print(f"{rows:,} rows ({time.time()-t0:.1f}s)")
+        
+        # Merge all tier2 files into one - using PyArrow (simpler schemas now)
+        print(f"\nMerging {len(present)} processed files...")
+        t0 = time.time()
+        
+        tier2_files = sorted(temp_dir_path.glob("tier2_*.parquet"))
+        
+        # Read and concat with PyArrow - schemas should match now
+        import pyarrow.parquet as pq
+        import pyarrow as pa
+        
+        tables = []
+        for f in tier2_files:
+            t = pq.read_table(f)
+            tables.append(t)
+            print(f"    Read {f.name}: {t.num_rows} rows")
+        
+        # Concat - this should work since schemas match after DuckDB processing
+        merged = pa.concat_tables(tables, promote_options="permissive")
+        pq.write_table(merged, parquet_path, compression="zstd")
+        
+        del tables
+        del merged
+        gc.collect()
+        
+        print(f"  Done in {time.time()-t0:.1f}s")
     
     # Write manifest
+    size_mb = parquet_path.stat().st_size / (1024*1024)
+    print(f"\nOutput: {parquet_path}")
+    print(f"  Rows: {total_rows:,}")
+    print(f"  Size: {size_mb:.2f} MB")
+    
+    manifest = {
+        "schema_version": "v7",
+        "tier": "tier2",
+        "window": {"start": start_day, "end": end_day},
+        "days_present": present,
+        "days_missing": [d for d in days if d not in present],
+        "row_count": total_rows,
+        "build_ts": datetime.now(timezone.utc).isoformat(),
+        "parquet_sha256": sha256(parquet_path),
+        "parquet_size_bytes": parquet_path.stat().st_size,
+    }
+    
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)
-    
-    return parquet_path, manifest_path
-
-
-# ==============================================================================
-# R2 Upload
-# ==============================================================================
-
-def upload_to_r2(
-    s3_client,
-    bucket: str,
-    local_path: Path,
-    r2_key: str,
-    force: bool = False
-) -> bool:
-    """
-    Upload a file to R2.
-    
-    Returns:
-        True if uploaded, False if skipped (already exists and not force)
-    """
-    # Check if exists
-    if not force:
-        try:
-            s3_client.head_object(Bucket=bucket, Key=r2_key)
-            return False  # Already exists
-        except ClientError as e:
-            if e.response["Error"]["Code"] != "404":
-                raise
+    print(f"  Manifest: {manifest_path}")
     
     # Upload
-    s3_client.upload_file(str(local_path), bucket, r2_key)
-    return True
-
-
-# ==============================================================================
-# Main Build Logic
-# ==============================================================================
-
-def build_tier2_weekly(
-    end_day: str,
-    days: int = 7,
-    min_days: int = MIN_DAYS_DEFAULT,
-    output_dir: Optional[Path] = None,
-    dry_run: bool = False,
-    upload: bool = False,
-    force: bool = False,
-    window_basis: str = "end_day"
-) -> bool:
-    """
-    Main entry point for Tier 2 weekly build.
-    
-    Args:
-        end_day: End date for the week (YYYY-MM-DD)
-        days: Number of days in the window (default 7)
-        min_days: Minimum Tier 3 days required to proceed (default 5)
-        output_dir: Local output directory
-        dry_run: If True, skip R2 upload
-        upload: If True, upload to R2
-        force: If True, overwrite existing R2 objects
-        window_basis: "previous_week_utc" if --previous-week, else "end_day"
-    
-    Returns:
-        True if successful, False otherwise
-    """
-    print()
-    print("=" * 60)
-    print(f"TIER 2 WEEKLY BUILD: ending {end_day}")
-    print("=" * 60)
-    
-    # Calculate date range
-    start_day, end_day, all_days = calculate_week_range(end_day, days)
-    print(f"\n[WINDOW] {start_day} to {end_day} ({len(all_days)} days)")
-    print(f"[BASIS] {window_basis}")
-    print(f"[THRESHOLD] Minimum {min_days}/{len(all_days)} days required")
-    
-    # Set output directory
-    if output_dir is None:
-        output_dir = DEFAULT_OUTPUT_DIR / end_day
-    
-    # Get R2 config and client
-    print("\n[STEP 1] Connecting to R2...")
-    config = get_r2_config()
-    s3_client = get_s3_client(config)
-    print(f"[OK] Connected to bucket: {config.bucket}")
-    
-    # Verify Tier 3 inputs and get coverage
-    print("\n[STEP 2] Checking Tier 3 inputs...")
-    present_days, missing_days, found_keys = verify_tier3_inputs_exist(
-        s3_client, config.bucket, all_days
-    )
-    
-    print(f"    Present: {len(present_days)}/{len(all_days)} days")
-    if present_days:
-        print(f"    Days present: {present_days}")
-    if missing_days:
-        print(f"    Days missing: {missing_days}")
-    
-    # Check threshold
-    if len(present_days) < min_days:
-        print(f"\n[ERROR] Insufficient Tier 3 inputs: {len(present_days)}/{min_days} required")
-        print(f"    Missing days: {missing_days}")
-        print(f"[HINT] Use --min-days to lower the threshold (current: {min_days})")
-        return False
-    
-    # Fetch coverage metadata for each present day
-    print("\n[STEP 3] Fetching Tier 3 coverage metadata...")
-    per_day_coverage = {}
-    partial_count = 0
-    for day in present_days:
-        coverage = fetch_tier3_coverage(s3_client, config.bucket, day)
-        per_day_coverage[day] = coverage
-        if coverage.get("is_partial"):
-            partial_count += 1
-            print(f"    {day}: {coverage['hours_found']}/24 hours (PARTIAL)")
-        else:
-            print(f"    {day}: {coverage['hours_found']}/24 hours")
-    
-    if partial_count > 0:
-        print(f"[INFO] {partial_count} partial day(s) included")
-    if missing_days:
-        print(f"[INFO] Proceeding with {len(present_days)}/{len(all_days)} days (>= {min_days} threshold)")
-    else:
-        print(f"[OK] All {len(present_days)} Tier 3 inputs found")
-    
-    # Build Tier 2 from Tier 3
-    print("\n[STEP 4] Building Tier 2 parquet...")
-    combined_table, row_count = build_tier2_from_tier3(
-        s3_client, config.bucket, found_keys, output_dir
-    )
-    
-    # Verify output columns
-    print("\n[STEP 5] Verifying output columns...")
-    is_valid, issues = verify_tier2_output(combined_table)
-    print("\n[STEP 5] Verifying output columns...")
-    is_valid, issues = verify_tier2_output(combined_table)
-    if not is_valid:
-        print("[ERROR] Output verification failed:")
-        for issue in issues:
-            print(f"  - {issue}")
-        return False
-    print("[OK] Output columns verified")
-    
-    # Get tier2 columns for manifest
-    tier2_columns = [field.name for field in combined_table.schema]
-    
-    # Write local outputs (always, even for dry-run)
-    print("\n[STEP 6] Writing local outputs...")
-    parquet_path, manifest_path = write_outputs(
-        combined_table,
-        {},  # Placeholder, will compute after write
-        output_dir
-    )
-    
-    # Now create actual manifest with hash and coverage
-    manifest = create_manifest(
-        end_day=end_day,
-        start_day=start_day,
-        days_expected=all_days,
-        days_present=present_days,
-        days_missing=missing_days,
-        per_day_coverage=per_day_coverage,
-        min_days_threshold=min_days,
-        source_inputs=found_keys,
-        row_count=row_count,
-        parquet_path=parquet_path,
-        tier2_columns=tier2_columns,
-        window_basis=window_basis,
-    )
-    
-    # Rewrite manifest with correct data
-    with open(manifest_path, "w") as f:
-        json.dump(manifest, f, indent=2)
-    
-    parquet_size_mb = parquet_path.stat().st_size / (1024 * 1024)
-    print(f"[OK] Wrote {parquet_path} ({parquet_size_mb:.2f} MB)")
-    print(f"[OK] Wrote {manifest_path}")
-    
-    # Upload to R2
-    if upload and not dry_run:
-        print("\n[STEP 7] Uploading to R2...")
-        r2_prefix = f"{TIER2_WEEKLY_PREFIX}/{end_day}"
+    if upload:
+        print(f"\nUploading to R2...")
+        r2_prefix = f"{TIER2_PREFIX}/{end_day}"
         
-        parquet_key = f"{r2_prefix}/dataset_entries_7d.parquet"
-        manifest_key = f"{r2_prefix}/manifest.json"
-        
-        print(f"  Uploading {parquet_key}...")
-        uploaded_parquet = upload_to_r2(s3_client, config.bucket, parquet_path, parquet_key, force)
-        if not uploaded_parquet and not force:
-            print(f"  [SKIP] Already exists (use --force to overwrite)")
-        
-        print(f"  Uploading {manifest_key}...")
-        uploaded_manifest = upload_to_r2(s3_client, config.bucket, manifest_path, manifest_key, force)
-        
-        print(f"[OK] Upload complete to {config.bucket}")
-    elif dry_run:
-        print("\n[INFO] Dry run - skipping R2 upload")
-    else:
-        print("\n[INFO] No --upload flag - skipping R2 upload")
-    
-    # Summary
-    print()
-    print("=" * 60)
-    print("BUILD SUMMARY")
-    print("=" * 60)
-    print(f"Window:         {start_day} to {end_day}")
-    print(f"Days present:   {len(present_days)}/{len(all_days)}")
-    if missing_days:
-        print(f"Days missing:   {missing_days}")
-    if partial_count > 0:
-        print(f"Partial days:   {partial_count}")
-    print(f"Rows:           {row_count:,}")
-    print(f"Parquet size:   {parquet_size_mb:.2f} MB")
-    print(f"Local path:     {output_dir}/")
-    if upload and not dry_run:
-        print(f"R2 prefix:      {TIER2_WEEKLY_PREFIX}/{end_day}/")
-    print("=" * 60)
+        for local, key in [(parquet_path, f"{r2_prefix}/dataset_entries_7d.parquet"),
+                           (manifest_path, f"{r2_prefix}/manifest.json")]:
+            if not force:
+                try:
+                    s3.head_object(Bucket=bucket, Key=key)
+                    print(f"  [SKIP] {key} exists (use --force)")
+                    continue
+                except:
+                    pass
+            s3.upload_file(str(local), bucket, key)
+            print(f"  [OK] {key}")
     
     return True
 
@@ -874,102 +292,35 @@ def build_tier2_weekly(
 # ==============================================================================
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Build Tier 2 weekly parquet from Tier 3 daily inputs",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__
-    )
+    global MIN_DAYS
     
-    # Date selection (mutually exclusive)
-    date_group = parser.add_mutually_exclusive_group()
-    
-    date_group.add_argument(
-        "--end-day",
-        type=str,
-        default=None,
-        help="End date for the week (YYYY-MM-DD). For manual/backfill runs."
-    )
-    
-    date_group.add_argument(
-        "--previous-week",
-        action="store_true",
-        help="Build the most recent complete Mon-Sun week (end_day = previous Sunday UTC). For cron."
-    )
-    
-    parser.add_argument(
-        "--days",
-        type=int,
-        default=7,
-        help="Number of days to include (default: 7)"
-    )
-    
-    parser.add_argument(
-        "--min-days",
-        type=int,
-        default=MIN_DAYS_DEFAULT,
-        help=f"Minimum Tier 3 days required to build (default: {MIN_DAYS_DEFAULT})"
-    )
-    
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Write local files only, skip R2 upload"
-    )
-    
-    parser.add_argument(
-        "--upload",
-        action="store_true",
-        help="Upload to R2 after local build"
-    )
-    
-    parser.add_argument(
-        "--force",
-        action="store_true",
-        help="Overwrite existing R2 objects"
-    )
-    
-    parser.add_argument(
-        "--local-out",
-        type=str,
-        default=None,
-        help="Local output directory (default: output/tier2_weekly/YYYY-MM-DD/)"
-    )
-    
+    parser = argparse.ArgumentParser(description="Build Tier 2 weekly from Tier 3")
+    parser.add_argument("--all", action="store_true", help="Build all available weeks")
+    parser.add_argument("--upload", action="store_true", help="Upload to R2")
+    parser.add_argument("--force", action="store_true", help="Overwrite existing")
+    parser.add_argument("--min-days", type=int, default=MIN_DAYS)
     args = parser.parse_args()
     
-    # Determine end_day and window_basis
-    if args.previous_week:
-        # Cron mode: compute most recent Sunday
-        args.end_day = compute_previous_sunday()
-        window_basis = "previous_week_utc"
-        print(f"[INFO] --previous-week: computed end_day = {args.end_day} (most recent Sunday UTC)")
-    elif args.end_day is not None:
-        # Manual mode: use specified end_day
-        window_basis = "end_day"
+    MIN_DAYS = args.min_days
+    
+    s3, bucket = get_s3()
+    
+    if args.all:
+        print("Discovering calendaristic weeks...")
+        weeks = discover_weeks(s3, bucket, args.min_days)
+        print(f"Found {len(weeks)} weeks: {weeks}")
     else:
-        # No args: default to yesterday UTC (legacy behavior)
-        yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
-        args.end_day = yesterday.strftime("%Y-%m-%d")
-        window_basis = "end_day"
-        print(f"[INFO] No --end-day or --previous-week specified, defaulting to yesterday UTC: {args.end_day}")
+        weeks = [previous_sunday()]
+        print(f"Default: building week ending {weeks[0]}")
     
-    # Parse local output directory
-    output_dir = Path(args.local_out) if args.local_out else None
+    success = 0
+    for week in weeks:
+        if build_week(s3, bucket, week, args.upload, args.force):
+            success += 1
     
-    # Run build
-    success = build_tier2_weekly(
-        end_day=args.end_day,
-        days=args.days,
-        min_days=args.min_days,
-        output_dir=output_dir,
-        dry_run=args.dry_run,
-        upload=args.upload,
-        force=args.force,
-        window_basis=window_basis,
-    )
-    
-    sys.exit(0 if success else 1)
-
+    print(f"\n{'='*60}")
+    print(f"Done: {success}/{len(weeks)} weeks built")
+    print(f"{'='*60}")
 
 if __name__ == "__main__":
     main()

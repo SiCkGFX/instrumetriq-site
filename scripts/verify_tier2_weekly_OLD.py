@@ -1,28 +1,26 @@
 #!/usr/bin/env python3
 """
-Tier 1 Weekly Parquet Verification Script
+Tier 2 Weekly Parquet Verification Script
 
-Validates Tier 1 weekly parquet exports for correctness and completeness.
+Validates Tier 2 weekly parquet exports for correctness and completeness.
 Downloads from R2 (or uses local files) and runs comprehensive checks.
-
-Tier 1 uses a flattened schema (19 fields) with aggregated sentiment.
 
 Usage:
     # Default: verify ALL weeks in R2
-    python3 scripts/verify_tier1_weekly.py
+    python3 scripts/verify_tier2_weekly.py
 
     # Verify specific week by end date
-    python3 scripts/verify_tier1_weekly.py --end-day 2025-12-28
+    python3 scripts/verify_tier2_weekly.py --end-day 2025-12-28
 
     # Verify from local files
-    python3 scripts/verify_tier1_weekly.py --local output/tier1_weekly/2025-12-28
+    python3 scripts/verify_tier2_weekly.py --local output/tier2_weekly/2025-12-28
 
     # Verify from R2 explicitly
-    python3 scripts/verify_tier1_weekly.py --r2 --end-day 2025-12-28
+    python3 scripts/verify_tier2_weekly.py --r2 --end-day 2025-12-28
 
 Outputs:
-    Reports are written to output/verify_tier1/report_YYYYMMDD_HHMMSS.md
-    Per-week artifacts are written to output/verify_tier1/{end-day}/
+    Reports are written to output/verify_tier2/report_YYYYMMDD_HHMMSS.md
+    Per-week artifacts are written to output/verify_tier2/{end-day}/
 """
 
 import argparse
@@ -59,75 +57,65 @@ from r2_config import get_r2_config, R2Config
 # Constants
 # ==============================================================================
 
-VERIFY_CACHE_DIR = Path("./output/verify_tier1")
+VERIFY_CACHE_DIR = Path("./output/verify_tier2")
 
-# Tier 1 flattened schema (19 required fields)
-TIER1_REQUIRED_COLUMNS = [
-    # Identity + Timing (6)
+# Tier 2 column policy (per spec in tiers datasets explanations.txt)
+# twitter_sentiment_windows IS INCLUDED with dynamic-key fields extracted to sidecar
+TIER2_REQUIRED_COLUMNS = [
     "symbol",
     "snapshot_ts",
-    "meta_added_ts",
-    "meta_expires_ts",
-    "meta_duration_sec",
-    "meta_archive_schema_version",
-    # Spot (4)
-    "spot_mid",
-    "spot_spread_bps",
-    "spot_range_pct_24h",
-    "spot_ticker24_chg",
-    # Derived (2)
-    "derived_liq_global_pct",
-    "derived_spread_bps",
-    # Score (1)
-    "score_final",
-    # Sentiment (6)
-    "sentiment_posts_total",
-    "sentiment_posts_pos",
-    "sentiment_posts_neu",
-    "sentiment_posts_neg",
-    "sentiment_mean_score",
-    "sentiment_is_silent",
+    "meta",
+    "spot_raw",
+    "derived",
+    "scores",
+    "twitter_sentiment_meta",
+    "twitter_sentiment_windows",  # Now included per spec
 ]
 
-# Expected column types (loose matching)
-COLUMN_TYPES = {
-    "symbol": "string",
-    "snapshot_ts": "string",
-    "meta_added_ts": "string",
-    "meta_expires_ts": "string",
-    "meta_duration_sec": "double",
-    "meta_archive_schema_version": "int64",
-    "spot_mid": "double",
-    "spot_spread_bps": "double",
-    "spot_range_pct_24h": "double",
-    "spot_ticker24_chg": "double",
-    "derived_liq_global_pct": "double",
-    "derived_spread_bps": "double",
-    "score_final": "double",
-    "sentiment_posts_total": "int64",
-    "sentiment_posts_pos": "int64",
-    "sentiment_posts_neu": "int64",
-    "sentiment_posts_neg": "int64",
-    "sentiment_mean_score": "double",
-    "sentiment_is_silent": "bool",
-    "sentiment_recent_posts_count": "int64",
-    "sentiment_has_recent_activity": "bool",
-    "sentiment_hours_since_latest_tweet": "double",
-}
-
-# Critical columns that MUST have < 99.5% nulls
-CRITICAL_COLUMNS = [
-    "symbol",
-    "snapshot_ts",
-    "meta_added_ts",
-    "spot_mid",
-    "score_final",
+TIER2_EXCLUDED_COLUMNS = [
+    "futures_raw",
+    "spot_prices",
+    "flags",
+    "diag",
+    "norm",
+    "labels",
+    # NOTE: twitter_sentiment_windows is NO LONGER excluded
 ]
 
-# Columns that should have < 95% nulls (WARN otherwise)
-EXPECTED_COLUMNS = [
-    "meta_duration_sec",
-    "spot_spread_bps",
+# Dynamic-key fields (extracted to sidecar, not in main parquet's twitter_sentiment_windows)
+DYNAMIC_KEY_FIELDS = [
+    "tag_counts",
+    "cashtag_counts",
+    "mention_counts",
+    "url_domain_counts",
+]
+
+# Static fields expected in twitter_sentiment_windows.last_cycle
+SENTIMENT_WINDOW_EXPECTED_FIELDS = [
+    "ai_sentiment",
+    "author_stats",
+    "category_counts",
+    "content_stats",
+    "hybrid_decision_stats",
+    "lexicon_sentiment",
+    "platform_engagement",
+    "top_terms",
+]
+
+# Expected meta sub-fields
+META_EXPECTED_FIELDS = [
+    "added_ts",
+    "expires_ts",
+    "duration_sec",
+    "archive_schema_version",
+]
+
+# Expected spot_raw sub-fields
+SPOT_RAW_EXPECTED_FIELDS = [
+    "mid",
+    "bid",
+    "ask",
+    "spread_bps",
 ]
 
 
@@ -178,19 +166,19 @@ def get_s3_client(config: R2Config):
     )
 
 
-def list_tier1_weeks(config: R2Config) -> list[str]:
-    """List all Tier 1 weekly end dates available in R2."""
+def list_tier2_weeks(config: R2Config) -> list[str]:
+    """List all Tier 2 weekly end dates available in R2."""
     s3 = get_s3_client(config)
     
     response = s3.list_objects_v2(
         Bucket=config.bucket,
-        Prefix="tier1/weekly/",
+        Prefix="tier2/weekly/",
         Delimiter="/",
     )
     
     weeks = []
     for prefix_obj in response.get("CommonPrefixes", []):
-        # tier1/weekly/2025-12-28/
+        # tier2/weekly/2025-12-28/
         prefix = prefix_obj.get("Prefix", "")
         parts = prefix.rstrip("/").split("/")
         if len(parts) >= 3:
@@ -209,18 +197,20 @@ def download_from_r2(
     config: R2Config,
     end_day: str,
     cache_dir: Path,
-) -> tuple[Optional[Path], Optional[Path]]:
+) -> tuple[Optional[Path], Optional[Path], Optional[Path]]:
     """
-    Download parquet and manifest from R2 for a given week.
+    Download parquet, sidecar, and manifest from R2 for a given week.
     
     Returns:
-        Tuple of (parquet_path, manifest_path), or (None, None) if not found.
+        Tuple of (parquet_path, manifest_path, sidecar_path), or (None, None, None) if not found.
+        sidecar_path may be None if sidecar doesn't exist (old format or skip-sidecar build).
     """
     s3 = get_s3_client(config)
     
-    prefix = f"tier1/weekly/{end_day}/"
+    prefix = f"tier2/weekly/{end_day}/"
     parquet_key = f"{prefix}dataset_entries_7d.parquet"
     manifest_key = f"{prefix}manifest.json"
+    sidecar_key = f"{prefix}sentiment_counts.parquet"
     
     # Create cache directory
     week_cache = cache_dir / end_day
@@ -228,14 +218,15 @@ def download_from_r2(
     
     parquet_path = week_cache / "dataset_entries_7d.parquet"
     manifest_path = week_cache / "manifest.json"
+    sidecar_path = week_cache / "sentiment_counts.parquet"
     
     try:
-        # Check if objects exist first
+        # Check if main objects exist first
         s3.head_object(Bucket=config.bucket, Key=parquet_key)
         s3.head_object(Bucket=config.bucket, Key=manifest_key)
     except Exception as e:
         print(f"[ERROR] Objects not found in R2 for week {end_day}: {e}", file=sys.stderr)
-        return None, None
+        return None, None, None
     
     # Download parquet
     print(f"  Downloading {parquet_key}...")
@@ -245,13 +236,22 @@ def download_from_r2(
     print(f"  Downloading {manifest_key}...")
     s3.download_file(config.bucket, manifest_key, str(manifest_path))
     
-    return parquet_path, manifest_path
+    # Try to download sidecar (optional - may not exist for old format or skip-sidecar builds)
+    try:
+        s3.head_object(Bucket=config.bucket, Key=sidecar_key)
+        print(f"  Downloading {sidecar_key}...")
+        s3.download_file(config.bucket, sidecar_key, str(sidecar_path))
+    except Exception:
+        print(f"  [INFO] No sidecar file found (may be old format or --skip-sidecar build)")
+        sidecar_path = None
+    
+    return parquet_path, manifest_path, sidecar_path
 
 
 def get_r2_object_size(config: R2Config, end_day: str) -> int:
     """Get parquet file size from R2 without downloading."""
     s3 = get_s3_client(config)
-    key = f"tier1/weekly/{end_day}/dataset_entries_7d.parquet"
+    key = f"tier2/weekly/{end_day}/dataset_entries_7d.parquet"
     
     try:
         response = s3.head_object(Bucket=config.bucket, Key=key)
@@ -279,7 +279,7 @@ def check_presence_and_integrity(
     manifest_path: Optional[Path],
     r2_size: Optional[int] = None,
 ):
-    """Check 1: Object presence + integrity."""
+    """Check A: Object presence + integrity."""
     if parquet_path is None or manifest_path is None:
         result.errors.append("Missing parquet or manifest file")
         return
@@ -312,15 +312,25 @@ def check_presence_and_integrity(
     
     result.info["manifest"] = manifest
     
-    # Verify SHA256 (support both field names)
-    sha_field = None
-    for name in ["parquet_sha256", "sha256"]:
-        if name in manifest:
-            sha_field = name
-            break
+    # Verify SHA256 (support multiple field locations)
+    expected_sha = None
+    sha_location = None
     
-    if sha_field:
-        expected_sha = manifest[sha_field]
+    # Check new location: files.main.sha256
+    if "files" in manifest and "main" in manifest["files"]:
+        if "sha256" in manifest["files"]["main"]:
+            expected_sha = manifest["files"]["main"]["sha256"]
+            sha_location = "files.main.sha256"
+    
+    # Fallback to legacy top-level fields
+    if expected_sha is None:
+        for name in ["parquet_sha256", "sha256"]:
+            if name in manifest:
+                expected_sha = manifest[name]
+                sha_location = name
+                break
+    
+    if expected_sha:
         actual_sha = compute_sha256(parquet_path)
         
         result.info["expected_sha256"] = expected_sha
@@ -334,8 +344,17 @@ def check_presence_and_integrity(
     else:
         result.warnings.append("Manifest does not contain SHA256 field")
     
-    # Compare file size to manifest
-    manifest_size_bytes = manifest.get("parquet_size_bytes")
+    # Compare file size to manifest (check both locations)
+    manifest_size_bytes = None
+    
+    # Check new location: files.main.size_bytes
+    if "files" in manifest and "main" in manifest["files"]:
+        manifest_size_bytes = manifest["files"]["main"].get("size_bytes")
+    
+    # Fallback to legacy top-level field
+    if manifest_size_bytes is None:
+        manifest_size_bytes = manifest.get("parquet_size_bytes")
+    
     if manifest_size_bytes is not None:
         if parquet_size != manifest_size_bytes:
             result.warnings.append(
@@ -349,7 +368,7 @@ def check_window_semantics(
     result: VerificationResult,
     end_day: str,
 ):
-    """Check 2: Window semantics (Mon-Sun, 7 days)."""
+    """Check B: Window semantics (allows partial weeks)."""
     manifest = result.info.get("manifest", {})
     
     # Required top-level fields
@@ -360,8 +379,8 @@ def check_window_semantics(
     
     # Check tier
     tier = manifest.get("tier")
-    if tier != "tier1":
-        result.errors.append(f"Manifest tier != 'tier1' (got: {tier})")
+    if tier != "tier2":
+        result.errors.append(f"Manifest tier != 'tier2' (got: {tier})")
     
     # Check schema_version
     schema_version = manifest.get("schema_version")
@@ -371,7 +390,7 @@ def check_window_semantics(
     # Check window structure
     window = manifest.get("window", {})
     
-    # Support both old and new field names
+    # Support both old (end_day) and new (week_end_day) field names
     manifest_end_day = window.get("week_end_day") or window.get("end_day")
     manifest_start_day = window.get("week_start_day") or window.get("start_day")
     window_basis = window.get("window_basis", "end_day")
@@ -379,7 +398,7 @@ def check_window_semantics(
     if manifest_end_day != end_day:
         result.errors.append(f"Manifest end_day ({manifest_end_day}) != folder name ({end_day})")
     
-    # Get days_expected if available
+    # Get days_expected if available, else fall back to days_included
     days_expected = window.get("days_expected") or window.get("days_included", [])
     days_included = window.get("days_included", [])
     
@@ -392,15 +411,6 @@ def check_window_semantics(
     # Verify days_expected has 7 items
     if len(days_expected) != 7:
         result.errors.append(f"Manifest days_expected should have 7 items, got {len(days_expected)}")
-    
-    # Verify end_day is a Sunday (WARN if not)
-    try:
-        end_date = datetime.strptime(end_day, "%Y-%m-%d").date()
-        if end_date.weekday() != 6:  # Sunday = 6
-            day_name = end_date.strftime("%A")
-            result.warnings.append(f"end_day {end_day} is a {day_name}, not a Sunday")
-    except ValueError:
-        result.errors.append(f"Invalid end_day format: {end_day}")
     
     # Verify days are consecutive
     if len(days_expected) == 7:
@@ -428,16 +438,23 @@ def check_window_semantics(
     # Check source_inputs matches days_included
     source_inputs = manifest.get("source_inputs", [])
     result.info["source_inputs_count"] = len(source_inputs)
+    
+    # source_inputs should match days_included (not days_expected)
+    if len(source_inputs) != len(days_included):
+        result.errors.append(
+            f"source_inputs count ({len(source_inputs)}) != days_included count ({len(days_included)})"
+        )
 
 
 def check_source_coverage(
     result: VerificationResult,
 ):
-    """Check 3: Source coverage metadata."""
+    """Check E: Source coverage metadata (new for partial week support)."""
     manifest = result.info.get("manifest", {})
     source_coverage = manifest.get("source_coverage")
     
     if source_coverage is None:
+        # Old manifest format - warn but don't fail
         result.warnings.append("Manifest missing source_coverage block (old format)")
         return
     
@@ -452,7 +469,7 @@ def check_source_coverage(
         if field_name not in source_coverage:
             result.errors.append(f"source_coverage missing field: {field_name}")
     
-    # Extract coverage info
+    # Extract coverage info for reporting
     result.info["source_coverage"] = source_coverage
     
     days_present = source_coverage.get("days_present", [])
@@ -502,7 +519,7 @@ def check_schema_columns(
     result: VerificationResult,
     parquet_path: Path,
 ) -> Optional[pa.Table]:
-    """Check 4: Parquet schema (22 flattened fields)."""
+    """Check C: Schema / column policy."""
     try:
         table = pq.read_table(parquet_path)
     except Exception as e:
@@ -516,7 +533,7 @@ def check_schema_columns(
     
     # Check required columns
     missing_required = []
-    for col in TIER1_REQUIRED_COLUMNS:
+    for col in TIER2_REQUIRED_COLUMNS:
         if col not in columns:
             missing_required.append(col)
     
@@ -525,11 +542,16 @@ def check_schema_columns(
     else:
         result.info["required_columns_ok"] = True
     
-    # Check for unexpected columns (WARN only)
-    expected_set = set(TIER1_REQUIRED_COLUMNS)
-    unexpected = columns - expected_set
-    if unexpected:
-        result.warnings.append(f"Unexpected extra columns: {sorted(unexpected)}")
+    # Check excluded columns are absent
+    present_excluded = []
+    for col in TIER2_EXCLUDED_COLUMNS:
+        if col in columns:
+            present_excluded.append(col)
+    
+    if present_excluded:
+        result.errors.append(f"Excluded columns present (should be absent): {present_excluded}")
+    else:
+        result.info["excluded_columns_ok"] = True
     
     # Write schema to file for artifacts
     schema_lines = []
@@ -540,41 +562,97 @@ def check_schema_columns(
         schema_lines.append(f"{fld.name}: {type_str}")
     result.info["schema_lines"] = schema_lines
     
-    # Check column types (lightweight)
-    type_mismatches = []
-    for col_name, expected_type in COLUMN_TYPES.items():
-        if col_name not in columns:
-            continue
-        actual_type = str(table.schema.field(col_name).type)
-        
-        # Loose type matching
-        if expected_type == "string" and not ("string" in actual_type or "utf8" in actual_type):
-            type_mismatches.append(f"{col_name}: expected string-like, got {actual_type}")
-        elif expected_type == "double" and "double" not in actual_type and "float" not in actual_type:
-            type_mismatches.append(f"{col_name}: expected double/float, got {actual_type}")
-        elif expected_type == "int64" and "int" not in actual_type:
-            type_mismatches.append(f"{col_name}: expected int-like, got {actual_type}")
-        elif expected_type == "bool" and "bool" not in actual_type:
-            # Allow int 0/1 as bool
-            if "int" not in actual_type:
-                type_mismatches.append(f"{col_name}: expected bool/int, got {actual_type}")
-    
-    if type_mismatches:
-        for mismatch in type_mismatches:
-            result.warnings.append(f"Type mismatch: {mismatch}")
-    
-    result.info["column_types"] = {col: str(table.schema.field(col).type) for col in table.column_names}
+    # Check nested sanity for struct columns
+    check_nested_sanity(result, table)
     
     return table
 
 
+def check_nested_sanity(result: VerificationResult, table: pa.Table):
+    """Lightweight check on nested struct fields."""
+    schema = table.schema
+    
+    # Check meta sub-fields
+    if "meta" in table.column_names:
+        meta_field = schema.field("meta")
+        if pa.types.is_struct(meta_field.type):
+            meta_field_names = [f.name for f in meta_field.type]
+            result.info["meta_fields"] = meta_field_names
+            
+            missing_meta = [f for f in META_EXPECTED_FIELDS if f not in meta_field_names]
+            if missing_meta:
+                result.warnings.append(f"meta missing expected fields: {missing_meta}")
+        else:
+            result.warnings.append(f"meta is not a struct type: {meta_field.type}")
+    
+    # Check spot_raw sub-fields
+    if "spot_raw" in table.column_names:
+        spot_field = schema.field("spot_raw")
+        if pa.types.is_struct(spot_field.type):
+            spot_field_names = [f.name for f in spot_field.type]
+            result.info["spot_raw_fields"] = spot_field_names
+            
+            missing_spot = [f for f in SPOT_RAW_EXPECTED_FIELDS if f not in spot_field_names]
+            if missing_spot:
+                result.warnings.append(f"spot_raw missing expected fields: {missing_spot}")
+        else:
+            result.warnings.append(f"spot_raw is not a struct type: {spot_field.type}")
+    
+    # Check derived and scores are structs
+    for col_name in ["derived", "scores"]:
+        if col_name in table.column_names:
+            col_field = schema.field(col_name)
+            if not pa.types.is_struct(col_field.type):
+                result.warnings.append(f"{col_name} is not a struct type: {col_field.type}")
+    
+    # Check twitter_sentiment_windows structure
+    if "twitter_sentiment_windows" in table.column_names:
+        tsw_field = schema.field("twitter_sentiment_windows")
+        if pa.types.is_struct(tsw_field.type):
+            tsw_field_names = [f.name for f in tsw_field.type]
+            result.info["twitter_sentiment_windows_fields"] = tsw_field_names
+            
+            # Check for last_cycle
+            if "last_cycle" not in tsw_field_names:
+                result.errors.append("twitter_sentiment_windows missing last_cycle")
+            else:
+                # Get last_cycle sub-fields
+                last_cycle_type = None
+                for f in tsw_field.type:
+                    if f.name == "last_cycle":
+                        last_cycle_type = f.type
+                        break
+                
+                if last_cycle_type and pa.types.is_struct(last_cycle_type):
+                    last_cycle_fields = [f.name for f in last_cycle_type]
+                    result.info["last_cycle_fields"] = last_cycle_fields
+                    
+                    # Check expected static fields are present
+                    missing_sentiment = [f for f in SENTIMENT_WINDOW_EXPECTED_FIELDS if f not in last_cycle_fields]
+                    if missing_sentiment:
+                        result.warnings.append(f"last_cycle missing expected fields: {missing_sentiment}")
+                    
+                    # Check dynamic-key fields are NOT present (extracted to sidecar)
+                    dynamic_present = [f for f in DYNAMIC_KEY_FIELDS if f in last_cycle_fields]
+                    if dynamic_present:
+                        result.warnings.append(f"last_cycle contains dynamic-key fields (should be in sidecar): {dynamic_present}")
+        else:
+            result.warnings.append(f"twitter_sentiment_windows is not a struct type: {tsw_field.type}")
+
+
 def check_data_quality(result: VerificationResult, table: pa.Table):
-    """Check 5: Data quality stats."""
+    """Check D: Data quality summaries."""
     manifest = result.info.get("manifest", {})
     num_rows = table.num_rows
     
-    # Compare row count to manifest
+    # Compare row count to manifest (check both locations)
     manifest_row_count = manifest.get("row_count")
+    
+    # Also check files.main.row_count
+    if manifest_row_count is None:
+        if "files" in manifest and "main" in manifest["files"]:
+            manifest_row_count = manifest["files"]["main"].get("row_count")
+    
     if manifest_row_count is not None:
         if num_rows != manifest_row_count:
             result.errors.append(
@@ -583,136 +661,85 @@ def check_data_quality(result: VerificationResult, table: pa.Table):
         else:
             result.info["row_count_match"] = True
     
-    # Distinct symbols
+    # Distinct symbols (use dictionary if available, else sample)
     if "symbol" in table.column_names:
         symbol_col = table.column("symbol")
         try:
+            # Try to get unique values efficiently
             symbols = symbol_col.unique()
             result.info["distinct_symbols"] = len(symbols)
-            
-            # Top 10 symbols by frequency
-            symbol_dict = {}
-            for i in range(min(10000, num_rows)):
-                s = symbol_col[i].as_py()
-                if s:
-                    symbol_dict[s] = symbol_dict.get(s, 0) + 1
-            top_symbols = sorted(symbol_dict.items(), key=lambda x: -x[1])[:10]
-            result.info["top_symbols"] = top_symbols
         except Exception:
             result.info["distinct_symbols"] = "unknown"
     
-    # Null ratios per column
-    null_ratios = {}
-    for col_name in table.column_names:
-        col = table.column(col_name)
-        null_count = col.null_count
-        null_ratio = null_count / num_rows if num_rows > 0 else 0
-        null_ratios[col_name] = {
-            "null_count": null_count,
-            "null_ratio": round(null_ratio, 4),
-        }
+    # Duration stats
+    if "meta" in table.column_names:
+        durations = []
+        meta_col = table.column("meta")
         
-        # FAIL if critical column > 99.5% null
-        if col_name in CRITICAL_COLUMNS and null_ratio > 0.995:
-            result.errors.append(
-                f"Critical column '{col_name}' has {null_ratio*100:.2f}% nulls (>99.5%)"
-            )
-        # WARN if expected column > 95% null
-        elif col_name in EXPECTED_COLUMNS and null_ratio > 0.95:
-            result.warnings.append(
-                f"Column '{col_name}' has {null_ratio*100:.2f}% nulls (>95%)"
-            )
+        # Sample up to 1000 rows for performance
+        sample_size = min(1000, num_rows)
+        step = max(1, num_rows // sample_size)
+        
+        for i in range(0, num_rows, step):
+            meta = meta_col[i].as_py()
+            if meta and isinstance(meta, dict):
+                dur = meta.get("duration_sec")
+                if dur is not None:
+                    durations.append(dur)
+        
+        if durations:
+            durations_sorted = sorted(durations)
+            result.info["duration_stats"] = {
+                "min": durations_sorted[0],
+                "median": statistics.median(durations_sorted),
+                "p95": durations_sorted[int(len(durations_sorted) * 0.95)] if len(durations_sorted) > 20 else durations_sorted[-1],
+                "max": durations_sorted[-1],
+                "sample_count": len(durations),
+            }
+            
+            # Warn if max is absurd (> 24 hours)
+            if durations_sorted[-1] > 86400:
+                result.warnings.append(
+                    f"duration_sec max is very high: {durations_sorted[-1]} seconds"
+                )
+    
+    # Null ratios for struct columns
+    struct_cols = ["meta", "spot_raw", "derived", "scores", "twitter_sentiment_meta", "twitter_sentiment_windows"]
+    null_ratios = {}
+    
+    for col_name in struct_cols:
+        if col_name in table.column_names:
+            col = table.column(col_name)
+            null_count = col.null_count
+            null_ratio = null_count / num_rows if num_rows > 0 else 0
+            null_ratios[col_name] = {
+                "null_count": null_count,
+                "null_ratio": round(null_ratio, 4),
+            }
+            
+            # Warn if > 1% null
+            if null_ratio > 0.01:
+                result.warnings.append(
+                    f"{col_name} has {null_ratio*100:.2f}% null values ({null_count}/{num_rows})"
+                )
     
     result.info["null_ratios"] = null_ratios
     
-    # Numeric stats for key columns
-    numeric_stats = {}
-    
-    # spot_spread_bps
-    if "spot_spread_bps" in table.column_names:
-        col = table.column("spot_spread_bps")
-        vals = [v.as_py() for v in col if v.as_py() is not None]
-        if vals:
-            vals_sorted = sorted(vals)
-            numeric_stats["spot_spread_bps"] = {
-                "min": vals_sorted[0],
-                "max": vals_sorted[-1],
-                "median": statistics.median(vals_sorted),
-                "sample_count": len(vals),
-            }
-            # WARN if negative spread
-            if vals_sorted[0] < 0:
-                result.warnings.append(f"spot_spread_bps has negative values (min={vals_sorted[0]})")
-    
-    # meta_duration_sec
-    if "meta_duration_sec" in table.column_names:
-        col = table.column("meta_duration_sec")
-        vals = [v.as_py() for v in col if v.as_py() is not None]
-        if vals:
-            vals_sorted = sorted(vals)
-            numeric_stats["meta_duration_sec"] = {
-                "min": vals_sorted[0],
-                "max": vals_sorted[-1],
-                "median": statistics.median(vals_sorted),
-                "sample_count": len(vals),
-            }
-            # WARN if <= 0
-            if vals_sorted[0] <= 0:
-                result.warnings.append(f"meta_duration_sec has non-positive values (min={vals_sorted[0]})")
-    
-    # score_final
-    if "score_final" in table.column_names:
-        col = table.column("score_final")
-        vals = [v.as_py() for v in col if v.as_py() is not None]
-        if vals:
-            vals_sorted = sorted(vals)
-            numeric_stats["score_final"] = {
-                "min": vals_sorted[0],
-                "max": vals_sorted[-1],
-                "mean": statistics.mean(vals),
-                "sample_count": len(vals),
-            }
-    
-    # sentiment_mean_score
-    if "sentiment_mean_score" in table.column_names:
-        col = table.column("sentiment_mean_score")
-        vals = [v.as_py() for v in col if v.as_py() is not None]
-        if vals:
-            vals_sorted = sorted(vals)
-            numeric_stats["sentiment_mean_score"] = {
-                "min": vals_sorted[0],
-                "max": vals_sorted[-1],
-                "mean": statistics.mean(vals),
-                "sample_count": len(vals),
-            }
-    
-    # sentiment_posts_total
-    if "sentiment_posts_total" in table.column_names:
-        col = table.column("sentiment_posts_total")
-        vals = [v.as_py() for v in col if v.as_py() is not None]
-        if vals:
-            vals_sorted = sorted(vals)
-            numeric_stats["sentiment_posts_total"] = {
-                "min": vals_sorted[0],
-                "max": vals_sorted[-1],
-                "sum": sum(vals),
-                "sample_count": len(vals),
-            }
-            # FAIL if negative counts
-            if vals_sorted[0] < 0:
-                result.errors.append(f"sentiment_posts_total has negative values (min={vals_sorted[0]})")
-    
-    result.info["numeric_stats"] = numeric_stats
-    
-    # Sample row (safe fields only)
-    if num_rows > 0:
-        sample_row = {}
-        safe_fields = ["symbol", "snapshot_ts", "score_final", "sentiment_posts_total", "sentiment_mean_score"]
-        for col_name in safe_fields:
-            if col_name in table.column_names:
-                val = table.column(col_name)[0].as_py()
-                sample_row[col_name] = val
-        result.info["sample_row"] = sample_row
+    # Snapshot_ts stats
+    if "snapshot_ts" in table.column_names:
+        ts_col = table.column("snapshot_ts")
+        ts_type = ts_col.type
+        result.info["snapshot_ts_type"] = str(ts_type)
+        
+        # Try to get min/max
+        try:
+            # snapshot_ts may be string or numeric
+            first_val = ts_col[0].as_py()
+            last_val = ts_col[num_rows - 1].as_py()
+            result.info["snapshot_ts_first"] = str(first_val)
+            result.info["snapshot_ts_last"] = str(last_val)
+        except Exception:
+            pass
 
 
 # ==============================================================================
@@ -730,7 +757,7 @@ def write_artifacts(result: VerificationResult, cache_dir: Path):
     if schema_lines:
         schema_path = week_dir / "schema.txt"
         with open(schema_path, "w") as f:
-            f.write("Tier 1 Weekly Parquet Schema\n")
+            f.write("Tier 2 Weekly Parquet Schema\n")
             f.write(f"Week ending: {end_day}\n")
             f.write("=" * 50 + "\n\n")
             for line in schema_lines:
@@ -741,23 +768,26 @@ def write_artifacts(result: VerificationResult, cache_dir: Path):
         "end_day": end_day,
         "status": result.status,
         "row_count": result.info.get("row_count"),
-        "column_count": result.info.get("column_count"),
         "parquet_size_bytes": result.info.get("parquet_size_bytes"),
         "sha256_match": result.info.get("sha256_match"),
         "required_columns_ok": result.info.get("required_columns_ok"),
+        "excluded_columns_ok": result.info.get("excluded_columns_ok"),
         "distinct_symbols": result.info.get("distinct_symbols"),
-        "present_days_count": result.info.get("present_days_count"),
-        "missing_days_count": result.info.get("missing_days_count"),
-        "partial_days_count": result.info.get("partial_days_count"),
-        "numeric_stats": result.info.get("numeric_stats"),
+        "duration_stats": result.info.get("duration_stats"),
         "null_ratios": result.info.get("null_ratios"),
+        # Sidecar stats
+        "sidecar_status": result.info.get("sidecar_status"),
+        "sidecar_row_count": result.info.get("sidecar_row_count"),
+        "sidecar_size_mb": result.info.get("sidecar_size_mb"),
+        "sidecar_count_types": result.info.get("sidecar_count_types"),
+        "sidecar_cycles": result.info.get("sidecar_cycles"),
         "errors": result.errors,
         "warnings": result.warnings,
     }
     
     stats_path = week_dir / "stats.json"
     with open(stats_path, "w") as f:
-        json.dump(stats, f, indent=2, default=str)
+        json.dump(stats, f, indent=2)
 
 
 # ==============================================================================
@@ -767,11 +797,9 @@ def write_artifacts(result: VerificationResult, cache_dir: Path):
 def generate_report(results: list[VerificationResult], report_path: Path):
     """Generate markdown verification report."""
     lines = [
-        "# Tier 1 Weekly Parquet Verification Report",
+        "# Tier 2 Weekly Parquet Verification Report",
         "",
         f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}",
-        "",
-        "Tier 1 uses a flattened schema with 22 fields (identity, spot, derived, score, sentiment).",
         "",
         "---",
         "",
@@ -797,12 +825,13 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         if partial > 0:
             partial_str += " ⚠️"
         
-        rows = info.get('row_count', 0)
-        rows_str = f"{rows:,}" if rows else "N/A"
+        # Format row count with comma (handle N/A gracefully)
+        row_count = info.get("row_count")
+        row_count_str = f"{row_count:,}" if isinstance(row_count, int) else "N/A"
         
         lines.append(
             f"| {r.end_day} | {r.status_symbol} | {days_str} | {partial_str} | "
-            f"{rows_str} | {info.get('parquet_size_mb', 'N/A')} | {sha_match} |"
+            f"{row_count_str} | {info.get('parquet_size_mb', 'N/A')} | {sha_match} |"
         )
     
     lines.append("")
@@ -821,7 +850,7 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         lines.append("[FAIL] Verification failed. Do NOT proceed until errors are resolved.")
     lines.append("")
     
-    # Source Coverage section
+    # Source Coverage section (new)
     lines.append("---")
     lines.append("")
     lines.append("## Source Coverage")
@@ -874,7 +903,33 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         
         lines.append("")
     
-    # Schema section
+    # Manifest checks section
+    lines.append("---")
+    lines.append("")
+    lines.append("## Manifest Checks")
+    lines.append("")
+    
+    for r in results:
+        manifest = r.info.get("manifest", {})
+        lines.append(f"### Week {r.end_day}")
+        lines.append("")
+        lines.append(f"- **tier:** {manifest.get('tier', 'N/A')}")
+        lines.append(f"- **schema_version:** {manifest.get('schema_version', 'N/A')}")
+        lines.append(f"- **build_ts_utc:** {manifest.get('build_ts_utc', 'N/A')}")
+        
+        window = manifest.get("window", {})
+        window_basis = r.info.get("window_basis", window.get("window_basis", "N/A"))
+        window_start = r.info.get("window_start", "N/A")
+        window_end = r.info.get("window_end", "N/A")
+        lines.append(f"- **window_basis:** {window_basis}")
+        lines.append(f"- **week_start_day:** {window_start}")
+        lines.append(f"- **week_end_day:** {window_end}")
+        lines.append(f"- **days_included:** {len(r.info.get('days_included', []))} days")
+        lines.append(f"- **source_inputs:** {r.info.get('source_inputs_count', 'N/A')} Tier 3 parquets")
+        lines.append(f"- **row_count (manifest):** {manifest.get('row_count', 'N/A')}")
+        lines.append("")
+    
+    # Schema checks section
     lines.append("---")
     lines.append("")
     lines.append("## Schema Checks")
@@ -883,27 +938,32 @@ def generate_report(results: list[VerificationResult], report_path: Path):
     for r in results:
         lines.append(f"### Week {r.end_day}")
         lines.append("")
-        lines.append(f"**Columns:** {r.info.get('column_count', 'N/A')} (expected 22)")
+        lines.append(f"**Top-level columns ({r.info.get('column_count', 'N/A')}):**")
+        columns = r.info.get("columns", [])
+        if columns:
+            lines.append("```")
+            for col in columns:
+                lines.append(f"  {col}")
+            lines.append("```")
         lines.append("")
         
-        columns = r.info.get("columns", [])
-        column_types = r.info.get("column_types", {})
+        # Nested fields
+        meta_fields = r.info.get("meta_fields", [])
+        if meta_fields:
+            lines.append(f"**meta sub-fields ({len(meta_fields)}):** {', '.join(meta_fields[:10])}" + ("..." if len(meta_fields) > 10 else ""))
         
-        if columns:
-            lines.append("| Column | Type |")
-            lines.append("|--------|------|")
-            for col in columns:
-                ctype = column_types.get(col, "?")
-                if len(ctype) > 40:
-                    ctype = ctype[:37] + "..."
-                lines.append(f"| {col} | {ctype} |")
+        spot_fields = r.info.get("spot_raw_fields", [])
+        if spot_fields:
+            lines.append(f"**spot_raw sub-fields ({len(spot_fields)}):** {', '.join(spot_fields[:10])}" + ("..." if len(spot_fields) > 10 else ""))
+        
+        # NOTE: twitter_sentiment_windows excluded from Tier 2 (full data in Tier 3)
         
         lines.append("")
     
     # Quality stats section
     lines.append("---")
     lines.append("")
-    lines.append("## Data Quality")
+    lines.append("## Quality Stats")
     lines.append("")
     
     for r in results:
@@ -911,58 +971,25 @@ def generate_report(results: list[VerificationResult], report_path: Path):
         lines.append("")
         lines.append(f"- **Distinct symbols:** {r.info.get('distinct_symbols', 'N/A')}")
         
-        top_symbols = r.info.get("top_symbols", [])
-        if top_symbols:
-            top_str = ", ".join([f"{s[0]} ({s[1]})" for s in top_symbols[:5]])
-            lines.append(f"- **Top symbols:** {top_str}")
+        duration_stats = r.info.get("duration_stats", {})
+        if duration_stats:
+            lines.append(
+                f"- **duration_sec:** min={duration_stats.get('min', 'N/A'):.0f}, "
+                f"median={duration_stats.get('median', 'N/A'):.0f}, "
+                f"p95={duration_stats.get('p95', 'N/A'):.0f}, "
+                f"max={duration_stats.get('max', 'N/A'):.0f} "
+                f"(sampled {duration_stats.get('sample_count', 0)} rows)"
+            )
         
-        lines.append("")
-        
-        # Numeric stats
-        numeric_stats = r.info.get("numeric_stats", {})
-        if numeric_stats:
-            lines.append("**Key field stats:**")
-            lines.append("| Field | Min | Max | Mean/Median |")
-            lines.append("|-------|-----|-----|-------------|")
-            
-            for field, stats in numeric_stats.items():
-                min_val = stats.get("min", "N/A")
-                max_val = stats.get("max", "N/A")
-                if "mean" in stats:
-                    mid_val = f"{stats['mean']:.3f}"
-                elif "median" in stats:
-                    mid_val = f"{stats['median']:.1f}"
-                else:
-                    mid_val = "N/A"
-                
-                # Format numbers
-                if isinstance(min_val, float):
-                    min_val = f"{min_val:.3f}"
-                if isinstance(max_val, float):
-                    max_val = f"{max_val:.3f}"
-                
-                lines.append(f"| {field} | {min_val} | {max_val} | {mid_val} |")
-            
-            lines.append("")
-        
-        # Null ratios (only notable ones)
         null_ratios = r.info.get("null_ratios", {})
-        notable_nulls = {k: v for k, v in null_ratios.items() if v["null_ratio"] > 0.01}
-        if notable_nulls:
-            lines.append("**Notable null ratios (>1%):**")
-            for col, stats in sorted(notable_nulls.items(), key=lambda x: -x[1]["null_ratio"]):
+        if null_ratios:
+            lines.append("- **Null ratios:**")
+            for col, stats in null_ratios.items():
                 pct = stats['null_ratio'] * 100
-                lines.append(f"- {col}: {pct:.2f}%")
-            lines.append("")
+                lines.append(f"  - {col}: {pct:.2f}% ({stats['null_count']} nulls)")
         
-        # Sample row
-        sample_row = r.info.get("sample_row")
-        if sample_row:
-            lines.append("**Sample row:**")
-            lines.append("```json")
-            lines.append(json.dumps(sample_row, indent=2, default=str))
-            lines.append("```")
-            lines.append("")
+        lines.append(f"- **snapshot_ts type:** {r.info.get('snapshot_ts_type', 'N/A')}")
+        lines.append("")
     
     # Warnings section
     all_warnings = []
@@ -1006,10 +1033,89 @@ def generate_report(results: list[VerificationResult], report_path: Path):
 # Main Verification
 # ==============================================================================
 
+def check_sidecar(result: VerificationResult, sidecar_path: Optional[Path]):
+    """Check F: Sidecar file (sentiment_counts.parquet) presence and integrity."""
+    manifest = result.info.get("manifest", {})
+    files_block = manifest.get("files", {})
+    sidecar_manifest = files_block.get("sidecar", {})
+    
+    # Check if manifest says sidecar should exist
+    expected_filename = sidecar_manifest.get("filename")
+    if expected_filename is None:
+        # Sidecar was skipped during build
+        result.warnings.append("Sidecar was skipped during build (--skip-sidecar flag used)")
+        result.info["sidecar_status"] = "skipped"
+        return
+    
+    if sidecar_path is None or not sidecar_path.exists():
+        result.errors.append("Sidecar file missing but expected per manifest")
+        result.info["sidecar_status"] = "missing"
+        return
+    
+    # Read sidecar and validate schema
+    try:
+        sidecar_table = pq.read_table(sidecar_path)
+    except Exception as e:
+        result.errors.append(f"Failed to read sidecar file: {e}")
+        result.info["sidecar_status"] = "unreadable"
+        return
+    
+    sidecar_cols = set(sidecar_table.column_names)
+    expected_cols = {"symbol", "snapshot_ts", "day", "cycle", "count_type", "key", "value"}
+    
+    missing_cols = expected_cols - sidecar_cols
+    if missing_cols:
+        result.errors.append(f"Sidecar missing required columns: {missing_cols}")
+    
+    # Check row count matches manifest
+    manifest_row_count = sidecar_manifest.get("row_count")
+    actual_row_count = sidecar_table.num_rows
+    
+    if manifest_row_count is not None and actual_row_count != manifest_row_count:
+        result.errors.append(f"Sidecar row count mismatch: manifest={manifest_row_count}, actual={actual_row_count}")
+    
+    # Check file size
+    actual_size = sidecar_path.stat().st_size
+    manifest_size = sidecar_manifest.get("size_bytes")
+    if manifest_size is not None and actual_size != manifest_size:
+        result.warnings.append(f"Sidecar size mismatch: manifest={manifest_size}, actual={actual_size}")
+    
+    # Check SHA256 if present
+    manifest_sha = sidecar_manifest.get("sha256")
+    if manifest_sha:
+        actual_sha = compute_sha256(sidecar_path)
+        if actual_sha != manifest_sha:
+            result.errors.append(f"Sidecar SHA256 mismatch: manifest={manifest_sha[:16]}..., actual={actual_sha[:16]}...")
+    
+    # Validate count_type values
+    if "count_type" in sidecar_cols:
+        count_types = sidecar_table.column("count_type").unique().to_pylist()
+        expected_types = {"tag_counts", "cashtag_counts", "mention_counts", "url_domain_counts"}
+        unexpected = set(count_types) - expected_types
+        if unexpected:
+            result.warnings.append(f"Sidecar contains unexpected count_types: {unexpected}")
+    
+    # Validate cycle values
+    if "cycle" in sidecar_cols:
+        cycles = sidecar_table.column("cycle").unique().to_pylist()
+        expected_cycles = {"last_cycle", "last_2_cycles"}
+        unexpected = set(cycles) - expected_cycles
+        if unexpected:
+            result.warnings.append(f"Sidecar contains unexpected cycles: {unexpected}")
+    
+    result.info["sidecar_status"] = "ok"
+    result.info["sidecar_row_count"] = actual_row_count
+    result.info["sidecar_size_bytes"] = actual_size
+    result.info["sidecar_size_mb"] = round(actual_size / (1024 * 1024), 2)
+    result.info["sidecar_count_types"] = count_types if "count_type" in sidecar_cols else []
+    result.info["sidecar_cycles"] = cycles if "cycle" in sidecar_cols else []
+
+
 def verify_week(
     end_day: str,
     parquet_path: Path,
     manifest_path: Path,
+    sidecar_path: Optional[Path] = None,
     r2_size: Optional[int] = None,
 ) -> VerificationResult:
     """Run all verification checks for a single week."""
@@ -1017,29 +1123,33 @@ def verify_week(
     
     print(f"\n[Verifying week ending {end_day}]")
     
-    # Check 1: Presence + integrity
-    print("  1. Checking presence and integrity...")
+    # Check A: Presence + integrity
+    print("  A. Checking presence and integrity...")
     check_presence_and_integrity(result, parquet_path, manifest_path, r2_size)
     if result.has_errors:
         return result
     
-    # Check 2: Window semantics
-    print("  2. Checking window semantics...")
+    # Check B: Window semantics
+    print("  B. Checking window semantics...")
     check_window_semantics(result, end_day)
     
-    # Check 3: Source coverage
-    print("  3. Checking source coverage...")
-    check_source_coverage(result)
-    
-    # Check 4: Schema / column policy
-    print("  4. Checking schema (22 flattened fields)...")
+    # Check C: Schema / column policy
+    print("  C. Checking schema and columns...")
     table = check_schema_columns(result, parquet_path)
     if table is None:
         return result
     
-    # Check 5: Data quality
-    print("  5. Checking data quality...")
+    # Check D: Data quality
+    print("  D. Checking data quality...")
     check_data_quality(result, table)
+    
+    # Check E: Source coverage
+    print("  E. Checking source coverage...")
+    check_source_coverage(result)
+    
+    # Check F: Sidecar (sentiment_counts.parquet)
+    print("  F. Checking sidecar file...")
+    check_sidecar(result, sidecar_path)
     
     print(f"  -> Status: {result.status_symbol}")
     if result.errors:
@@ -1052,7 +1162,7 @@ def verify_week(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Verify Tier 1 weekly parquet exports for correctness"
+        description="Verify Tier 2 weekly parquet exports for correctness"
     )
     parser.add_argument(
         "--end-day",
@@ -1062,7 +1172,7 @@ def main():
     parser.add_argument(
         "--local",
         type=str,
-        help="Path to local tier1 weekly directory (contains dataset_entries_7d.parquet and manifest.json)",
+        help="Path to local tier2 weekly directory (contains dataset_entries_7d.parquet and manifest.json)",
     )
     parser.add_argument(
         "--r2",
@@ -1083,87 +1193,134 @@ def main():
     
     # Generate timestamped report path inside cache_dir
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    report_path = cache_dir / f"tier1_report_{timestamp}.md"
+    report_path = cache_dir / f"tier2_report_{timestamp}.md"
+    
+    print("=" * 60)
+    print("TIER 2 WEEKLY PARQUET VERIFICATION")
+    print("=" * 60)
     
     results = []
     
     if args.local:
-        # Local mode
+        # Verify local files
         local_path = Path(args.local)
+        
+        # Infer end_day from path if not specified
+        end_day = args.end_day
+        if not end_day:
+            # Try to get from folder name
+            folder_name = local_path.name
+            try:
+                datetime.strptime(folder_name, "%Y-%m-%d")
+                end_day = folder_name
+            except ValueError:
+                print("[ERROR] Cannot infer end_day from local path. Use --end-day.", file=sys.stderr)
+                return 1
+        
+        print(f"Mode: Local verification")
+        print(f"Path: {local_path}")
+        print(f"Week end: {end_day}")
+        
         parquet_path = local_path / "dataset_entries_7d.parquet"
         manifest_path = local_path / "manifest.json"
+        sidecar_path = local_path / "sentiment_counts.parquet"
         
-        # Derive end_day from folder name or use provided
-        if args.end_day:
-            end_day = args.end_day
-        else:
-            end_day = local_path.name  # Assume folder is named YYYY-MM-DD
+        # Check if sidecar exists
+        if not sidecar_path.exists():
+            sidecar_path = None
         
-        print(f"[Mode] Verifying from local path: {local_path}")
-        result = verify_week(end_day, parquet_path, manifest_path)
+        result = verify_week(end_day, parquet_path, manifest_path, sidecar_path)
         results.append(result)
         
         # Write artifacts
         write_artifacts(result, cache_dir)
         
     else:
-        # R2 mode (default)
-        print("[Mode] Verifying from R2")
+        # Download from R2
+        print("\n[Connecting to R2...]")
         config = get_r2_config()
+        print(f"  Bucket: {config.bucket}")
         
         # List all available weeks
-        available_weeks = list_tier1_weeks(config)
+        print("  Listing available weeks...")
+        available_weeks = list_tier2_weeks(config)
         if not available_weeks:
-            print("[ERROR] No Tier 1 weeks found in R2", file=sys.stderr)
-            sys.exit(1)
+            print("[ERROR] No Tier 2 weekly exports found in R2", file=sys.stderr)
+            return 1
         
         if args.end_day:
             # Verify specific week
             weeks_to_verify = [args.end_day]
-            print(f"[INFO] Verifying specific week: {args.end_day}")
+            print(f"  Verifying specific week: {args.end_day}")
         else:
             # Verify ALL weeks
             weeks_to_verify = available_weeks
-            print(f"[INFO] Found {len(available_weeks)} weeks in R2, verifying ALL")
+            print(f"  Found {len(available_weeks)} weeks, verifying ALL")
+        
+        print(f"Mode: R2 verification")
+        print(f"Weeks to verify: {weeks_to_verify}")
         
         for end_day in weeks_to_verify:
+            print(f"\n[Downloading week {end_day} from R2...]")
+            
+            # Get size first
             r2_size = get_r2_object_size(config, end_day)
-            parquet_path, manifest_path = download_from_r2(config, end_day, cache_dir)
+            
+            # Download files (returns 3-tuple: parquet, manifest, sidecar)
+            parquet_path, manifest_path, sidecar_path = download_from_r2(
+                config, end_day, cache_dir
+            )
             
             if parquet_path is None:
                 result = VerificationResult(end_day=end_day)
-                result.errors.append(f"Failed to download from R2")
+                result.errors.append("Failed to download from R2")
                 results.append(result)
                 continue
             
-            result = verify_week(end_day, parquet_path, manifest_path, r2_size)
+            result = verify_week(end_day, parquet_path, manifest_path, sidecar_path, r2_size)
             results.append(result)
             
             # Write artifacts
             write_artifacts(result, cache_dir)
     
     # Generate report
-    print(f"\n[Generating report: {report_path}]")
+    print("\n" + "=" * 60)
+    print("GENERATING REPORT")
+    print("=" * 60)
+    
     all_pass = generate_report(results, report_path)
     
-    # Print summary
+    print(f"\n[OK] Report written to: {report_path}")
+    
+    # Artifact locations
+    print(f"[OK] Artifacts written to: {cache_dir}/")
+    for r in results:
+        print(f"     - {r.end_day}/manifest.json")
+        print(f"     - {r.end_day}/schema.txt")
+        print(f"     - {r.end_day}/stats.json")
+    
+    # Summary
     print("\n" + "=" * 60)
     print("VERIFICATION SUMMARY")
     print("=" * 60)
+    
     for r in results:
         print(f"  {r.end_day}: {r.status_symbol}")
         if r.errors:
-            for e in r.errors[:3]:
-                print(f"    ERROR: {e}")
+            for err in r.errors[:3]:
+                print(f"    [ERROR] {err}")
         if r.warnings:
-            for w in r.warnings[:3]:
-                print(f"    WARN: {w}")
-    print(f"\nReport written to: {report_path}")
-    print(f"Artifacts written to: {cache_dir}/")
-    print("=" * 60)
+            for warn in r.warnings[:3]:
+                print(f"    [WARN] {warn}")
     
-    sys.exit(0 if all_pass else 1)
+    print()
+    if all_pass:
+        print("[PASS] All critical checks passed.")
+    else:
+        print("[FAIL] Verification failed. See report for details.")
+    
+    return 0 if all_pass else 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

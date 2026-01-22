@@ -1,32 +1,19 @@
-# Tier 1 Weekly Dataset Schema
+# Tier 1 Daily Dataset Schema
 
-This document describes the schema for Tier 1 weekly parquet exports.
+This document describes the schema for Tier 1 daily parquet exports.
 
 ## Overview
 
-Tier 1 weekly exports are the **"Starter — light entry table"**, derived from Tier 3 daily parquets with only essential fields retained. This tier includes **aggregated sentiment** from Twitter but excludes all futures data and sentiment internals.
+Tier 1 daily exports are the **"Starter — light entry table"**, derived from Tier 3 daily parquets with only essential fields retained. This tier includes **aggregated sentiment** from Twitter but excludes all futures data and sentiment internals.
 
 | Property | Value |
 |----------|-------|
 | **schema_version** | v7 |
 | **tier** | tier1 |
-| **window** | 7 consecutive UTC days (Mon–Sun) |
+| **granularity** | Daily (one file per UTC day) |
 | **source** | Derived from `tier3/daily/` parquets |
 | **format** | Apache Parquet with zstd compression |
-| **R2 path** | `tier1/weekly/{end-day}/dataset_entries_7d.parquet` |
-
-### Weekly Window Definition
-
-A Tier 1 weekly export covers 7 consecutive UTC days (Monday through Sunday):
-- **Window:** `end_day - 6` (Monday) to `end_day` (Sunday)
-- **Example:** `--end-day 2026-01-04` covers 2025-12-29 (Mon) through 2026-01-04 (Sun)
-
-### Partial Week Support
-
-Tier 1 can be built from **5 or more** of the 7 expected days (configurable via `--min-days`).
-- Missing days are explicitly recorded in the manifest
-- Partial Tier 3 days (those with < 24 hours coverage) are also tracked
-- Use the `source_coverage` block in manifest to understand data gaps
+| **R2 path** | `tier1/daily/{YYYY-MM-DD}/data.parquet` |
 
 ---
 
@@ -41,15 +28,15 @@ Tier 1 uses an **explicit allowlist** approach with **flattened fields**:
 
 ### Tier Comparison
 
-| Tier | Approach | Fields | Sentiment | Futures |
-|------|----------|--------|-----------|---------|
-| **Tier 1** | Flattened allowlist | 22 | Aggregated only | ❌ Excluded |
-| **Tier 2** | Struct exclusion | 7 structs | Meta only | ❌ Excluded |
-| **Tier 3** | Full archive | 12 structs | Full windows | ✅ Included |
+| Tier | Approach | Columns | Sentiment | Futures |
+|------|----------|---------|-----------|---------|
+| **Tier 1** | Flattened allowlist | 19 flat fields | Aggregated only | ❌ Excluded |
+| **Tier 2** | Struct exclusion | 8 nested columns | Full windows | ❌ Excluded |
+| **Tier 3** | Full archive | 12 nested columns | Full windows | ✅ Included |
 
 ---
 
-## Field Reference (22 Fields)
+## Field Reference (19 Fields)
 
 ### Identity + Timing (6 fields)
 
@@ -84,7 +71,7 @@ Tier 1 uses an **explicit allowlist** approach with **flattened fields**:
 |-------|------|--------|-------------|
 | `score_final` | double | scores.final | Final composite score |
 
-### Aggregated Sentiment (9 fields)
+### Aggregated Sentiment (6 fields)
 
 These fields are extracted from `twitter_sentiment_windows.last_cycle`, providing aggregated sentiment without exposing any internals.
 
@@ -96,11 +83,8 @@ These fields are extracted from `twitter_sentiment_windows.last_cycle`, providin
 | `sentiment_posts_neg` | int64 | last_cycle.posts_neg | Negative posts count |
 | `sentiment_mean_score` | double | last_cycle.hybrid_decision_stats.mean_score | Mean sentiment score |
 | `sentiment_is_silent` | bool | last_cycle.sentiment_activity.is_silent | Is symbol silent (no recent posts) |
-| `sentiment_recent_posts_count` | int64 | last_cycle.sentiment_activity.recent_posts_count | Recent posts count |
-| `sentiment_has_recent_activity` | bool | last_cycle.sentiment_activity.has_recent_activity | Has recent activity |
-| `sentiment_hours_since_latest_tweet` | double | last_cycle.sentiment_activity.hours_since_latest_tweet | Hours since latest tweet |
 
-**Note:** All sentiment fields may be null if Twitter sentiment was not available for an entry.
+**Note:** All sentiment fields may be null if Twitter sentiment was not available for an entry. Other `sentiment_activity` fields (recent_posts_count, has_recent_activity, hours_since_latest_tweet) are excluded as they have limited utility for aggregated exports.
 
 ---
 
@@ -138,7 +122,7 @@ All internal sentiment diagnostics are excluded:
 
 ## Manifest Schema
 
-Each weekly export includes a `manifest.json` with full metadata.
+Each daily export includes a `manifest.json` with full metadata.
 
 ### Example Manifest
 
@@ -147,93 +131,43 @@ Each weekly export includes a `manifest.json` with full metadata.
   "schema_version": "v7",
   "tier": "tier1",
   "tier_description": "Starter — light entry table with aggregated sentiment (no futures, no sentiment internals)",
-  "window": {
-    "window_basis": "previous_week_utc",
-    "week_start_day": "2025-12-22",
-    "week_end_day": "2025-12-28",
-    "days_expected": ["2025-12-22", "2025-12-23", ...],
-    "days_included": ["2025-12-22", "2025-12-23", ...]
-  },
-  "build_ts_utc": "2026-01-16T12:01:02.113608+00:00",
-  "source_inputs": [
-    "tier3/daily/2025-12-22/data.parquet",
-    ...
-  ],
-  "row_count": 17635,
-  "source_coverage": {
-    "days_expected": ["2025-12-22", ...],
-    "days_present": ["2025-12-22", ...],
-    "days_missing": [],
-    "per_day": {
-      "2025-12-22": {
-        "hours_found": 24,
-        "hours_expected": 24,
-        "is_partial": false,
-        "missing_hours": []
-      }
-    },
-    "present_days_count": 7,
-    "missing_days_count": 0,
-    "partial_days_count": 0,
-    "min_days_threshold_used": 5,
-    "coverage_note": "This weekly export is derived from 7/7 daily partitions."
-  },
+  "date_utc": "2026-01-18",
+  "source_tier3": "tier3/daily/2026-01-18/data.parquet",
+  "source_tier3_size_bytes": 51596288,
+  "row_count": 2615,
+  "build_ts_utc": "2026-01-19T00:30:05.123456+00:00",
+  "parquet_sha256": "...",
+  "parquet_size_bytes": 191395,
   "field_policy": {
     "approach": "explicit_allowlist_flattened",
-    "total_fields": 22,
-    "fields": ["symbol", "snapshot_ts", "meta_added_ts", ...],
+    "total_fields": 19,
+    "fields": ["symbol", "snapshot_ts", "meta_added_ts", "meta_expires_ts", "meta_duration_sec", "meta_archive_schema_version", "spot_mid", "spot_spread_bps", "spot_range_pct_24h", "spot_ticker24_chg", "derived_liq_global_pct", "derived_spread_bps", "score_final", "sentiment_posts_total", "sentiment_posts_pos", "sentiment_posts_neu", "sentiment_posts_neg", "sentiment_mean_score", "sentiment_is_silent"],
     "field_categories": {
-      "identity_timing": ["symbol", "snapshot_ts", ...],
-      "spot_snapshot": ["spot_mid", "spot_spread_bps", ...],
+      "identity_timing": ["symbol", "snapshot_ts", "meta_added_ts", "meta_expires_ts", "meta_duration_sec", "meta_archive_schema_version"],
+      "spot_snapshot": ["spot_mid", "spot_spread_bps", "spot_range_pct_24h", "spot_ticker24_chg"],
       "derived_metrics": ["derived_liq_global_pct", "derived_spread_bps"],
       "scores": ["score_final"],
-      "sentiment_aggregated": ["sentiment_posts_total", ...]
+      "sentiment_aggregated": ["sentiment_posts_total", "sentiment_posts_pos", "sentiment_posts_neu", "sentiment_posts_neg", "sentiment_mean_score", "sentiment_is_silent"]
     },
     "sentiment_source": "twitter_sentiment_windows.last_cycle",
-    "sentiment_note": "Sentiment fields are aggregated-only from last_cycle. No internals (decision_sources, conf_mean, top_terms, etc.) are included.",
+    "sentiment_note": "Sentiment fields are aggregated-only from last_cycle. No internals included.",
     "exclusions": [
       "futures_raw (all futures data)",
       "flags.futures_data_ok (futures existence flag)",
       "spot_prices (time-series arrays)",
       "twitter_sentiment_windows (full struct)",
-      "All sentiment internals: decision_sources, primary_conf_mean, ..."
+      "All sentiment internals: decision_sources, conf_mean, top_terms, category_counts, etc."
     ]
-  },
-  "parquet_sha256": "...",
-  "parquet_size_bytes": 1463922
+  }
 }
 ```
-
-### window Block
-
-| Field | Description |
-|-------|-------------|
-| `window_basis` | How end_day was determined: `"previous_week_utc"` (cron) or `"end_day"` (manual) |
-| `week_start_day` | First day of the 7-day window (Monday) |
-| `week_end_day` | Last day of the 7-day window (Sunday) |
-| `days_expected` | List of 7 days in the window |
-| `days_included` | Days that were actually included in the build |
-
-### source_coverage Block
-
-| Field | Description |
-|-------|-------------|
-| `days_expected` | List of 7 days in the window |
-| `days_present` | Tier 3 days that exist and were included |
-| `days_missing` | Tier 3 days that were not found in R2 |
-| `per_day` | Coverage metadata for each present day (hours_found, is_partial, missing_hours) |
-| `present_days_count` | Count of included days |
-| `missing_days_count` | Count of missing days |
-| `partial_days_count` | Count of partial days (< 24 hours coverage) |
-| `min_days_threshold_used` | Minimum days required for build |
-| `coverage_note` | Human-readable summary |
 
 ### field_policy Block
 
 | Field | Description |
 |-------|-------------|
 | `approach` | `"explicit_allowlist_flattened"` — fields are flattened, not nested |
-| `total_fields` | Count of fields in output (22) |
+| `total_fields` | Count of fields in output (19) |
 | `fields` | Ordered list of all field names |
 | `field_categories` | Fields grouped by category |
 | `sentiment_source` | Source path for sentiment fields |
@@ -244,24 +178,27 @@ Each weekly export includes a `manifest.json` with full metadata.
 
 ## Usage Examples
 
-### Build Previous Week (Cron Mode)
+### Daily Build (Cron Mode)
 
 ```bash
-# Monday 00:05 UTC cron
-python3 scripts/build_tier1_weekly.py --previous-week --upload
+# Daily 00:30 UTC cron - builds yesterday
+30 0 * * * cd /srv/instrumetriq && python3 scripts/build_tier1_daily.py --upload >> /var/log/tier1_daily.log 2>&1
 ```
 
 ### Manual Build
 
 ```bash
-# Dry-run for specific week
-python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --dry-run
+# Dry-run for specific date
+python3 scripts/build_tier1_daily.py --date 2026-01-18 --dry-run
 
 # Build and upload
-python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload
+python3 scripts/build_tier1_daily.py --date 2026-01-18 --upload
+
+# Build date range
+python3 scripts/build_tier1_daily.py --from-date 2026-01-15 --to-date 2026-01-18 --upload
 
 # Force overwrite existing
-python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload --force
+python3 scripts/build_tier1_daily.py --date 2026-01-18 --upload --force
 ```
 
 ### Reading Tier 1 Parquet
@@ -270,23 +207,16 @@ python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload --force
 import pyarrow.parquet as pq
 
 # Read full table
-table = pq.read_table("tier1_weekly/2025-12-28/dataset_entries_7d.parquet")
+table = pq.read_table("tier1/daily/2026-01-18/data.parquet")
 
 # Read specific columns
 table = pq.read_table(
-    "tier1_weekly/2025-12-28/dataset_entries_7d.parquet",
+    "tier1/daily/2026-01-18/data.parquet",
     columns=["symbol", "snapshot_ts", "score_final", "sentiment_mean_score"]
 )
 
 # Convert to pandas
 df = table.to_pandas()
-```
-
-### Cron Schedule
-
-```bash
-# Monday 00:05 UTC — build previous Mon-Sun week
-5 0 * * 1 cd /srv/instrumetriq && python3 scripts/build_tier1_weekly.py --previous-week --upload >> /var/log/tier1_weekly.log 2>&1
 ```
 
 ---
@@ -306,40 +236,22 @@ All fields except identity/timing may contain nulls where data was unavailable.
 
 ## Verification
 
-Use `verify_tier1_weekly.py` to validate Tier 1 exports for correctness and completeness.
-
-### Running Verification
-
-```bash
-# Verify most recent week from R2
-python3 scripts/verify_tier1_weekly.py
-
-# Verify specific week
-python3 scripts/verify_tier1_weekly.py --end-day 2025-12-28
-
-# Verify local files
-python3 scripts/verify_tier1_weekly.py --local output/tier1_weekly/2025-12-28
-```
+Tier 1 exports can be verified for correctness and completeness.
 
 ### Verification Checks
-
-The verifier performs 5 categories of checks:
 
 | Check | Description |
 |-------|-------------|
 | **1. Presence + Integrity** | Parquet/manifest exist, SHA256 matches |
-| **2. Window Semantics** | 7-day Mon–Sun window, consecutive days |
-| **3. Source Coverage** | Days present/missing, partial day detection |
-| **4. Schema Validation** | 22 required columns with correct types |
-| **5. Data Quality** | Row counts, distinct symbols, null ratios |
+| **2. Schema Validation** | 19 required columns with correct types |
+| **3. Data Quality** | Row counts, distinct symbols, null ratios |
 
 ### Validation Rules
 
 **FAIL conditions:**
 - SHA256 mismatch between parquet and manifest
-- Missing required columns (any of 22)
+- Missing required columns (any of 19)
 - Row count mismatch between parquet and manifest
-- Coverage < min_days_threshold (default 5)
 - Critical columns >99.5% null (symbol, snapshot_ts, spot_mid, score_final)
 - Negative sentiment_posts_total values
 

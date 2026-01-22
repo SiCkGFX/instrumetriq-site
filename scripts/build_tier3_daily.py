@@ -12,6 +12,9 @@ Usage:
     # Export specific date with upload
     python3 scripts/export_tier3_daily.py --date 2026-01-14 --upload
 
+    # Export date range (inclusive)
+    python3 scripts/export_tier3_daily.py --from-date 2025-12-14 --to-date 2026-01-17 --upload
+
     # Force overwrite existing R2 objects
     python3 scripts/export_tier3_daily.py --date 2026-01-14 --upload --force
 
@@ -72,7 +75,8 @@ PARQUET_COMPRESSION = "zstd"
 EXPECTED_HOURS = [f"{h:02d}" for h in range(24)]  # ["00", "01", ..., "23"]
 
 # Minimum hours required for a valid export (allows partial days)
-MIN_HOURS_DEFAULT = 20
+# Set to 1 to allow any day with at least 1 hour of data
+MIN_HOURS_DEFAULT = 1
 
 # Required top-level keys for schema validation
 REQUIRED_TOP_LEVEL_KEYS = [
@@ -380,6 +384,80 @@ def self_test(archive_path: Path) -> bool:
 
 
 # ==============================================================================
+# Schema Transformation (Tier 3 specific)
+# ==============================================================================
+
+# Fields to rename in futures_raw (fix historical _1h -> _5m naming)
+FUTURES_FIELD_RENAMES = {
+    "open_interest_1h_delta_pct": "open_interest_5m_delta_pct",
+    "top_long_short_accounts_1h": "top_long_short_accounts_5m",
+    "top_long_short_positions_1h": "top_long_short_positions_5m",
+}
+
+# Fields to drop from sentiment_activity (meaningless in daily aggregations)
+SENTIMENT_ACTIVITY_FIELDS_TO_DROP = [
+    "recent_posts_1h",
+    "recent_posts_4h",
+    "recent_posts_24h",
+    "config",  # Redundant config constants (same for all rows)
+]
+
+# Fields to drop from sentiment windows (dynamic dicts that explode into 30k+ sparse columns)
+SENTIMENT_WINDOW_FIELDS_TO_DROP = [
+    "tag_counts",           # Hashtags in tweets - explodes to 6000+ sparse columns
+    "cashtag_counts",       # Cashtags mentioned - explodes to 2800+ sparse columns  
+    "mention_counts",       # Twitter accounts mentioned - explodes to 15000+ sparse columns
+    "url_domain_counts",    # URL domains linked - explodes to 2400+ sparse columns
+    "bucket_min_posts_for_score",  # Always 5, redundant config constant
+]
+
+
+def transform_entry_for_tier3(entry: dict) -> dict:
+    """
+    Apply Tier 3 schema transformations to an entry.
+    
+    Transformations:
+    1. Rename futures_raw.*_1h fields to *_5m (fixes historical naming debt)
+    2. Drop sentiment_activity.recent_posts_1h/4h/24h (meaningless in aggregations)
+    3. Drop sentiment_activity.config (redundant constants)
+    4. Drop dynamic count dicts (tag_counts, cashtag_counts, mention_counts, url_domain_counts)
+       - These explode into 30,000+ sparse columns in Parquet format
+       - Use source .jsonl.gz archive if you need raw co-mention data
+    5. Drop bucket_min_posts_for_score (always 5, redundant)
+    
+    Args:
+        entry: Raw entry dict from archive
+        
+    Returns:
+        Transformed entry with corrected schema
+    """
+    # Transform futures_raw field names
+    futures_raw = entry.get("futures_raw")
+    if futures_raw and isinstance(futures_raw, dict):
+        for old_name, new_name in FUTURES_FIELD_RENAMES.items():
+            if old_name in futures_raw:
+                futures_raw[new_name] = futures_raw.pop(old_name)
+    
+    # Transform twitter_sentiment_windows (both last_cycle and last_2_cycles)
+    twitter_windows = entry.get("twitter_sentiment_windows")
+    if twitter_windows and isinstance(twitter_windows, dict):
+        for window_key in ["last_cycle", "last_2_cycles"]:
+            window = twitter_windows.get(window_key)
+            if window and isinstance(window, dict):
+                # Drop window-level fields (dynamic dicts, config constants)
+                for field_to_drop in SENTIMENT_WINDOW_FIELDS_TO_DROP:
+                    window.pop(field_to_drop, None)
+                
+                # Drop sentiment_activity sub-fields
+                sentiment_activity = window.get("sentiment_activity")
+                if sentiment_activity and isinstance(sentiment_activity, dict):
+                    for field_to_drop in SENTIMENT_ACTIVITY_FIELDS_TO_DROP:
+                        sentiment_activity.pop(field_to_drop, None)
+    
+    return entry
+
+
+# ==============================================================================
 # Parquet Export
 # ==============================================================================
 
@@ -439,8 +517,11 @@ def entries_to_parquet(entries: list[dict], output_path: Path) -> dict:
         if "added_ts" in meta:
             added_timestamps.append(meta["added_ts"])
     
+    # Apply Tier 3 schema transformations (renames, drops)
+    transformed_entries = [transform_entry_for_tier3(e) for e in entries]
+    
     # Normalize entries for Parquet (handle empty dicts, etc.)
-    normalized_entries = [normalize_entry_for_parquet(e) for e in entries]
+    normalized_entries = [normalize_entry_for_parquet(e) for e in transformed_entries]
     
     # Create PyArrow table from list of dicts
     # PyArrow will infer nested schema automatically
@@ -768,6 +849,7 @@ def main():
 Examples:
   python3 scripts/export_tier3_daily.py --dry-run
   python3 scripts/export_tier3_daily.py --date 2026-01-14 --upload
+  python3 scripts/export_tier3_daily.py --from-date 2025-12-14 --to-date 2026-01-17 --upload
   python3 scripts/export_tier3_daily.py --date 2026-01-14 --upload --force
   python3 scripts/export_tier3_daily.py --self-test
         """,
@@ -777,6 +859,18 @@ Examples:
         "--date",
         type=str,
         help="UTC date to export (YYYY-MM-DD). Default: yesterday UTC",
+    )
+    
+    parser.add_argument(
+        "--from-date",
+        type=str,
+        help="Start of date range (inclusive, YYYY-MM-DD). Use with --to-date.",
+    )
+    
+    parser.add_argument(
+        "--to-date",
+        type=str,
+        help="End of date range (inclusive, YYYY-MM-DD). Use with --from-date.",
     )
     
     parser.add_argument(
@@ -842,10 +936,43 @@ Examples:
     today_utc = now_utc.strftime("%Y-%m-%d")
     yesterday_utc = (now_utc - timedelta(days=1)).strftime("%Y-%m-%d")
     
-    # Determine date
-    if args.date:
+    # Determine upload mode
+    do_upload = args.upload and not args.dry_run
+    
+    if args.dry_run and args.upload:
+        print("[WARN] --dry-run overrides --upload; will not upload", file=sys.stderr)
+    
+    # Build list of dates to process
+    dates_to_process = []
+    
+    if args.from_date and args.to_date:
+        # Date range mode
+        try:
+            start_date = datetime.strptime(args.from_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(args.to_date, "%Y-%m-%d").date()
+        except ValueError as e:
+            print(f"[ERROR] Invalid date format: {e}. Use YYYY-MM-DD", file=sys.stderr)
+            sys.exit(1)
+        
+        if start_date > end_date:
+            print(f"[ERROR] --from-date ({args.from_date}) must be <= --to-date ({args.to_date})", file=sys.stderr)
+            sys.exit(1)
+        
+        current = start_date
+        while current <= end_date:
+            dates_to_process.append(current.strftime("%Y-%m-%d"))
+            current += timedelta(days=1)
+        
+        print(f"[INFO] Date range: {args.from_date} to {args.to_date} ({len(dates_to_process)} days)")
+    
+    elif args.from_date or args.to_date:
+        # Only one of from/to specified
+        print("[ERROR] Both --from-date and --to-date must be specified together", file=sys.stderr)
+        sys.exit(1)
+    
+    elif args.date:
+        # Single date mode
         date_str = args.date
-        # Validate format
         try:
             datetime.strptime(date_str, "%Y-%m-%d")
         except ValueError:
@@ -857,29 +984,56 @@ Examples:
             print(f"[ERROR] Cannot export today's date ({today_utc}) - day is not complete.", file=sys.stderr)
             print("[HINT] Use --allow-incomplete to bypass this check (may result in partial export)", file=sys.stderr)
             sys.exit(1)
+        
+        dates_to_process = [date_str]
+    
     else:
         # Default to yesterday UTC
-        date_str = yesterday_utc
-        print(f"[INFO] No --date specified, defaulting to yesterday UTC: {date_str}")
+        dates_to_process = [yesterday_utc]
+        print(f"[INFO] No --date specified, defaulting to yesterday UTC: {yesterday_utc}")
     
-    # Determine upload mode
-    do_upload = args.upload and not args.dry_run
+    # Process all dates
+    success_count = 0
+    fail_count = 0
+    skip_count = 0
     
-    if args.dry_run and args.upload:
-        print("[WARN] --dry-run overrides --upload; will not upload", file=sys.stderr)
+    for i, date_str in enumerate(dates_to_process):
+        if len(dates_to_process) > 1:
+            print(f"\n[{i+1}/{len(dates_to_process)}] Processing {date_str}...")
+        
+        # Skip today unless --allow-incomplete
+        if date_str == today_utc and not args.allow_incomplete:
+            print(f"  [SKIP] Skipping today ({today_utc}) - day not complete")
+            skip_count += 1
+            continue
+        
+        exit_code = export_tier3_daily(
+            date_str=date_str,
+            archive_path=args.archive_path,
+            output_dir=args.out_dir,
+            upload=do_upload,
+            force=args.force,
+            allow_incomplete=args.allow_incomplete,
+            min_hours=args.min_hours,
+        )
+        
+        if exit_code == 0:
+            success_count += 1
+        else:
+            fail_count += 1
     
-    # Run export
-    exit_code = export_tier3_daily(
-        date_str=date_str,
-        archive_path=args.archive_path,
-        output_dir=args.out_dir,
-        upload=do_upload,
-        force=args.force,
-        allow_incomplete=args.allow_incomplete,
-        min_hours=args.min_hours,
-    )
+    # Summary for multi-date runs
+    if len(dates_to_process) > 1:
+        print(f"\n{'='*60}")
+        print(f"BATCH SUMMARY")
+        print(f"{'='*60}")
+        print(f"Total days:   {len(dates_to_process)}")
+        print(f"Success:      {success_count}")
+        print(f"Failed:       {fail_count}")
+        print(f"Skipped:      {skip_count}")
+        print(f"{'='*60}")
     
-    sys.exit(exit_code)
+    sys.exit(0 if fail_count == 0 else 1)
 
 
 if __name__ == "__main__":

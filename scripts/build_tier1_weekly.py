@@ -13,22 +13,22 @@ Tier 1 is the "Starter — light entry table" with:
 NO: futures data, sentiment internals, time-series arrays, full nested structs.
 
 Weekly cadence:
-- Cron runs Monday 00:05 UTC with --previous-week
-- Builds the most recent complete Mon-Sun week (end_day = previous Sunday UTC)
-- Window: end_day - 6 days to end_day (7 days)
+- Builds calendaristic weeks (Monday-Sunday)
+- Default: builds the most recent complete week (ending on previous Sunday UTC)
+- --all: builds ALL calendaristic weeks that have Tier 3 data
 
 Usage:
-    # Cron mode: build previous Mon-Sun week (for Monday 00:05 UTC cron)
-    python3 scripts/build_tier1_weekly.py --previous-week --upload
+    # Default: build the most recent complete calendaristic week
+    python3 scripts/build_tier1_weekly.py --upload
 
-    # Dry-run to see computed window
-    python3 scripts/build_tier1_weekly.py --previous-week --dry-run
-
-    # Manual/backfill: build specific week ending on a date
-    python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload
+    # Build ALL calendaristic weeks with available Tier 3 data
+    python3 scripts/build_tier1_weekly.py --all --upload
 
     # Force overwrite existing R2 objects
-    python3 scripts/build_tier1_weekly.py --end-day 2026-01-04 --upload --force
+    python3 scripts/build_tier1_weekly.py --all --upload --force
+
+    # Dry-run (local only, no upload)
+    python3 scripts/build_tier1_weekly.py --dry-run
 
 Output:
     Local:  output/tier1_weekly/YYYY-MM-DD/dataset_entries_7d.parquet
@@ -109,7 +109,7 @@ MIN_DAYS_DEFAULT = 5
 #    - posts_total, posts_pos, posts_neu, posts_neg
 #    - hybrid_decision_stats.mean_score
 #    From twitter_sentiment_windows.last_cycle.sentiment_activity:
-#    - is_silent, recent_posts_count, has_recent_activity, hours_since_latest_tweet
+#    - is_silent (only - other activity fields are useless for weekly builds)
 #
 # EXCLUDED:
 # - Any futures data or futures_data_ok flag
@@ -150,9 +150,6 @@ TIER1_FIELD_SPEC = {
     
     # From twitter_sentiment_windows.last_cycle.sentiment_activity
     "sentiment_is_silent": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.is_silent", "required": False},
-    "sentiment_recent_posts_count": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.recent_posts_count", "required": False},
-    "sentiment_has_recent_activity": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.has_recent_activity", "required": False},
-    "sentiment_hours_since_latest_tweet": {"source": "twitter_sentiment_windows.last_cycle.sentiment_activity.hours_since_latest_tweet", "required": False},
 }
 
 # Required source columns in Tier 3 parquet
@@ -207,6 +204,71 @@ def compute_previous_sunday() -> str:
         days_since_sunday = 7
     previous_sunday = today - timedelta(days=days_since_sunday)
     return previous_sunday.strftime("%Y-%m-%d")
+
+
+def discover_all_calendaristic_weeks(s3_client, bucket: str, min_days: int = 5) -> List[str]:
+    """
+    Discover all calendaristic weeks (Mon-Sun) that have enough Tier 3 data.
+    
+    Scans R2 for all Tier 3 daily parquets and groups them into calendaristic weeks.
+    Returns list of Sunday dates (week end dates) that have >= min_days of data.
+    
+    Returns:
+        List of end_day dates (Sundays) in YYYY-MM-DD format, sorted ascending
+    """
+    from botocore.exceptions import ClientError
+    
+    # List all Tier 3 daily folders
+    paginator = s3_client.get_paginator('list_objects_v2')
+    available_days = set()
+    
+    for page in paginator.paginate(Bucket=bucket, Prefix=f"{TIER3_DAILY_PREFIX}/", Delimiter='/'):
+        for prefix in page.get('CommonPrefixes', []):
+            # Extract date from prefix like "tier3/daily/2025-12-15/"
+            day = prefix['Prefix'].rstrip('/').split('/')[-1]
+            if len(day) == 10 and day[4] == '-' and day[7] == '-':
+                available_days.add(day)
+    
+    if not available_days:
+        return []
+    
+    # Find all Sundays that could have weeks with enough data
+    min_date = min(available_days)
+    max_date = max(available_days)
+    
+    min_dt = datetime.strptime(min_date, "%Y-%m-%d").date()
+    max_dt = datetime.strptime(max_date, "%Y-%m-%d").date()
+    
+    # Find first Sunday on or after min_date
+    days_to_sunday = (6 - min_dt.weekday()) % 7
+    first_sunday = min_dt + timedelta(days=days_to_sunday)
+    
+    # Find the most recent completed Sunday (before today)
+    today = datetime.now(timezone.utc).date()
+    days_since_sunday = (today.weekday() + 1) % 7
+    if days_since_sunday == 0:
+        days_since_sunday = 7
+    last_sunday = today - timedelta(days=days_since_sunday)
+    
+    # Collect all Sundays with enough data
+    valid_weeks = []
+    current_sunday = first_sunday
+    
+    while current_sunday <= last_sunday:
+        # Calculate week range (Mon-Sun)
+        week_start = current_sunday - timedelta(days=6)
+        week_days = []
+        for i in range(7):
+            day = (week_start + timedelta(days=i)).strftime("%Y-%m-%d")
+            if day in available_days:
+                week_days.append(day)
+        
+        if len(week_days) >= min_days:
+            valid_weeks.append(current_sunday.strftime("%Y-%m-%d"))
+        
+        current_sunday += timedelta(days=7)
+    
+    return sorted(valid_weeks)
 
 
 def validate_end_day_is_sunday(end_day: str) -> Tuple[bool, str]:
@@ -886,34 +948,17 @@ def main():
         epilog=__doc__
     )
     
-    # Date selection (mutually exclusive)
-    date_group = parser.add_mutually_exclusive_group()
-    
-    date_group.add_argument(
-        "--end-day",
-        type=str,
-        default=None,
-        help="End date for the week (YYYY-MM-DD). Should be a Sunday. For manual/backfill runs."
-    )
-    
-    date_group.add_argument(
-        "--previous-week",
-        action="store_true",
-        help="Build the most recent complete Mon-Sun week (end_day = previous Sunday UTC). For cron."
-    )
-    
     parser.add_argument(
-        "--days",
-        type=int,
-        default=7,
-        help="Number of days to include (default: 7)"
+        "--all",
+        action="store_true",
+        help="Build ALL calendaristic weeks with available Tier 3 data"
     )
     
     parser.add_argument(
         "--min-days",
         type=int,
         default=MIN_DAYS_DEFAULT,
-        help=f"Minimum Tier 3 days required to build (default: {MIN_DAYS_DEFAULT})"
+        help=f"Minimum Tier 3 days required to build a week (default: {MIN_DAYS_DEFAULT})"
     )
     
     parser.add_argument(
@@ -934,47 +979,60 @@ def main():
         help="Overwrite existing R2 objects"
     )
     
-    parser.add_argument(
-        "--local-out",
-        type=str,
-        default=None,
-        help="Local output directory (default: output/tier1_weekly/YYYY-MM-DD/)"
-    )
-    
     args = parser.parse_args()
     
-    # Determine end_day and window_basis
-    if args.previous_week:
-        # Cron mode: compute most recent Sunday
-        args.end_day = compute_previous_sunday()
-        window_basis = "previous_week_utc"
-        print(f"[INFO] --previous-week: computed end_day = {args.end_day} (most recent Sunday UTC)")
-    elif args.end_day is not None:
-        # Manual mode: use specified end_day
-        window_basis = "end_day"
+    # Connect to R2 first (needed for --all discovery)
+    config = get_r2_config()
+    s3_client = get_s3_client(config)
+    
+    # Determine which weeks to build
+    if args.all:
+        print("[INFO] Discovering all calendaristic weeks with Tier 3 data...")
+        weeks_to_build = discover_all_calendaristic_weeks(s3_client, config.bucket, args.min_days)
+        if not weeks_to_build:
+            print("[ERROR] No calendaristic weeks found with enough Tier 3 data")
+            sys.exit(1)
+        print(f"[INFO] Found {len(weeks_to_build)} weeks to build: {weeks_to_build}")
     else:
-        # No args: default to yesterday UTC (legacy behavior)
-        yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
-        args.end_day = yesterday.strftime("%Y-%m-%d")
-        window_basis = "end_day"
-        print(f"[INFO] No --end-day or --previous-week specified, defaulting to yesterday UTC: {args.end_day}")
+        # Default: build the most recent completed calendaristic week
+        end_day = compute_previous_sunday()
+        weeks_to_build = [end_day]
+        print(f"[INFO] Default: building calendaristic week ending {end_day} (most recent Sunday UTC)")
     
-    # Parse local output directory
-    output_dir = Path(args.local_out) if args.local_out else None
+    # Build each week
+    total = len(weeks_to_build)
+    success_count = 0
+    failed_weeks = []
     
-    # Run build
-    success = build_tier1_weekly(
-        end_day=args.end_day,
-        days=args.days,
-        min_days=args.min_days,
-        output_dir=output_dir,
-        dry_run=args.dry_run,
-        upload=args.upload,
-        force=args.force,
-        window_basis=window_basis,
-    )
+    for i, end_day in enumerate(weeks_to_build):
+        print(f"\n{'='*60}")
+        print(f"[{i+1}/{total}] Building week ending {end_day}")
+        print(f"{'='*60}")
+        
+        success = build_tier1_weekly(
+            end_day=end_day,
+            days=7,
+            min_days=args.min_days,
+            output_dir=None,
+            dry_run=args.dry_run,
+            upload=args.upload,
+            force=args.force,
+            window_basis="calendaristic",
+        )
+        
+        if success:
+            success_count += 1
+        else:
+            failed_weeks.append(end_day)
     
-    sys.exit(0 if success else 1)
+    # Summary
+    print(f"\n{'='*60}")
+    print(f"BUILD SUMMARY: {success_count}/{total} weeks built successfully")
+    if failed_weeks:
+        print(f"Failed weeks: {failed_weeks}")
+    print(f"{'='*60}")
+    
+    sys.exit(0 if not failed_weeks else 1)
 
 
 if __name__ == "__main__":

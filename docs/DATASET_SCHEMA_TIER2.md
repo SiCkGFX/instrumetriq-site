@@ -1,38 +1,25 @@
-# Tier 2 Weekly Dataset Schema
+# Tier 2 Daily Dataset Schema
 
-This document describes the schema for Tier 2 weekly parquet exports.
+This document describes the schema for Tier 2 daily parquet exports.
 
 ## Overview
 
-Tier 2 weekly exports are derived from Tier 3 daily parquets with a reduced column footprint optimized for research and analysis.
+Tier 2 daily exports are derived from Tier 3 daily parquets with a reduced column footprint optimized for research and analysis. Tier 2 includes rich sentiment data from `twitter_sentiment_windows.last_cycle`.
 
 | Property | Value |
 |----------|-------|
 | **schema_version** | v7 |
 | **tier** | tier2 |
-| **window** | 7 consecutive UTC days |
+| **granularity** | Daily (one file per UTC day) |
 | **source** | Derived from `tier3/daily/` parquets |
 | **format** | Apache Parquet with zstd compression |
-| **R2 path** | `tier2/weekly/{end-day}/dataset_entries_7d.parquet` |
-
-### Weekly Window Definition
-
-A Tier 2 weekly export covers 7 consecutive UTC days ending on `end_day`:
-- **Window:** `end_day - 6` to `end_day` (inclusive)
-- **Example:** `--end-day 2026-01-15` covers 2026-01-09 through 2026-01-15
-
-### Partial Week Support
-
-Tier 2 can be built from **5 or more** of the 7 expected days (configurable via `--min-days`).
-- Missing days are explicitly recorded in the manifest
-- Partial Tier 3 days (those with < 24 hours coverage) are also tracked
-- Use the `source_coverage` block in manifest to understand data gaps
+| **R2 path** | `tier2/daily/{YYYY-MM-DD}/data.parquet` |
 
 ---
 
 ## Column Policy
 
-### Included Columns (7)
+### Included Columns (8)
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -43,8 +30,9 @@ Tier 2 can be built from **5 or more** of the 7 expected days (configurable via 
 | `derived` | struct | Calculated metrics |
 | `scores` | struct | Scoring results |
 | `twitter_sentiment_meta` | struct | Twitter sentiment metadata |
+| `twitter_sentiment_last_cycle` | struct | Sentiment from last 2-hour cycle (selected fields only) |
 
-### Excluded Columns (7)
+### Excluded Columns (6)
 
 | Column | Reason for Exclusion |
 |--------|---------------------|
@@ -52,19 +40,54 @@ Tier 2 can be built from **5 or more** of the 7 expected days (configurable via 
 | `spot_prices` | Time-series arrays, high volume |
 | `flags` | Boolean flags, debugging only |
 | `diag` | Diagnostics, internal use |
-| `twitter_sentiment_windows` | Dynamic-key structs (10K-17K keys), see note below |
 | `norm` | Intentionally dropped in v7 |
 | `labels` | Intentionally dropped in v7 |
 
-### Why twitter_sentiment_windows is Excluded
+### twitter_sentiment_last_cycle Structure
 
-`twitter_sentiment_windows` contains dynamic-key struct fields where keys are actual hashtag/handle/domain names (e.g., `tag_counts: struct<#BTC: 5, #ETH: 3, ...>`). 
+The `twitter_sentiment_last_cycle` column is extracted from `twitter_sentiment_windows.last_cycle` with **13 selected fields** (stable schema):
 
-**Problem:** These fields have 10,000-17,000 unique keys per day. The keys differ between days, causing schema incompatibility during weekly concatenation. Converting to MAP<string, int64> for stable schema takes 15-30 minutes per weekly build.
+| Field | Type | Description |
+|-------|------|-------------|
+| `ai_sentiment` | struct | AI model sentiment scores and stats |
+| `author_stats` | struct | Author follower counts and distinct author counts |
+| `bucket_has_valid_sentiment` | bool | Whether bucket has valid sentiment |
+| `bucket_min_posts_for_score` | int64 | Minimum posts required for scoring |
+| `bucket_status` | string | Bucket status indicator |
+| `category_counts` | struct | Counts per sentiment category (emoji_pos, fud_fear, etc.) |
+| `hybrid_decision_stats` | struct | Combined decision sources and ratios |
+| `platform_engagement` | struct | Likes, retweets, replies, views stats |
+| `posts_neg` | int64 | Negative posts count |
+| `posts_neu` | int64 | Neutral posts count |
+| `posts_pos` | int64 | Positive posts count |
+| `posts_total` | int64 | Total posts count |
+| `sentiment_activity` | struct | Activity metrics (is_silent, hours_since_latest_tweet) |
 
-**Solution:** Tier 2 excludes `twitter_sentiment_windows` entirely. The essential provenance metadata is still available in `twitter_sentiment_meta`.
+**Note:** This column is named `twitter_sentiment_last_cycle` (not `twitter_sentiment_windows`) because it only contains the `last_cycle` data, not `last_2_cycles`.
 
-**For full sentiment data:** Use Tier 3 daily files (no concatenation needed, original struct format preserved).
+### Excluded Sentiment Fields
+
+The following fields from `twitter_sentiment_windows.last_cycle` are **excluded** from Tier 2:
+
+| Field | Reason for Exclusion |
+|-------|---------------------|
+| `content_stats` | Detailed content type breakdown, low utility |
+| `lexicon_sentiment` | Lexicon-based sentiment (AI sentiment preferred) |
+| `media_count` | Media attachment count, low utility |
+| `top_terms` | Top terms per category, high cardinality |
+
+### Excluded Dynamic-Key Fields
+
+The following **dynamic-key fields** are excluded from Tier 2 due to schema instability:
+
+| Field | Reason for Exclusion |
+|-------|---------------------|
+| `tag_counts` | 3,600+ unique hashtag keys per day |
+| `cashtag_counts` | 2,300+ unique cashtag keys per day |
+| `mention_counts` | 10,000+ unique mention keys per day |
+| `url_domain_counts` | 1,500+ unique domain keys per day |
+
+These fields have high-cardinality dynamic keys that vary between days, causing schema incompatibility when merging parquet files. They are available in Tier 3 daily exports.
 
 ---
 
@@ -130,86 +153,76 @@ Key fields within the `twitter_sentiment_meta` struct:
 
 ## Manifest Schema
 
-Each weekly export includes a `manifest.json` with:
+Each daily export includes a `manifest.json` with:
 
 ```json
 {
   "schema_version": "v7",
   "tier": "tier2",
-  "window": {
-    "window_basis": "previous_week_utc",
-    "week_start_day": "2025-12-22",
-    "week_end_day": "2025-12-28",
-    "days_expected": ["2025-12-22", "2025-12-23", ...],
-    "days_included": ["2025-12-22", "2025-12-23", ...]
-  },
-  "build_ts_utc": "2026-01-16T08:14:05.789519+00:00",
-  "source_inputs": [
-    "tier3/daily/2025-12-22/data.parquet",
-    ...
-  ],
-  "row_count": 17635,
-  "source_coverage": {
-    "days_expected": ["2025-12-22", ...],
-    "days_present": ["2025-12-22", ...],
-    "days_missing": [],
-    "per_day": {
-      "2025-12-22": {
-        "hours_found": 24,
-        "hours_expected": 24,
-        "is_partial": false,
-        "missing_hours": []
-      }
-    },
-    "present_days_count": 7,
-    "missing_days_count": 0,
-    "partial_days_count": 0,
-    "min_days_threshold_used": 5,
-    "coverage_note": "This weekly export is derived from 7/7 daily partitions."
-  },
-  "column_policy": {
-    "included_top_level_columns": [...],
-    "excluded_top_level_columns": [...],
-    "explicit_exclusions": [...]
-  },
+  "tier_description": "Research — reduced column footprint with sentiment last_cycle",
+  "date_utc": "2026-01-18",
+  "source_tier3": "tier3/daily/2026-01-18/data.parquet",
+  "source_tier3_size_bytes": 51588086,
+  "row_count": 2615,
+  "build_ts_utc": "2026-01-19T00:20:33.971078+00:00",
   "parquet_sha256": "...",
-  "parquet_size_bytes": 5339067
+  "parquet_size_bytes": 912958,
+  "column_policy": {
+    "columns": [
+      "symbol",
+      "snapshot_ts",
+      "meta",
+      "spot_raw",
+      "derived",
+      "scores",
+      "twitter_sentiment_meta",
+      "twitter_sentiment_last_cycle"
+    ],
+    "excluded_from_tier3": [
+      "futures_raw",
+      "spot_prices",
+      "flags",
+      "diag"
+    ],
+    "sentiment_source": "twitter_sentiment_windows.last_cycle",
+    "sentiment_excluded_fields": [
+      "top_terms",
+      "tag_counts",
+      "mention_counts",
+      "cashtag_counts",
+      "url_domain_counts",
+      "lexicon_sentiment",
+      "content_stats",
+      "media_count"
+    ]
+  }
 }
 ```
 
-### window Block
-
-The `window` block describes the weekly range:
+### Manifest Fields
 
 | Field | Description |
 |-------|-------------|
-| `window_basis` | How end_day was determined: `"previous_week_utc"` (cron mode) or `"end_day"` (manual) |
-| `week_start_day` | First day of the 7-day window (Monday) |
-| `week_end_day` | Last day of the 7-day window (Sunday) |
-| `days_expected` | List of 7 days in the window |
-| `days_included` | Days that were actually included in the build |
+| `schema_version` | Archive schema version (v7) |
+| `tier` | Tier identifier (tier2) |
+| `tier_description` | Human-readable tier description |
+| `date_utc` | The UTC date covered |
+| `source_tier3` | Path to source Tier 3 parquet |
+| `source_tier3_size_bytes` | Size of source Tier 3 file |
+| `row_count` | Number of entries in output |
+| `build_ts_utc` | Build timestamp |
+| `parquet_sha256` | SHA256 hash of parquet file |
+| `parquet_size_bytes` | Size of output parquet |
+| `column_policy` | Column inclusion/exclusion rules |
 
-**Window basis modes:**
-- `previous_week_utc`: Used with `--previous-week` flag; computes end_day as most recent Sunday UTC
-- `end_day`: Used with `--end-day YYYY-MM-DD` flag; uses explicit date provided
-
-### source_coverage Block
-
-The `source_coverage` block documents data completeness:
+### column_policy Block
 
 | Field | Description |
 |-------|-------------|
-| `days_expected` | List of 7 days in the window |
-| `days_present` | Tier 3 days that exist and were included |
-| `days_missing` | Tier 3 days that were not found in R2 |
-| `per_day` | Coverage metadata for each present day |
-| `present_days_count` | Count of included days (e.g., 6) |
-| `missing_days_count` | Count of missing days (e.g., 1) |
-| `partial_days_count` | Count of partial days (< 24 hours coverage) |
-| `min_days_threshold_used` | Minimum days required for build |
-| `coverage_note` | Human-readable summary |
-
-**Gaps reflect pipeline uptime**, not missing market data. If the archival pipeline was offline, those days will be missing from Tier 3 and therefore from Tier 2.
+| `columns` | List of 8 included columns |
+| `excluded_from_tier3` | Tier 3 columns not included in Tier 2 |
+| `sentiment_source` | Source path for sentiment data |
+| `sentiment_excluded_fields` | Fields excluded from twitter_sentiment_last_cycle |
 
 ---
 
@@ -218,26 +231,31 @@ The `source_coverage` block documents data completeness:
 Use the verification script to validate Tier 2 exports:
 
 ```bash
-# Verify most recent week from R2
-python3 scripts/verify_tier2_weekly.py
+# Verify latest date from R2
+python3 scripts/verify_tier2_daily.py
 
-# Verify specific week
-python3 scripts/verify_tier2_weekly.py --end-day 2025-12-28
+# Verify specific date
+python3 scripts/verify_tier2_daily.py --date 2026-01-18
 
-# Verify local files
-python3 scripts/verify_tier2_weekly.py --local output/tier2_weekly/2025-12-28
+# Verify all dates
+python3 scripts/verify_tier2_daily.py --all
+
+# Schema-only check (faster)
+python3 scripts/verify_tier2_daily.py --date 2026-01-18 --schema-only
 ```
 
-**Report location:** `output/verify_tier2_report.md`
+### Verification Checks
 
-**Artifacts generated:**
-- `output/verify_tier2/{end-day}/manifest.json` - Downloaded manifest copy
-- `output/verify_tier2/{end-day}/schema.txt` - PyArrow schema pretty print
-- `output/verify_tier2/{end-day}/stats.json` - Machine-readable summary
+| Check | Description |
+|-------|-------------|
+| Schema Validation | 8 required columns with correct types |
+| Sentiment Fields | 13 required fields in twitter_sentiment_last_cycle |
+| Data Quality | Null rates, distinct symbols |
 
 ---
 
 ## Related Documentation
 
 - [DATASET_EXPORT_GUIDE.md](DATASET_EXPORT_GUIDE.md) - Export workflow and usage
-- [scripts/README.md](../scripts/README.md) - Script reference
+- [DATASET_SCHEMA_TIER3.md](DATASET_SCHEMA_TIER3.md) - Tier 3 daily schema
+- [DATASET_SCHEMA_TIER1.md](DATASET_SCHEMA_TIER1.md) - Tier 1 daily schema

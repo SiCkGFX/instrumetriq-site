@@ -4,13 +4,23 @@ This guide covers the tiered dataset export system for Instrumetriq archives.
 
 ## Overview
 
-The archive data is exported in multiple tiers, each serving different use cases:
+The archive data is exported in multiple tiers, each serving different use cases. **All tiers are now daily exports**, built in sequence each night.
 
-| Tier | Granularity | Update Frequency | Schema | Primary Use Case |
-|------|-------------|------------------|--------|------------------|
-| **Tier 1** | Weekly | Once per week | 22 flattened fields | Starter table with aggregated sentiment (no futures) |
-| **Tier 2** | Weekly | Once per week | 7 nested structs | Research, reduced column footprint |
-| **Tier 3** | Daily | Once per day | 12 nested structs | Full historical data, ML training |
+| Tier | Granularity | Schema | Primary Use Case |
+|------|-------------|--------|------------------|
+| **Tier 1** | Daily | 19 flattened fields | Starter table with aggregated sentiment (no futures) |
+| **Tier 2** | Daily | 8 nested columns | Research, reduced column footprint |
+| **Tier 3** | Daily | 12 nested columns | Full historical data, ML training |
+
+### Daily Build Schedule
+
+All tiers build daily at these UTC times:
+
+| Tier | Cron Time | Script |
+|------|-----------|--------|
+| Tier 3 | 00:10 UTC | `export_tier3_daily.py` |
+| Tier 2 | 00:20 UTC | `build_tier2_daily.py` |
+| Tier 1 | 00:30 UTC | `build_tier1_daily.py` |
 
 ---
 
@@ -26,11 +36,11 @@ Daily partitions are built from the **archive folder day (UTC)**, not from `meta
 
 #### Automatic (Cron)
 
-The standard operational pattern runs via cron at **00:05 UTC**, exporting the previous day:
+The standard operational pattern runs via cron at **00:10 UTC**, exporting the previous day:
 
 ```bash
-# Cron entry (runs at 00:05 UTC daily)
-5 0 * * * cd /srv/instrumetriq && python3 scripts/export_tier3_daily.py --upload >> /var/log/tier3_export.log 2>&1
+# Cron entry (runs at 00:10 UTC daily)
+10 0 * * * cd /srv/instrumetriq && python3 scripts/export_tier3_daily.py --upload >> /var/log/tier3_daily.log 2>&1
 ```
 
 With no `--date` argument, the script automatically selects **yesterday UTC**.
@@ -121,17 +131,17 @@ See [DATASET_SCHEMA_TIER3.md](DATASET_SCHEMA_TIER3.md) for:
 
 ---
 
-## Tier 2: Weekly Parquet Export
+## Tier 2: Daily Parquet Export
 
-Tier 2 provides weekly aggregations derived from Tier 3 daily inputs, optimized for research and analysis with reduced column footprint.
+Tier 2 provides daily exports derived from Tier 3 with reduced column footprint, optimized for research and analysis.
 
 ### Design Principles
 
-1. **Derived from Tier 3**: No direct archive access; reads from R2 `tier3/daily/` inputs
+1. **Derived from Tier 3**: Reads from R2 `tier3/daily/` inputs
 2. **Column Reduction**: Excludes high-volume/low-utility columns to reduce size
-3. **Weekly Cadence**: Builds complete 7-day windows (Mon–Sun)
+3. **Daily Cadence**: Builds daily, same as Tier 3
 
-### Column Policy
+### Column Policy (8 columns)
 
 **Included columns:**
 - `symbol` - Ticker symbol
@@ -141,67 +151,61 @@ Tier 2 provides weekly aggregations derived from Tier 3 daily inputs, optimized 
 - `derived` - Calculated metrics
 - `scores` - Scoring results
 - `twitter_sentiment_meta` - Twitter metadata
+- `twitter_sentiment_last_cycle` - Sentiment from last 2-hour cycle (selected fields only)
 
 **Excluded columns:**
-- `futures_raw` - Full futures data block
-- `spot_prices` - Spot price time-series arrays
-- `flags` - Boolean flags block
-- `diag` - Diagnostics block
-- `twitter_sentiment_windows` - Dynamic-key structs (hashtags, handles, domains vary by day)
+- `futures_raw` - Full futures data block, available in Tier 3
+- `spot_prices` - Time-series arrays, high volume
+- `flags` - Boolean flags block, debugging only
+- `diag` - Diagnostics block, internal use
 
 ### Usage
 
 #### Automatic (Cron)
 
-Run weekly on Mondays at 00:05 UTC:
+Runs daily at 00:20 UTC (after Tier 3 completes):
 
 ```bash
 # Cron entry
-5 0 * * 1 cd /srv/instrumetriq && python3 scripts/build_tier2_weekly.py --upload >> /var/log/tier2_weekly.log 2>&1
+20 0 * * * cd /srv/instrumetriq && python3 scripts/build_tier2_daily.py --upload >> /var/log/tier2_daily.log 2>&1
 ```
 
-With no `--end-day` argument, the script automatically calculates yesterday as the end of the 7-day window.
+With no `--date` argument, the script automatically builds yesterday's data.
 
 #### Manual Export
 
 ```bash
-# Dry-run (local output only, no R2 operations)
-python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --dry-run
+# Dry-run for specific date
+python3 scripts/build_tier2_daily.py --date 2026-01-18 --dry-run
 
-# Build locally (no upload)
-python3 scripts/build_tier2_weekly.py --end-day 2025-12-28
+# Build and upload
+python3 scripts/build_tier2_daily.py --date 2026-01-18 --upload
 
-# Build and upload to R2
-python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --upload
+# Build date range
+python3 scripts/build_tier2_daily.py --from-date 2026-01-15 --to-date 2026-01-18 --upload
 
-# Custom output directory
-python3 scripts/build_tier2_weekly.py --end-day 2025-12-28 --output-dir ./custom_output --upload
+# Force overwrite existing
+python3 scripts/build_tier2_daily.py --date 2026-01-18 --upload --force
 ```
 
 #### CLI Options
 
 | Option | Description |
 |--------|-------------|
-| `--end-day YYYY-MM-DD` | End date of 7-day window (default: yesterday UTC) |
-| `--days N` | Override window size (default: 7) |
-| `--output-dir PATH` | Local output directory |
-| `--dry-run` | Skip R2 upload, local output only |
+| `--date YYYY-MM-DD` | Date to build (default: yesterday UTC) |
+| `--from-date YYYY-MM-DD` | Start date for range |
+| `--to-date YYYY-MM-DD` | End date for range |
+| `--dry-run` | Local build only, no R2 upload |
 | `--upload` | Upload results to R2 |
-
-### Window Logic
-
-Given `--end-day 2025-12-28`:
-- Window: 2025-12-22 to 2025-12-28 (7 days)
-- Requires: All 7 Tier 3 daily parquets in R2
-- Output: `tier2/weekly/2025-12-28/dataset_entries_7d.parquet`
+| `--force` | Overwrite existing files |
 
 ### Output Structure
 
 ```
-output/tier2_weekly/
+output/tier2_daily/
 └── YYYY-MM-DD/
-    ├── dataset_entries_7d.parquet  # Zstd-compressed parquet
-    └── manifest.json               # Build metadata
+    ├── data.parquet    # Zstd-compressed parquet
+    └── manifest.json   # Build metadata
 ```
 
 ### R2 Structure
@@ -209,9 +213,9 @@ output/tier2_weekly/
 ```
 instrumetriq-datasets/
 └── tier2/
-    └── weekly/
+    └── daily/
         └── YYYY-MM-DD/
-            ├── dataset_entries_7d.parquet
+            ├── data.parquet
             └── manifest.json
 ```
 
@@ -221,46 +225,39 @@ instrumetriq-datasets/
 {
   "schema_version": "v7",
   "tier": "tier2",
-  "window": {
-    "start_day": "2025-12-22",
-    "end_day": "2025-12-28",
-    "days_included": ["2025-12-22", "2025-12-23", ...]
-  },
-  "build_ts_utc": "2026-01-16T08:14:05.789519+00:00",
-  "source_inputs": ["tier3/daily/2025-12-22/data.parquet", ...],
-  "row_count": 17635,
-  "column_policy": {
-    "included_top_level_columns": [...],
-    "excluded_top_level_columns": [...],
-    "explicit_exclusions": [...]
-  },
+  "tier_description": "Research — reduced column footprint with sentiment last_cycle",
+  "date_utc": "2026-01-18",
+  "source_tier3": "tier3/daily/2026-01-18/data.parquet",
+  "row_count": 2615,
+  "build_ts_utc": "2026-01-19T00:20:05.123456+00:00",
   "parquet_sha256": "...",
-  "parquet_size_bytes": 5339067
+  "parquet_size_bytes": 912345,
+  "column_policy": {
+    "columns": ["symbol", "snapshot_ts", "meta", "spot_raw", "derived", "scores", "twitter_sentiment_meta", "twitter_sentiment_last_cycle"],
+    "excluded_from_tier3": ["futures_raw", "spot_prices", "flags", "diag"],
+    "sentiment_source": "twitter_sentiment_windows.last_cycle"
+  }
 }
 ```
 
 ### Prerequisites
 
-1. All Tier 3 daily inputs for the window must exist in R2
+1. Tier 3 daily parquet for the date must exist in R2
 2. R2 credentials configured (see Environment Setup)
-3. Required packages: `pyarrow`, `boto3`
+3. Required packages: `duckdb`, `boto3`
 
 ### Troubleshooting
 
-**"Missing Tier 3 daily parquets for: [dates]"**
-→ Run `export_tier3_daily.py` for the missing dates first
-
-**Schema mismatch errors**
-→ Ensure you're using the latest version of `build_tier2_weekly.py`
-→ The `twitter_sentiment_windows` column must be excluded (it has dynamic schemas)
+**"Tier 3 source not found"**
+→ Run `export_tier3_daily.py` for the missing date first
 
 ---
 
-## Tier 1: Weekly Parquet Export (Starter)
+## Tier 1: Daily Parquet Export (Starter)
 
 Tier 1 is the **"Starter — light entry table"** with aggregated sentiment. It extracts and flattens specific fields from Tier 3 structs into a stable, predictable schema.
 
-### Field Policy (22 flattened fields)
+### Field Policy (19 flattened fields)
 
 **Approach:** Explicit allowlist with flattened fields (no nested structs)
 
@@ -270,7 +267,7 @@ Tier 1 is the **"Starter — light entry table"** with aggregated sentiment. It 
 | Core Spot (4) | `spot_mid`, `spot_spread_bps`, `spot_range_pct_24h`, `spot_ticker24_chg` |
 | Minimal Derived (2) | `derived_liq_global_pct`, `derived_spread_bps` |
 | Minimal Scoring (1) | `score_final` |
-| Aggregated Sentiment (9) | `sentiment_posts_total`, `sentiment_posts_pos`, `sentiment_posts_neu`, `sentiment_posts_neg`, `sentiment_mean_score`, `sentiment_is_silent`, `sentiment_recent_posts_count`, `sentiment_has_recent_activity`, `sentiment_hours_since_latest_tweet` |
+| Aggregated Sentiment (6) | `sentiment_posts_total`, `sentiment_posts_pos`, `sentiment_posts_neu`, `sentiment_posts_neg`, `sentiment_mean_score`, `sentiment_is_silent` |
 
 **Key exclusions:**
 - All futures data (`futures_raw`, `flags.futures_data_ok`)
@@ -282,15 +279,26 @@ Tier 1 is the **"Starter — light entry table"** with aggregated sentiment. It 
 
 ### Usage
 
+#### Automatic (Cron)
+
+Runs daily at 00:30 UTC (after Tier 2 completes):
+
 ```bash
-# Cron mode (Mondays 00:05 UTC)
-python3 scripts/build_tier1_weekly.py --previous-week --upload
+# Cron entry
+30 0 * * * cd /srv/instrumetriq && python3 scripts/build_tier1_daily.py --upload >> /var/log/tier1_daily.log 2>&1
+```
 
-# Manual/backfill (end_day should be a Sunday)
-python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --upload
+#### Manual Export
 
-# Dry-run to preview
-python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --dry-run
+```bash
+# Dry-run for specific date
+python3 scripts/build_tier1_daily.py --date 2026-01-18 --dry-run
+
+# Build and upload
+python3 scripts/build_tier1_daily.py --date 2026-01-18 --upload
+
+# Build date range
+python3 scripts/build_tier1_daily.py --from-date 2026-01-15 --to-date 2026-01-18 --upload
 ```
 
 ### R2 Structure
@@ -298,19 +306,19 @@ python3 scripts/build_tier1_weekly.py --end-day 2025-12-28 --dry-run
 ```
 instrumetriq-datasets/
 └── tier1/
-    └── weekly/
+    └── daily/
         └── YYYY-MM-DD/
-            ├── dataset_entries_7d.parquet
+            ├── data.parquet
             └── manifest.json
 ```
 
 ### Tier Comparison
 
-| Tier | Approach | Fields | Sentiment | Futures |
-|------|----------|--------|-----------|---------|
-| **Tier 1** | Flattened allowlist | 22 | Aggregated only | ❌ Excluded |
-| **Tier 2** | Struct exclusion | 7 structs | Meta only | ❌ Excluded |
-| **Tier 3** | Full archive | 12 structs | Full windows | ✅ Included |
+| Tier | Approach | Columns | Sentiment | Futures |
+|------|----------|---------|-----------|----------|
+| **Tier 1** | Flattened allowlist | 19 flat fields | Aggregated only | ❌ Excluded |
+| **Tier 2** | Struct exclusion | 8 nested columns | Full last_cycle | ❌ Excluded |
+| **Tier 3** | Full archive | 12 nested columns | Full windows | ✅ Included |
 
 See [DATASET_SCHEMA_TIER1.md](DATASET_SCHEMA_TIER1.md) for full schema documentation.
 
