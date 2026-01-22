@@ -1422,7 +1422,9 @@ import PageHero from '../components/PageHero.astro';
       context.fillStyle = '#b0b0b0';
       context.font = '12px sans-serif';
       context.textAlign = 'center';
-      context.fillText(`Time (hours from ${firstDate})`, padding + width / 2, canvas.height - 5);
+      // Show date range instead of hours (more meaningful for multi-week data)
+      const lastDate = new Date(dataPoints[dataPoints.length - 1].ts).toISOString().split('T')[0];
+      context.fillText(`Observation period (${firstDate} to ${lastDate})`, padding + width / 2, canvas.height - 5);
       
       context.save();
       context.translate(15, padding + height / 2);
