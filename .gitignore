@@ -25,3 +25,4 @@ output/
 # jetbrains setting folder
 .idea/
 __pycache__/
+logs/
