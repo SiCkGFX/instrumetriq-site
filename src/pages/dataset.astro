@@ -247,6 +247,10 @@ const artifacts = loadArtifacts();
               <strong>This is descriptive only</strong> — it shows what was observed, not what might predict future outcomes. 
               No correlation with returns or trading edge is implied or claimed.
             </p>
+            <p class="timing-note">
+              <strong>Timing:</strong> Sentiment is captured in a ~1-hour window <em>prior</em> to the 2-hour price monitoring session. 
+              This creates a natural lead-time between sentiment observation and price evolution.
+            </p>
             <p class="disclaimer-emphasis">{datasetSummary.sentiment_buckets.disclaimer}</p>
             <div class="table-wrapper">
               <table class="data-table">
@@ -1007,6 +1011,15 @@ const artifacts = loadArtifacts();
     font-size: 0.9rem;
     color: var(--text-muted);
     font-style: italic;
+    margin-bottom: var(--space-3);
+  }
+  
+  .timing-note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--panel2);
+    border-left: 3px solid var(--accent-dim);
     margin-bottom: var(--space-3);
   }
   

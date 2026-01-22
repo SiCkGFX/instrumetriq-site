@@ -81,12 +81,20 @@ const faqs = [
     answer: 'Yes. You can change your tier at any time through Patreon. Upgrades take effect immediately; downgrades apply at the next billing cycle.',
   },
   {
+    question: 'How are download links protected?',
+    answer: 'Download links are time-limited signed URLs that expire periodically. You will receive fresh links via Patreon as part of your active subscription. Links cannot be used indefinitely after unsubscribing.',
+  },
+  {
     question: 'What does the data cover?',
-    answer: 'Each entry is a ~2-hour observation session for a cryptocurrency trading pair on Binance. We track spot market data and aggregate X (Twitter) sentiment using AI classification.',
+    answer: 'Each entry is a ~2-hour observation session for a cryptocurrency trading pair on Binance. We track spot market data and aggregate X (Twitter) sentiment using a custom-trained DistilBERT model with a hybrid two-model arbitration system.',
   },
   {
     question: 'Is this real-time data?',
     answer: 'No. This is historical batch data updated daily. It is designed for research, analysis, and backtesting—not live trading signals.',
+  },
+  {
+    question: 'When is sentiment captured relative to price monitoring?',
+    answer: 'Sentiment is captured in a ~1-hour window immediately prior to the 2-hour price monitoring session. When a coin enters the active watchlist, it is assigned the aggregated sentiment from the preceding Twitter scrape cycle. This creates a natural lead-time between sentiment observation and price evolution.',
   },
 ];
 ---
@@ -178,8 +186,8 @@ const faqs = [
         <div class="included-item">
           <span class="included-icon">🔗</span>
           <div class="included-content">
-            <strong>Private Download Links</strong>
-            <p>Secure access via Patreon with fast global delivery</p>
+            <strong>Signed Download Links</strong>
+            <p>Time-limited secure URLs via Patreon, refreshed regularly</p>
           </div>
         </div>
         <div class="included-item">
