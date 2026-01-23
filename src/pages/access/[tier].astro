@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tiers = await getCollection('tiers');
+  return tiers.map((tier) => ({
+    params: { tier: tier.slug },
+    props: { tier },
+  }));
+}
+
+const { tier } = Astro.props;
+const { Content } = await tier.render();
+---
+
+<BaseLayout
+  title={`${tier.data.title} - Instrumetriq`}
+  description={tier.data.shortDescription}
+>
+  <PageHero
+    eyebrow="ACCESS"
+    title={`${tier.data.planName} (Tier ${tier.data.tierNumber})`}
+    subtitle={tier.data.shortDescription}
+  />
+
+  <div class="pageContent">
+    <div class="tier-meta">
+      <span class="meta-item">${tier.data.priceUsdMonthly}/month</span>
+      {tier.data.updatedAt && (
+        <>
+          <span class="separator">•</span>
+          <time class="meta-item" datetime={tier.data.updatedAt.toISOString()}>
+            Updated {tier.data.updatedAt.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })}
+          </time>
+        </>
+      )}
+    </div>
+
+    <div class="tier-content">
+      <Content />
+    </div>
+
+    <footer class="tier-footer">
+      <a href="/access" class="back-link">← Back to Access</a>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .tier-meta {
+    display: flex;
+    gap: var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-4);
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .separator {
+    opacity: 0.5;
+  }
+
+  .tier-content :global(h2) {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-2);
+  }
+
+  .tier-content :global(h3) {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .tier-content :global(p) {
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .tier-content :global(pre) {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: var(--space-3);
+    overflow: auto;
+  }
+
+  .tier-content :global(code) {
+    font-size: 0.95em;
+  }
+
+  .tier-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-3) 0;
+  }
+
+  .tier-content :global(th),
+  .tier-content :global(td) {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .tier-content :global(th) {
+    color: var(--text);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .tier-footer {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+  }
+
+  .back-link {
+    color: var(--text);
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+</style>

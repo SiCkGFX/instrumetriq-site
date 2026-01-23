@@ -1,6 +1,7 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -93,6 +94,17 @@ const faqs = [
     answer: 'Sentiment is captured in a ~1-hour window immediately prior to the 2-hour price monitoring session. When a coin enters the active watchlist, it is assigned the aggregated sentiment from the preceding Twitter scrape cycle. This creates a natural lead-time between sentiment observation and price evolution.',
   },
 ];
+
+const tierDocs = (await getCollection('tiers'))
+  .slice()
+  .sort((a, b) => a.data.tierNumber - b.data.tierNumber);
+
+const tierDocsRendered = await Promise.all(
+  tierDocs.map(async (doc) => ({
+    doc,
+    ...(await doc.render()),
+  }))
+);
 ---
 
 <BaseLayout 
@@ -156,7 +168,37 @@ const faqs = [
             <a href={tier.patreonUrl} class="subscribe-button" target="_blank" rel="noopener noreferrer">
               Subscribe on Patreon →
             </a>
+
+            <a href={`/access/tier${tier.tier.replace('Tier ', '')}`} class="schema-link">
+              View schema →
+            </a>
           </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Tier Details -->
+    <section class="tier-details-section">
+      <h2>Tier Details</h2>
+      <p class="tier-details-lead">
+        Full schema references for each tier. These pages are intended to be read before subscribing.
+      </p>
+      <div class="tier-details-list">
+        {tierDocsRendered.map(({ doc, Content }) => (
+          <details class="tier-details-item" id={`tier-${doc.slug}`}>
+            <summary class="tier-details-summary">
+              <span class="tier-details-title">{doc.data.planName} (Tier {doc.data.tierNumber})</span>
+              <span class="tier-details-subtitle">{doc.data.shortDescription}</span>
+            </summary>
+            <div class="tier-details-content">
+              <Content />
+              <div class="tier-details-footer">
+                <a class="tier-details-permalink" href={`/access/${doc.slug}`}>
+                  Open dedicated page →
+                </a>
+              </div>
+            </div>
+          </details>
         ))}
       </div>
     </section>
@@ -420,6 +462,18 @@ const faqs = [
     background: transparent;
     color: var(--accent);
   }
+
+  .schema-link {
+    display: block;
+    margin-top: var(--space-3);
+    font-size: 0.9rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .schema-link:hover {
+    color: var(--accent);
+  }
   
   /* Included Section */
   .included-section {
@@ -466,6 +520,118 @@ const faqs = [
     margin: 0;
     font-size: 0.9rem;
     color: var(--text-muted);
+  }
+
+  /* Tier Details */
+  .tier-details-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .tier-details-lead {
+    margin: 0 0 var(--space-4) 0;
+    color: var(--text-muted);
+    max-width: 70ch;
+  }
+
+  .tier-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .tier-details-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .tier-details-summary {
+    padding: var(--space-4);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .tier-details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tier-details-title {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .tier-details-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .tier-details-content {
+    padding: 0 var(--space-4) var(--space-4) var(--space-4);
+  }
+
+  .tier-details-content :global(h2) {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-2);
+  }
+
+  .tier-details-content :global(h3) {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .tier-details-content :global(p) {
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .tier-details-content :global(pre) {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: var(--space-3);
+    overflow: auto;
+  }
+
+  .tier-details-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-3) 0;
+  }
+
+  .tier-details-content :global(th),
+  .tier-details-content :global(td) {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .tier-details-content :global(th) {
+    color: var(--text);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .tier-details-footer {
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .tier-details-permalink {
+    color: var(--text);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .tier-details-permalink:hover {
+    color: var(--accent);
   }
   
   /* FAQ Section */
