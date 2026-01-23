@@ -47,45 +47,45 @@ tier1/daily/
 
 | Field | Type | Description |
 |------|------|-------------|
-| `symbol` | string | Trading pair (e.g., "BTCUSDC") |
-| `snapshot_ts` | string | Observation timestamp (ISO 8601, UTC) |
-| `meta_added_ts` | string | When the archive entry was recorded |
-| `meta_expires_ts` | string | Entry expiration time |
-| `meta_duration_sec` | double | Observation duration (seconds) |
-| `meta_archive_schema_version` | int64 | Schema version (7) |
+| `symbol` | string | The unique trading pair identifier on Binance (e.g., "BTCUSDC"). |
+| `snapshot_ts` | string | The ISO 8601 timestamp (UTC) marking the end of the observation window. |
+| `meta_added_ts` | string | The timestamp when this record was permanently written to the archive. |
+| `meta_expires_ts` | string | The timestamp when this record is considered effectively expired for real-time usage. |
+| `meta_duration_sec` | double | The total duration of the data collection window in seconds (standard is 7200s / 2 hours). |
+| `meta_archive_schema_version` | int64 | The internal version number of the schema definition (currently v7). |
 
 ### Spot Market (4)
 
 | Field | Type | Description |
 |------|------|-------------|
-| `spot_mid` | double | Mid price |
-| `spot_spread_bps` | double | Bid/ask spread (basis points) |
-| `spot_range_pct_24h` | double | 24h price range (%) |
-| `spot_ticker24_chg` | double | 24h price change |
+| `spot_mid` | double | The mid-market price (average of best bid and best ask) at the moment of the snapshot. |
+| `spot_spread_bps` | double | The difference between best bid and best ask prices, expressed in basis points (1 bp = 0.01%). |
+| `spot_range_pct_24h` | double | The percentage difference between the 24-hour high and low prices. |
+| `spot_ticker24_chg` | double | The absolute price change over the rolling 24-hour window. |
 
 ### Derived Metrics (2)
 
 | Field | Type | Description |
 |------|------|-------------|
-| `derived_liq_global_pct` | double | Global liquidity percentile |
-| `derived_spread_bps` | double | Derived spread (basis points) |
+| `derived_liq_global_pct` | double | A percentile rank (0.0–1.0) comparing this asset's liquidity to the entire monitored universe. |
+| `derived_spread_bps` | double | A smoothed or adjusted spread metric used for historical consistency. |
 
 ### Scoring (1)
 
 | Field | Type | Description |
 |------|------|-------------|
-| `score_final` | double | Final composite admission score |
+| `score_final` | double | A composite score (0–100) aggregating liquidity, volatility, and social presence. Used for ranking. |
 
 ### X (Twitter) Sentiment (6)
 
 | Field | Type | Description |
 |------|------|-------------|
-| `sentiment_posts_total` | int64 | Total posts in observation window |
-| `sentiment_posts_pos` | int64 | Positive posts count |
-| `sentiment_posts_neu` | int64 | Neutral posts count |
-| `sentiment_posts_neg` | int64 | Negative posts count |
-| `sentiment_mean_score` | double | Mean sentiment score |
-| `sentiment_is_silent` | bool | No recent posts for this symbol |
+| `sentiment_posts_total` | int64 | The total count of relevant posts detected during the observation window. |
+| `sentiment_posts_pos` | int64 | The number of posts classified as having Positive sentiment by the AI model. |
+| `sentiment_posts_neu` | int64 | The number of posts classified as Neutral. |
+| `sentiment_posts_neg` | int64 | The number of posts classified as Negative. |
+| `sentiment_mean_score` | double | The separate average sentiment intensity score (-1.0 to 1.0) derived from the model's confidence logic. |
+| `sentiment_is_silent` | bool | Boolean flag indicating whether the asset had zero social activity in this window. |
 
 ## Notes
 
