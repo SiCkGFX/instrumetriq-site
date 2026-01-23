@@ -164,14 +164,14 @@ Entries are organized by **write time** (when the entry was added to the archive
 | `depth_ask_qty_quote` | double | Ask-side depth in quote currency |
 | `depth_bid_qty_quote` | double | Bid-side depth in quote currency |
 | `last` | double | Last traded price |
-| `liq_eff_raw` | double | Raw liquidity efficiency |
-| `liq_qv_usd` | double | Quote volume liquidity in USD |
+| `liq_eff_raw` | double | Liquidity efficiency ratio (Volume / Impact) |
+| `liq_qv_usd` | double | Liquidity expressed as quote volume (USD) |
 | `micro_premium_pct` | double | Micro premium percentage |
 | `mid` | double | Mid price |
-| `obi_5` | double | Order book imbalance at 5 levels |
+| `obi_5` | double | Order Book Imbalance (5 levels). Ratio of bids to asks near mid-price. |
 | `range_pct_24h` | double | 24-hour price range percentage |
 | `spread_bps` | double | Bid-ask spread in basis points |
-| `spread_eff_raw` | double | Raw effective spread |
+| `spread_eff_raw` | double | Effective spread ratio |
 | `taker_buy_ratio_5m` | double | Taker buy ratio over 5 minutes |
 | `ticker24_chg` | double | 24-hour ticker price change |
 
@@ -208,35 +208,35 @@ Entries are organized by **write time** (when the entry was added to the archive
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `compression_score` | double | Compression algorithm score |
-| `depth` | double | Depth score component |
+| `compression_score` | double | Volatility Compression Score (0-100). Detects potential price squeezes. |
+| `depth` | double | Depth Score (0-100). Evaluates order book depth relative to volume. |
 | `final` | double | A composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`. |
-| `flow` | double | Flow score component |
-| `liq` | double | Liquidity score component |
-| `liq_eff_score` | double | Liquidity efficiency score |
-| `microstruct` | double | Microstructure score |
-| `mom` | double | Momentum score component |
-| `spread` | double | Spread score component |
-| `spread_eff_score` | double | Spread efficiency score |
-| `str` | double | Strength score component |
-| `taker` | double | Taker activity score |
-| `vol` | double | Volatility score component |
+| `flow` | double | Order Flow Score (0-100). Evaluates taker buy/sell pressure balance. |
+| `liq` | double | Liquidity Score (0-100). Aggregate score of global and self-liquidity. |
+| `liq_eff_score` | double | Liquidity Efficiency Score (0-100). Measures volume-to-impact efficiency. |
+| `microstruct` | double | Microstructure Score (0-100). Aggregate of spread, depth, and efficiency scores. |
+| `mom` | double | Momentum Score (0-100). Evaluates price trend strength. |
+| `spread` | double | Spread Score (0-100). Evaluates bid-ask spread tightness (higher is better). |
+| `spread_eff_score` | double | Spread Efficiency Score (0-100). Measures effective spread quality. |
+| `str` | double | Relative Strength Score (0-100). Evaluates performance vs market baseline. |
+| `taker` | double | Taker Score (0-100). Evaluates aggressive order flow activity. |
+| `vol` | double | Volatility Score (0-100). Evaluates price action activity (tradeable volatility). |
 
 ### flags
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `compression_enabled` | bool | Whether compression is enabled |
+| `compression_enabled` | bool | True if volatility compression scoring was active |
 | `futures_contract_check_failed` | bool | Futures contract check failed |
 | `futures_contract_exists` | bool | Futures contract exists for symbol |
 | `futures_data_ok` | bool | Futures data is valid |
 | `futures_stale` | bool | Futures data is stale |
-| `mom_fallback` | bool | Momentum used fallback |
-| `pair_bonus_applied` | double | Pair bonus value applied |
+| `mom_fallback` | bool | True if momentum data was missing and default was used |
+| `pair_bonus_applied` | double | Internal scoring multiplier |
 | `spot_data_ok` | bool | Spot data is valid |
-| `spread_fallback` | bool | Spread used fallback |
+| `spread_fallback` | bool | True if spread data was missing and default was used |
 | `twitter_data_ok` | bool | Twitter sentiment data is valid |
-| `vol_fallback` | bool | Volatility used fallback |
+| `vol_fallback` | bool | True if volatility data was missing and default was used |
 
 ### diag
 

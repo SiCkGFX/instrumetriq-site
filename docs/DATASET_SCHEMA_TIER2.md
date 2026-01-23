@@ -112,11 +112,11 @@ Key fields within the `spot_raw` struct:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `mid` | double | Mid price |
+| `mid` | double | Mid price (Bid/Ask average) |
 | `bid` | double | Best bid price |
 | `ask` | double | Best ask price |
 | `spread_bps` | double | Spread in basis points |
-| `last` | double | Last traded price |
+| `last` | double | Last traded price on exchange |
 
 ### derived
 
@@ -125,8 +125,8 @@ Key fields within the `derived` struct:
 | Field | Type | Description |
 |-------|------|-------------|
 | `spread_bps` | double | Calculated spread in basis points |
-| `depth_imbalance` | double | Order book depth imbalance |
-| `flow` | double | Flow metric |
+| `depth_imbalance` | double | Order Book Imbalance ratio |
+| `flow` | double | Order Flow imbalance metric |
 
 ### scores
 
@@ -135,9 +135,9 @@ Key fields within the `scores` struct:
 | Field | Type | Description |
 |-------|------|-------------|
 | `final` | double | A composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`. |
-| `spread` | double | Spread component score |
-| `depth` | double | Depth component score |
-| `liq` | double | Liquidity component score |
+| `spread` | double | Spread Score (0-100). Evaluates bid-ask spread tightness (higher is better). |
+| `depth` | double | Depth Score (0-100). Evaluates order book depth relative to volume. |
+| `liq` | double | Liquidity Score (0-100). Aggregate score of global and self-liquidity. |
 
 ### twitter_sentiment_meta
 
