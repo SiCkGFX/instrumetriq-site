@@ -44,6 +44,10 @@ tier3/daily/
 | `twitter_sentiment_meta` | struct | X (Twitter) capture metadata |
 | `spot_prices` | list<struct> | Intra-session spot samples (~10s interval) |
 
+## Scoring Logic
+
+The `scores.final` field is a composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`.
+
 ## How to interpret NULLs
 
 - `futures_raw = NULL` typically means the symbol has no futures contract or futures data was not available at capture time.

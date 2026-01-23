@@ -210,7 +210,7 @@ Entries are organized by **write time** (when the entry was added to the archive
 |-------|------|-------------|
 | `compression_score` | double | Compression algorithm score |
 | `depth` | double | Depth score component |
-| `final` | double | Final composite score |
+| `final` | double | A composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`. |
 | `flow` | double | Flow score component |
 | `liq` | double | Liquidity score component |
 | `liq_eff_score` | double | Liquidity efficiency score |

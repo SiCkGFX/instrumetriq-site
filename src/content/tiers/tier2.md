@@ -71,6 +71,10 @@ This struct is extracted from `twitter_sentiment_windows.last_cycle` with a stab
 | `posts_total` | int64 | Total posts count |
 | `sentiment_activity` | struct | Activity metrics (e.g., silent, recency) |
 
+## Scoring Logic
+
+The `scores.final` field is a composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`.
+
 ## Notes
 
 - Some high-cardinality dynamic-key fields (hashtags, mentions, domains) are excluded from Tier 2 to keep the schema stable across days.

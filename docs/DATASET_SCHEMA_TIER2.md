@@ -134,7 +134,7 @@ Key fields within the `scores` struct:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `final` | double | Final composite score |
+| `final` | double | A composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`. |
 | `spread` | double | Spread component score |
 | `depth` | double | Depth component score |
 | `liq` | double | Liquidity component score |
