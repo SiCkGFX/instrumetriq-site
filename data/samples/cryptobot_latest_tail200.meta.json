@@ -1,12 +1,10 @@
 {
-  "extracted_at_utc": "2026-01-22T11:57:42.143817Z",
-  "source_archive_folder": "/srv/cryptobot/data/archive/20260122",
+  "extracted_at_utc": "2026-01-23T01:00:04.388617Z",
+  "source_archive_folder": "/srv/cryptobot/data/archive/20260123",
   "source_files": [
-    "/srv/cryptobot/data/archive/20260122/11.jsonl.gz",
-    "/srv/cryptobot/data/archive/20260122/10.jsonl.gz",
-    "/srv/cryptobot/data/archive/20260122/09.jsonl.gz"
+    "/srv/cryptobot/data/archive/20260123/00.jsonl.gz"
   ],
   "requested_count": 200,
-  "actual_count": 200,
+  "actual_count": 121,
   "sample_file": "data/samples/cryptobot_latest_tail200.jsonl"
 }
