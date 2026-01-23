@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "clean": "rm -rf .astro dist",
     "lint:wording": "node scripts/lint_wording.mjs",
     "build": "npm run lint:wording && astro build",
     "preview": "astro preview",
