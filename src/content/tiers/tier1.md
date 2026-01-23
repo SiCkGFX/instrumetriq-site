@@ -7,7 +7,7 @@ priceUsdMonthly: 5
 updatedAt: 2026-01-23
 ---
 
-Tier 1 is the smallest export: a flat table derived from Tier 3, designed to be easy to load and stable to join across days.
+Tier 1 is a flat daily table designed to be easy to load and stable to join across days.
 
 ## Summary
 
@@ -16,7 +16,7 @@ Tier 1 is the smallest export: a flat table derived from Tier 3, designed to be 
 - **Schema version:** v7
 - **Shape:** 19 flat columns (no nested structs)
 - **Sentiment scope:** aggregated X (Twitter) fields only (no sentiment internals)
-- **Futures:** excluded
+- **Futures:** not included
 
 ## R2 Layout
 
@@ -75,7 +75,16 @@ These are aggregated counts/summaries sourced from the preceding scrape cycle.
 | `sentiment_mean_score` | double | Mean sentiment score |
 | `sentiment_is_silent` | bool | No recent posts for this symbol |
 
+## Intentionally excluded (Tier 1)
+
+Tier 1 is deliberately scoped to a compact, stable set of fields.
+
+- **Futures market blocks** (perpetual funding, OI, basis)
+- **High-volume time series arrays** (intra-session price samples)
+- **Operational / diagnostic blocks**
+- **Sentiment internals and high-cardinality fields** (diagnostics, dynamic-key counts)
+
 ## Notes
 
 - Tier 1 is intended for research and analysis. It is not real-time data and is not presented as a trading signal.
-- Sentiment fields can be NULL when X (Twitter) data was unavailable.
+- When `sentiment_is_silent` is true, sentiment counts will be zero and summary values may be NULL.

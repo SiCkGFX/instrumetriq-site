@@ -7,7 +7,7 @@ priceUsdMonthly: 15
 updatedAt: 2026-01-23
 ---
 
-Tier 2 is a reduced Tier 3 export: it keeps nested structs for market microstructure and scoring, and includes a stable subset of sentiment fields from the preceding scrape cycle.
+Tier 2 is a nested daily table built for analysis workflows. It includes market microstructure, scoring, and a stable subset of sentiment fields from the preceding scrape cycle.
 
 ## Summary
 
