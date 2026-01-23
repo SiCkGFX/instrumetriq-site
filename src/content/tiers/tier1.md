@@ -60,7 +60,7 @@ tier1/daily/
 
 | Field | Type | Description |
 |------|------|-------------|
-| `score_final` | double | Final composite liquidity score |
+| `score_final` | double | Final composite admission score |
 
 ### X (Twitter) Sentiment (6)
 
