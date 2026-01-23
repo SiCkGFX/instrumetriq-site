@@ -2,21 +2,28 @@
 title: "Tier 2 Schema"
 tierNumber: 2
 planName: "Researcher"
-shortDescription: "Reduced Tier 3 export with nested structs and richer X (Twitter) sentiment (no futures)."
+shortDescription: "Structured daily export with nested market microstructure and rich X (Twitter) sentiment."
 priceUsdMonthly: 15
 updatedAt: 2026-01-23
 ---
 
-Tier 2 is a nested daily table built for analysis workflows. It includes market microstructure, scoring, and a stable subset of sentiment fields from the preceding scrape cycle.
+Tier 2 is a professional-grade daily dataset designed for research and analysis workflows. It offers deep visibility into spot market microstructure and granular sentiment metrics using a structured, nested schema.
 
-## Summary
+## Key characteristics
 
-- **Format:** Apache Parquet (zstd)
-- **Granularity:** daily partitions (UTC)
-- **Schema version:** v7
-- **Shape:** 8 top-level columns (nested structs)
-- **Sentiment scope:** selected `last_cycle` sentiment fields (stable subset)
-- **Futures:** excluded
+- **Structured schema** — 8 top-level nested columns preserving data richness
+- **Market Microstructure** — Spot price, spread, depth, and imbalance metrics
+- **Rich Sentiment** — Detailed breakdown of sentiment sources, engagement, and decision stats
+- **Daily granularity** — one parquet file per UTC day
+
+## Overview
+
+| Property | Value |
+|----------|-------|
+| **Format** | Apache Parquet (zstd compressed) |
+| **Granularity** | Daily (one file per UTC day) |
+| **Schema Version** | v7 |
+| **Columns** | 8 top-level nested columns |
 
 ## R2 Layout
 
@@ -38,16 +45,11 @@ tier2/daily/
 | `derived` | struct | Calculated metrics |
 | `scores` | struct | Scoring results |
 | `twitter_sentiment_meta` | struct | X (Twitter) capture metadata |
-| `twitter_sentiment_last_cycle` | struct | Selected sentiment fields from the preceding scrape cycle |
+| `twitter_sentiment_last_cycle` | struct | Stable selection of sentiment fields |
 
-## Column Exclusions (from Tier 3)
+## Data Scope
 
-Tier 2 intentionally omits:
-
-- `futures_raw` (available in Tier 3)
-- `spot_prices` (high-volume time series)
-- `flags`, `diag` (operational/debug blocks)
-- `norm`, `labels` (dropped in v7)
+Tier 2 provides a focused view on **Spot Market** and **Social Sentiment**. It includes the `spot_raw` structure for order book analysis and a stable, high-value subset of `twitter_sentiment` for advanced social signals.
 
 ## `twitter_sentiment_last_cycle` (selected fields)
 

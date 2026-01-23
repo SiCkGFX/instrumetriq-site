@@ -7,16 +7,30 @@ priceUsdMonthly: 5
 updatedAt: 2026-01-23
 ---
 
-Tier 1 is a flat daily table designed to be easy to load and stable to join across days.
+This dataset captures **2-hour observation sessions** of cryptocurrency trading pairs on Binance. Each row represents one session where a coin was tracked for market conditions and social sentiment.
 
-## Summary
+## Key characteristics
 
-- **Format:** Apache Parquet (zstd)
-- **Granularity:** daily partitions (UTC)
-- **Schema version:** v7
-- **Shape:** 19 flat columns (no nested structs)
-- **Sentiment scope:** aggregated X (Twitter) fields only (no sentiment internals)
-- **Futures:** not included
+- **Flat schema** — 19 columns, no nested structs, ready for analysis
+- **Essential metrics only** — price, spread, score, sentiment summary
+- **X (Twitter) sentiment** — post counts and mean score
+- **Daily granularity** — one parquet file per UTC day
+
+## Use cases
+
+- Quick sentiment screening across coins
+- Correlation studies between price and social activity
+- Lightweight backtesting inputs
+- Learning/prototyping with minimal data complexity
+
+## Overview
+
+| Property | Value |
+|----------|-------|
+| **Format** | Apache Parquet (zstd compressed) |
+| **Granularity** | Daily (one file per UTC day) |
+| **Schema Version** | v7 |
+| **Columns** | 19 flat fields |
 
 ## R2 Layout
 
@@ -64,27 +78,16 @@ tier1/daily/
 
 ### X (Twitter) Sentiment (6)
 
-These are aggregated counts/summaries sourced from the preceding scrape cycle.
-
 | Field | Type | Description |
 |------|------|-------------|
-| `sentiment_posts_total` | int64 | Total posts in the sentiment window |
-| `sentiment_posts_pos` | int64 | Positive post count |
-| `sentiment_posts_neu` | int64 | Neutral post count |
-| `sentiment_posts_neg` | int64 | Negative post count |
+| `sentiment_posts_total` | int64 | Total posts in observation window |
+| `sentiment_posts_pos` | int64 | Positive posts count |
+| `sentiment_posts_neu` | int64 | Neutral posts count |
+| `sentiment_posts_neg` | int64 | Negative posts count |
 | `sentiment_mean_score` | double | Mean sentiment score |
 | `sentiment_is_silent` | bool | No recent posts for this symbol |
-
-## Intentionally excluded (Tier 1)
-
-Tier 1 is deliberately scoped to a compact, stable set of fields.
-
-- **Futures market blocks** (perpetual funding, OI, basis)
-- **High-volume time series arrays** (intra-session price samples)
-- **Operational / diagnostic blocks**
-- **Sentiment internals and high-cardinality fields** (diagnostics, dynamic-key counts)
 
 ## Notes
 
 - Tier 1 is intended for research and analysis. It is not real-time data and is not presented as a trading signal.
-- When `sentiment_is_silent` is true, sentiment counts will be zero and summary values may be NULL.
+- When `sentiment_is_silent` is true, sentiment fields can be NULL.
