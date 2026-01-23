@@ -74,7 +74,7 @@ tier1/daily/
 
 | Field | Type | Description |
 |------|------|-------------|
-| `score_final` | double | Weighted composite score determining admission eligibility. Range: 0-100. Formula: sum(factor_score * factor_weight) + meta_contributions + pair_bonus, clamped to [0,100]. Weights loaded from weights.json (default: liq=0.15, mom=0.10, vol=0.10, str=0.05, spread=0.15, taker=0.15, flow=0.10, depth=0.10, microstruct=0.10). **INTERPRETATION:** >=60 typically passes admission threshold. 80+ = excellent candidate (strong on most factors). 40-60 = marginal (mixed signals). <40 = poor candidate. Source: base_scorer.py _compute_final_score_and_verdict(). |
+| `score_final` | double | A composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. Source: `base_scorer.py`. |
 
 ### X (Twitter) Sentiment (6)
 

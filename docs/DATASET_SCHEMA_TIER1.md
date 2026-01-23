@@ -69,7 +69,7 @@ Tier 1 uses an **explicit allowlist** approach with **flattened fields**:
 
 | Field | Type | Source | Description |
 |-------|------|--------|-------------|
-| `score_final` | double | scores.final | Final composite score |
+| `score_final` | double | scores.final | A composite quality score (0-100) derived from weighted individual factor scores. Key factors include **Price Action** (Momentum, Volatility), **Liquidity Health** (Spread Efficiency, Depth), and **Order Flow** (Taker Buy/Sell Pressure). This metric acts as a quality filter: higher scores (≥60) indicate tradeable, liquid assets with strong market interest, while lower scores filter out predominantly illiquid or noise-heavy pairs. |
 
 ### Aggregated Sentiment (6 fields)
 
