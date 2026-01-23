@@ -1,9 +1,9 @@
 {
-  "total_entries_all_time": 98726,
-  "total_days": 45,
+  "total_entries_all_time": 100193,
+  "total_days": 46,
   "first_day_utc": "2025-12-09",
-  "last_day_utc": "2026-01-22",
-  "last_entry_ts_utc": "2026-01-22T09:49:47.218087Z",
+  "last_day_utc": "2026-01-23",
+  "last_entry_ts_utc": "2026-01-22T22:54:53.510917Z",
   "source_path": "/srv/cryptobot/data/archive",
-  "generated_at_utc": "2026-01-22T11:58:36.935424Z"
+  "generated_at_utc": "2026-01-23T01:00:53.979309Z"
 }
