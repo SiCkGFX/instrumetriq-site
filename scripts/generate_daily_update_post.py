@@ -16,19 +16,28 @@ from datetime import datetime, timezone
 # Paths
 SITE_ROOT = Path("/srv/instrumetriq")
 STATS_FILE = SITE_ROOT / "public/data/archive_stats.json"
+REGIMES_FILE = SITE_ROOT / "public/data/activity_regimes.json"
+COVERAGE_FILE = SITE_ROOT / "public/data/coverage_table.json"
 UPDATES_DIR = SITE_ROOT / "src/content/updates"
+
+def load_json(path):
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[WARN] Failed to load {path}: {e}")
+        return {}
 
 def main():
     if not STATS_FILE.exists():
         print(f"[ERROR] Stats file not found: {STATS_FILE}")
         sys.exit(1)
 
-    try:
-        with open(STATS_FILE, "r") as f:
-            stats = json.load(f)
-    except json.JSONDecodeError as e:
-        print(f"[ERROR] Failed to parse stats file: {e}")
-        sys.exit(1)
+    stats = load_json(STATS_FILE)
+    regimes = load_json(REGIMES_FILE)
+    coverage = load_json(COVERAGE_FILE)
 
     # Use the generation date from stats, or current UTC date
     if "generated_at_utc" in stats:
@@ -44,10 +53,31 @@ def main():
         print(f"[INFO] Update post {filename} already exists. Skipping.")
         return
 
-    # Calculate some deltas could be cool later, but for now just raw stats
+    # 1. Archive Stats
     total_entries = stats.get("total_entries_all_time", 0)
     total_days = stats.get("total_days", 0)
     last_entry = stats.get("last_entry_ts_utc", "N/A")
+    archive_start = stats.get("first_day_utc", "N/A")
+    archive_end = stats.get("last_day_utc", "N/A")
+
+    # 2. Activity Regimes (Get Top 3 by share)
+    regime_rows = []
+    if "regimes" in regimes:
+        sorted_regimes = sorted(regimes["regimes"], key=lambda x: x.get("share_pct", 0), reverse=True)
+        for r in sorted_regimes[:4]: # Top 4
+            name = r.get("bin", "Unknown").replace("_", " ").title()
+            count = r.get("n_entries", 0)
+            share = r.get("share_pct", 0.0)
+            regime_rows.append(f"| {name} | {count} | {share:.1f}% |")
+    
+    regime_table = "\n".join(regime_rows) if regime_rows else "| No data available | - | - |"
+
+    # 3. Coverage Highlights
+    cov_map = {row["group"]: row.get("present_pct", 0) for row in coverage.get("rows", [])}
+    sentiment_cov = cov_map.get("sentiment_last_cycle", 0)
+    market_cov = cov_map.get("market_microstructure", 0)
+    liquidity_cov = cov_map.get("liquidity", 0)
+
 
     # Content Template
     content = f"""---
@@ -57,17 +87,25 @@ description: "Dataset status snapshot for {log_date}"
 author: "System"
 ---
 
-## Dataset Status Update
+## 📊 Status Snapshot
 
-**Last Updated:** {stats.get('generated_at_utc', datetime.now(timezone.utc).isoformat())}
+**Total Archived Entries:** `{total_entries:,}`  
+**Archive Window:** `{archive_start}` to `{archive_end}` ({total_days} days)  
+**Last Data Entry:** `{last_entry}`
 
-**Archive Window:** {stats.get('first_day_utc')} to {stats.get('last_day_utc')}
+## 📈 Activity Regimes
+*Distribution of tweet volume per monitoring window in the latest snapshot:*
 
-## Counts
+| Regime | Count | Share |
+|---|---|---|
+{regime_table}
 
-- **Total Entries Archived:** {total_entries:,}
-- **Total Days:** {total_days}
-- **Last Entry Timestamp:** {last_entry}
+## 🛡️ Coverage Metrics
+*Field availability percentages in the latest validation batch:*
+
+- **Market Structure:** {market_cov}%
+- **Liquidity:** {liquidity_cov}%
+- **Sentiment (Last Cycle):** {sentiment_cov}%
 
 ***
 
