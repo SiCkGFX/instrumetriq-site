@@ -95,6 +95,56 @@ const faqs = [
   },
 ];
 
+const tierExtras = {
+  1: {
+    features: [
+      'Flat schema — 19 columns, no nested structs, ready for analysis immediately.',
+      'Essential metrics only: price, spread, liquidity score, sentiment summary.',
+      'X (Twitter) sentiment: post counts and mean score from AI classification.',
+      'Daily granularity: one parquet file per UTC day.',
+    ],
+    codeTitle: 'Loading Tier 1 (Simple)',
+    code: `import pyarrow.parquet as pq
+
+# Read entire day - no complex parsing needed
+table = pq.read_table("tier1/daily/2026-01-18/data.parquet")
+df = table.to_pandas()`,
+  },
+  2: {
+    features: [
+      'Nested structures optimized for rich data encapsulation.',
+      'Derived analytics: depth imbalance, flow metrics.',
+      'Multi-component scores: spread, depth, liquidity, flow → final.',
+      'X (Twitter) sentiment: detailed AI classification & engagement data.',
+    ],
+    codeTitle: 'Accessing Nested Fields (Tier 2)',
+    code: `# Accessing nested score components
+df['final_score'] = df['scores'].apply(lambda x: x['final'])
+df['liquidity'] = df['scores'].apply(lambda x: x['liquidity'])
+
+# Accessing tweets from the 2-hour window
+df['tweets'] = df['twitter_sentiment_last_cycle'].apply(
+    lambda x: x['posts_total']
+)`,
+  },
+  3: {
+    features: [
+      'High-frequency samples: 700+ price points per session (every ~10s).',
+      'Futures data: funding rates, open interest, trader positioning.',
+      'Machine Learning ready: designed specifically for model training.',
+      'Backtesting optimized: full intraday granularity.',
+    ],
+    codeTitle: 'Working with Time-Series (Tier 3)',
+    code: `# Extract the high-freq price series for backtesting
+entry = df.iloc[0]
+price_series = entry['spot_prices'] 
+
+# Each 'p' has ts, mid, bid, ask, spread
+timestamps = [p['ts'] for p in price_series]
+mid_prices = [p['mid'] for p in price_series]`,
+  },
+};
+
 const tierDocs = (await getCollection('tiers'))
   .slice()
   .sort((a, b) => a.data.tierNumber - b.data.tierNumber);
@@ -193,26 +243,26 @@ const tierDocsRendered = await Promise.all(
               <span class="tier-details-subtitle">{doc.data.shortDescription}</span>
             </summary>
             <div class="tier-details-content">
-              {tierConfig && (
+              {tierExtras[doc.data.tierNumber] && (
                 <div class="tier-summary-content">
                   <div class="tier-summary-block">
-                    <h4>Key Features</h4>
+                    <h4>Key Capabilities</h4>
                     <ul>
-                      {tierConfig.features.map(feature => (
+                      {tierExtras[doc.data.tierNumber].features.map(feature => (
                         <li>{feature}</li>
                       ))}
                     </ul>
                   </div>
-                  <div class="tier-summary-block">
-                    <h4>Best For</h4>
-                    <p>{tierConfig.useCases}</p>
+                  <div class="tier-summary-block code-summary-block">
+                    <h4>{tierExtras[doc.data.tierNumber].codeTitle}</h4>
+                    <pre class="code-snippet"><code>{tierExtras[doc.data.tierNumber].code}</code></pre>
                   </div>
                 </div>
               )}
               
               <div class="tier-details-footer">
                 <a class="tier-details-permalink" href={`/access/${doc.slug}`}>
-                  Open dedicated page for full schema →
+                  View Full Schema Reference →
                 </a>
               </div>
             </div>
@@ -670,6 +720,29 @@ const tierDocsRendered = await Promise.all(
     color: var(--text-muted);
     font-size: 0.95rem;
     line-height: 1.5;
+  }
+
+  /* Code Snippets in Details */
+  .code-summary-block {
+    flex: 1.2; /* Give code block slightly more space */
+    min-width: 300px;
+  }
+
+  .code-snippet {
+    background: #0d1117; /* Dark GitHub-like background */
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: var(--space-3);
+    margin: 0;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #c9d1d9;
+  }
+
+  .code-snippet code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    white-space: pre;
   }
 
   .tier-details-footer {
