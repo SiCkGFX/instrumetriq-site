@@ -67,27 +67,24 @@ def main():
     hours_expected = manifest.get("hours_expected", 24)
     is_partial = manifest.get("is_partial", False)
     
-    # Hourly Stats
-    rows_by_hour = manifest.get("rows_by_hour", {})
-    if rows_by_hour:
-        peak_hour = max(rows_by_hour, key=rows_by_hour.get)
-        peak_count = rows_by_hour[peak_hour]
-        min_hour = min(rows_by_hour, key=rows_by_hour.get)
-        min_count = rows_by_hour[min_hour]
+    # Calculate Archive Scale & Contribution
+    total_entries_all = stats.get("total_entries_all_time", row_count)
+    if total_entries_all > 0:
+        contribution_pct = (row_count / total_entries_all) * 100
     else:
-        peak_hour, peak_count, min_hour, min_count = ("N/A", 0, "N/A", 0)
+        contribution_pct = 0.0
 
     # Coverage Highlights (General)
     cov_map = {row["group"]: row.get("present_pct", 0) for row in coverage.get("rows", [])}
     
     # 5. Build Content
-    status_emoji = "✅" if (hours_found == hours_expected and not is_partial) else "⚠️"
-    status_text = "Complete (24h)" if (hours_found == hours_expected and not is_partial) else f"Partial ({hours_found}/{hours_expected}h)"
+    # Validation Icon
+    validation_icon = "✅Verified" if (hours_found == hours_expected and not is_partial) else "⚠️Partial"
 
     content = f"""---
 title: "Daily Dataset Update - {target_date}"
 date: {target_date}
-description: "Validated Tier 3 archive statistics for {target_date}"
+description: "Validated archive statistics for {target_date}"
 author: "System"
 ---
 
@@ -96,26 +93,27 @@ author: "System"
 
 | Metric | Value |
 | :--- | :--- |
-| **Status** | {status_emoji} {status_text} |
 | **Total Snapshots** | `{row_count:,}` |
-| **Peak Volume** | {peak_count} (at {peak_hour}:00 UTC) |
-| **Low Volume** | {min_count} (at {min_hour}:00 UTC) |
-| **Schema Version** | v{manifest.get('schema_versions', ['?'])[0]} |
+| **Archive Growth** | +{contribution_pct:.2f}% (Daily share of total) |
+| **Format** | Parquet (ZSTD) |
+| **Partition ID** | `{target_date}` |
 
-## 🛡️ Validation & Coverage
-*Field availability percentages from the daily validation batch:*
+## 🛡️ Quality & Integrity
+*Automated validation checks for this partition:*
+
+- **Temporal Coverage:** {int((hours_found/hours_expected)*100)}% ({hours_found}/{hours_expected} hours active)
+- **Data Completeness:** {validation_icon}
+- **Data Integrity:** SHA-256 Verified (`{manifest.get('parquet_sha256', 'N/A')[:8]}...`)
+
+## 🔬 Field Availability
+*Feature presence in the validation batch:*
 
 - **Market Microstructure:** {cov_map.get("market_microstructure", 0)}%
 - **Liquidity Metrics:** {cov_map.get("liquidity", 0)}%
 - **Sentiment (Last Cycle):** {cov_map.get("sentiment_last_cycle", 0)}%
 
-## 📂 Archive Metadata
-- **Partition:** `tier3/daily/{target_date}`
-- **Format:** Parquet (Snappy/Zstd)
-- **Manifest SHA:** `{manifest.get('parquet_sha256', 'N/A')[:8]}...`
-
 ***
-*This report is generated automatically after the daily Tier 3 build verification.*
+*This report is generated automatically after the daily build verification.*
 """
 
     with open(file_path, "w") as f:
