@@ -16,9 +16,9 @@ from datetime import datetime, timezone
 # Paths
 SITE_ROOT = Path("/srv/instrumetriq")
 STATS_FILE = SITE_ROOT / "public/data/archive_stats.json"
-REGIMES_FILE = SITE_ROOT / "public/data/activity_regimes.json"
-COVERAGE_FILE = SITE_ROOT / "public/data/coverage_table.json"
+TIER3_DIR = SITE_ROOT / "output/tier3_daily"
 UPDATES_DIR = SITE_ROOT / "src/content/updates"
+COVERAGE_FILE = SITE_ROOT / "public/data/coverage_table.json"
 
 def load_json(path):
     if not path.exists():
@@ -35,81 +35,87 @@ def main():
         print(f"[ERROR] Stats file not found: {STATS_FILE}")
         sys.exit(1)
 
+    # 1. Determine "Yesterday" (Target Date)
+    # The cron runs at 03:00 UTC on Day X, but we want to report on Day X-1 (Yesterday)
+    # because that is the completed Tier 3 day.
+    today_utc = datetime.now(timezone.utc)
+    from datetime import timedelta
+    yesterday_utc = today_utc - timedelta(days=1)
+    target_date = yesterday_utc.strftime("%Y-%m-%d")
+
+    # 2. Check for Tier 3 Manifest
+    manifest_path = TIER3_DIR / target_date / "manifest.json"
+    if not manifest_path.exists():
+        print(f"[WARN] Tier 3 manifest for {target_date} not found at {manifest_path}")
+        print("Skipping post generation (waiting for Tier 3 build).")
+        return
+
+    manifest = load_json(manifest_path)
     stats = load_json(STATS_FILE)
-    regimes = load_json(REGIMES_FILE)
-    coverage = load_json(COVERAGE_FILE)
+    coverage = load_json(COVERAGE_FILE) # Keeping coverage as it is general V7 validation
 
-    # Use the generation date from stats, or current UTC date
-    if "generated_at_utc" in stats:
-        gen_dt = datetime.fromisoformat(stats["generated_at_utc"].replace("Z", "+00:00"))
-        log_date = gen_dt.strftime("%Y-%m-%d")
-    else:
-        log_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-
-    filename = f"{log_date}.md"
+    # 3. Prevent Duplicates
+    filename = f"{target_date}.md"
     file_path = UPDATES_DIR / filename
-
     if file_path.exists():
         print(f"[INFO] Update post {filename} already exists. Skipping.")
         return
 
-    # 1. Archive Stats
-    total_entries = stats.get("total_entries_all_time", 0)
-    total_days = stats.get("total_days", 0)
-    last_entry = stats.get("last_entry_ts_utc", "N/A")
-    archive_start = stats.get("first_day_utc", "N/A")
-    archive_end = stats.get("last_day_utc", "N/A")
-
-    # 2. Activity Regimes (Get Top 3 by share)
-    regime_rows = []
-    if "regimes" in regimes:
-        sorted_regimes = sorted(regimes["regimes"], key=lambda x: x.get("share_pct", 0), reverse=True)
-        for r in sorted_regimes[:4]: # Top 4
-            name = r.get("bin", "Unknown").replace("_", " ").title()
-            count = r.get("n_entries", 0)
-            share = r.get("share_pct", 0.0)
-            regime_rows.append(f"| {name} | {count} | {share:.1f}% |")
+    # 4. Extract Metrics
+    row_count = manifest.get("row_count", 0)
+    hours_found = manifest.get("hours_found", 0)
+    hours_expected = manifest.get("hours_expected", 24)
+    is_partial = manifest.get("is_partial", False)
     
-    regime_table = "\n".join(regime_rows) if regime_rows else "| No data available | - | - |"
+    # Hourly Stats
+    rows_by_hour = manifest.get("rows_by_hour", {})
+    if rows_by_hour:
+        peak_hour = max(rows_by_hour, key=rows_by_hour.get)
+        peak_count = rows_by_hour[peak_hour]
+        min_hour = min(rows_by_hour, key=rows_by_hour.get)
+        min_count = rows_by_hour[min_hour]
+    else:
+        peak_hour, peak_count, min_hour, min_count = ("N/A", 0, "N/A", 0)
 
-    # 3. Coverage Highlights
+    # Coverage Highlights (General)
     cov_map = {row["group"]: row.get("present_pct", 0) for row in coverage.get("rows", [])}
-    sentiment_cov = cov_map.get("sentiment_last_cycle", 0)
-    market_cov = cov_map.get("market_microstructure", 0)
-    liquidity_cov = cov_map.get("liquidity", 0)
+    
+    # 5. Build Content
+    status_emoji = "✅" if (hours_found == hours_expected and not is_partial) else "⚠️"
+    status_text = "Complete (24h)" if (hours_found == hours_expected and not is_partial) else f"Partial ({hours_found}/{hours_expected}h)"
 
-
-    # Content Template
     content = f"""---
-title: "Daily Dataset Update - {log_date}"
-date: {log_date}
-description: "Dataset status snapshot for {log_date}"
+title: "Daily Dataset Update - {target_date}"
+date: {target_date}
+description: "Validated Tier 3 archive statistics for {target_date}"
 author: "System"
 ---
 
-## 📊 Status Snapshot
+## 📊 Daily Production Stats
+*Finalized metrics for the full 24-hour UTC cycle.*
 
-**Total Archived Entries:** `{total_entries:,}`  
-**Archive Window:** `{archive_start}` to `{archive_end}` ({total_days} days)  
-**Last Data Entry:** `{last_entry}`
+| Metric | Value |
+| :--- | :--- |
+| **Status** | {status_emoji} {status_text} |
+| **Total Snapshots** | `{row_count:,}` |
+| **Peak Volume** | {peak_count} (at {peak_hour}:00 UTC) |
+| **Low Volume** | {min_count} (at {min_hour}:00 UTC) |
+| **Schema Version** | v{manifest.get('schema_versions', ['?'])[0]} |
 
-## 📈 Activity Regimes
-*Distribution of tweet volume per monitoring window in the latest snapshot:*
+## 🛡️ Validation & Coverage
+*Field availability percentages from the daily validation batch:*
 
-| Regime | Count | Share |
-|---|---|---|
-{regime_table}
+- **Market Microstructure:** {cov_map.get("market_microstructure", 0)}%
+- **Liquidity Metrics:** {cov_map.get("liquidity", 0)}%
+- **Sentiment (Last Cycle):** {cov_map.get("sentiment_last_cycle", 0)}%
 
-## 🛡️ Coverage Metrics
-*Field availability percentages in the latest validation batch:*
-
-- **Market Structure:** {market_cov}%
-- **Liquidity:** {liquidity_cov}%
-- **Sentiment (Last Cycle):** {sentiment_cov}%
+## 📂 Archive Metadata
+- **Partition:** `tier3/daily/{target_date}`
+- **Format:** Parquet (Snappy/Zstd)
+- **Manifest SHA:** `{manifest.get('parquet_sha256', 'N/A')[:8]}...`
 
 ***
-
-*This is an automated report generated during the daily site refresh.*
+*This report is generated automatically after the daily Tier 3 build verification.*
 """
 
     with open(file_path, "w") as f:
