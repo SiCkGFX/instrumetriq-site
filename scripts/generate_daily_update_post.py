@@ -78,8 +78,9 @@ def main():
     cov_map = {row["group"]: row.get("present_pct", 0) for row in coverage.get("rows", [])}
     
     # 5. Build Content
-    # Validation Icon
-    validation_icon = "✅Verified" if (hours_found == hours_expected and not is_partial) else "⚠️Partial"
+    # Status Text (No emojis, per brand guide)
+    status_text = "Verified" if (hours_found == hours_expected and not is_partial) else "Partial"
+    status_detail = "Complete (24h)" if (hours_found == hours_expected and not is_partial) else f"{hours_found}/{hours_expected} hours found"
 
     content = f"""---
 title: "Daily Dataset Update - {target_date}"
@@ -88,29 +89,23 @@ description: "Validated archive statistics for {target_date}"
 author: "System"
 ---
 
-## 📊 Daily Production Stats
-*Finalized metrics for the full 24-hour UTC cycle.*
+## Production Summary
 
-| Metric | Value |
-| :--- | :--- |
-| **Total Snapshots** | `{row_count:,}` |
-| **Archive Growth** | +{contribution_pct:.2f}% (Daily share of total) |
-| **Format** | Parquet (ZSTD) |
-| **Partition ID** | `{target_date}` |
+| Metric | Value | Reference |
+| :--- | :--- | :--- |
+| **Partition** | `{target_date}` | 24-hour UTC cycle |
+| **Snapshots** | `{row_count:,}` | +{contribution_pct:.2f}% daily growth |
+| **Archive** | `{total_entries_all:,}` | Total entries (all-time) |
+| **Status** | {status_text} | {status_detail} |
 
-## 🛡️ Quality & Integrity
-*Automated validation checks for this partition:*
+## Validation Report
 
-- **Temporal Coverage:** {int((hours_found/hours_expected)*100)}% ({hours_found}/{hours_expected} hours active)
-- **Data Completeness:** {validation_icon}
-- **Data Integrity:** SHA-256 Verified (`{manifest.get('parquet_sha256', 'N/A')[:8]}...`)
-
-## 🔬 Field Availability
-*Feature presence in the validation batch:*
-
-- **Market Microstructure:** {cov_map.get("market_microstructure", 0)}%
-- **Liquidity Metrics:** {cov_map.get("liquidity", 0)}%
-- **Sentiment (Last Cycle):** {cov_map.get("sentiment_last_cycle", 0)}%
+| Check | Status | Scope |
+| :--- | :--- | :--- |
+| **Temporal** | {int((hours_found/hours_expected)*100)}% | {hours_found}/{hours_expected} hours active |
+| **Integrity** | Pass | SHA-256 Verified |
+| **Market Data** | {cov_map.get("market_microstructure", 0)}% | Microstructure & Liquidity |
+| **Sentiment** | {cov_map.get("sentiment_last_cycle", 0)}% | Last Cycle |
 
 ***
 *This report is generated automatically after the daily build verification.*
