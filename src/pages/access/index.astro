@@ -184,22 +184,40 @@ const tierDocsRendered = await Promise.all(
         Full schema references for each tier. These pages are intended to be read before subscribing.
       </p>
       <div class="tier-details-list">
-        {tierDocsRendered.map(({ doc, Content }) => (
+        {tierDocsRendered.map(({ doc }) => {
+          const tierConfig = tiers.find(t => t.tier === `Tier ${doc.data.tierNumber}`);
+          return (
           <details class="tier-details-item" id={`tier-${doc.slug}`}>
             <summary class="tier-details-summary">
               <span class="tier-details-title">{doc.data.planName} (Tier {doc.data.tierNumber})</span>
               <span class="tier-details-subtitle">{doc.data.shortDescription}</span>
             </summary>
             <div class="tier-details-content">
-              <Content />
+              {tierConfig && (
+                <div class="tier-summary-content">
+                  <div class="tier-summary-block">
+                    <h4>Key Features</h4>
+                    <ul>
+                      {tierConfig.features.map(feature => (
+                        <li>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div class="tier-summary-block">
+                    <h4>Best For</h4>
+                    <p>{tierConfig.useCases}</p>
+                  </div>
+                </div>
+              )}
+              
               <div class="tier-details-footer">
                 <a class="tier-details-permalink" href={`/access/${doc.slug}`}>
-                  Open dedicated page →
+                  Open dedicated page for full schema →
                 </a>
               </div>
             </div>
           </details>
-        ))}
+        )})}
       </div>
     </section>
     
@@ -614,6 +632,44 @@ const tierDocsRendered = await Promise.all(
     color: var(--text);
     font-weight: 500;
     background: rgba(255, 255, 255, 0.02);
+  }
+
+  /* Tier Summary Styles (New) */
+  .tier-summary-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin: var(--space-4) 0;
+  }
+
+  @media (max-width: 600px) {
+    .tier-summary-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .tier-summary-block h4 {
+    color: var(--text);
+    font-size: 1rem;
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .tier-summary-block ul {
+    margin: 0;
+    padding-left: var(--space-4);
+    color: var(--text-muted);
+  }
+
+  .tier-summary-block li {
+    margin-bottom: var(--space-1);
+    font-size: 0.95rem;
+  }
+
+  .tier-summary-block p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
   .tier-details-footer {
