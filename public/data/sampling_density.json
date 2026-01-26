@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-01-26T03:01:05.001904Z",
-  "entries_scanned": 290,
+  "generated_at_utc": "2026-01-26T06:48:11.672067Z",
+  "entries_scanned": 689,
   "source": {
     "sample_file": "Full archive: 20260126",
     "ssot_file": "data/field_coverage_report.json"
@@ -10,9 +10,9 @@
     "spot_prices": "spot_prices"
   },
   "sample_count_stats": {
-    "n_entries": 290,
-    "median": 761.0,
-    "p10": 733,
+    "n_entries": 689,
+    "median": 758,
+    "p10": 730,
     "p90": 774,
     "min": 719,
     "max": 780
@@ -30,13 +30,13 @@
     },
     {
       "bucket": "700-749",
-      "count": 60,
-      "share_pct": 20.7
+      "count": 224,
+      "share_pct": 32.5
     },
     {
       "bucket": "750-799",
-      "count": 230,
-      "share_pct": 79.3
+      "count": 465,
+      "share_pct": 67.5
     },
     {
       "bucket": "800-899",
@@ -50,9 +50,9 @@
     }
   ],
   "spot_prices_len_stats": {
-    "n_entries": 290,
-    "median": 761,
-    "p10": 733,
+    "n_entries": 689,
+    "median": 758,
+    "p10": 730,
     "p90": 774,
     "min": 719,
     "max": 780
