@@ -118,16 +118,23 @@ log_section "Step 6: Generate research artifacts"
 run_cmd "python3 scripts/generate_research_artifacts.py --archive-path $ARCHIVE_PATH"
 
 # ============================================================
+# Step 6b: Generate daily update post (Updates page)
+# ============================================================
+log_section "Step 6b: Generate daily update post"
+
+run_cmd "python3 scripts/generate_daily_update_post.py"
+
+# ============================================================
 # Step 7: Commit changes to git (if any)
 # ============================================================
 log_section "Step 7: Check for changes"
 
-# Check if there are changes in public/data/
-if git diff --quiet public/data/; then
-    log "No changes detected in public/data/"
+# Check if there are changes in public/data/ or src/content/updates/
+if git diff --quiet public/data/ src/content/updates/; then
+    log "No changes detected"
 else
     log "Changes detected - committing..."
-    run_cmd "git add public/data/"
+    run_cmd "git add public/data/ src/content/updates/"
     run_cmd "git commit -m 'chore: Daily site data refresh ($TIMESTAMP)'"
     run_cmd "git push origin main"
     log "Changes pushed to origin/main"
