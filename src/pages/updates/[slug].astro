@@ -80,4 +80,26 @@ const { Content } = await update.render();
   .back-link:hover {
     color: var(--accent);
   }
+
+  /* Specific table overrides for update posts */
+  .post-content :global(table) {
+    margin: var(--space-6) 0;
+  }
+
+  .post-content :global(th),
+  .post-content :global(td) {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+
+  /* Reset edge padding so table stays aligned with text */
+  .post-content :global(th:first-child),
+  .post-content :global(td:first-child) {
+    padding-left: var(--space-2);
+  }
+
+  .post-content :global(th:last-child),
+  .post-content :global(td:last-child) {
+    padding-right: var(--space-2);
+  }
 </style>
