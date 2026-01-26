@@ -120,7 +120,7 @@ df = table.to_pandas()`,
     codeTitle: 'Accessing Nested Fields (Tier 2)',
     code: `# Accessing nested score components
 df['final_score'] = df['scores'].apply(lambda x: x['final'])
-df['liquidity'] = df['scores'].apply(lambda x: x['liquidity'])
+df['liquidity'] = df['scores'].apply(lambda x: x['liq'])
 
 # Accessing tweets from the 2-hour window
 df['tweets'] = df['twitter_sentiment_last_cycle'].apply(
@@ -139,7 +139,7 @@ df['tweets'] = df['twitter_sentiment_last_cycle'].apply(
 entry = df.iloc[0]
 price_series = entry['spot_prices'] 
 
-# Each 'p' has ts, mid, bid, ask, spread
+# Each 'p' has ts, mid, bid, ask, spread_bps
 timestamps = [p['ts'] for p in price_series]
 mid_prices = [p['mid'] for p in price_series]`,
   },

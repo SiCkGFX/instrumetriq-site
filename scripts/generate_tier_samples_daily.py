@@ -265,11 +265,20 @@ def main():
     print("[STEP 2] Generating Tier 3 daily sample...")
     try:
         tier3_sample, used_date = get_tier_sample(s3_client, config.bucket, 3, tier3_date, args.sample_size)
+        
+        # Write Parquet
+        tier3_parquet_path = output_dir / "tier3_sample_daily.parquet"
+        pq.write_table(tier3_sample, tier3_parquet_path)
+        
+        # Write JSONL
         tier3_records = table_to_jsonl(tier3_sample)
         tier3_path = output_dir / "tier3_sample_daily.jsonl"
         write_jsonl(tier3_records, tier3_path, indent=not args.compact)
-        tier3_size_kb = tier3_path.stat().st_size / 1024
-        print(f"[OK] Wrote {tier3_path} ({len(tier3_records)} rows, {tier3_sample.num_columns} cols, {tier3_size_kb:.1f} KB)")
+        
+        tier3_size_kb_json = tier3_path.stat().st_size / 1024
+        tier3_size_kb_pq = tier3_parquet_path.stat().st_size / 1024
+        print(f"[OK] Wrote {tier3_path} ({len(tier3_records)} rows, {tier3_size_kb_json:.1f} KB)")
+        print(f"[OK] Wrote {tier3_parquet_path} ({tier3_size_kb_pq:.1f} KB)")
         results['tier3'] = {'sample': tier3_sample, 'date': used_date, 'path': tier3_path}
     except Exception as e:
         print(f"[ERROR] Tier 3 sample failed: {e}")
@@ -280,11 +289,20 @@ def main():
     print("[STEP 3] Generating Tier 2 daily sample...")
     try:
         tier2_sample, used_date = get_tier_sample(s3_client, config.bucket, 2, tier2_date, args.sample_size)
+        
+        # Write Parquet
+        tier2_parquet_path = output_dir / "tier2_sample_daily.parquet"
+        pq.write_table(tier2_sample, tier2_parquet_path)
+        
+        # Write JSONL
         tier2_records = table_to_jsonl(tier2_sample)
         tier2_path = output_dir / "tier2_sample_daily.jsonl"
         write_jsonl(tier2_records, tier2_path, indent=not args.compact)
-        tier2_size_kb = tier2_path.stat().st_size / 1024
-        print(f"[OK] Wrote {tier2_path} ({len(tier2_records)} rows, {tier2_sample.num_columns} cols, {tier2_size_kb:.1f} KB)")
+        
+        tier2_size_kb_json = tier2_path.stat().st_size / 1024
+        tier2_size_kb_pq = tier2_parquet_path.stat().st_size / 1024
+        print(f"[OK] Wrote {tier2_path} ({len(tier2_records)} rows, {tier2_size_kb_json:.1f} KB)")
+        print(f"[OK] Wrote {tier2_parquet_path} ({tier2_size_kb_pq:.1f} KB)")
         results['tier2'] = {'sample': tier2_sample, 'date': used_date, 'path': tier2_path}
     except Exception as e:
         print(f"[ERROR] Tier 2 sample failed: {e}")
@@ -295,9 +313,20 @@ def main():
     print("[STEP 4] Generating Tier 1 daily sample...")
     try:
         tier1_sample, used_date = get_tier_sample(s3_client, config.bucket, 1, tier1_date, args.sample_size)
+        
+        # Write Parquet
+        tier1_parquet_path = output_dir / "tier1_sample_daily.parquet"
+        pq.write_table(tier1_sample, tier1_parquet_path)
+
+        # Write JSONL
         tier1_records = table_to_jsonl(tier1_sample)
         tier1_path = output_dir / "tier1_sample_daily.jsonl"
         write_jsonl(tier1_records, tier1_path, indent=not args.compact)
+        
+        tier1_size_kb_json = tier1_path.stat().st_size / 1024
+        tier1_size_kb_pq = tier1_parquet_path.stat().st_size / 1024
+        print(f"[OK] Wrote {tier1_path} ({len(tier1_records)} rows, {tier1_size_kb_json:.1f} KB)")
+        print(f"[OK] Wrote {tier1_parquet_path} ({tier1_size_kb_pq:.1f} KB)")
         tier1_size_kb = tier1_path.stat().st_size / 1024
         print(f"[OK] Wrote {tier1_path} ({len(tier1_records)} rows, {tier1_sample.num_columns} cols, {tier1_size_kb:.1f} KB)")
         results['tier1'] = {'sample': tier1_sample, 'date': used_date, 'path': tier1_path}
