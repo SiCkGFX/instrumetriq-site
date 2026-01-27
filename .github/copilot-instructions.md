@@ -104,6 +104,7 @@ If you cannot confirm a claim in `docs/SSOT_TWITTER_SENTIMENT_PIPELINE.md`, do *
 
 ## 8) When to Ask vs Assume
 Ask a question (instead of guessing) when:
+- **ALWAYS WRITE IN CHAT WHAT YOU ARE ABOUT TO DO BEFORE DOING IT.** Do not modify files immediately. You must explain your plan and wait for the user to give the go-ahead.
 - A change would alter scope claims or marketing language.
 - A change would affect the Home page, header, or footer.
 - A new metric/source/feature/timeline would need to be invented.

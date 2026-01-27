@@ -48,7 +48,7 @@ const tiers = [
     highlighted: true,
   },
   {
-    name: 'Full Archive',
+    name: 'Institutional',
     price: 35,
     description: 'Complete data for ML and backtesting',
     features: [
@@ -95,7 +95,13 @@ const faqs = [
   },
 ];
 
-const tierExtras = {
+interface TierExtra {
+  features: string[];
+  codeTitle: string;
+  code: string;
+}
+
+const tierExtras: Record<number, TierExtra> = {
   1: {
     features: [
       'Flat schema — 19 columns, no nested structs, ready for analysis immediately.',

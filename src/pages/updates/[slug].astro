@@ -84,12 +84,34 @@ const { Content } = await update.render();
   /* Specific table overrides for update posts */
   .post-content :global(table) {
     margin: var(--space-6) 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  /* 
+     Align columns for "Production Summary" and "Validation Report" tables.
+     We use fixed widths to ensure the "Value" and "Status" columns 
+     align visually across the two tables.
+  */
+  .post-content :global(th:nth-child(1)),
+  .post-content :global(td:nth-child(1)) {
+    width: 25%;
+  }
+
+  .post-content :global(th:nth-child(2)),
+  .post-content :global(td:nth-child(2)) {
+    width: 25%;
+  }
+  
+  .post-content :global(th:nth-child(3)),
+  .post-content :global(td:nth-child(3)) {
+    width: 50%;
   }
 
   .post-content :global(th),
   .post-content :global(td) {
-    padding-left: var(--space-6);
-    padding-right: var(--space-6);
+    padding: var(--space-2) var(--space-4);
+    text-align: left;
   }
 
   /* Reset edge padding so table stays aligned with text */

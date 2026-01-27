@@ -117,8 +117,8 @@ These tiers mirror the website Access page.
 
 **Best for:** Research, dashboards, analysis workflows.
 
-### Tier 3 — Full Archive ($35/mo)
-**Title:** Full Archive
+### Tier 3 — Institutional ($35/mo)
+**Title:** Institutional
 
 **Short description:** Complete data for ML and backtesting.
 

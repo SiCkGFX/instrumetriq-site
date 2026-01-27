@@ -318,7 +318,7 @@ instrumetriq-datasets/
 |------|----------|---------|-----------|----------|
 | **Tier 1** | Flattened allowlist | 19 flat fields | Aggregated only | ❌ Excluded |
 | **Tier 2** | Struct exclusion | 8 nested columns | Full last_cycle | ❌ Excluded |
-| **Tier 3** | Full archive | 12 nested columns | Full windows | ✅ Included |
+| **Tier 3** | Institutional | 12 nested columns | Full windows | ✅ Included |
 
 See [DATASET_SCHEMA_TIER1.md](DATASET_SCHEMA_TIER1.md) for full schema documentation.
 

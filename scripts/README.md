@@ -289,7 +289,7 @@ Tier 1 uses an **explicit allowlist with flattened fields** (no nested structs):
 |------|----------|--------|-----------|---------|
 | Tier 1 | Flattened allowlist | 22 | Aggregated only | ❌ |
 | Tier 2 | Struct exclusion | 7 structs | Meta only | ❌ |
-| Tier 3 | Full archive | 12 structs | Full windows | ✅ |
+| Tier 3 | Institutional | 12 structs | Full windows | ✅ |
 
 **Usage:**
 ```bash
