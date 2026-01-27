@@ -112,7 +112,7 @@ These tiers mirror the website Access page.
 - Daily Tier 2 Parquet files
 - 8 nested column groups
 - Order book depth at multiple levels
-- Multi-window sentiment (last cycle + 2 cycles)
+- Rich sentiment details (last 1-hour cycle)
 - Derived analytics (depth imbalance, flow)
 
 **Best for:** Research, dashboards, analysis workflows.
@@ -127,7 +127,7 @@ These tiers mirror the website Access page.
 - 12 nested column groups
 - 700+ price samples per entry (~10s intervals)
 - Futures data (funding rate, open interest)
-- Full sentiment windows with engagement
+- Multi-window sentiment (current + trailing)
 
 **Best for:** ML training, backtesting, quantitative research.
 

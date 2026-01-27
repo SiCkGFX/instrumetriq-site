@@ -38,7 +38,7 @@ const tiers = [
     features: [
       '8 nested column groups',
       'Order book depth at multiple levels',
-      'Multi-window sentiment (last cycle + 2 cycles)',
+      'Rich sentiment details (last 1-hour cycle)',
       'Derived analytics (depth imbalance, flow)',
       'Daily parquet files (~0.8 MB/day)',
     ],
@@ -55,7 +55,7 @@ const tiers = [
       '12 nested column groups',
       '700+ price samples per entry (~10s intervals)',
       'Futures data (funding rate, open interest)',
-      'Full sentiment windows with engagement',
+      'Multi-window sentiment (current + trailing)',
       'Daily parquet files (~10 MB/day)',
     ],
     useCases: 'ML training, backtesting, quantitative research',
