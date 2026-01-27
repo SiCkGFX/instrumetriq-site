@@ -76,7 +76,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     left: 0;
     right: 0;
     height: 60vh;
-    background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(0, 188, 212, 0.04), transparent 70%);
+    /* 
+       Commented out per brand guide: "Accent color is never decorative".
+       Restores strict dark grey background environment.
+    */
+    /* background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(0, 188, 212, 0.04), transparent 70%); */
     pointer-events: none;
     z-index: -1;
   }

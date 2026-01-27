@@ -8,6 +8,7 @@
  */
 
 /* Font Face Definitions */
+/* 
 @font-face {
   font-family: 'MuseoModerno';
   src: url('/MuseoModerno/MuseoModerno-VariableFont_wght.ttf') format('truetype-variations');
@@ -23,6 +24,7 @@
   font-style: italic;
   font-display: swap;
 }
+*/
 
 :root {
   /* Color System - Premium Dark Theme */
@@ -39,7 +41,10 @@
   --accent-subtle: rgba(0, 188, 212, 0.08);
   
   /* Typography */
-  --font-sans: 'MuseoModerno', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Replaced MuseoModerno with system sans-serif stack for brand compliance (Neutral/Serious) */
+  /* --font-sans: 'MuseoModerno', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
   --font-size-xs: 0.6875rem;    /* 11px - eyebrow labels */
   --font-size-sm: 0.875rem;     /* 14px - metadata */
   --font-size-base: 1rem;       /* 16px - body */
@@ -376,4 +381,30 @@ main .container .pageContent > h2:first-child {
 /* Structural-safe variant (current markup uses section wrappers) */
 main .container .pageContent > section:first-child > h2:first-child {
   margin-top: 0 !important;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-4);
+  font-variant-numeric: tabular-nums;
+}
+
+th, td {
+  padding: var(--space-2) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tr:last-child td {
+  border-bottom: none;
 }
