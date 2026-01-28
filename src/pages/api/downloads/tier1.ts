@@ -41,6 +41,9 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { validateToken } from '@/lib/tokenValidator';
 import { generateBundleUrls } from '@/lib/signedUrlGenerator';
 
+// Force server-side rendering (Cloudflare Function)
+export const prerender = false;
+
 const TIER = 'tier1';
 const INDEX_KEY = 'config/download_index_tier1.json';
 
