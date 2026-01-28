@@ -146,22 +146,17 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     }
     
-    // Step 3: Generate presigned URLs using R2 bucket binding
-    // R2 bucket bindings have createSignedUrl method (Cloudflare Workers)
-    const expirySeconds = 6 * 24 * 60 * 60; // 6 days
+    // Step 3: Generate download URLs through our proxy API
+    const baseUrl = new URL(request.url).origin;
     
-    const dailyWithUrls = await Promise.all(
-      (indexData.daily || []).map(async (item: any) => {
-        // Use direct public URL with signed token for now
-        // TODO: Use proper presigning once we confirm bucket access works
-        return {
-          date: item.date,
-          size_bytes: item.size_bytes,
-          download_url: `https://pub-instrumetriq.r2.dev/${item.r2_key}`,
-          manifest_url: `https://pub-instrumetriq.r2.dev/${item.manifest_key}`
-        };
-      })
-    );
+    const dailyWithUrls = (indexData.daily || []).map((item: any) => {
+      return {
+        date: item.date,
+        size_bytes: item.size_bytes,
+        download_url: `${baseUrl}/api/download/${item.r2_key}?token=${encodeURIComponent(token)}`,
+        manifest_url: `${baseUrl}/api/download/${item.manifest_key}?token=${encodeURIComponent(token)}`
+      };
+    });
     
     let mtdWithUrls = null;
     if (indexData.mtd) {
@@ -169,8 +164,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
         month: indexData.mtd.month,
         days_included: indexData.mtd.days_included,
         size_bytes: indexData.mtd.size_bytes,
-        download_url: `https://pub-instrumetriq.r2.dev/${indexData.mtd.r2_key}`,
-        manifest_url: `https://pub-instrumetriq.r2.dev/${indexData.mtd.manifest_key}`
+        download_url: `${baseUrl}/api/download/${indexData.mtd.r2_key}?token=${encodeURIComponent(token)}`,
+        manifest_url: `${baseUrl}/api/download/${indexData.mtd.manifest_key}?token=${encodeURIComponent(token)}`
       };
     }
     

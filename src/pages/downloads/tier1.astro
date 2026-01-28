@@ -213,12 +213,7 @@ if (!isValid) {
           // Update timestamp
           const lastUpdatedEl = document.getElementById('last-updated');
           const timestamp = new Date(data.generated_at);
-          lastUpdatedEl.textContent = timestamp.toLocaleString('en-US', {
-            dateStyle: 'medium',
-            timeStyle: 'short',
-            timeZone: 'UTC',
-            timeZoneName: 'short'
-          });
+          lastUpdatedEl.textContent = timestamp.toUTCString();
         })
         .catch(error => {
           const loadingEl = document.querySelector('.downloadPage__loading');
