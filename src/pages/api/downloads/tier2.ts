@@ -8,12 +8,12 @@
  */
 
 import type { APIRoute } from 'astro';
-import { readFileSync } from 'fs';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { validateToken } from '@/lib/tokenValidator';
 import { generateBundleUrls } from '@/lib/signedUrlGenerator';
 
 const TIER = 'tier2';
-const INDEX_PATH = '/var/www/instrumetriq/private/download_index/tier2.json';
+const INDEX_KEY = 'config/download_index_tier2.json';
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
@@ -43,13 +43,34 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     }
     
-    // Load download index
+    // Load download index from R2
     let indexData;
     try {
-      const indexContent = readFileSync(INDEX_PATH, 'utf-8');
-      indexData = JSON.parse(indexContent);
+      const runtime = locals.runtime as any;
+      const client = new S3Client({
+        region: 'auto',
+        endpoint: runtime?.env?.R2_ENDPOINT || process.env.R2_ENDPOINT,
+        credentials: {
+          accessKeyId: runtime?.env?.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID || '',
+          secretAccessKey: runtime?.env?.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY || '',
+        },
+      });
+      
+      const command = new GetObjectCommand({
+        Bucket: runtime?.env?.R2_BUCKET || process.env.R2_BUCKET || 'instrumetriq-datasets',
+        Key: INDEX_KEY,
+      });
+      
+      const response = await client.send(command);
+      const body = await response.Body?.transformToString();
+      
+      if (!body) {
+        throw new Error('Empty response from R2');
+      }
+      
+      indexData = JSON.parse(body);
     } catch (error) {
-      console.error('[API /downloads/tier2] Failed to load index:', error);
+      console.error('[API /downloads/tier2] Failed to load index from R2:', error);
       return new Response(JSON.stringify({
         success: false,
         error: 'Download index unavailable'
