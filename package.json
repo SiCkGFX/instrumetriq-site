@@ -3,11 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "bash -c 'source ~/.r2_credentials && astro dev'",
+    "dev": "bash -c 'source ~/.r2_credentials 2>/dev/null || true; astro dev'",
     "clean": "rm -rf .astro dist",
     "lint:wording": "node scripts/lint_wording.mjs",
-    "build": "npm run lint:wording && bash -c 'source ~/.r2_credentials && astro build'",
-    "preview": "bash -c 'source ~/.r2_credentials && astro preview'",
+    "build": "npm run lint:wording && bash -c 'source ~/.r2_credentials 2>/dev/null || true; astro build'",
+    "preview": "bash -c 'source ~/.r2_credentials 2>/dev/null || true; astro preview'",
     "publish": "python scripts/deploy_to_cloudflare.py",
     "sync-sample": "python scripts/tools/sync_cryptobot_sample.py",
     "astro": "astro"
