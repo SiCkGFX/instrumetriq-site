@@ -8,6 +8,11 @@ interface Env {
 
 declare namespace App {
   interface Locals {
-    runtime: Runtime;
+    runtime: {
+      env: Env;
+      cf: any;
+      caches: any;
+      ctx: any;
+    };
   }
 }

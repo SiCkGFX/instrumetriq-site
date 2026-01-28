@@ -11,14 +11,23 @@ const TIER = 'tier1';
 // Validate token on server side
 let isValid = false;
 let errorMessage = '';
+let debugInfo = '';
 
 if (!token) {
   errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
 } else {
   try {
-    console.log('[tier1 page] Runtime available:', !!Astro.locals.runtime);
-    console.log('[tier1 page] Runtime.env available:', !!Astro.locals.runtime?.env);
-    console.log('[tier1 page] DATASETS binding available:', !!Astro.locals.runtime?.env?.DATASETS);
+    // Debug: Check what runtime structure we have
+    const rt = Astro.locals.runtime as any;
+    debugInfo = `Runtime check:
+- Astro.locals.runtime exists: ${!!Astro.locals.runtime}
+- runtime.env exists: ${!!rt?.env}
+- runtime.runtime exists: ${!!rt?.runtime}
+- runtime.runtime.env exists: ${!!rt?.runtime?.env}
+- DATASETS at runtime.env: ${!!rt?.env?.DATASETS}
+- DATASETS at runtime.runtime.env: ${!!rt?.runtime?.env?.DATASETS}`;
+    
+    console.log(debugInfo);
     
     const validation = await validateToken(token, TIER, Astro.locals.runtime);
     isValid = validation.valid;
@@ -27,7 +36,7 @@ if (!token) {
     }
   } catch (error) {
     console.error('[tier1 page] Validation error:', error);
-    errorMessage = `Validation error: ${error instanceof Error ? error.message : String(error)}`;
+    errorMessage = `${error instanceof Error ? error.message : String(error)}`;
   }
 }
 
@@ -58,6 +67,11 @@ function formatBytes(bytes: number): string {
       <div class="downloadPage__error">
         <h2>Access Denied</h2>
         <p>{errorMessage}</p>
+        {debugInfo && (
+          <pre style="background: #1a1a1a; color: #0f0; padding: 1rem; margin-top: 1rem; text-align: left; font-size: 0.875rem; overflow-x: auto; border-radius: 4px;">
+            {debugInfo}
+          </pre>
+        )}
         <p>If you're a Patreon supporter, please use the download link from your tier's weekly post.</p>
         <p>Links are updated every Sunday and remain valid through Tuesday.</p>
       </div>
