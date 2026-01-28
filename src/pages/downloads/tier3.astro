@@ -15,7 +15,7 @@ let errorMessage = '';
 if (!token) {
   errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
 } else {
-  const validation = await validateToken(token, TIER);
+  const validation = await validateToken(token, TIER, Astro.locals.runtime);
   isValid = validation.valid;
   if (!isValid) {
     errorMessage = validation.reason || 'Invalid or expired access token.';

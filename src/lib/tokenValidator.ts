@@ -10,12 +10,44 @@
 
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
-const R2_ENDPOINT = import.meta.env.R2_ENDPOINT || process.env.R2_ENDPOINT;
-const R2_ACCESS_KEY_ID = import.meta.env.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID;
-const R2_SECRET_ACCESS_KEY = import.meta.env.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY;
-const R2_BUCKET = import.meta.env.R2_BUCKET || process.env.R2_BUCKET;
-
 const TOKEN_STATE_KEY = 'config/tier_tokens.json';
+
+interface R2Config {
+  endpoint: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucket: string;
+}
+
+/**
+ * Get R2 configuration from Astro runtime environment.
+ * Supports both Cloudflare Pages (runtime.env) and local dev (import.meta.env/process.env)
+ */
+function getR2Config(runtime?: any): R2Config | null {
+  // Try Cloudflare Pages runtime first (Astro.locals.runtime.env)
+  if (runtime?.env) {
+    const endpoint = runtime.env.R2_ENDPOINT;
+    const accessKeyId = runtime.env.R2_ACCESS_KEY_ID;
+    const secretAccessKey = runtime.env.R2_SECRET_ACCESS_KEY;
+    const bucket = runtime.env.R2_BUCKET;
+    
+    if (endpoint && accessKeyId && secretAccessKey && bucket) {
+      return { endpoint, accessKeyId, secretAccessKey, bucket };
+    }
+  }
+  
+  // Fallback to import.meta.env (Vite) or process.env (Node)
+  const endpoint = import.meta.env?.R2_ENDPOINT || process.env.R2_ENDPOINT;
+  const accessKeyId = import.meta.env?.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = import.meta.env?.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY;
+  const bucket = import.meta.env?.R2_BUCKET || process.env.R2_BUCKET;
+  
+  if (endpoint && accessKeyId && secretAccessKey && bucket) {
+    return { endpoint, accessKeyId, secretAccessKey, bucket };
+  }
+  
+  return null;
+}
 
 export interface TokenState {
   version: number;
@@ -50,7 +82,7 @@ let cachedState: TokenState | null = null;
 let lastLoadTime = 0;
 const CACHE_TTL = 60000; // 60 seconds
 
-async function loadTokenState(): Promise<TokenState> {
+async function loadTokenState(runtime?: any): Promise<TokenState> {
   const now = Date.now();
   
   // Use cache if still fresh
@@ -59,22 +91,23 @@ async function loadTokenState(): Promise<TokenState> {
   }
   
   try {
-    // Create R2 client
-    if (!R2_ENDPOINT || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET) {
-      throw new Error('R2 credentials not configured');
+    // Get R2 configuration
+    const config = getR2Config(runtime);
+    if (!config) {
+      throw new Error('R2 credentials not configured (check environment variables)');
     }
     
     const client = new S3Client({
       region: 'auto',
-      endpoint: R2_ENDPOINT,
+      endpoint: config.endpoint,
       credentials: {
-        accessKeyId: R2_ACCESS_KEY_ID,
-        secretAccessKey: R2_SECRET_ACCESS_KEY,
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
       },
     });
     
     const command = new GetObjectCommand({
-      Bucket: R2_BUCKET,
+      Bucket: config.bucket,
       Key: TOKEN_STATE_KEY,
     });
     
@@ -98,9 +131,10 @@ async function loadTokenState(): Promise<TokenState> {
  * 
  * @param token - The token to validate (43-character base64url string)
  * @param tier - The tier to validate against ('tier1', 'tier2', 'tier3')
+ * @param runtime - Optional Astro runtime context (Astro.locals.runtime) for Cloudflare env access
  * @returns ValidationResult with valid flag and optional reason
  */
-export async function validateToken(token: string, tier: string): Promise<ValidationResult> {
+export async function validateToken(token: string, tier: string, runtime?: any): Promise<ValidationResult> {
   // Basic format validation
   if (!token || typeof token !== 'string') {
     return { valid: false, reason: 'Token is required' };
@@ -119,7 +153,7 @@ export async function validateToken(token: string, tier: string): Promise<Valida
   // Load state
   let state: TokenState;
   try {
-    state = await loadTokenState();
+    state = await loadTokenState(runtime);
   } catch (error) {
     console.error('[TokenValidator] Failed to load state:', error);
     return { valid: false, reason: 'Token validation unavailable' };
@@ -150,10 +184,11 @@ export async function validateToken(token: string, tier: string): Promise<Valida
  * Useful for debugging and health checks.
  * 
  * @param tier - The tier to query
+ * @param runtime - Optional Astro runtime context
  * @returns Metadata about the tier's token state
  */
-export async function getTierInfo(tier: string) {
-  const state = await loadTokenState();
+export async function getTierInfo(tier: string, runtime?: any) {
+  const state = await loadTokenState(runtime);
   const tierInfo = state.tiers[tier];
   
   if (!tierInfo) {
@@ -173,12 +208,14 @@ export async function getTierInfo(tier: string) {
 /**
  * Check if token validation system is healthy.
  * Returns warnings for missing tokens or configuration issues.
+ * 
+ * @param runtime - Optional Astro runtime context
  */
-export async function checkTokenHealth(): Promise<{ healthy: boolean; warnings: string[] }> {
+export async function checkTokenHealth(runtime?: any): Promise<{ healthy: boolean; warnings: string[] }> {
   const warnings: string[] = [];
   
   try {
-    const state = await loadTokenState();
+    const state = await loadTokenState(runtime);
     
     // Check each tier
     for (const tier of ['tier1', 'tier2', 'tier3']) {

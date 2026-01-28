@@ -15,7 +15,7 @@ import { generateBundleUrls } from '@/lib/signedUrlGenerator';
 const TIER = 'tier2';
 const INDEX_PATH = '/var/www/instrumetriq/private/download_index/tier2.json';
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   try {
     // Extract token from query parameters
     const url = new URL(request.url);
@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
     }
     
     // Validate token
-    const validation = await validateToken(token, TIER);
+    const validation = await validateToken(token, TIER, locals.runtime);
     if (!validation.valid) {
       return new Response(JSON.stringify({
         success: false,
