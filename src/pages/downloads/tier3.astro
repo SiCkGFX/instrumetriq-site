@@ -1,0 +1,356 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { validateToken } from '@/lib/tokenValidator';
+
+// Extract token from query parameters
+const token = Astro.url.searchParams.get('token');
+const TIER = 'tier3';
+
+// Validate token on server side
+let isValid = false;
+let errorMessage = '';
+
+if (!token) {
+  errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
+} else {
+  const validation = validateToken(token, TIER);
+  isValid = validation.valid;
+  if (!isValid) {
+    errorMessage = validation.reason || 'Invalid or expired access token.';
+  }
+}
+
+// If invalid, return 403
+if (!isValid) {
+  Astro.response.status = 403;
+}
+
+// Helper function to format bytes
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+---
+
+<BaseLayout 
+  title="Tier 3 Downloads - Instrumetriq" 
+  description="Access your Tier 3 (Researcher) dataset downloads"
+>
+  <div class="downloadPage">
+    <header class="downloadPage__header">
+      <h1>Tier 3 Downloads</h1>
+      <p class="downloadPage__subtitle">Researcher — Complete Archive Access</p>
+    </header>
+
+    {!isValid ? (
+      <div class="downloadPage__error">
+        <h2>Access Denied</h2>
+        <p>{errorMessage}</p>
+        <p>If you're a Patreon supporter, please use the download link from your tier's weekly post.</p>
+        <p>Links are updated every Sunday and remain valid through Tuesday.</p>
+      </div>
+    ) : (
+      <div class="downloadPage__content">
+        <div class="downloadPage__loading">
+          <p>Loading available downloads...</p>
+        </div>
+
+        <div class="downloadPage__downloads" style="display: none;">
+          <section class="downloadSection">
+            <h2>Month-to-Date Bundle</h2>
+            <p class="downloadSection__description">
+              All days from the current month merged into a single file.
+              Updated daily at 02:30 UTC.
+            </p>
+            <div id="mtd-container"></div>
+          </section>
+
+          <section class="downloadSection">
+            <h2>Daily Files (Last 7 Days)</h2>
+            <p class="downloadSection__description">
+              Individual daily exports. Each file contains one day of scored posts.
+            </p>
+            <div id="daily-container"></div>
+          </section>
+
+          <div class="downloadPage__footer">
+            <p class="downloadPage__updated">Last updated: <span id="last-updated"></span></p>
+            <p class="downloadPage__help">
+              Need help? Visit the <a href="/dataset">Dataset</a> page for schema documentation.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <script define:vars={{ token, TIER }}>
+    if (token) {
+      // Fetch downloads from API
+      fetch(`/api/downloads/${TIER}?token=${encodeURIComponent(token)}`)
+        .then(res => res.json())
+        .then(data => {
+          const loadingEl = document.querySelector('.downloadPage__loading');
+          const downloadsEl = document.querySelector('.downloadPage__downloads');
+          
+          if (!data.success) {
+            loadingEl.innerHTML = `<p class="error">${data.error}</p>`;
+            return;
+          }
+
+          // Hide loading, show downloads
+          loadingEl.style.display = 'none';
+          downloadsEl.style.display = 'block';
+
+          // Populate MTD
+          const mtdContainer = document.getElementById('mtd-container');
+          if (data.mtd) {
+            mtdContainer.innerHTML = `
+              <div class="downloadItem downloadItem--featured">
+                <div class="downloadItem__info">
+                  <strong>${data.mtd.month}</strong>
+                  <span class="downloadItem__meta">${data.mtd.days_included} days • ${formatBytes(data.mtd.size_bytes)}</span>
+                </div>
+                <div class="downloadItem__actions">
+                  <a href="${data.mtd.download_url}" class="downloadButton downloadButton--primary" download>
+                    Download Parquet
+                  </a>
+                  <a href="${data.mtd.manifest_url}" class="downloadButton downloadButton--secondary" download>
+                    Manifest
+                  </a>
+                </div>
+              </div>
+            `;
+          } else {
+            mtdContainer.innerHTML = '<p class="downloadSection__empty">Month-to-date bundle not yet available.</p>';
+          }
+
+          // Populate Daily (last 7)
+          const dailyContainer = document.getElementById('daily-container');
+          const dailyFiles = data.daily.slice(0, 7);
+          
+          if (dailyFiles.length > 0) {
+            dailyContainer.innerHTML = dailyFiles.map(item => `
+              <div class="downloadItem">
+                <div class="downloadItem__info">
+                  <strong>${item.date}</strong>
+                  <span class="downloadItem__meta">${formatBytes(item.size_bytes)}</span>
+                </div>
+                <div class="downloadItem__actions">
+                  <a href="${item.download_url}" class="downloadButton downloadButton--primary" download>
+                    Download
+                  </a>
+                  <a href="${item.manifest_url}" class="downloadButton downloadButton--secondary" download>
+                    Manifest
+                  </a>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            dailyContainer.innerHTML = '<p class="downloadSection__empty">No daily files available yet.</p>';
+          }
+
+          // Update timestamp
+          const lastUpdatedEl = document.getElementById('last-updated');
+          const timestamp = new Date(data.generated_at);
+          lastUpdatedEl.textContent = timestamp.toLocaleString('en-US', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+            timeZone: 'UTC',
+            timeZoneName: 'short'
+          });
+        })
+        .catch(error => {
+          const loadingEl = document.querySelector('.downloadPage__loading');
+          loadingEl.innerHTML = '<p class="error">Failed to load downloads. Please try again later.</p>';
+          console.error('Download fetch error:', error);
+        });
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+  </script>
+
+  <style>
+    .downloadPage {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .downloadPage__header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .downloadPage__header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .downloadPage__subtitle {
+      color: var(--text-dim);
+      font-size: 1.125rem;
+    }
+
+    .downloadPage__error {
+      background: rgba(255, 100, 100, 0.1);
+      border: 1px solid rgba(255, 100, 100, 0.3);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .downloadPage__error h2 {
+      color: #ff6464;
+      margin-bottom: 1rem;
+    }
+
+    .downloadPage__error p {
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .downloadPage__loading {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-dim);
+    }
+
+    .downloadSection {
+      margin-bottom: 3rem;
+    }
+
+    .downloadSection h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .downloadSection__description {
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .downloadSection__empty {
+      color: var(--text-dim);
+      font-style: italic;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .downloadItem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .downloadItem--featured {
+      background: rgba(0, 255, 200, 0.05);
+      border-color: var(--accent);
+    }
+
+    .downloadItem__info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .downloadItem__meta {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+    }
+
+    .downloadItem__actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .downloadButton {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .downloadButton--primary {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+
+    .downloadButton--primary:hover {
+      background: var(--accent-bright);
+      transform: translateY(-1px);
+    }
+
+    .downloadButton--secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-base);
+    }
+
+    .downloadButton--secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .downloadPage__footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .downloadPage__updated {
+      color: var(--text-dim);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .downloadPage__help {
+      color: var(--text-dim);
+      font-size: 0.875rem;
+    }
+
+    .downloadPage__help a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .downloadPage__help a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: #ff6464;
+    }
+
+    @media (max-width: 640px) {
+      .downloadItem {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .downloadItem__actions {
+        width: 100%;
+      }
+
+      .downloadButton {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  </style>
+</BaseLayout>

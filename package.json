@@ -3,16 +3,21 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "bash -c 'source ~/.r2_credentials && astro dev'",
     "clean": "rm -rf .astro dist",
     "lint:wording": "node scripts/lint_wording.mjs",
-    "build": "npm run lint:wording && astro build",
-    "preview": "astro preview",
+    "build": "npm run lint:wording && bash -c 'source ~/.r2_credentials && astro build'",
+    "preview": "bash -c 'source ~/.r2_credentials && astro preview'",
     "publish": "python scripts/deploy_to_cloudflare.py",
     "sync-sample": "python scripts/tools/sync_cryptobot_sample.py",
     "astro": "astro"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.975.0",
+    "@aws-sdk/s3-request-presigner": "^3.975.0",
     "astro": "^5.16.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10"
   }
 }
