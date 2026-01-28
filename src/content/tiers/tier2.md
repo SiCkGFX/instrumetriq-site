@@ -1,7 +1,7 @@
 ---
 title: "Tier 2 Schema"
 tierNumber: 2
-planName: "Researcher"
+planName: "Analyst"
 shortDescription: "Structured daily export with nested market microstructure and rich X (Twitter) sentiment."
 priceUsdMonthly: 15
 updatedAt: 2026-01-23

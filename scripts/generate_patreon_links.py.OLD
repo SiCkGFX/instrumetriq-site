@@ -80,8 +80,8 @@ def main():
 
     tiers = [
         ("Tier 1 (Explorer)", "tier1"),
-        ("Tier 2 (Researcher)", "tier2"),
-        ("Tier 3 (Institutional)", "tier3")
+        ("Tier 2 (Analyst)", "tier2"),
+        ("Tier 3 (Researcher)", "tier3")
     ]
 
     for label, folder in tiers:

@@ -103,8 +103,8 @@ These tiers mirror the website Access page.
 
 **Best for:** Quick screening, correlation studies, learning.
 
-### Tier 2 — Researcher ($15/mo)
-**Title:** Researcher
+### Tier 2 — Analyst ($15/mo)
+**Title:** Analyst
 
 **Short description:** Full market microstructure + sentiment.
 
@@ -117,8 +117,8 @@ These tiers mirror the website Access page.
 
 **Best for:** Research, dashboards, analysis workflows.
 
-### Tier 3 — Institutional ($35/mo)
-**Title:** Institutional
+### Tier 3 — Researcher ($35/mo)
+**Title:** Researcher
 
 **Short description:** Complete data for ML and backtesting.
 

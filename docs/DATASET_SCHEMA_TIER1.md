@@ -30,9 +30,9 @@ Tier 1 uses an **explicit allowlist** approach with **flattened fields**:
 
 | Tier | Approach | Columns | Sentiment | Futures |
 |------|----------|---------|-----------|---------|
-| **Tier 1** | Flattened allowlist | 19 flat fields | Aggregated only | ❌ Excluded |
-| **Tier 2** | Struct exclusion | 8 nested columns | Full windows | ❌ Excluded |
-| **Tier 3** | Institutional | 12 nested columns | Full windows | ✅ Included |
+| **Tier 1** | Explorer | 19 flat fields | Aggregated only | ❌ Excluded |
+| **Tier 2** | Analyst | 8 nested columns | Full windows | ❌ Excluded |
+| **Tier 3** | Researcher | 12 nested columns | Full windows | ✅ Included |
 
 ---
 

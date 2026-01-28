@@ -1,7 +1,7 @@
 ---
 title: "Tier 3 Schema"
 tierNumber: 3
-planName: "Institutional"
+planName: "Researcher"
 shortDescription: "Our most granular dataset. Includes full market microstructure, derivates, multi-window sentiment, and 10s price samples."
 priceUsdMonthly: 85
 updatedAt: 2026-01-23

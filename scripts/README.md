@@ -287,9 +287,9 @@ Tier 1 uses an **explicit allowlist with flattened fields** (no nested structs):
 **Tier Hierarchy:**
 | Tier | Approach | Fields | Sentiment | Futures |
 |------|----------|--------|-----------|---------|
-| Tier 1 | Flattened allowlist | 22 | Aggregated only | ❌ |
-| Tier 2 | Struct exclusion | 7 structs | Meta only | ❌ |
-| Tier 3 | Institutional | 12 structs | Full windows | ✅ |
+| Tier 1 | Explorer | 22 | Aggregated only | ❌ |
+| Tier 2 | Analyst | 7 structs | Meta only | ❌ |
+| Tier 3 | Researcher | 12 structs | Full windows | ✅ |
 
 **Usage:**
 ```bash
