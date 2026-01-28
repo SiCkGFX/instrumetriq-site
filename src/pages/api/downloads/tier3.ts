@@ -8,7 +8,6 @@
  */
 
 import type { APIRoute } from 'astro';
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { validateToken } from '@/lib/tokenValidator';
 import { generateBundleUrls } from '@/lib/signedUrlGenerator';
 
@@ -46,39 +45,28 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     }
     
-    // Load download index from R2
+    // Load download index from R2 using bucket binding
     let indexData;
     try {
-      const runtime = locals.runtime as any;
-      const client = new S3Client({
-        region: 'auto',
-        endpoint: runtime?.env?.R2_ENDPOINT || process.env.R2_ENDPOINT,
-        credentials: {
-          accessKeyId: runtime?.env?.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID || '',
-          secretAccessKey: runtime?.env?.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY || '',
-        },
-      });
-      
-      const command = new GetObjectCommand({
-        Bucket: runtime?.env?.R2_BUCKET || process.env.R2_BUCKET || 'instrumetriq-datasets',
-        Key: INDEX_KEY,
-      });
-      
-      const response = await client.send(command);
-      const body = await response.Body?.transformToString();
-      
-      if (!body) {
-        throw new Error('Empty response from R2');
+      const bucket = locals.runtime?.runtime?.env?.DATASETS;
+      if (!bucket) {
+        throw new Error('R2 bucket binding not available');
       }
       
-      indexData = JSON.parse(body);
+      const object = await bucket.get(INDEX_KEY);
+      if (!object) {
+        throw new Error(`Download index not found: ${INDEX_KEY}`);
+      }
+      
+      const text = await object.text();
+      indexData = JSON.parse(text);
     } catch (error) {
-      console.error('[API /downloads/tier3] Failed to load index from R2:', error);
+      console.error('[tier3 API] Failed to load download index:', error);
       return new Response(JSON.stringify({
         success: false,
         error: 'Download index unavailable'
       }), {
-        status: 503,
+        status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
     }

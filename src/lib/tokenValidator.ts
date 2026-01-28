@@ -8,63 +8,7 @@
  * (for generation) and Cloudflare Pages (for validation) can access it.
  */
 
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-
 const TOKEN_STATE_KEY = 'config/tier_tokens.json';
-
-interface R2Config {
-  endpoint: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-  bucket: string;
-}
-
-/**
- * Get R2 configuration from Astro runtime environment.
- * Supports both Cloudflare Pages (runtime.env) and local dev (import.meta.env/process.env)
- */
-function getR2Config(runtime?: any): R2Config | null {
-  console.log('[tokenValidator] getR2Config called, runtime:', !!runtime, 'runtime.env:', !!runtime?.env);
-  
-  // Try Cloudflare Pages runtime first (Astro.locals.runtime.env)
-  if (runtime?.env) {
-    const endpoint = runtime.env.R2_ENDPOINT;
-    const accessKeyId = runtime.env.R2_ACCESS_KEY_ID;
-    const secretAccessKey = runtime.env.R2_SECRET_ACCESS_KEY;
-    const bucket = runtime.env.R2_BUCKET;
-    
-    console.log('[tokenValidator] Runtime env check:', {
-      hasEndpoint: !!endpoint,
-      hasAccessKeyId: !!accessKeyId,
-      hasSecretAccessKey: !!secretAccessKey,
-      hasBucket: !!bucket
-    });
-    
-    if (endpoint && accessKeyId && secretAccessKey && bucket) {
-      return { endpoint, accessKeyId, secretAccessKey, bucket };
-    }
-  }
-  
-  // Fallback to import.meta.env (Vite) or process.env (Node)
-  const endpoint = import.meta.env?.R2_ENDPOINT || process.env.R2_ENDPOINT;
-  const accessKeyId = import.meta.env?.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = import.meta.env?.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY;
-  const bucket = import.meta.env?.R2_BUCKET || process.env.R2_BUCKET;
-  
-  console.log('[tokenValidator] Fallback env check:', {
-    hasEndpoint: !!endpoint,
-    hasAccessKeyId: !!accessKeyId,
-    hasSecretAccessKey: !!secretAccessKey,
-    hasBucket: !!bucket
-  });
-  
-  if (endpoint && accessKeyId && secretAccessKey && bucket) {
-    return { endpoint, accessKeyId, secretAccessKey, bucket };
-  }
-  
-  console.error('[tokenValidator] No R2 credentials found in any source');
-  return null;
-}
 
 export interface TokenState {
   version: number;
@@ -92,7 +36,7 @@ export interface ValidationResult {
 }
 
 /**
- * Load token state from R2.
+ * Load token state from R2 using the DATASETS bucket binding.
  * Cached for performance, reloaded on demand if state changes.
  */
 let cachedState: TokenState | null = null;
@@ -108,38 +52,79 @@ async function loadTokenState(runtime?: any): Promise<TokenState> {
   }
   
   try {
-    // Get R2 configuration
-    const config = getR2Config(runtime);
-    if (!config) {
-      throw new Error('R2 credentials not configured (check environment variables)');
+    // Get R2 bucket from Cloudflare Pages binding
+    const bucket = runtime?.runtime?.env?.DATASETS;
+    if (!bucket) {
+      throw new Error('R2 bucket binding (DATASETS) not available');
+    }
+    
+    // Fetch token state from R2
+    const object = await bucket.get(TOKEN_STATE_KEY);
+    if (!object) {
+      throw new Error(`Token state file not found: ${TOKEN_STATE_KEY}`);
+    }
+    
+    const text = await object.text();
+    const state = JSON.parse(text) as TokenState;
+    
+    // Update cache
+    cachedState = state;
+    lastLoadTime = now;
+    
+    return state;
+  } catch (error) {
+    console.error('[tokenValidator] Failed to load token state:', error);
+    throw new Error(`Token validation unavailable: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+/**
+ * LEGACY: Load token state using AWS SDK for local development.
+ * This is a fallback when R2 binding is not available (local dev only).
+ */
+async function loadTokenStateViaSDK(runtime?: any): Promise<TokenState> {
+  try {
+    const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
+    
+    const endpoint = process.env.R2_ENDPOINT;
+    const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+    const bucketName = process.env.R2_BUCKET;
+    
+    if (!endpoint || !accessKeyId || !secretAccessKey || !bucketName) {
+      throw new Error('R2 credentials not configured for local development');
     }
     
     const client = new S3Client({
       region: 'auto',
-      endpoint: config.endpoint,
+      endpoint,
       credentials: {
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey,
+        accessKeyId,
+        secretAccessKey,
       },
     });
     
     const command = new GetObjectCommand({
-      Bucket: config.bucket,
+      Bucket: bucketName,
       Key: TOKEN_STATE_KEY,
     });
     
     const response = await client.send(command);
-    const body = await response.Body?.transformToString();
-    
-    if (!body) {
+    if (!response.Body) {
       throw new Error('Empty response from R2');
     }
     
-    cachedState = JSON.parse(body);
-    lastLoadTime = now;
-    return cachedState!;
+    const text = await response.Body.transformToString();
+    const state = JSON.parse(text) as TokenState;
+    
+    // Update cache
+    cachedState = state;
+    lastLoadTime = Date.now();
+    
+    return state;
   } catch (error) {
-    throw new Error(`Failed to load token state from R2: ${error}`);
+    console.error('[tokenValidator] Failed to load token state via SDK:', error);
+    throw new Error(`Token validation unavailable: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -167,10 +152,16 @@ export async function validateToken(token: string, tier: string, runtime?: any):
     return { valid: false, reason: `Invalid tier: ${tier}` };
   }
   
-  // Load state
+  // Load state (try R2 binding first, fallback to SDK for local dev)
   let state: TokenState;
   try {
-    state = await loadTokenState(runtime);
+    if (runtime?.runtime?.env?.DATASETS) {
+      // Use R2 binding (Cloudflare Pages production)
+      state = await loadTokenState(runtime);
+    } else {
+      // Use SDK (local development)
+      state = await loadTokenStateViaSDK(runtime);
+    }
   } catch (error) {
     console.error('[TokenValidator] Failed to load state:', error);
     return { valid: false, reason: 'Token validation unavailable' };
@@ -205,7 +196,9 @@ export async function validateToken(token: string, tier: string, runtime?: any):
  * @returns Metadata about the tier's token state
  */
 export async function getTierInfo(tier: string, runtime?: any) {
-  const state = await loadTokenState(runtime);
+  const state = runtime?.runtime?.env?.DATASETS 
+    ? await loadTokenState(runtime)
+    : await loadTokenStateViaSDK(runtime);
   const tierInfo = state.tiers[tier];
   
   if (!tierInfo) {
@@ -232,7 +225,9 @@ export async function checkTokenHealth(runtime?: any): Promise<{ healthy: boolea
   const warnings: string[] = [];
   
   try {
-    const state = await loadTokenState(runtime);
+    const state = runtime?.runtime?.env?.DATASETS 
+      ? await loadTokenState(runtime)
+      : await loadTokenStateViaSDK(runtime);
     
     // Check each tier
     for (const tier of ['tier1', 'tier2', 'tier3']) {
