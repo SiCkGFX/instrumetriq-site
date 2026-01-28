@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-01-27T03:01:06.787239Z",
-  "entries_scanned": 338,
+  "generated_at_utc": "2026-01-28T03:01:05.695126Z",
+  "entries_scanned": 348,
   "source": {
-    "sample_file": "Full archive: 20260127",
+    "sample_file": "Full archive: 20260128",
     "ssot_file": "data/field_coverage_report.json"
   },
   "definition": {
@@ -14,19 +14,19 @@
     "duration_sec": "meta.duration_sec"
   },
   "duration_stats": {
-    "n_entries_with_duration": 338,
+    "n_entries_with_duration": 348,
     "duration_sec": {
-      "median": 7528,
-      "p10": 7309,
-      "p90": 7735,
-      "min": 7202,
-      "max": 7795
+      "median": 7532,
+      "p10": 7338,
+      "p90": 7688,
+      "min": 7203,
+      "max": 7793
     }
   },
   "admission_hour_distribution": [
     {
       "hour": 0,
-      "count": 140
+      "count": 119
     },
     {
       "hour": 1,
@@ -110,15 +110,15 @@
     },
     {
       "hour": 21,
-      "count": 15
+      "count": 12
     },
     {
       "hour": 22,
-      "count": 138
+      "count": 146
     },
     {
       "hour": 23,
-      "count": 45
+      "count": 71
     }
   ],
   "unavailable_fields": []

@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-01-27T03:01:06.694061Z",
-  "entries_scanned": 338,
+  "generated_at_utc": "2026-01-28T03:01:05.620209Z",
+  "entries_scanned": 348,
   "source": {
-    "sample_file": "Full archive: 20260127",
+    "sample_file": "Full archive: 20260128",
     "ssot_file": "data/field_coverage_report.json"
   },
   "fields_used": {
@@ -10,12 +10,12 @@
     "spot_prices": "spot_prices"
   },
   "sample_count_stats": {
-    "n_entries": 338,
-    "median": 750.5,
-    "p10": 728,
-    "p90": 771,
-    "min": 717,
-    "max": 778
+    "n_entries": 348,
+    "median": 750.0,
+    "p10": 733,
+    "p90": 767,
+    "min": 719,
+    "max": 779
   },
   "sample_count_histogram": [
     {
@@ -30,13 +30,13 @@
     },
     {
       "bucket": "700-749",
-      "count": 162,
-      "share_pct": 47.9
+      "count": 169,
+      "share_pct": 48.6
     },
     {
       "bucket": "750-799",
-      "count": 176,
-      "share_pct": 52.1
+      "count": 179,
+      "share_pct": 51.4
     },
     {
       "bucket": "800-899",
@@ -50,12 +50,12 @@
     }
   ],
   "spot_prices_len_stats": {
-    "n_entries": 338,
+    "n_entries": 348,
     "median": 750,
-    "p10": 728,
-    "p90": 771,
-    "min": 717,
-    "max": 778
+    "p10": 733,
+    "p90": 767,
+    "min": 719,
+    "max": 779
   },
   "unavailable_fields": []
 }
