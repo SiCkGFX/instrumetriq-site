@@ -48,22 +48,35 @@ async function loadTokenState(runtime?: any): Promise<TokenState> {
   
   // Use cache if still fresh
   if (cachedState && (now - lastLoadTime) < CACHE_TTL) {
+    console.log('[tokenValidator] Using cached token state');
     return cachedState;
   }
   
   try {
+    console.log('[tokenValidator] Loading token state from R2');
+    console.log('[tokenValidator] runtime:', !!runtime);
+    console.log('[tokenValidator] runtime.runtime:', !!runtime?.runtime);
+    console.log('[tokenValidator] runtime.runtime.env:', !!runtime?.runtime?.env);
+    console.log('[tokenValidator] DATASETS binding:', !!runtime?.runtime?.env?.DATASETS);
+    
     // Get R2 bucket from Cloudflare Pages binding
     const bucket = runtime?.runtime?.env?.DATASETS;
     if (!bucket) {
-      throw new Error('R2 bucket binding (DATASETS) not available');
+      const detail = !runtime ? 'runtime is undefined' : 
+                     !runtime.runtime ? 'runtime.runtime is undefined' :
+                     !runtime.runtime.env ? 'runtime.runtime.env is undefined' :
+                     'DATASETS binding is undefined';
+      throw new Error(`R2 bucket binding (DATASETS) not available: ${detail}`);
     }
     
+    console.log('[tokenValidator] Fetching from R2:', TOKEN_STATE_KEY);
     // Fetch token state from R2
     const object = await bucket.get(TOKEN_STATE_KEY);
     if (!object) {
-      throw new Error(`Token state file not found: ${TOKEN_STATE_KEY}`);
+      throw new Error(`Token state file not found in R2: ${TOKEN_STATE_KEY}`);
     }
     
+    console.log('[tokenValidator] Parsing token state');
     const text = await object.text();
     const state = JSON.parse(text) as TokenState;
     
@@ -71,6 +84,7 @@ async function loadTokenState(runtime?: any): Promise<TokenState> {
     cachedState = state;
     lastLoadTime = now;
     
+    console.log('[tokenValidator] Token state loaded successfully');
     return state;
   } catch (error) {
     console.error('[tokenValidator] Failed to load token state:', error);
