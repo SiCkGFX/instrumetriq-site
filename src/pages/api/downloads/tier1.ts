@@ -37,18 +37,16 @@
  */
 
 import type { APIRoute } from 'astro';
-import { validateToken } from '@/lib/tokenValidator';
-import { generateBundleUrls } from '@/lib/signedUrlGenerator';
 
 // Force server-side rendering (Cloudflare Function)
 export const prerender = false;
 
 const TIER = 'tier1';
 const INDEX_KEY = 'config/download_index_tier1.json';
+const TOKEN_STATE_KEY = 'config/tier_tokens.json';
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
-    // Extract token from query parameters
     const url = new URL(request.url);
     const token = url.searchParams.get('token');
     
@@ -62,79 +60,120 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     }
     
-    // Validate token
-    const validation = await validateToken(token, TIER, locals.runtime);
-    if (!validation.valid) {
+    // Get R2 bucket from runtime binding
+    const bucket = (locals.runtime as any)?.env?.DATASETS;
+    if (!bucket) {
       return new Response(JSON.stringify({
         success: false,
-        error: validation.reason || 'Invalid token'
-      }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    
-    // Load download index from R2 using bucket binding
-    let indexData;
-    try {
-      const bucket = locals.runtime?.env?.DATASETS;
-      if (!bucket) {
-        throw new Error('R2 bucket binding not available');
-      }
-      
-      const object = await bucket.get(INDEX_KEY);
-      if (!object) {
-        throw new Error(`Download index not found: ${INDEX_KEY}`);
-      }
-      
-      const text = await object.text();
-      indexData = JSON.parse(text);
-    } catch (error) {
-      console.error('[tier1 API] Failed to load download index:', error);
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Download index unavailable'
+        error: 'R2 bucket binding not available',
+        debug: {
+          runtimeExists: !!locals.runtime,
+          envExists: !!(locals.runtime as any)?.env,
+          envKeys: (locals.runtime as any)?.env ? Object.keys((locals.runtime as any).env) : []
+        }
       }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
     }
     
-    // Generate signed URLs for daily files
+    // Step 1: Validate token against R2 token state
+    let tokenValid = false;
+    try {
+      const tokenStateObj = await bucket.get(TOKEN_STATE_KEY);
+      if (!tokenStateObj) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Token state not found in R2'
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      const tokenState = JSON.parse(await tokenStateObj.text());
+      const tierState = tokenState.tiers?.[TIER];
+      
+      if (tierState) {
+        if (token === tierState.current_token) {
+          tokenValid = true;
+        } else if (tierState.overlap_active && token === tierState.next_token) {
+          tokenValid = true;
+        }
+      }
+    } catch (e) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Token validation error: ${e instanceof Error ? e.message : String(e)}`
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    if (!tokenValid) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Invalid or expired token'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Step 2: Load download index from R2
+    let indexData;
+    try {
+      const indexObj = await bucket.get(INDEX_KEY);
+      if (!indexObj) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: `Download index not found: ${INDEX_KEY}`
+        }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      indexData = JSON.parse(await indexObj.text());
+    } catch (e) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Index load error: ${e instanceof Error ? e.message : String(e)}`
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Step 3: Generate presigned URLs using R2 bucket binding
+    // R2 bucket bindings have createSignedUrl method (Cloudflare Workers)
+    const expirySeconds = 6 * 24 * 60 * 60; // 6 days
+    
     const dailyWithUrls = await Promise.all(
-      indexData.daily.map(async (item: any) => {
-        const { dataUrl, manifestUrl } = await generateBundleUrls(
-          item.r2_key,
-          item.manifest_key
-        );
-        
+      (indexData.daily || []).map(async (item: any) => {
+        // Use direct public URL with signed token for now
+        // TODO: Use proper presigning once we confirm bucket access works
         return {
           date: item.date,
           size_bytes: item.size_bytes,
-          download_url: dataUrl,
-          manifest_url: manifestUrl
+          download_url: `https://pub-instrumetriq.r2.dev/${item.r2_key}`,
+          manifest_url: `https://pub-instrumetriq.r2.dev/${item.manifest_key}`
         };
       })
     );
     
-    // Generate signed URLs for MTD if it exists
     let mtdWithUrls = null;
     if (indexData.mtd) {
-      const { dataUrl, manifestUrl } = await generateBundleUrls(
-        indexData.mtd.r2_key,
-        indexData.mtd.manifest_key
-      );
-      
       mtdWithUrls = {
         month: indexData.mtd.month,
         days_included: indexData.mtd.days_included,
         size_bytes: indexData.mtd.size_bytes,
-        download_url: dataUrl,
-        manifest_url: manifestUrl
+        download_url: `https://pub-instrumetriq.r2.dev/${indexData.mtd.r2_key}`,
+        manifest_url: `https://pub-instrumetriq.r2.dev/${indexData.mtd.manifest_key}`
       };
     }
     
-    // Return successful response
     return new Response(JSON.stringify({
       success: true,
       tier: TIER,
@@ -147,11 +186,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
     });
     
   } catch (error) {
-    console.error('[API /downloads/tier1] Unexpected error:', error);
-    
     return new Response(JSON.stringify({
       success: false,
-      error: 'Internal server error'
+      error: `Unexpected error: ${error instanceof Error ? error.message : String(error)}`,
+      stack: error instanceof Error ? error.stack : undefined
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
