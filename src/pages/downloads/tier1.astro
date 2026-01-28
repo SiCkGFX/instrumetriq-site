@@ -172,10 +172,17 @@ if (!isValid) {
                   <a href="${data.mtd.download_url}" class="downloadButton downloadButton--primary" download>
                     Download Parquet
                   </a>
-                  <a href="${data.mtd.manifest_url}" class="downloadButton downloadButton--secondary" download>
+                  <button class="downloadButton downloadButton--expand" data-manifest-url="${data.mtd.manifest_url}" data-target="mtd-manifest">
                     Manifest
-                  </a>
+                  </button>
                 </div>
+              </div>
+              <div class="manifestPanel" id="mtd-manifest" style="display: none;">
+                <div class="manifestPanel__header">
+                  <span>Manifest — ${data.mtd.month}</span>
+                  <a href="${data.mtd.manifest_url}" class="manifestPanel__download" download>Download JSON</a>
+                </div>
+                <pre class="manifestPanel__content"><code>Loading...</code></pre>
               </div>
             `;
           } else {
@@ -187,7 +194,7 @@ if (!isValid) {
           const dailyFiles = data.daily.slice(0, 7);
           
           if (dailyFiles.length > 0) {
-            dailyContainer.innerHTML = dailyFiles.map(item => `
+            dailyContainer.innerHTML = dailyFiles.map((item, idx) => `
               <div class="downloadItem">
                 <div class="downloadItem__info">
                   <strong>${item.date}</strong>
@@ -197,15 +204,53 @@ if (!isValid) {
                   <a href="${item.download_url}" class="downloadButton downloadButton--primary" download>
                     Download
                   </a>
-                  <a href="${item.manifest_url}" class="downloadButton downloadButton--secondary" download>
+                  <button class="downloadButton downloadButton--expand" data-manifest-url="${item.manifest_url}" data-target="daily-manifest-${idx}">
                     Manifest
-                  </a>
+                  </button>
                 </div>
+              </div>
+              <div class="manifestPanel" id="daily-manifest-${idx}" style="display: none;">
+                <div class="manifestPanel__header">
+                  <span>Manifest — ${item.date}</span>
+                  <a href="${item.manifest_url}" class="manifestPanel__download" download>Download JSON</a>
+                </div>
+                <pre class="manifestPanel__content"><code>Loading...</code></pre>
               </div>
             `).join('');
           } else {
             dailyContainer.innerHTML = '<p class="downloadSection__empty">No daily files available yet.</p>';
           }
+
+          // Add expand button handlers
+          document.querySelectorAll('.downloadButton--expand').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const targetId = btn.getAttribute('data-target');
+              const manifestUrl = btn.getAttribute('data-manifest-url');
+              const panel = document.getElementById(targetId);
+              
+              if (!panel) return;
+              
+              if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                btn.classList.add('active');
+                
+                // Load manifest content if not loaded
+                const codeEl = panel.querySelector('code');
+                if (codeEl && codeEl.textContent === 'Loading...') {
+                  try {
+                    const res = await fetch(manifestUrl);
+                    const manifest = await res.json();
+                    codeEl.textContent = JSON.stringify(manifest, null, 2);
+                  } catch (err) {
+                    codeEl.textContent = 'Failed to load manifest';
+                  }
+                }
+              } else {
+                panel.style.display = 'none';
+                btn.classList.remove('active');
+              }
+            });
+          });
 
           // Update timestamp
           const lastUpdatedEl = document.getElementById('last-updated');
@@ -234,23 +279,26 @@ if (!isValid) {
     }
 
     .downloadPage__header {
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
       text-align: center;
     }
 
     .downloadPage__header h1 {
       font-size: 2rem;
       margin-bottom: 0.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
     }
 
     .downloadPage__subtitle {
       color: var(--text-dim);
-      font-size: 1.125rem;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
     }
 
     .downloadPage__error {
-      background: rgba(255, 100, 100, 0.1);
-      border: 1px solid rgba(255, 100, 100, 0.3);
+      background: rgba(255, 100, 100, 0.08);
+      border: 1px solid rgba(255, 100, 100, 0.25);
       border-radius: 8px;
       padding: 2rem;
       text-align: center;
@@ -259,11 +307,13 @@ if (!isValid) {
     .downloadPage__error h2 {
       color: #ff6464;
       margin-bottom: 1rem;
+      font-size: 1.25rem;
     }
 
     .downloadPage__error p {
       margin-bottom: 0.75rem;
       line-height: 1.6;
+      color: var(--text-dim);
     }
 
     .downloadPage__loading {
@@ -273,41 +323,56 @@ if (!isValid) {
     }
 
     .downloadSection {
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
 
     .downloadSection h2 {
-      font-size: 1.5rem;
+      font-size: 1.125rem;
+      font-weight: 600;
       margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
     }
 
     .downloadSection__description {
       color: var(--text-dim);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       line-height: 1.6;
+      font-size: 0.9rem;
     }
 
     .downloadSection__empty {
       color: var(--text-dim);
       font-style: italic;
-      padding: 1rem;
+      padding: 1.5rem;
       text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 6px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
     }
 
     .downloadItem {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 6px;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
+      transition: border-color 0.2s;
+    }
+
+    .downloadItem:hover {
+      border-color: rgba(255, 255, 255, 0.15);
     }
 
     .downloadItem--featured {
-      background: rgba(0, 255, 200, 0.05);
-      border-color: var(--accent);
+      background: rgba(0, 188, 212, 0.06);
+      border-color: rgba(0, 188, 212, 0.25);
+    }
+
+    .downloadItem--featured:hover {
+      border-color: rgba(0, 188, 212, 0.4);
     }
 
     .downloadItem__info {
@@ -316,9 +381,16 @@ if (!isValid) {
       gap: 0.25rem;
     }
 
+    .downloadItem__info strong {
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.02em;
+    }
+
     .downloadItem__meta {
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       color: var(--text-dim);
+      font-family: 'Courier New', monospace;
     }
 
     .downloadItem__actions {
@@ -330,9 +402,11 @@ if (!isValid) {
       padding: 0.5rem 1rem;
       border-radius: 4px;
       text-decoration: none;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       font-weight: 500;
       transition: all 0.2s;
+      cursor: pointer;
+      border: none;
     }
 
     .downloadButton--primary {
@@ -341,37 +415,102 @@ if (!isValid) {
     }
 
     .downloadButton--primary:hover {
-      background: var(--accent-bright);
+      filter: brightness(1.15);
       transform: translateY(-1px);
     }
 
-    .downloadButton--secondary {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .downloadButton--expand {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--text-base);
     }
 
-    .downloadButton--secondary:hover {
+    .downloadButton--expand:hover {
       border-color: var(--accent);
       color: var(--accent);
     }
 
+    .downloadButton--expand.active {
+      background: var(--accent);
+      color: var(--bg-dark);
+      border-color: var(--accent);
+    }
+
+    /* Manifest Panel */
+    .manifestPanel {
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      margin-top: -0.5rem;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+    }
+
+    .manifestPanel__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .manifestPanel__download {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--accent);
+      border-radius: 3px;
+      text-transform: none;
+      letter-spacing: normal;
+      transition: all 0.2s;
+    }
+
+    .manifestPanel__download:hover {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+
+    .manifestPanel__content {
+      margin: 0;
+      padding: 1rem;
+      background: #0a0a0a;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      font-family: 'Courier New', Consolas, monospace;
+      color: #a0a0a0;
+      max-height: 300px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
+
+    .manifestPanel__content code {
+      font-family: inherit;
+    }
+
     .downloadPage__footer {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       text-align: center;
     }
 
     .downloadPage__updated {
       color: var(--text-dim);
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
     }
 
     .downloadPage__help {
       color: var(--text-dim);
-      font-size: 0.875rem;
+      font-size: 0.8rem;
     }
 
     .downloadPage__help a {
