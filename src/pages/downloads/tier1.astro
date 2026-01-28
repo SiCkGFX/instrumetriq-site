@@ -1,50 +1,91 @@
 ---
-export const prerender = false; // Enable on-demand rendering for query params
+export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { validateToken } from '@/lib/tokenValidator';
 
 // Extract token from query parameters
 const token = Astro.url.searchParams.get('token');
 const TIER = 'tier1';
 
-// Validate token on server side
 let isValid = false;
 let errorMessage = '';
+let debugInfo = '';
 
-if (!token) {
-  errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
-} else {
-  try {
-    console.log('[tier1 page] Starting validation...');
-    console.log('[tier1 page] Astro.locals:', !!Astro.locals);
-    console.log('[tier1 page] Astro.locals.runtime:', !!Astro.locals.runtime);
-    console.log('[tier1 page] runtime.env:', !!Astro.locals.runtime?.env);
-    console.log('[tier1 page] runtime.env.DATASETS:', !!Astro.locals.runtime?.env?.DATASETS);
-    
-    const validation = await validateToken(token, TIER, Astro.locals.runtime);
-    console.log('[tier1 page] Validation result:', validation);
-    
-    isValid = validation.valid;
-    if (!isValid) {
-      errorMessage = validation.reason || 'Invalid or expired access token.';
-    }
-  } catch (error) {
-    console.error('[tier1 page] Validation error:', error);
-    errorMessage = `Validation failed: ${error instanceof Error ? error.message : String(error)}`;
+// Wrap EVERYTHING in try-catch to see any error
+try {
+  // Step 1: Check runtime structure
+  const runtime = Astro.locals.runtime;
+  debugInfo += `Runtime exists: ${!!runtime}\n`;
+  debugInfo += `Runtime type: ${typeof runtime}\n`;
+  debugInfo += `Runtime keys: ${runtime ? Object.keys(runtime).join(', ') : 'N/A'}\n`;
+  
+  if (runtime?.env) {
+    debugInfo += `Env keys: ${Object.keys(runtime.env).join(', ')}\n`;
+  } else {
+    debugInfo += `Env: undefined\n`;
   }
+  
+  const bucket = runtime?.env?.DATASETS;
+  debugInfo += `DATASETS exists: ${!!bucket}\n`;
+  debugInfo += `DATASETS type: ${typeof bucket}\n`;
+  
+  if (bucket) {
+    // Try to list methods on the bucket
+    debugInfo += `DATASETS methods: ${Object.keys(bucket).slice(0, 5).join(', ')}\n`;
+  }
+  
+  // Step 2: Try to fetch token state from R2
+  if (!token) {
+    errorMessage = 'Missing access token.';
+  } else if (!bucket) {
+    errorMessage = 'R2 bucket binding not available';
+  } else {
+    debugInfo += `Attempting to fetch config/tier_tokens.json...\n`;
+    
+    const object = await bucket.get('config/tier_tokens.json');
+    debugInfo += `Object fetched: ${!!object}\n`;
+    
+    if (!object) {
+      errorMessage = 'Token state file not found in R2';
+    } else {
+      const text = await object.text();
+      debugInfo += `Text length: ${text.length}\n`;
+      
+      const state = JSON.parse(text);
+      debugInfo += `State version: ${state.version}\n`;
+      debugInfo += `Tiers: ${Object.keys(state.tiers).join(', ')}\n`;
+      
+      // Check token validity
+      const tierState = state.tiers[TIER];
+      if (!tierState) {
+        errorMessage = `Tier ${TIER} not found in token state`;
+      } else {
+        const currentToken = tierState.current_token;
+        const nextToken = tierState.next_token;
+        const overlapActive = tierState.overlap_active;
+        
+        debugInfo += `Current token exists: ${!!currentToken}\n`;
+        debugInfo += `Current token prefix: ${currentToken?.substring(0, 10)}...\n`;
+        debugInfo += `Provided token prefix: ${token.substring(0, 10)}...\n`;
+        debugInfo += `Tokens match: ${token === currentToken}\n`;
+        
+        if (token === currentToken) {
+          isValid = true;
+        } else if (overlapActive && token === nextToken) {
+          isValid = true;
+        } else {
+          errorMessage = 'Invalid or expired token';
+        }
+      }
+    }
+  }
+} catch (error) {
+  errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;
+  debugInfo += `\nCaught error: ${error instanceof Error ? error.stack : String(error)}`;
 }
 
-// If invalid, return 403
 if (!isValid) {
   Astro.response.status = 403;
-}
-
-// Helper function to format bytes
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
 ---
 
@@ -62,6 +103,9 @@ function formatBytes(bytes: number): string {
       <div class="downloadPage__error">
         <h2>Access Denied</h2>
         <p>{errorMessage}</p>
+        <pre style="background: #1a1a1a; color: #0f0; padding: 1rem; margin: 1rem 0; text-align: left; font-size: 0.75rem; overflow-x: auto; border-radius: 4px; white-space: pre-wrap;">
+{debugInfo}
+        </pre>
         <p>If you're a Patreon supporter, please use the download link from your tier's weekly post.</p>
         <p>Links are updated every Sunday and remain valid through Tuesday.</p>
       </div>
