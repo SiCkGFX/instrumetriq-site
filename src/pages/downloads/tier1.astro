@@ -16,14 +16,22 @@ if (!token) {
   errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
 } else {
   try {
+    console.log('[tier1 page] Starting validation...');
+    console.log('[tier1 page] Astro.locals:', !!Astro.locals);
+    console.log('[tier1 page] Astro.locals.runtime:', !!Astro.locals.runtime);
+    console.log('[tier1 page] runtime.env:', !!Astro.locals.runtime?.env);
+    console.log('[tier1 page] runtime.env.DATASETS:', !!Astro.locals.runtime?.env?.DATASETS);
+    
     const validation = await validateToken(token, TIER, Astro.locals.runtime);
+    console.log('[tier1 page] Validation result:', validation);
+    
     isValid = validation.valid;
     if (!isValid) {
       errorMessage = validation.reason || 'Invalid or expired access token.';
     }
   } catch (error) {
     console.error('[tier1 page] Validation error:', error);
-    errorMessage = `${error instanceof Error ? error.message : String(error)}`;
+    errorMessage = `Validation failed: ${error instanceof Error ? error.message : String(error)}`;
   }
 }
 

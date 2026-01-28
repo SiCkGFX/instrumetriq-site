@@ -56,7 +56,9 @@ async function loadTokenState(runtime?: any): Promise<TokenState> {
     console.log('[tokenValidator] Loading token state from R2');
     console.log('[tokenValidator] runtime:', !!runtime);
     console.log('[tokenValidator] runtime.env:', !!runtime?.env);
+    console.log('[tokenValidator] runtime.env keys:', runtime?.env ? Object.keys(runtime.env) : 'N/A');
     console.log('[tokenValidator] DATASETS binding:', !!runtime?.env?.DATASETS);
+    console.log('[tokenValidator] DATASETS type:', typeof runtime?.env?.DATASETS);
     
     // Get R2 bucket from Cloudflare Pages binding
     const bucket = runtime?.env?.DATASETS;
