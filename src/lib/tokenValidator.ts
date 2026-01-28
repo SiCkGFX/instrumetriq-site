@@ -24,12 +24,21 @@ interface R2Config {
  * Supports both Cloudflare Pages (runtime.env) and local dev (import.meta.env/process.env)
  */
 function getR2Config(runtime?: any): R2Config | null {
+  console.log('[tokenValidator] getR2Config called, runtime:', !!runtime, 'runtime.env:', !!runtime?.env);
+  
   // Try Cloudflare Pages runtime first (Astro.locals.runtime.env)
   if (runtime?.env) {
     const endpoint = runtime.env.R2_ENDPOINT;
     const accessKeyId = runtime.env.R2_ACCESS_KEY_ID;
     const secretAccessKey = runtime.env.R2_SECRET_ACCESS_KEY;
     const bucket = runtime.env.R2_BUCKET;
+    
+    console.log('[tokenValidator] Runtime env check:', {
+      hasEndpoint: !!endpoint,
+      hasAccessKeyId: !!accessKeyId,
+      hasSecretAccessKey: !!secretAccessKey,
+      hasBucket: !!bucket
+    });
     
     if (endpoint && accessKeyId && secretAccessKey && bucket) {
       return { endpoint, accessKeyId, secretAccessKey, bucket };
@@ -42,10 +51,18 @@ function getR2Config(runtime?: any): R2Config | null {
   const secretAccessKey = import.meta.env?.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY;
   const bucket = import.meta.env?.R2_BUCKET || process.env.R2_BUCKET;
   
+  console.log('[tokenValidator] Fallback env check:', {
+    hasEndpoint: !!endpoint,
+    hasAccessKeyId: !!accessKeyId,
+    hasSecretAccessKey: !!secretAccessKey,
+    hasBucket: !!bucket
+  });
+  
   if (endpoint && accessKeyId && secretAccessKey && bucket) {
     return { endpoint, accessKeyId, secretAccessKey, bucket };
   }
   
+  console.error('[tokenValidator] No R2 credentials found in any source');
   return null;
 }
 
