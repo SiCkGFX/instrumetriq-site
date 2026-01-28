@@ -2,20 +2,14 @@
  * Signed URL Generator
  * 
  * Generates time-limited signed URLs for R2 object downloads.
- * Uses AWS SDK v3 for S3-compatible signed URL generation.
- * 
- * Usage:
- *   import { generateSignedUrl } from '@/lib/signedUrlGenerator';
- *   
- *   const url = await generateSignedUrl('tier1/daily/2026-01/2026-01-27/data.parquet');
- *   // Returns URL valid for 6 days 20 hours
+ * Uses Cloudflare R2 native binding in production (Cloudflare Pages).
+ * Falls back to AWS SDK with credentials for local development.
  */
 
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-// R2 Configuration from environment variables (sourced from ~/.r2_credentials)
-// These are the same credentials used by the Python build scripts
+// R2 Configuration from environment variables (for local dev only)
 const R2_ENDPOINT = import.meta.env.R2_ENDPOINT || process.env.R2_ENDPOINT;
 const R2_ACCESS_KEY_ID = import.meta.env.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID;
 const R2_SECRET_ACCESS_KEY = import.meta.env.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY;
@@ -27,10 +21,11 @@ const DEFAULT_EXPIRY_SECONDS = 6 * 24 * 60 * 60 + 20 * 60 * 60; // 580800
 
 /**
  * Initialize R2 client (S3-compatible)
+ * Uses local credentials for development.
  */
 function getR2Client(): S3Client {
   if (!R2_ENDPOINT || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
-    throw new Error('R2 credentials not configured. Ensure ~/.r2_credentials is sourced.');
+    throw new Error('R2 credentials not configured for local development. Ensure ~/.r2_credentials is sourced.');
   }
   
   // R2_ENDPOINT is already a full URL from ~/.r2_credentials
