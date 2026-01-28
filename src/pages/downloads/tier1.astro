@@ -13,36 +13,43 @@ let isValid = false;
 let errorMessage = '';
 let debugInfo = '';
 
-if (!token) {
-  errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
-} else {
-  try {
-    // Debug: Check what runtime structure we have
-    const rt = Astro.locals.runtime as any;
-    debugInfo = `Runtime check:
+try {
+  if (!token) {
+    errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
+  } else {
+    try {
+      // Debug: Check what runtime structure we have
+      const rt = Astro.locals.runtime as any;
+      debugInfo = `Runtime check:
 - Astro.locals.runtime exists: ${!!Astro.locals.runtime}
 - runtime.env exists: ${!!rt?.env}
 - runtime.runtime exists: ${!!rt?.runtime}
 - runtime.runtime.env exists: ${!!rt?.runtime?.env}
 - DATASETS at runtime.env: ${!!rt?.env?.DATASETS}
 - DATASETS at runtime.runtime.env: ${!!rt?.runtime?.env?.DATASETS}`;
-    
-    console.log(debugInfo);
-    
-    const validation = await validateToken(token, TIER, Astro.locals.runtime);
-    isValid = validation.valid;
-    if (!isValid) {
-      errorMessage = validation.reason || 'Invalid or expired access token.';
+      
+      console.log(debugInfo);
+      
+      const validation = await validateToken(token, TIER, Astro.locals.runtime);
+      isValid = validation.valid;
+      if (!isValid) {
+        errorMessage = validation.reason || 'Invalid or expired access token.';
+      }
+    } catch (error) {
+      console.error('[tier1 page] Validation error:', error);
+      errorMessage = `${error instanceof Error ? error.message : String(error)}`;
     }
-  } catch (error) {
-    console.error('[tier1 page] Validation error:', error);
-    errorMessage = `${error instanceof Error ? error.message : String(error)}`;
   }
+} catch (outerError) {
+  console.error('[tier1 page] Outer error:', outerError);
+  errorMessage = `Critical error: ${outerError instanceof Error ? outerError.message : String(outerError)}`;
+  debugInfo = `CRITICAL ERROR during initialization: ${outerError}`;
 }
 
 // If invalid, return 403
 if (!isValid) {
-  Astro.response.status = 403;
+  // Don't set 403 status, just show error - let's see the debug output
+  // Astro.response.status = 403;
 }
 
 // Helper function to format bytes
