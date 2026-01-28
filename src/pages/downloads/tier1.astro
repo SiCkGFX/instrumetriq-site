@@ -93,46 +93,76 @@ if (!isValid) {
   title="Tier 1 Downloads - Instrumetriq" 
   description="Access your Tier 1 (Explorer) dataset downloads"
 >
-  <div class="downloadPage">
-    <header class="downloadPage__header">
-      <h1>Tier 1 Downloads</h1>
-      <p class="downloadPage__subtitle">Explorer — Lightweight Sentiment Screening</p>
+  <div class="pageContent">
+    <header class="downloadHeader">
+      <span class="downloadHeader__eyebrow">TIER 1 DOWNLOADS</span>
+      <h1 class="downloadHeader__title">Explorer</h1>
+      <p class="downloadHeader__subtitle">Lightweight Sentiment Screening</p>
     </header>
 
     {!isValid ? (
-      <div class="downloadPage__error">
-        <h2>Access Denied</h2>
-        <p>{errorMessage}</p>
-        <p>If you're a Patreon supporter, please use the download link from your tier's weekly post.</p>
-        <p>New links are posted every Sunday. Previous links remain valid until Monday midnight UTC.</p>
+      <div class="errorCard">
+        <div class="errorCard__icon">⛔</div>
+        <h2 class="errorCard__title">Access Denied</h2>
+        <p class="errorCard__message">{errorMessage}</p>
+        <div class="errorCard__help">
+          <p>If you're a Patreon supporter, please use the download link from your tier's weekly post.</p>
+          <p>New links are posted every Sunday. Previous links remain valid until Monday midnight UTC.</p>
+        </div>
       </div>
     ) : (
-      <div class="downloadPage__content">
-        <div class="downloadPage__loading">
+      <div class="downloadContent">
+        <div class="downloadLoading" id="loading-state">
+          <div class="loadingSpinner"></div>
           <p>Loading available downloads...</p>
         </div>
 
-        <div class="downloadPage__downloads" style="display: none;">
+        <div class="downloadMain" id="download-main" style="display: none;">
+          <!-- MTD Section -->
           <section class="downloadSection">
-            <h2>Month-to-Date Bundle</h2>
+            <h2 class="downloadSection__title">Month-to-Date Bundle</h2>
             <p class="downloadSection__description">
-              All days from the current month merged into a single file.
-              Updated daily at 02:30 UTC.
+              All days from the current month merged into a single Parquet file. Updated daily at 02:30 UTC.
             </p>
-            <div id="mtd-container"></div>
+            <div class="tableWrapper">
+              <table class="downloadTable" id="mtd-table">
+                <thead>
+                  <tr>
+                    <th>Period</th>
+                    <th class="numeric">Days</th>
+                    <th class="numeric">Size</th>
+                    <th class="actions-col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mtd-body"></tbody>
+              </table>
+            </div>
           </section>
 
+          <!-- Daily Files Section -->
           <section class="downloadSection">
-            <h2>Daily Files (Last 7 Days)</h2>
+            <h2 class="downloadSection__title">Daily Files (Last 7 Days)</h2>
             <p class="downloadSection__description">
               Individual daily exports. Each file contains one day of scored posts.
             </p>
-            <div id="daily-container"></div>
+            <div class="tableWrapper">
+              <table class="downloadTable" id="daily-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th class="numeric">Size</th>
+                    <th class="actions-col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="daily-body"></tbody>
+              </table>
+            </div>
           </section>
 
-          <div class="downloadPage__footer">
-            <p class="downloadPage__updated">Last updated: <span id="last-updated"></span></p>
-            <p class="downloadPage__help">
+          <!-- Footer -->
+          <div class="downloadFooter">
+            <p class="downloadFooter__timestamp" id="last-updated"></p>
+            <p class="downloadFooter__help">
               Need help? Visit the <a href="/dataset">Dataset</a> page for schema documentation.
             </p>
           </div>
@@ -143,87 +173,78 @@ if (!isValid) {
 
   <script define:vars={{ token, TIER }}>
     if (token) {
-      // Fetch downloads from API
       fetch(`/api/downloads/${TIER}?token=${encodeURIComponent(token)}`)
         .then(res => res.json())
         .then(data => {
-          const loadingEl = document.querySelector('.downloadPage__loading');
-          const downloadsEl = document.querySelector('.downloadPage__downloads');
+          const loadingEl = document.getElementById('loading-state');
+          const mainEl = document.getElementById('download-main');
           
           if (!data.success) {
-            loadingEl.innerHTML = `<p class="error">${data.error}</p>`;
+            loadingEl.innerHTML = `<div class="errorInline">${data.error}</div>`;
             return;
           }
 
-          // Hide loading, show downloads
           loadingEl.style.display = 'none';
-          downloadsEl.style.display = 'block';
+          mainEl.style.display = 'block';
 
-          // Populate MTD
-          const mtdContainer = document.getElementById('mtd-container');
+          // Populate MTD table
+          const mtdBody = document.getElementById('mtd-body');
           if (data.mtd) {
-            mtdContainer.innerHTML = `
-              <div class="downloadItem downloadItem--featured">
-                <div class="downloadItem__info">
-                  <strong>${data.mtd.month}</strong>
-                  <span class="downloadItem__meta">${data.mtd.days_included} days • ${formatBytes(data.mtd.size_bytes)}</span>
-                </div>
-                <div class="downloadItem__actions">
-                  <a href="${data.mtd.download_url}" class="downloadButton downloadButton--primary" download>
-                    Download Parquet
-                  </a>
-                  <button class="downloadButton downloadButton--expand" data-manifest-url="${data.mtd.manifest_url}" data-target="mtd-manifest">
-                    Manifest
-                  </button>
-                </div>
-              </div>
-              <div class="manifestPanel" id="mtd-manifest" style="display: none;">
-                <div class="manifestPanel__header">
-                  <span>Manifest — ${data.mtd.month}</span>
-                  <a href="${data.mtd.manifest_url}" class="manifestPanel__download" download>Download JSON</a>
-                </div>
-                <pre class="manifestPanel__content"><code>Loading...</code></pre>
-              </div>
+            mtdBody.innerHTML = `
+              <tr class="dataRow" data-idx="mtd">
+                <td class="dateCell">${data.mtd.month}</td>
+                <td class="numeric">${data.mtd.days_included}</td>
+                <td class="numeric">${formatBytes(data.mtd.size_bytes)}</td>
+                <td class="actionsCell">
+                  <a href="${data.mtd.download_url}" class="actionBtn actionBtn--primary" download>Download</a>
+                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${data.mtd.manifest_url}" data-target="manifest-mtd">Manifest</button>
+                </td>
+              </tr>
+              <tr class="manifestRow" id="manifest-mtd" style="display: none;">
+                <td colspan="4">
+                  <div class="manifestHeader">
+                    <span>Manifest — ${data.mtd.month}</span>
+                    <a href="${data.mtd.manifest_url}" class="manifestDownload" download>Download JSON</a>
+                  </div>
+                  <pre class="manifestContent"><code>Loading...</code></pre>
+                </td>
+              </tr>
             `;
           } else {
-            mtdContainer.innerHTML = '<p class="downloadSection__empty">Month-to-date bundle not yet available.</p>';
+            mtdBody.innerHTML = '<tr><td colspan="4" class="emptyState">Month-to-date bundle not yet available.</td></tr>';
           }
 
-          // Populate Daily (last 7)
-          const dailyContainer = document.getElementById('daily-container');
+          // Populate Daily table
+          const dailyBody = document.getElementById('daily-body');
           const dailyFiles = data.daily.slice(0, 7);
           
           if (dailyFiles.length > 0) {
-            dailyContainer.innerHTML = dailyFiles.map((item, idx) => `
-              <div class="downloadItem">
-                <div class="downloadItem__info">
-                  <strong>${item.date}</strong>
-                  <span class="downloadItem__meta">${formatBytes(item.size_bytes)}</span>
-                </div>
-                <div class="downloadItem__actions">
-                  <a href="${item.download_url}" class="downloadButton downloadButton--primary" download>
-                    Download
-                  </a>
-                  <button class="downloadButton downloadButton--expand" data-manifest-url="${item.manifest_url}" data-target="daily-manifest-${idx}">
-                    Manifest
-                  </button>
-                </div>
-              </div>
-              <div class="manifestPanel" id="daily-manifest-${idx}" style="display: none;">
-                <div class="manifestPanel__header">
-                  <span>Manifest — ${item.date}</span>
-                  <a href="${item.manifest_url}" class="manifestPanel__download" download>Download JSON</a>
-                </div>
-                <pre class="manifestPanel__content"><code>Loading...</code></pre>
-              </div>
+            dailyBody.innerHTML = dailyFiles.map((item, idx) => `
+              <tr class="dataRow" data-idx="daily-${idx}">
+                <td class="dateCell">${item.date}</td>
+                <td class="numeric">${formatBytes(item.size_bytes)}</td>
+                <td class="actionsCell">
+                  <a href="${item.download_url}" class="actionBtn actionBtn--primary" download>Download</a>
+                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${item.manifest_url}" data-target="manifest-daily-${idx}">Manifest</button>
+                </td>
+              </tr>
+              <tr class="manifestRow" id="manifest-daily-${idx}" style="display: none;">
+                <td colspan="3">
+                  <div class="manifestHeader">
+                    <span>Manifest — ${item.date}</span>
+                    <a href="${item.manifest_url}" class="manifestDownload" download>Download JSON</a>
+                  </div>
+                  <pre class="manifestContent"><code>Loading...</code></pre>
+                </td>
+              </tr>
             `).join('');
           } else {
-            dailyContainer.innerHTML = '<p class="downloadSection__empty">No daily files available yet.</p>';
+            dailyBody.innerHTML = '<tr><td colspan="3" class="emptyState">No daily files available yet.</td></tr>';
           }
 
-          // Add expand button handlers
-          document.querySelectorAll('.downloadButton--expand').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
+          // Expand button handlers
+          document.querySelectorAll('.actionBtn--secondary').forEach(btn => {
+            btn.addEventListener('click', async () => {
               const targetId = btn.getAttribute('data-target');
               const manifestUrl = btn.getAttribute('data-manifest-url');
               const panel = document.getElementById(targetId);
@@ -231,10 +252,9 @@ if (!isValid) {
               if (!panel) return;
               
               if (panel.style.display === 'none') {
-                panel.style.display = 'block';
+                panel.style.display = 'table-row';
                 btn.classList.add('active');
                 
-                // Load manifest content if not loaded
                 const codeEl = panel.querySelector('code');
                 if (codeEl && codeEl.textContent === 'Loading...') {
                   try {
@@ -255,11 +275,11 @@ if (!isValid) {
           // Update timestamp
           const lastUpdatedEl = document.getElementById('last-updated');
           const timestamp = new Date(data.generated_at);
-          lastUpdatedEl.textContent = timestamp.toUTCString();
+          lastUpdatedEl.textContent = `Last updated: ${timestamp.toUTCString()}`;
         })
         .catch(error => {
-          const loadingEl = document.querySelector('.downloadPage__loading');
-          loadingEl.innerHTML = '<p class="error">Failed to load downloads. Please try again later.</p>';
+          const loadingEl = document.getElementById('loading-state');
+          loadingEl.innerHTML = '<div class="errorInline">Failed to load downloads. Please try again later.</div>';
           console.error('Download fetch error:', error);
         });
     }
@@ -272,274 +292,355 @@ if (!isValid) {
   </script>
 
   <style>
-    .downloadPage {
-      max-width: 800px;
+    /* Page Layout */
+    .pageContent {
+      max-width: 900px;
       margin: 0 auto;
-      padding: 2rem 1rem;
+      padding: var(--space-6) var(--space-4);
     }
 
-    .downloadPage__header {
-      margin-bottom: 2.5rem;
+    /* Header */
+    .downloadHeader {
       text-align: center;
+      margin-bottom: var(--space-6);
     }
 
-    .downloadPage__header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
+    .downloadHeader__eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: var(--space-2);
+    }
+
+    .downloadHeader__title {
+      font-size: 2.5rem;
       font-weight: 600;
       letter-spacing: -0.02em;
+      margin-bottom: var(--space-2);
     }
 
-    .downloadPage__subtitle {
-      color: var(--text-dim);
-      font-size: 1rem;
-      letter-spacing: 0.02em;
+    .downloadHeader__subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
     }
 
-    .downloadPage__error {
-      background: rgba(255, 100, 100, 0.08);
-      border: 1px solid rgba(255, 100, 100, 0.25);
+    /* Error Card */
+    .errorCard {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-left: 4px solid #ef4444;
       border-radius: 8px;
-      padding: 2rem;
+      padding: var(--space-5);
       text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
-    .downloadPage__error h2 {
-      color: #ff6464;
-      margin-bottom: 1rem;
+    .errorCard__icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-3);
+    }
+
+    .errorCard__title {
       font-size: 1.25rem;
-    }
-
-    .downloadPage__error p {
-      margin-bottom: 0.75rem;
-      line-height: 1.6;
-      color: var(--text-dim);
-    }
-
-    .downloadPage__loading {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-dim);
-    }
-
-    .downloadSection {
-      margin-bottom: 2.5rem;
-    }
-
-    .downloadSection h2 {
-      font-size: 1.125rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      color: #ef4444;
+      margin-bottom: var(--space-3);
+    }
+
+    .errorCard__message {
+      color: var(--text);
+      margin-bottom: var(--space-4);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      padding: var(--space-2) var(--space-3);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .errorCard__help {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .errorCard__help p {
+      margin-bottom: var(--space-2);
+    }
+
+    /* Loading State */
+    .downloadLoading {
+      text-align: center;
+      padding: var(--space-6);
+      color: var(--text-muted);
+    }
+
+    .loadingSpinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      margin: 0 auto var(--space-3);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .errorInline {
+      color: #ef4444;
+      padding: var(--space-4);
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 6px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Sections */
+    .downloadSection {
+      margin-bottom: var(--space-6);
+    }
+
+    .downloadSection__title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
       letter-spacing: -0.01em;
     }
 
     .downloadSection__description {
-      color: var(--text-dim);
-      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
       line-height: 1.6;
+      margin-bottom: var(--space-4);
+    }
+
+    /* Table Styling - Matches Dataset page */
+    .tableWrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--panel);
+    }
+
+    .downloadTable {
+      width: 100%;
+      border-collapse: collapse;
       font-size: 0.9rem;
     }
 
-    .downloadSection__empty {
-      color: var(--text-dim);
-      font-style: italic;
-      padding: 1.5rem;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.02);
-      border-radius: 6px;
-      border: 1px dashed rgba(255, 255, 255, 0.1);
-    }
-
-    .downloadItem {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.25rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      margin-bottom: 0.5rem;
-      transition: border-color 0.2s;
-    }
-
-    .downloadItem:hover {
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .downloadItem--featured {
-      background: rgba(0, 188, 212, 0.06);
-      border-color: rgba(0, 188, 212, 0.25);
-    }
-
-    .downloadItem--featured:hover {
-      border-color: rgba(0, 188, 212, 0.4);
-    }
-
-    .downloadItem__info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .downloadItem__info strong {
+    .downloadTable thead th {
+      position: sticky;
+      top: 0;
+      background-color: var(--panel2);
+      padding: 14px 16px;
+      text-align: left;
       font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--border2);
+      color: var(--text-muted);
+    }
+
+    .downloadTable thead th.numeric {
+      text-align: right;
+    }
+
+    .downloadTable thead th.actions-col {
+      text-align: right;
+      min-width: 180px;
+    }
+
+    .downloadTable tbody tr.dataRow {
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.15s;
+    }
+
+    .downloadTable tbody tr.dataRow:hover {
+      background-color: var(--panel2);
+    }
+
+    .downloadTable tbody td {
+      padding: 14px 16px;
+      line-height: 1.5;
+    }
+
+    .downloadTable tbody td.dateCell {
       font-family: 'Courier New', monospace;
-      letter-spacing: 0.02em;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.95rem;
     }
 
-    .downloadItem__meta {
-      font-size: 0.8rem;
-      color: var(--text-dim);
+    .downloadTable tbody td.numeric {
+      text-align: right;
       font-family: 'Courier New', monospace;
     }
 
-    .downloadItem__actions {
-      display: flex;
-      gap: 0.5rem;
+    .downloadTable tbody td.actionsCell {
+      text-align: right;
     }
 
-    .downloadButton {
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      text-decoration: none;
+    .downloadTable tbody td.emptyState {
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: var(--space-4);
+    }
+
+    /* Action Buttons - Matches Dataset expand buttons */
+    .actionBtn {
+      background-color: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
       font-size: 0.8rem;
       font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 6px;
+      margin-left: 8px;
       transition: all 0.2s;
-      cursor: pointer;
-      border: none;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    .downloadButton--primary {
-      background: var(--accent);
-      color: var(--bg-dark);
-    }
-
-    .downloadButton--primary:hover {
-      filter: brightness(1.15);
+    .actionBtn:hover {
+      background-color: var(--panel2);
+      border-color: var(--accent);
+      color: var(--accent);
       transform: translateY(-1px);
     }
 
-    .downloadButton--expand {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-base);
-    }
-
-    .downloadButton--expand:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .downloadButton--expand.active {
-      background: var(--accent);
-      color: var(--bg-dark);
+    .actionBtn--primary {
+      background-color: var(--accent);
+      color: var(--bg);
       border-color: var(--accent);
     }
 
-    /* Manifest Panel */
-    .manifestPanel {
-      background: #0d0d0d;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-top: none;
-      border-radius: 0 0 6px 6px;
-      margin-top: -0.5rem;
-      margin-bottom: 0.5rem;
-      overflow: hidden;
+    .actionBtn--primary:hover {
+      background-color: var(--accent-bright);
+      border-color: var(--accent-bright);
+      color: var(--bg);
+      box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
     }
 
-    .manifestPanel__header {
+    .actionBtn--secondary.active {
+      background-color: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+    }
+
+    /* Manifest Row - Matches Dataset json-row */
+    .manifestRow td {
+      padding: 0 !important;
+      background-color: var(--bg);
+      border-top: 2px solid var(--accent-dim);
+    }
+
+    .manifestHeader {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.75rem 1rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-dim);
+      padding: 12px 16px;
+      background-color: var(--panel2);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.5px;
     }
 
-    .manifestPanel__download {
+    .manifestDownload {
       font-size: 0.75rem;
       color: var(--accent);
       text-decoration: none;
-      padding: 0.25rem 0.5rem;
+      padding: 6px 12px;
       border: 1px solid var(--accent);
-      border-radius: 3px;
+      border-radius: 4px;
+      font-weight: 500;
       text-transform: none;
       letter-spacing: normal;
       transition: all 0.2s;
     }
 
-    .manifestPanel__download:hover {
+    .manifestDownload:hover {
       background: var(--accent);
-      color: var(--bg-dark);
+      color: var(--bg);
     }
 
-    .manifestPanel__content {
+    .manifestContent {
       margin: 0;
-      padding: 1rem;
-      background: #0a0a0a;
+      padding: 20px;
+      background-color: #1a1a1a;
       overflow-x: auto;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-family: 'Courier New', Consolas, monospace;
-      color: #a0a0a0;
-      max-height: 300px;
+      color: #d4d4d4;
+      max-height: 500px;
       overflow-y: auto;
       line-height: 1.5;
     }
 
-    .manifestPanel__content code {
+    .manifestContent code {
       font-family: inherit;
     }
 
-    .downloadPage__footer {
-      margin-top: 2.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    /* Footer */
+    .downloadFooter {
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border);
       text-align: center;
     }
 
-    .downloadPage__updated {
-      color: var(--text-dim);
-      font-size: 0.8rem;
-      margin-bottom: 0.75rem;
+    .downloadFooter__timestamp {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-2);
     }
 
-    .downloadPage__help {
-      color: var(--text-dim);
-      font-size: 0.8rem;
+    .downloadFooter__help {
+      font-size: 0.9rem;
+      color: var(--text-muted);
     }
 
-    .downloadPage__help a {
+    .downloadFooter__help a {
       color: var(--accent);
       text-decoration: none;
     }
 
-    .downloadPage__help a:hover {
+    .downloadFooter__help a:hover {
       text-decoration: underline;
     }
 
-    .error {
-      color: #ff6464;
-    }
-
+    /* Mobile Responsive */
     @media (max-width: 640px) {
-      .downloadItem {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+      .pageContent {
+        padding: var(--space-4) var(--space-3);
       }
 
-      .downloadItem__actions {
-        width: 100%;
+      .downloadHeader__title {
+        font-size: 2rem;
       }
 
-      .downloadButton {
-        flex: 1;
-        text-align: center;
+      .downloadTable thead th,
+      .downloadTable tbody td {
+        padding: 10px 12px;
+      }
+
+      .actionBtn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        margin-left: 4px;
       }
     }
   </style>
