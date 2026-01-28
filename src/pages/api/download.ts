@@ -48,7 +48,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
     
     // Validate token
-    const validation = validateToken(token, tier);
+    const validation = await validateToken(token, tier);
     if (!validation.valid) {
       return new Response(JSON.stringify({
         success: false,
