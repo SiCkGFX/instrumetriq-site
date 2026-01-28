@@ -2,62 +2,23 @@
 export const prerender = false; // Enable on-demand rendering for query params
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { validateToken } from '@/lib/tokenValidator';
 
 // Extract token from query parameters
 const token = Astro.url.searchParams.get('token');
 const TIER = 'tier1';
 
-// Validate token on server side
+// Simple test - just show the page
 let isValid = false;
-let errorMessage = '';
-let debugInfo = '';
-
-try {
-  if (!token) {
-    errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
-  } else {
-    try {
-      // Debug: Check what runtime structure we have
-      const rt = Astro.locals.runtime as any;
-      debugInfo = `Runtime check:
+let errorMessage = 'Testing - page loads';
+let debugInfo = `Basic info:
+- Token present: ${!!token}
+- Token value: ${token?.substring(0, 10)}...
+- Astro.locals exists: ${!!Astro.locals}
 - Astro.locals.runtime exists: ${!!Astro.locals.runtime}
-- runtime.env exists: ${!!rt?.env}
-- runtime.runtime exists: ${!!rt?.runtime}
-- runtime.runtime.env exists: ${!!rt?.runtime?.env}
-- DATASETS at runtime.env: ${!!rt?.env?.DATASETS}
-- DATASETS at runtime.runtime.env: ${!!rt?.runtime?.env?.DATASETS}`;
-      
-      console.log(debugInfo);
-      
-      const validation = await validateToken(token, TIER, Astro.locals.runtime);
-      isValid = validation.valid;
-      if (!isValid) {
-        errorMessage = validation.reason || 'Invalid or expired access token.';
-      }
-    } catch (error) {
-      console.error('[tier1 page] Validation error:', error);
-      errorMessage = `${error instanceof Error ? error.message : String(error)}`;
-    }
-  }
-} catch (outerError) {
-  console.error('[tier1 page] Outer error:', outerError);
-  errorMessage = `Critical error: ${outerError instanceof Error ? outerError.message : String(outerError)}`;
-  debugInfo = `CRITICAL ERROR during initialization: ${outerError}`;
-}
+- runtime type: ${typeof Astro.locals.runtime}
+- runtime keys: ${Astro.locals.runtime ? Object.keys(Astro.locals.runtime).join(', ') : 'N/A'}`;
 
-// If invalid, return 403
-if (!isValid) {
-  // Don't set 403 status, just show error - let's see the debug output
-  // Astro.response.status = 403;
-}
-
-// Helper function to format bytes
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-}
+console.log('[tier1] Debug info:', debugInfo);
 ---
 
 <BaseLayout 
