@@ -77,7 +77,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     // Load download index from R2 using bucket binding
     let indexData;
     try {
-      const bucket = (locals.runtime as any)?.env?.DATASETS;
+      const bucket = locals.runtime?.env?.DATASETS;
       if (!bucket) {
         throw new Error('R2 bucket binding not available');
       }

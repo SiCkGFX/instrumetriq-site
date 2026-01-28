@@ -2,23 +2,42 @@
 export const prerender = false; // Enable on-demand rendering for query params
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { validateToken } from '@/lib/tokenValidator';
 
 // Extract token from query parameters
 const token = Astro.url.searchParams.get('token');
 const TIER = 'tier1';
 
-// Simple test - just show the page
+// Validate token on server side
 let isValid = false;
-let errorMessage = 'Testing - page loads';
-let debugInfo = `Basic info:
-- Token present: ${!!token}
-- Token value: ${token?.substring(0, 10)}...
-- Astro.locals exists: ${!!Astro.locals}
-- Astro.locals.runtime exists: ${!!Astro.locals.runtime}
-- runtime type: ${typeof Astro.locals.runtime}
-- runtime keys: ${Astro.locals.runtime ? Object.keys(Astro.locals.runtime).join(', ') : 'N/A'}`;
+let errorMessage = '';
 
-console.log('[tier1] Debug info:', debugInfo);
+if (!token) {
+  errorMessage = 'Missing access token. Please use the link provided in your Patreon post.';
+} else {
+  try {
+    const validation = await validateToken(token, TIER, Astro.locals.runtime);
+    isValid = validation.valid;
+    if (!isValid) {
+      errorMessage = validation.reason || 'Invalid or expired access token.';
+    }
+  } catch (error) {
+    console.error('[tier1 page] Validation error:', error);
+    errorMessage = `${error instanceof Error ? error.message : String(error)}`;
+  }
+}
+
+// If invalid, return 403
+if (!isValid) {
+  Astro.response.status = 403;
+}
+
+// Helper function to format bytes
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
 ---
 
 <BaseLayout 
@@ -35,11 +54,6 @@ console.log('[tier1] Debug info:', debugInfo);
       <div class="downloadPage__error">
         <h2>Access Denied</h2>
         <p>{errorMessage}</p>
-        {debugInfo && (
-          <pre style="background: #1a1a1a; color: #0f0; padding: 1rem; margin-top: 1rem; text-align: left; font-size: 0.875rem; overflow-x: auto; border-radius: 4px;">
-            {debugInfo}
-          </pre>
-        )}
         <p>If you're a Patreon supporter, please use the download link from your tier's weekly post.</p>
         <p>Links are updated every Sunday and remain valid through Tuesday.</p>
       </div>
