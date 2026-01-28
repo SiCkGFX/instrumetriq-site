@@ -292,39 +292,36 @@ if (!isValid) {
   </script>
 
   <style>
-    /* Page Layout */
-    .pageContent {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: var(--space-6) var(--space-4);
-    }
-
-    /* Header */
+    /* Header - using pageHero pattern */
     .downloadHeader {
       text-align: center;
-      margin-bottom: var(--space-6);
+      padding-top: var(--space-6);
+      padding-bottom: var(--space-4);
+      margin-bottom: var(--space-5);
+      border-bottom: 1px solid var(--border);
     }
 
     .downloadHeader__eyebrow {
       display: block;
-      font-size: 0.75rem;
+      font-size: var(--font-size-xs);
       font-weight: 600;
-      letter-spacing: 0.1em;
-      color: var(--accent);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
+      color: var(--text-dim);
       margin-bottom: var(--space-2);
     }
 
     .downloadHeader__title {
-      font-size: 2.5rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 500;
+      line-height: 1.05;
       margin-bottom: var(--space-2);
     }
 
     .downloadHeader__subtitle {
       font-size: 1.1rem;
       color: var(--text-muted);
+      line-height: 1.6;
     }
 
     /* Error Card */
@@ -432,6 +429,7 @@ if (!isValid) {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.9rem;
+      margin: 0;
     }
 
     .downloadTable thead th {
@@ -454,7 +452,6 @@ if (!isValid) {
 
     .downloadTable thead th.actions-col {
       text-align: right;
-      min-width: 180px;
     }
 
     .downloadTable tbody tr.dataRow {
@@ -469,6 +466,7 @@ if (!isValid) {
     .downloadTable tbody td {
       padding: 14px 16px;
       line-height: 1.5;
+      vertical-align: middle;
     }
 
     .downloadTable tbody td.dateCell {
@@ -485,6 +483,7 @@ if (!isValid) {
 
     .downloadTable tbody td.actionsCell {
       text-align: right;
+      white-space: nowrap;
     }
 
     .downloadTable tbody td.emptyState {
@@ -504,11 +503,16 @@ if (!isValid) {
       font-weight: 500;
       padding: 8px 14px;
       border-radius: 6px;
-      margin-left: 8px;
+      margin-left: 12px;
       transition: all 0.2s;
       white-space: nowrap;
       text-decoration: none;
       display: inline-block;
+      vertical-align: middle;
+    }
+
+    .actionBtn:first-child {
+      margin-left: 0;
     }
 
     .actionBtn:hover {
@@ -525,8 +529,7 @@ if (!isValid) {
     }
 
     .actionBtn--primary:hover {
-      background-color: var(--accent-bright);
-      border-color: var(--accent-bright);
+      filter: brightness(1.15);
       color: var(--bg);
       box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
     }
@@ -560,21 +563,25 @@ if (!isValid) {
     }
 
     .manifestDownload {
-      font-size: 0.75rem;
-      color: var(--accent);
-      text-decoration: none;
-      padding: 6px 12px;
-      border: 1px solid var(--accent);
-      border-radius: 4px;
+      background-color: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.8rem;
       font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
       text-transform: none;
       letter-spacing: normal;
       transition: all 0.2s;
+      display: inline-block;
     }
 
     .manifestDownload:hover {
-      background: var(--accent);
+      background-color: var(--accent);
+      border-color: var(--accent);
       color: var(--bg);
+      transform: translateY(-1px);
     }
 
     .manifestContent {
@@ -624,10 +631,6 @@ if (!isValid) {
 
     /* Mobile Responsive */
     @media (max-width: 640px) {
-      .pageContent {
-        padding: var(--space-4) var(--space-3);
-      }
-
       .downloadHeader__title {
         font-size: 2rem;
       }
@@ -640,7 +643,7 @@ if (!isValid) {
       .actionBtn {
         padding: 6px 10px;
         font-size: 0.75rem;
-        margin-left: 4px;
+        margin-left: 8px;
       }
     }
   </style>
