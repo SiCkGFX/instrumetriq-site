@@ -55,16 +55,14 @@ async function loadTokenState(runtime?: any): Promise<TokenState> {
   try {
     console.log('[tokenValidator] Loading token state from R2');
     console.log('[tokenValidator] runtime:', !!runtime);
-    console.log('[tokenValidator] runtime.runtime:', !!runtime?.runtime);
-    console.log('[tokenValidator] runtime.runtime.env:', !!runtime?.runtime?.env);
-    console.log('[tokenValidator] DATASETS binding:', !!runtime?.runtime?.env?.DATASETS);
+    console.log('[tokenValidator] runtime.env:', !!runtime?.env);
+    console.log('[tokenValidator] DATASETS binding:', !!runtime?.env?.DATASETS);
     
     // Get R2 bucket from Cloudflare Pages binding
-    const bucket = runtime?.runtime?.env?.DATASETS;
+    const bucket = runtime?.env?.DATASETS;
     if (!bucket) {
       const detail = !runtime ? 'runtime is undefined' : 
-                     !runtime.runtime ? 'runtime.runtime is undefined' :
-                     !runtime.runtime.env ? 'runtime.runtime.env is undefined' :
+                     !runtime.env ? 'runtime.env is undefined' :
                      'DATASETS binding is undefined';
       throw new Error(`R2 bucket binding (DATASETS) not available: ${detail}`);
     }
@@ -169,7 +167,7 @@ export async function validateToken(token: string, tier: string, runtime?: any):
   // Load state (try R2 binding first, fallback to SDK for local dev)
   let state: TokenState;
   try {
-    if (runtime?.runtime?.env?.DATASETS) {
+    if (runtime?.env?.DATASETS) {
       // Use R2 binding (Cloudflare Pages production)
       state = await loadTokenState(runtime);
     } else {
@@ -210,7 +208,7 @@ export async function validateToken(token: string, tier: string, runtime?: any):
  * @returns Metadata about the tier's token state
  */
 export async function getTierInfo(tier: string, runtime?: any) {
-  const state = runtime?.runtime?.env?.DATASETS 
+  const state = runtime?.env?.DATASETS 
     ? await loadTokenState(runtime)
     : await loadTokenStateViaSDK(runtime);
   const tierInfo = state.tiers[tier];
@@ -239,7 +237,7 @@ export async function checkTokenHealth(runtime?: any): Promise<{ healthy: boolea
   const warnings: string[] = [];
   
   try {
-    const state = runtime?.runtime?.env?.DATASETS 
+    const state = runtime?.env?.DATASETS 
       ? await loadTokenState(runtime)
       : await loadTokenStateViaSDK(runtime);
     

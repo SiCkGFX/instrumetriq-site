@@ -17,8 +17,8 @@ if (!token) {
 } else {
   try {
     console.log('[tier1 page] Runtime available:', !!Astro.locals.runtime);
-    console.log('[tier1 page] Runtime.runtime available:', !!Astro.locals.runtime?.runtime);
-    console.log('[tier1 page] DATASETS binding available:', !!Astro.locals.runtime?.runtime?.env?.DATASETS);
+    console.log('[tier1 page] Runtime.env available:', !!Astro.locals.runtime?.env);
+    console.log('[tier1 page] DATASETS binding available:', !!Astro.locals.runtime?.env?.DATASETS);
     
     const validation = await validateToken(token, TIER, Astro.locals.runtime);
     isValid = validation.valid;
