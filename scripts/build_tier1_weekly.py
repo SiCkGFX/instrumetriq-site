@@ -328,8 +328,9 @@ def verify_tier3_inputs_exist(
     found_keys = []
     
     for day in days:
-        parquet_key = f"{TIER3_DAILY_PREFIX}/{day}/data.parquet"
-        manifest_key = f"{TIER3_DAILY_PREFIX}/{day}/manifest.json"
+        month_str = day[:7]
+        parquet_key = f"{TIER3_DAILY_PREFIX}/{month_str}/{day}/instrumetriq_tier3_daily_{day}.parquet"
+        manifest_key = f"{TIER3_DAILY_PREFIX}/{month_str}/{day}/manifest.json"
         
         try:
             # Both parquet and manifest must exist

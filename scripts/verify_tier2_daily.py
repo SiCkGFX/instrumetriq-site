@@ -59,11 +59,11 @@ TIER2_EXPECTED_COLUMNS = [
 ]
 
 # Fields expected inside twitter_sentiment_last_cycle struct
+# Note: bucket_min_posts_for_score is intentionally excluded (config noise)
 TIER2_SENTIMENT_FIELDS = [
     "ai_sentiment",
     "author_stats",
     "bucket_has_valid_sentiment",
-    "bucket_min_posts_for_score",
     "bucket_status",
     "category_counts",
     "hybrid_decision_stats",
@@ -92,19 +92,24 @@ def get_s3():
 
 def list_available_dates(s3, bucket: str) -> list[str]:
     """List all available Tier 2 daily dates in R2."""
+    # New structure: tier2/daily/YYYY-MM/YYYY-MM-DD/instrumetriq_tier2_daily_YYYY-MM-DD.parquet
     resp = s3.list_objects_v2(Bucket=bucket, Prefix="tier2/daily/")
     dates = set()
     for obj in resp.get("Contents", []):
-        parts = obj["Key"].split("/")
-        if len(parts) >= 3 and "data.parquet" in obj["Key"]:
-            dates.add(parts[2])
+        key = obj["Key"]
+        if "instrumetriq_tier2_daily_" in key and key.endswith(".parquet"):
+            # Extract date from filename
+            parts = key.split("/")
+            if len(parts) >= 4:
+                dates.add(parts[3])  # YYYY-MM-DD folder name
     return sorted(dates)
 
 
 def download_parquet(s3, bucket: str, date: str) -> Path:
     """Download Tier 2 parquet for date to temp file."""
     import tempfile
-    key = f"tier2/daily/{date}/data.parquet"
+    month_str = date[:7]  # YYYY-MM
+    key = f"tier2/daily/{month_str}/{date}/instrumetriq_tier2_daily_{date}.parquet"
     tmp = Path(tempfile.mkdtemp()) / "data.parquet"
     s3.download_file(bucket, key, str(tmp))
     return tmp

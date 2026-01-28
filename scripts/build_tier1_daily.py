@@ -166,9 +166,10 @@ def build_day(s3, bucket: str, date: str, upload: bool = False, force: bool = Fa
     print(f"Building Tier 1 for {date}")
     print(f"{'='*60}")
     
-    tier3_key = f"{TIER3_PREFIX}/{date}/data.parquet"
-    tier1_key = f"{TIER1_PREFIX}/{date}/data.parquet"
-    manifest_key = f"{TIER1_PREFIX}/{date}/manifest.json"
+    month_str = date[:7]
+    tier3_key = f"{TIER3_PREFIX}/{month_str}/{date}/instrumetriq_tier3_daily_{date}.parquet"
+    tier1_key = f"{TIER1_PREFIX}/{month_str}/{date}/instrumetriq_tier1_daily_{date}.parquet"
+    manifest_key = f"{TIER1_PREFIX}/{month_str}/{date}/manifest.json"
     
     # Check if Tier 3 source exists
     try:

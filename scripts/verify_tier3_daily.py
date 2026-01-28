@@ -91,19 +91,24 @@ def get_s3():
 
 def list_available_dates(s3, bucket: str) -> list[str]:
     """List all available Tier 3 daily dates in R2."""
+    # New structure: tier3/daily/YYYY-MM/YYYY-MM-DD/instrumetriq_tier3_daily_YYYY-MM-DD.parquet
     resp = s3.list_objects_v2(Bucket=bucket, Prefix="tier3/daily/")
     dates = set()
     for obj in resp.get("Contents", []):
-        parts = obj["Key"].split("/")
-        if len(parts) >= 3 and "data.parquet" in obj["Key"]:
-            dates.add(parts[2])
+        key = obj["Key"]
+        if "instrumetriq_tier3_daily_" in key and key.endswith(".parquet"):
+            # Extract date from filename
+            parts = key.split("/")
+            if len(parts) >= 4:
+                dates.add(parts[3])  # YYYY-MM-DD folder name
     return sorted(dates)
 
 
 def download_parquet(s3, bucket: str, date: str) -> Path:
     """Download Tier 3 parquet for date to temp file."""
     import tempfile
-    key = f"tier3/daily/{date}/data.parquet"
+    month_str = date[:7]  # YYYY-MM
+    key = f"tier3/daily/{month_str}/{date}/instrumetriq_tier3_daily_{date}.parquet"
     tmp = Path(tempfile.mkdtemp()) / "data.parquet"
     s3.download_file(bucket, key, str(tmp))
     return tmp

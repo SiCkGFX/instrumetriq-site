@@ -424,6 +424,7 @@ def transform_entry_for_tier3(entry: dict) -> dict:
        - These explode into 30,000+ sparse columns in Parquet format
        - Use source .jsonl.gz archive if you need raw co-mention data
     5. Drop bucket_min_posts_for_score (always 5, redundant)
+    6. Drop diag.backfill_normalized (internal memo, not for external users)
     
     Args:
         entry: Raw entry dict from archive
@@ -431,6 +432,11 @@ def transform_entry_for_tier3(entry: dict) -> dict:
     Returns:
         Transformed entry with corrected schema
     """
+    # Drop internal diag fields
+    diag = entry.get("diag")
+    if diag and isinstance(diag, dict):
+        diag.pop("backfill_normalized", None)
+    
     # Transform futures_raw field names
     futures_raw = entry.get("futures_raw")
     if futures_raw and isinstance(futures_raw, dict):
@@ -793,10 +799,17 @@ def export_tier3_daily(
         client = create_s3_client(config)
         
         # Check for existing objects
-        r2_parquet_key = f"tier3/daily/{date_str}/data.parquet"
-        r2_manifest_key = f"tier3/daily/{date_str}/manifest.json"
+        month_str = date_str[:7]
+        r2_parquet_key = f"tier3/daily/{month_str}/{date_str}/instrumetriq_tier3_daily_{date_str}.parquet"
+        r2_manifest_key = f"tier3/daily/{month_str}/{date_str}/manifest.json"
         
-        existing = check_r2_objects_exist(client, config.bucket, date_str)
+        # We need to manually check these keys now since check_r2_objects_exist likely uses the old path logic.
+        # Ideally we refactor check_r2_objects_exist but inline check is fine for now.
+        try:
+            client.head_object(Bucket=config.bucket, Key=r2_parquet_key)
+            existing = [r2_parquet_key]
+        except:
+            existing = []
         
         if existing and not force:
             print(f"[ERROR] Objects already exist in R2 for {date_str}:", file=sys.stderr)

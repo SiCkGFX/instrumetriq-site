@@ -114,7 +114,8 @@ def sha256(path):
 
 def download_day(s3, bucket, day, temp_dir):
     """Download one day's parquet."""
-    key = f"{TIER3_PREFIX}/{day}/data.parquet"
+    month_str = day[:7]
+    key = f"{TIER3_PREFIX}/{month_str}/{day}/instrumetriq_tier3_daily_{day}.parquet"
     local_path = Path(temp_dir) / f"{day}.parquet"
     s3.download_file(bucket, key, str(local_path))
     return local_path
@@ -133,7 +134,8 @@ def build_week(s3, bucket, end_day, upload=False, force=False):
     present = []
     for d in days:
         try:
-            s3.head_object(Bucket=bucket, Key=f"{TIER3_PREFIX}/{d}/data.parquet")
+            m = d[:7]
+            s3.head_object(Bucket=bucket, Key=f"{TIER3_PREFIX}/{m}/{d}/instrumetriq_tier3_daily_{d}.parquet")
             present.append(d)
         except:
             pass

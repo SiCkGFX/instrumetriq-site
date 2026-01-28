@@ -1,23 +1,21 @@
 /**
  * Token Validation Utility
  * 
- * Validates tier access tokens against the token state file.
+ * Validates tier access tokens against the token state stored in R2.
  * Supports overlap window where both current and next tokens are valid.
  * 
- * Usage:
- *   import { validateToken } from '@/lib/tokenValidator';
- *   
- *   const result = validateToken('abc...xyz', 'tier1');
- *   if (result.valid) {
- *     // Token is valid, generate signed URL
- *   } else {
- *     // Token invalid: result.reason
- *   }
+ * Token state is stored in R2 at config/tier_tokens.json so both VPS
+ * (for generation) and Cloudflare Pages (for validation) can access it.
  */
 
-import { readFileSync } from 'fs';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
-const TOKEN_STATE_PATH = '/etc/instrumetriq/tier_tokens.json';
+const R2_ENDPOINT = import.meta.env.R2_ENDPOINT || process.env.R2_ENDPOINT;
+const R2_ACCESS_KEY_ID = import.meta.env.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID;
+const R2_SECRET_ACCESS_KEY = import.meta.env.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY;
+const R2_BUCKET = import.meta.env.R2_BUCKET || process.env.R2_BUCKET;
+
+const TOKEN_STATE_KEY = 'config/tier_tokens.json';
 
 export interface TokenState {
   version: number;
@@ -45,14 +43,14 @@ export interface ValidationResult {
 }
 
 /**
- * Load token state from JSON file.
+ * Load token state from R2.
  * Cached for performance, reloaded on demand if state changes.
  */
 let cachedState: TokenState | null = null;
 let lastLoadTime = 0;
 const CACHE_TTL = 60000; // 60 seconds
 
-function loadTokenState(): TokenState {
+async function loadTokenState(): Promise<TokenState> {
   const now = Date.now();
   
   // Use cache if still fresh
@@ -61,12 +59,37 @@ function loadTokenState(): TokenState {
   }
   
   try {
-    const data = readFileSync(TOKEN_STATE_PATH, 'utf-8');
-    cachedState = JSON.parse(data);
+    // Create R2 client
+    if (!R2_ENDPOINT || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET) {
+      throw new Error('R2 credentials not configured');
+    }
+    
+    const client = new S3Client({
+      region: 'auto',
+      endpoint: R2_ENDPOINT,
+      credentials: {
+        accessKeyId: R2_ACCESS_KEY_ID,
+        secretAccessKey: R2_SECRET_ACCESS_KEY,
+      },
+    });
+    
+    const command = new GetObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: TOKEN_STATE_KEY,
+    });
+    
+    const response = await client.send(command);
+    const body = await response.Body?.transformToString();
+    
+    if (!body) {
+      throw new Error('Empty response from R2');
+    }
+    
+    cachedState = JSON.parse(body);
     lastLoadTime = now;
     return cachedState!;
   } catch (error) {
-    throw new Error(`Failed to load token state: ${error}`);
+    throw new Error(`Failed to load token state from R2: ${error}`);
   }
 }
 
@@ -77,7 +100,7 @@ function loadTokenState(): TokenState {
  * @param tier - The tier to validate against ('tier1', 'tier2', 'tier3')
  * @returns ValidationResult with valid flag and optional reason
  */
-export function validateToken(token: string, tier: string): ValidationResult {
+export async function validateToken(token: string, tier: string): Promise<ValidationResult> {
   // Basic format validation
   if (!token || typeof token !== 'string') {
     return { valid: false, reason: 'Token is required' };
@@ -96,7 +119,7 @@ export function validateToken(token: string, tier: string): ValidationResult {
   // Load state
   let state: TokenState;
   try {
-    state = loadTokenState();
+    state = await loadTokenState();
   } catch (error) {
     console.error('[TokenValidator] Failed to load state:', error);
     return { valid: false, reason: 'Token validation unavailable' };
@@ -129,8 +152,8 @@ export function validateToken(token: string, tier: string): ValidationResult {
  * @param tier - The tier to query
  * @returns Metadata about the tier's token state
  */
-export function getTierInfo(tier: string) {
-  const state = loadTokenState();
+export async function getTierInfo(tier: string) {
+  const state = await loadTokenState();
   const tierInfo = state.tiers[tier];
   
   if (!tierInfo) {
@@ -151,11 +174,11 @@ export function getTierInfo(tier: string) {
  * Check if token validation system is healthy.
  * Returns warnings for missing tokens or configuration issues.
  */
-export function checkTokenHealth(): { healthy: boolean; warnings: string[] } {
+export async function checkTokenHealth(): Promise<{ healthy: boolean; warnings: string[] }> {
   const warnings: string[] = [];
   
   try {
-    const state = loadTokenState();
+    const state = await loadTokenState();
     
     // Check each tier
     for (const tier of ['tier1', 'tier2', 'tier3']) {
