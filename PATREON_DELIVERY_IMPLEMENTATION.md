@@ -63,7 +63,7 @@
 - [✓] Add R2 credentials to Astro environment variables (reuses ~/.r2_credentials, same as Python scripts)
 - [✓] Install AWS SDK for JavaScript (`@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`) (installed)
 - [✓] Configure R2 endpoint in Astro config (npm scripts source ~/.r2_credentials automatically)
-- [ ] Test R2 connection from Astro SSR (ready to test with npm run dev)
+- [✓] Test R2 connection from Astro SSR (working via R2 bucket binding in Cloudflare Pages)
 
 ### 3.2 Token Validation Utility
 - [✓] Create `src/lib/tokenValidator.ts` (complete with all functions)
@@ -73,21 +73,20 @@
 - [ ] Write unit tests for token validation (defer to testing phase)
 
 ### 3.3 Signed URL Generator
-- [✓] Create `src/lib/signedUrlGenerator.ts` (complete)
-- [✓] Implement S3-compatible signed URL generation (using AWS SDK v3)
-- [✓] Set expiry to 6 days 20 hours (safe buffer) (DEFAULT_EXPIRY_SECONDS = 580800)
-- [✓] Add content-disposition header for nice filenames (ResponseContentDisposition)
-- [ ] Test signed URLs work in browser (needs .env configuration first)
+- [✓] Create `src/lib/signedUrlGenerator.ts` (deprecated - using download proxy instead)
+- [✓] Implement download proxy at `/api/download/[...path].ts` (streams from R2 with token validation)
+- [✓] Set proper content-disposition headers for downloads
+- [✓] Bucket remains private, all downloads go through authenticated proxy
 
 ### 3.4 API Endpoints
-- [✓] Create `/api/download` endpoint (generic endpoint for all tiers)
-- [✓] Create `/api/downloads/tier1.ts` endpoint (returns full download index with signed URLs)
-- [✓] Create `/api/downloads/tier2.ts` endpoint (returns full download index with signed URLs)
-- [✓] Create `/api/downloads/tier3.ts` endpoint (returns full download index with signed URLs)
+- [✓] Create `/api/download/[...path].ts` endpoint (proxy downloads from private R2)
+- [✓] Create `/api/downloads/tier1.ts` endpoint (returns download index with proxy URLs)
+- [✓] Create `/api/downloads/tier2.ts` endpoint (returns download index with proxy URLs)
+- [✓] Create `/api/downloads/tier3.ts` endpoint (returns download index with proxy URLs)
 - [✓] Implement token validation in each endpoint (all endpoints validate tokens)
-- [✓] Load download index and generate signed URLs (reads from /var/www/instrumetriq/private/download_index/)
+- [✓] Load download index from R2 (config/download_index_tierX.json)
 - [✓] Return JSON with daily array + MTD object (all endpoints return both)
-- [ ] Test API responses with valid/invalid tokens (needs download index files + test)
+- [✓] Test API responses with valid/invalid tokens (tested - 401 for invalid, 200 for valid)
 
 ### 3.5 Download Pages
 - [✓] Create `/src/pages/downloads/tier1.astro` (complete with all features)
@@ -95,12 +94,12 @@
 - [✓] Create `/src/pages/downloads/tier3.astro` (complete with all features)
 - [✓] Implement token validation on page load (server-side validation before rendering)
 - [✓] Show 403 error for invalid tokens (HTTP 403 with user-friendly message)
-- [✓] Fetch signed URLs from API endpoint (client-side fetch after token validation)
+- [✓] Fetch download URLs from API endpoint (client-side fetch after token validation)
 - [✓] Display last 7 daily files with dates (shows most recent 7 from API response)
 - [✓] Display current MTD file (featured section at top with month/days info)
 - [✓] Add "Last updated" timestamp (shows API generation timestamp in UTC)
-- [ ] Style download page to match site design
-- [ ] Test download pages in browser
+- [✓] Test download pages in browser (all 3 tiers tested with valid/invalid tokens)
+- [ ] Style download page to match site design (functional but basic styling)
 
 ---
 
@@ -108,22 +107,22 @@
 
 ### 4.1 Weekly Rotation Script
 - [ ] Create `scripts/rotate_tier_tokens.py`
-- [ ] Implement "announce" mode (Sunday: generate next_token, enable overlap)
-- [ ] Implement "promote" mode (Monday: promote next → current, disable overlap)
+- [ ] Implement "announce" mode (Sunday 06:00 UTC: generate next_token, enable overlap)
+- [ ] Implement "promote" mode (Tuesday 00:00 UTC: promote next → current, disable overlap)
 - [ ] Add logging for token rotation events
 - [ ] Test rotation script in both modes
 
 ### 4.2 Patreon Link Generator
 - [ ] Create `scripts/generate_patreon_links.py`
 - [ ] Load current/next tokens from state file
-- [ ] Generate URLs: `https://instrumetriq.com/downloads/tier[1-3]?t=TOKEN`
+- [ ] Generate URLs: `https://instrumetriq.com/downloads/tier[1-3]?token=TOKEN`
 - [ ] Output formatted text for copy/paste to Patreon
 - [ ] Include instructions for which link is current/next
 - [ ] Test link generation produces correct output
 
 ### 4.3 Cron Jobs
-- [ ] Add Sunday 00:00 UTC cron: `rotate_tier_tokens.py --mode=announce`
-- [ ] Add Monday 00:00 UTC cron: `rotate_tier_tokens.py --mode=promote`
+- [ ] Add Sunday 06:00 UTC cron: `rotate_tier_tokens.py --mode=announce`
+- [ ] Add Tuesday 00:00 UTC cron: `rotate_tier_tokens.py --mode=promote`
 - [ ] Test cron jobs execute correctly
 - [ ] Verify token state updates as expected
 
@@ -132,24 +131,21 @@
 ## Phase 5: Integration & Testing
 
 ### 5.1 End-to-End Testing
-- [ ] Test full daily pipeline: build → upload → index → signed URLs
-- [ ] Test MTD updates correctly each day
+- [✓] Test full daily pipeline: build → upload → index → download (working for all tiers)
+- [✓] Test MTD updates correctly (tier1/2/3 MTD bundles built and downloadable)
 - [ ] Test retention deletes 8th day correctly
-- [ ] Verify signed URLs expire after ~7 days
-- [ ] Test token rotation: old tokens stop working Monday
-- [ ] Test overlap window: both tokens work Sunday
+- [ ] Test token rotation: old tokens stop working after promote
+- [ ] Test overlap window: both tokens work during overlap period
 
 ### 5.2 Error Handling
-- [ ] Add error handling for missing R2 files
-- [ ] Add error handling for token file corruption
-- [ ] Add error handling for R2 signing failures
-- [ ] Add graceful degradation if index file missing
-- [ ] Test error pages display correctly
+- [✓] Add error handling for missing R2 files (returns 404/500 with message)
+- [✓] Add error handling for token file corruption (returns error message)
+- [✓] Add graceful degradation if index file missing (returns error message)
+- [✓] Test error pages display correctly (Access Denied page tested)
 
 ### 5.3 Monitoring
 - [ ] Add logging for daily build success/failure
 - [ ] Add logging for token rotation events
-- [ ] Add logging for download page access (aggregated, no PII)
 - [ ] Create simple health check script
 - [ ] Document monitoring procedures
 
@@ -158,18 +154,19 @@
 ## Phase 6: Deployment & Documentation
 
 ### 6.1 VPS Deployment
-- [ ] Deploy token state file to VPS
+- [✓] Deploy token state file to R2 (config/tier_tokens.json)
+- [✓] Token generation scripts work on VPS
 - [ ] Deploy rotation scripts to VPS
 - [ ] Configure cron jobs on VPS
-- [ ] Test VPS scripts can read/write token state
-- [ ] Test VPS scripts can access R2
+- [✓] Test VPS scripts can read/write token state (verified)
+- [✓] Test VPS scripts can access R2 (verified)
 
 ### 6.2 Website Deployment
-- [ ] Deploy updated Astro site to Cloudflare Pages
-- [ ] Verify environment variables set correctly
-- [ ] Test download pages work in production
-- [ ] Test API endpoints work in production
-- [ ] Test signed URLs work from production
+- [✓] Deploy updated Astro site to Cloudflare Pages
+- [✓] R2 bucket binding configured (DATASETS)
+- [✓] Test download pages work in production (all 3 tiers verified)
+- [✓] Test API endpoints work in production (all 3 tiers verified)
+- [✓] Test downloads work from production (verified with actual file downloads)
 
 ### 6.3 Patreon Setup
 - [ ] Create tier1 pinned members-only post
