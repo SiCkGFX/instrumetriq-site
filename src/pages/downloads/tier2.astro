@@ -197,14 +197,17 @@ if (!isValid) {
                 <td class="numeric">${formatBytes(data.mtd.size_bytes)}</td>
                 <td class="actionsCell">
                   <a href="${data.mtd.download_url}" class="actionBtn actionBtn--primary" download>Download</a>
-                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${data.mtd.manifest_url}" data-target="manifest-mtd">Manifest</button>
+                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${data.mtd.manifest_url}" data-target="manifest-mtd">
+                    <span class="btnText">Manifest</span>
+                    <span class="btnChevron">▼</span>
+                  </button>
                 </td>
               </tr>
               <tr class="manifestRow" id="manifest-mtd" style="display: none;">
                 <td colspan="4">
                   <div class="manifestHeader">
                     <span>Manifest — ${data.mtd.month}</span>
-                    <a href="${data.mtd.manifest_url}" class="manifestDownload" download>Download JSON</a>
+                    <a href="${data.mtd.manifest_url}" class="actionBtn" download>Download JSON</a>
                   </div>
                   <pre class="manifestContent"><code>Loading...</code></pre>
                 </td>
@@ -225,14 +228,17 @@ if (!isValid) {
                 <td class="numeric">${formatBytes(item.size_bytes)}</td>
                 <td class="actionsCell">
                   <a href="${item.download_url}" class="actionBtn actionBtn--primary" download>Download</a>
-                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${item.manifest_url}" data-target="manifest-daily-${idx}">Manifest</button>
+                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${item.manifest_url}" data-target="manifest-daily-${idx}">
+                    <span class="btnText">Manifest</span>
+                    <span class="btnChevron">▼</span>
+                  </button>
                 </td>
               </tr>
               <tr class="manifestRow" id="manifest-daily-${idx}" style="display: none;">
                 <td colspan="3">
                   <div class="manifestHeader">
                     <span>Manifest — ${item.date}</span>
-                    <a href="${item.manifest_url}" class="manifestDownload" download>Download JSON</a>
+                    <a href="${item.manifest_url}" class="actionBtn" download>Download JSON</a>
                   </div>
                   <pre class="manifestContent"><code>Loading...</code></pre>
                 </td>
@@ -430,6 +436,7 @@ if (!isValid) {
       border-collapse: collapse;
       font-size: 0.9rem;
       margin: 0;
+      table-layout: fixed;
     }
 
     .downloadTable thead th {
@@ -445,6 +452,12 @@ if (!isValid) {
       border-bottom: 2px solid var(--border2);
       color: var(--text-muted);
     }
+
+    /* Fixed column widths for alignment */
+    .downloadTable thead th:nth-child(1) { width: 25%; }
+    .downloadTable thead th:nth-child(2) { width: 15%; }
+    .downloadTable thead th:nth-child(3) { width: 20%; }
+    .downloadTable thead th:nth-child(4) { width: 40%; }
 
     .downloadTable thead th.numeric {
       text-align: right;
@@ -541,6 +554,18 @@ if (!isValid) {
       box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
     }
 
+    .actionBtn--secondary.active .btnChevron {
+      transform: rotate(180deg);
+    }
+
+    /* Chevron indicator for expandable buttons */
+    .btnChevron {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 0.65rem;
+      transition: transform 0.2s;
+    }
+
     /* Manifest Row - Matches Dataset json-row */
     .manifestRow td {
       padding: 0 !important;
@@ -560,28 +585,6 @@ if (!isValid) {
       color: var(--text);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-    }
-
-    .manifestDownload {
-      background-color: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 6px;
-      text-decoration: none;
-      text-transform: none;
-      letter-spacing: normal;
-      transition: all 0.2s;
-      display: inline-block;
-    }
-
-    .manifestDownload:hover {
-      background-color: var(--accent);
-      border-color: var(--accent);
-      color: var(--bg);
-      transform: translateY(-1px);
     }
 
     .manifestContent {
