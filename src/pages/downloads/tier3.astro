@@ -207,7 +207,7 @@ if (!isValid) {
                 <td colspan="4">
                   <div class="manifestHeader">
                     <span>Manifest — ${data.mtd.month}</span>
-                    <a href="${data.mtd.manifest_url}" class="actionBtn" download>Download JSON</a>
+                    <a href="${data.mtd.manifest_url}" class="manifestBtn" download>Download JSON</a>
                   </div>
                   <pre class="manifestContent"><code>Loading...</code></pre>
                 </td>
@@ -238,7 +238,7 @@ if (!isValid) {
                 <td colspan="3">
                   <div class="manifestHeader">
                     <span>Manifest — ${item.date}</span>
-                    <a href="${item.manifest_url}" class="actionBtn" download>Download JSON</a>
+                    <a href="${item.manifest_url}" class="manifestBtn" download>Download JSON</a>
                   </div>
                   <pre class="manifestContent"><code>Loading...</code></pre>
                 </td>
@@ -585,6 +585,28 @@ if (!isValid) {
       color: var(--text);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    .manifestBtn {
+      background-color: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: normal;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .manifestBtn:hover {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+      transform: translateY(-1px);
     }
 
     .manifestContent {
