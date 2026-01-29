@@ -423,7 +423,7 @@ if (!isValid) {
       margin-bottom: var(--space-4);
     }
 
-    /* Table Styling - Matches Dataset page */
+    /* Table Styling */
     .tableWrapper {
       overflow-x: auto;
       border-radius: 8px;
@@ -436,7 +436,6 @@ if (!isValid) {
       border-collapse: collapse;
       font-size: 0.9rem;
       margin: 0;
-      table-layout: fixed;
     }
 
     .downloadTable thead th {
@@ -453,12 +452,6 @@ if (!isValid) {
       color: var(--text-muted);
     }
 
-    /* Fixed column widths for alignment */
-    .downloadTable thead th:nth-child(1) { width: 25%; }
-    .downloadTable thead th:nth-child(2) { width: 15%; }
-    .downloadTable thead th:nth-child(3) { width: 20%; }
-    .downloadTable thead th:nth-child(4) { width: 40%; }
-
     .downloadTable thead th.numeric {
       text-align: right;
     }
@@ -466,6 +459,26 @@ if (!isValid) {
     .downloadTable thead th.actions-col {
       text-align: right;
     }
+
+    /* MTD table: 4 columns - Period | Days | Size | Actions */
+    #mtd-table { table-layout: fixed; }
+    #mtd-table th:nth-child(1),
+    #mtd-table td:nth-child(1) { width: 20%; }
+    #mtd-table th:nth-child(2),
+    #mtd-table td:nth-child(2) { width: 15%; text-align: right; }
+    #mtd-table th:nth-child(3),
+    #mtd-table td:nth-child(3) { width: 20%; text-align: right; }
+    #mtd-table th:nth-child(4),
+    #mtd-table td:nth-child(4) { width: 45%; text-align: right; }
+
+    /* Daily table: 3 columns - Date | Size | Actions */
+    #daily-table { table-layout: fixed; }
+    #daily-table th:nth-child(1),
+    #daily-table td:nth-child(1) { width: 25%; }
+    #daily-table th:nth-child(2),
+    #daily-table td:nth-child(2) { width: 25%; text-align: right; }
+    #daily-table th:nth-child(3),
+    #daily-table td:nth-child(3) { width: 50%; text-align: right; }
 
     .downloadTable tbody tr.dataRow {
       border-bottom: 1px solid var(--border);
