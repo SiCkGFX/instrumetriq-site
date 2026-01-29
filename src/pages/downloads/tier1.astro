@@ -131,7 +131,8 @@ if (!isValid) {
                     <th>Period</th>
                     <th class="numeric">Days</th>
                     <th class="numeric">Size</th>
-                    <th class="actions-col">Actions</th>
+                    <th class="center-col">MTD Parquet</th>
+                    <th class="center-col">Manifest</th>
                   </tr>
                 </thead>
                 <tbody id="mtd-body"></tbody>
@@ -151,7 +152,8 @@ if (!isValid) {
                   <tr>
                     <th>Date</th>
                     <th class="numeric">Size</th>
-                    <th class="actions-col">Actions</th>
+                    <th class="center-col">Daily Parquet</th>
+                    <th class="center-col">Manifest</th>
                   </tr>
                 </thead>
                 <tbody id="daily-body"></tbody>
@@ -195,16 +197,21 @@ if (!isValid) {
                 <td class="dateCell">${data.mtd.month}</td>
                 <td class="numeric">${data.mtd.days_included}</td>
                 <td class="numeric">${formatBytes(data.mtd.size_bytes)}</td>
-                <td class="actionsCell">
-                  <a href="${data.mtd.download_url}" class="actionBtn actionBtn--primary" download>Download</a>
-                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${data.mtd.manifest_url}" data-target="manifest-mtd">
-                    <span class="btnText">Manifest</span>
-                    <span class="btnChevron">▼</span>
+                <td class="downloadCell">
+                  <a href="${data.mtd.download_url}" class="downloadBtn" download>
+                    <span class="downloadBtn__icon">↓</span>
+                    <span>Download</span>
+                  </a>
+                </td>
+                <td class="expandCell">
+                  <button class="expandBtn" data-manifest-url="${data.mtd.manifest_url}" data-target="manifest-mtd">
+                    <span>Expand</span>
+                    <span class="expandBtn__chevron">▼</span>
                   </button>
                 </td>
               </tr>
               <tr class="manifestRow" id="manifest-mtd" style="display: none;">
-                <td colspan="4">
+                <td colspan="5">
                   <div class="manifestHeader">
                     <span>Manifest — ${data.mtd.month}</span>
                     <a href="${data.mtd.manifest_url}" class="manifestBtn" download>Download JSON</a>
@@ -214,7 +221,7 @@ if (!isValid) {
               </tr>
             `;
           } else {
-            mtdBody.innerHTML = '<tr><td colspan="4" class="emptyState">Month-to-date bundle not yet available.</td></tr>';
+            mtdBody.innerHTML = '<tr><td colspan="5" class="emptyState">Month-to-date bundle not yet available.</td></tr>';
           }
 
           // Populate Daily table
@@ -226,16 +233,21 @@ if (!isValid) {
               <tr class="dataRow" data-idx="daily-${idx}">
                 <td class="dateCell">${item.date}</td>
                 <td class="numeric">${formatBytes(item.size_bytes)}</td>
-                <td class="actionsCell">
-                  <a href="${item.download_url}" class="actionBtn actionBtn--primary" download>Download</a>
-                  <button class="actionBtn actionBtn--secondary" data-manifest-url="${item.manifest_url}" data-target="manifest-daily-${idx}">
-                    <span class="btnText">Manifest</span>
-                    <span class="btnChevron">▼</span>
+                <td class="downloadCell">
+                  <a href="${item.download_url}" class="downloadBtn" download>
+                    <span class="downloadBtn__icon">↓</span>
+                    <span>Download</span>
+                  </a>
+                </td>
+                <td class="expandCell">
+                  <button class="expandBtn" data-manifest-url="${item.manifest_url}" data-target="manifest-daily-${idx}">
+                    <span>Expand</span>
+                    <span class="expandBtn__chevron">▼</span>
                   </button>
                 </td>
               </tr>
               <tr class="manifestRow" id="manifest-daily-${idx}" style="display: none;">
-                <td colspan="3">
+                <td colspan="4">
                   <div class="manifestHeader">
                     <span>Manifest — ${item.date}</span>
                     <a href="${item.manifest_url}" class="manifestBtn" download>Download JSON</a>
@@ -245,11 +257,11 @@ if (!isValid) {
               </tr>
             `).join('');
           } else {
-            dailyBody.innerHTML = '<tr><td colspan="3" class="emptyState">No daily files available yet.</td></tr>';
+            dailyBody.innerHTML = '<tr><td colspan="4" class="emptyState">No daily files available yet.</td></tr>';
           }
 
           // Expand button handlers
-          document.querySelectorAll('.actionBtn--secondary').forEach(btn => {
+          document.querySelectorAll('.expandBtn').forEach(btn => {
             btn.addEventListener('click', async () => {
               const targetId = btn.getAttribute('data-target');
               const manifestUrl = btn.getAttribute('data-manifest-url');
@@ -456,29 +468,33 @@ if (!isValid) {
       text-align: right;
     }
 
-    .downloadTable thead th.actions-col {
-      text-align: right;
+    .downloadTable thead th.center-col {
+      text-align: center;
     }
 
-    /* MTD table: 4 columns - Period | Days | Size | Actions */
+    /* MTD table: 5 columns - Period | Days | Size | MTD Parquet | Manifest */
     #mtd-table { table-layout: fixed; }
     #mtd-table th:nth-child(1),
-    #mtd-table td:nth-child(1) { width: 20%; }
+    #mtd-table td:nth-child(1) { width: 18%; }
     #mtd-table th:nth-child(2),
-    #mtd-table td:nth-child(2) { width: 15%; text-align: right; }
+    #mtd-table td:nth-child(2) { width: 12%; text-align: right; }
     #mtd-table th:nth-child(3),
-    #mtd-table td:nth-child(3) { width: 20%; text-align: right; }
+    #mtd-table td:nth-child(3) { width: 18%; text-align: right; }
     #mtd-table th:nth-child(4),
-    #mtd-table td:nth-child(4) { width: 45%; text-align: right; }
+    #mtd-table td:nth-child(4) { width: 26%; text-align: center; }
+    #mtd-table th:nth-child(5),
+    #mtd-table td:nth-child(5) { width: 26%; text-align: center; }
 
-    /* Daily table: 3 columns - Date | Size | Actions */
+    /* Daily table: 4 columns - Date | Size | Daily Parquet | Manifest */
     #daily-table { table-layout: fixed; }
     #daily-table th:nth-child(1),
-    #daily-table td:nth-child(1) { width: 25%; }
+    #daily-table td:nth-child(1) { width: 22%; }
     #daily-table th:nth-child(2),
-    #daily-table td:nth-child(2) { width: 25%; text-align: right; }
+    #daily-table td:nth-child(2) { width: 18%; text-align: right; }
     #daily-table th:nth-child(3),
-    #daily-table td:nth-child(3) { width: 50%; text-align: right; }
+    #daily-table td:nth-child(3) { width: 30%; text-align: center; }
+    #daily-table th:nth-child(4),
+    #daily-table td:nth-child(4) { width: 30%; text-align: center; }
 
     .downloadTable tbody tr.dataRow {
       border-bottom: 1px solid var(--border);
@@ -507,11 +523,6 @@ if (!isValid) {
       font-family: 'Courier New', monospace;
     }
 
-    .downloadTable tbody td.actionsCell {
-      text-align: right;
-      white-space: nowrap;
-    }
-
     .downloadTable tbody td.emptyState {
       text-align: center;
       color: var(--text-muted);
@@ -519,64 +530,75 @@ if (!isValid) {
       padding: var(--space-4);
     }
 
-    /* Action Buttons - Matches Dataset expand buttons */
-    .actionBtn {
+    .downloadTable tbody td.downloadCell,
+    .downloadTable tbody td.expandCell {
+      text-align: center;
+    }
+
+    /* Download Button - Primary action, cyan accent */
+    .downloadBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--accent);
+      border: 1px solid var(--accent);
+      color: var(--bg);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .downloadBtn:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 2px 10px rgba(0, 188, 212, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .downloadBtn__icon {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    /* Expand Button - Secondary action, muted */
+    .expandBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background-color: var(--panel);
       border: 1px solid var(--border);
       color: var(--text);
       cursor: pointer;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 500;
-      padding: 8px 14px;
+      padding: 10px 18px;
       border-radius: 6px;
-      margin-left: 12px;
       transition: all 0.2s;
-      white-space: nowrap;
-      text-decoration: none;
-      display: inline-block;
-      vertical-align: middle;
     }
 
-    .actionBtn:first-child {
-      margin-left: 0;
-    }
-
-    .actionBtn:hover {
+    .expandBtn:hover {
       background-color: var(--panel2);
       border-color: var(--accent);
       color: var(--accent);
-      transform: translateY(-1px);
     }
 
-    .actionBtn--primary {
+    .expandBtn.active {
       background-color: var(--accent);
-      color: var(--bg);
       border-color: var(--accent);
-    }
-
-    .actionBtn--primary:hover {
-      filter: brightness(1.15);
       color: var(--bg);
       box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
     }
 
-    .actionBtn--secondary.active {
-      background-color: var(--accent);
-      color: var(--bg);
-      border-color: var(--accent);
-      box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
-    }
-
-    .actionBtn--secondary.active .btnChevron {
-      transform: rotate(180deg);
-    }
-
-    /* Chevron indicator for expandable buttons */
-    .btnChevron {
-      display: inline-block;
-      margin-left: 6px;
-      font-size: 0.65rem;
+    .expandBtn__chevron {
+      font-size: 0.7rem;
       transition: transform 0.2s;
+    }
+
+    .expandBtn.active .expandBtn__chevron {
+      transform: rotate(180deg);
     }
 
     /* Manifest Row - Matches Dataset json-row */
